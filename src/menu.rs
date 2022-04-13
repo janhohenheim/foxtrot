@@ -64,6 +64,7 @@ fn setup_menu(
         });
 }
 
+#[allow(clippy::type_complexity)]
 fn click_play_button(
     mut commands: Commands,
     button_colors: Res<ButtonColors>,

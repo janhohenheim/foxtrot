@@ -1,4 +1,4 @@
-# A Bevy game template
+# My personal Bevy game template
 
 Template for a Game using the awesome [Bevy engine][bevy] featuring out of the box builds for Windows, Linux, macOS, and Web (Wasm).
 

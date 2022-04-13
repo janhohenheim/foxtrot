@@ -27,7 +27,7 @@ jobs:
         if: runner.os == 'linux'
       - name: Build & run tests
         run: cargo test
-test:
+test-macos:
   strategy:
     matrix:
       os: [windows-latest, ubuntu-latest]

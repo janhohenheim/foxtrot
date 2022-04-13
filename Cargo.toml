@@ -2,7 +2,7 @@
 name = "bevy_game" # ToDo
 version = "0.1.0"
 publish = false
-authors = ["Niklas Eicker <git@nikl.me>"] # ToDo: you are the author ;)
+authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 
 [profile.dev.package."*"]

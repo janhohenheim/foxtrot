@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
         if: runner.os == 'linux'
       - name: Install zld
-        run: brew install zld
+        run: brew install michaeleisel/zld/zld
         if: runner.os == 'macos'
       - name: Build & run tests
         run: cargo test

@@ -43,3 +43,7 @@ winit = { version = "0.25", features=["x11"]}
 
 [build-dependencies]
 embed-resource = "1.4"
+
+[patch.crates-io]
+bevy = { git = 'https://github.com/bevyengine/bevy', tag = 'v0.7.0' }
+

@@ -31,10 +31,10 @@ dev = [
 ]
 
 [dependencies]
-bevy = { version = "0.6", default-features = false }
-bevy_kira_audio = { version = "0.8" }
-bevy_asset_loader = { version = "0.9" }
-bevy-inspector-egui = { version = "0.9", optional = true }
+bevy = { version = "0.7", default-features = false }
+bevy_kira_audio = { version = "0.9" }
+bevy_asset_loader = { version = "0.10" }
+bevy-inspector-egui = { version = "0.10", optional = true }
 bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", optional = true }
 rand = "0.8.3"
 

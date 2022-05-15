@@ -4,12 +4,10 @@
 use bevy::prelude::{App, ClearColor, Color, Msaa, WindowDescriptor};
 use bevy::DefaultPlugins;
 use bevy_game::GamePlugin;
-#[cfg(feature = "dev")]
-use bevy_inspector_egui::WorldInspectorPlugin;
 
 fn main() {
     let mut app = App::new();
-    app.insert_resource(Msaa { samples: 1 })
+    app.insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         .insert_resource(WindowDescriptor {
             width: 800.,
@@ -17,10 +15,7 @@ fn main() {
             title: "Bevy game".to_string(), // ToDo
             ..Default::default()
         })
-        .add_plugins(DefaultPlugins);
-
-    #[cfg(feature = "dev")]
-    app.add_plugin(WorldInspectorPlugin::new());
-
-    app.add_plugin(GamePlugin).run();
+        .add_plugins(DefaultPlugins)
+        .add_plugin(GamePlugin)
+        .run();
 }

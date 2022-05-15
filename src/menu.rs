@@ -33,7 +33,9 @@ fn setup_menu(
     font_assets: Res<FontAssets>,
     button_colors: Res<ButtonColors>,
 ) {
-    commands.spawn_bundle(UiCameraBundle::default());
+    commands
+        .spawn_bundle(UiCameraBundle::default())
+        .insert(Name::new("UI Camera"));
     commands
         .spawn_bundle(ButtonBundle {
             style: Style {
@@ -46,21 +48,24 @@ fn setup_menu(
             color: button_colors.normal,
             ..Default::default()
         })
+        .insert(Name::new("Play Button"))
         .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                text: Text {
-                    sections: vec![TextSection {
-                        value: "Play".to_string(),
-                        style: TextStyle {
-                            font: font_assets.fira_sans.clone(),
-                            font_size: 40.0,
-                            color: Color::rgb(0.9, 0.9, 0.9),
-                        },
-                    }],
-                    alignment: Default::default(),
-                },
-                ..Default::default()
-            });
+            parent
+                .spawn_bundle(TextBundle {
+                    text: Text {
+                        sections: vec![TextSection {
+                            value: "Play".to_string(),
+                            style: TextStyle {
+                                font: font_assets.fira_sans.clone(),
+                                font_size: 40.0,
+                                color: Color::rgb(0.9, 0.9, 0.9),
+                            },
+                        }],
+                        alignment: Default::default(),
+                    },
+                    ..Default::default()
+                })
+                .insert(Name::new("Play Text"));
         });
 }
 

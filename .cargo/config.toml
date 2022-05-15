@@ -19,10 +19,26 @@ rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Zshare-generics=y"]
 linker = "rust-lld.exe"
 rustflags = ["-Zshare-generics=n"]
 
+[alias]
+run_wasm = "run --features editor --target wasm32-unknown-unknown"
+run_wasm_release = "run --release --target wasm32-unknown-unknown"
+run_native = "run --features editor,dynamic"
+run_native_release = "run --release"
+
+[target.wasm32-unknown-unknown]
+runner = "wasm-server-runner"
+
+# Enable only a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
 # In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
-#[profile.dev]
-#debug = 1
+debug = 1
 
-[alias]
-serve = "run --target wasm32-unknown-unknown"
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

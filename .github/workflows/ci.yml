@@ -31,8 +31,15 @@ jobs:
       - name: Install zld
         run: brew install michaeleisel/zld/zld
         if: runner.os == 'macos'
-      - name: Build & run tests
-        run: cargo test
+      - name: Install llvm tools
+        run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
+        if : runner.os == 'windows'
+      - name: Install cargo deps
+        run: cargo install wasm-server-runner
+      - name: Build & run tests for native
+        run: cargo test --features editor
+      - name: Build for web
+        run: cargo build --features editor --target wasm32-unknown-unknown 
   all-doc-tests:
     runs-on: ubuntu-latest
     steps:

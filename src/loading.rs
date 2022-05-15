@@ -14,6 +14,7 @@ impl Plugin for LoadingPlugin {
             .with_collection::<FontAssets>()
             .with_collection::<AudioAssets>()
             .with_collection::<TextureAssets>()
+            .init_resource::<SpriteAssets>()
             .continue_to_state(GameState::Menu)
             .build(app);
     }
@@ -38,4 +39,27 @@ pub struct AudioAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/bevy.png")]
     pub texture_bevy: Handle<Image>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SpriteAssets {
+    pub bevy_one: Sprite,
+    pub bevy_two: Sprite,
+}
+
+impl Default for SpriteAssets {
+    fn default() -> Self {
+        SpriteAssets {
+            bevy_one: Sprite {
+                custom_size: Some(Vec2::new(1.0, 1.0)),
+                color: Color::rgb(0.0, 0.8, 0.0).into(),
+                ..default()
+            },
+            bevy_two: Sprite {
+                custom_size: Some(Vec2::new(1.0, 1.0)),
+                color: Color::rgb(0.8, 0.0, 0.0).into(),
+                ..default()
+            },
+        }
+    }
 }

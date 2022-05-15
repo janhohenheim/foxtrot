@@ -1,11 +1,10 @@
 # My personal Bevy game template
 
 Template for a Game using the awesome [Bevy engine][bevy] featuring out of the box builds for Windows, Linux, macOS, and Web (Wasm).
-
-_Since Bevy is in heavy development, there regularly are unpublished new features or bug fixes. If you like living on the edge, you can use the branch `bevy_main` of this template to be close to the current state of Bevy's main branch_
- 
+Adapted to my needs from [NiklasEi/bevy_game_template](https://github.com/NiklasEi/bevy_game_template).
 # What does this template give you?
-* small example ["game"](https://niklasei.github.io/bevy_game_template/) (*warning: biased; e.g., split into a lot of plugins and using `bevy_kira_audio` for sound*)
+* small example ["game"](https://janhohenheim.github.io/bevy_game_template/) (*warning: biased; e.g., split into a lot of plugins and using `bevy_kira_audio` for sound*)
+* networking using ggrs
 * easy setup for running the web build using [trunk] (`trunk serve`) 
 * run the native version with `cargo run`
 * workflow for GitHub actions creating releases for Windows, Linux, macOS, and Web (Wasm) ready for distribution
@@ -34,23 +33,12 @@ You should keep the `credits` directory up to date. The release workflow automat
  2. Trigger the `deploy-github-page` workflow
  3. After a few minutes your game is live at `http://username.github.io/repository`
 
-# Getting started with Bevy
-
-You should check out the Bevy website for [links to resources][bevy-learn] and the [Bevy Cheat Book] for a bunch of helpful documentation and examples. I can also recommend the [official Bevy Discord server][bevy-discord] to keep up to date with the development and get feedback + help from other Bevy users.
-
-# Known issues
-
-Audio in web-builds can have issues in some browsers. This seems to be a general performance issue and not due to the audio itself (see [bevy_kira_audio/#9][firefox-sound-issue]).
 
 # License
 
-This project is licensed under [CC0 1.0 Universal](LICENSE) except some content of `assets` and the Bevy icons in the `build` directory (see [Credits](credits/CREDITS.md)). Go crazy and feel free to show me whatever you build with this ([@nikl_me][nikl-twitter]).
+This project is licensed under [CC0 1.0 Universal](LICENSE) except some content of `assets` and the Bevy icons in the `build` directory (see [Credits](credits/CREDITS.md)).
 
 [bevy]: https://bevyengine.org/
-[bevy-learn]: https://bevyengine.org/learn/
-[bevy-discord]: https://discord.gg/bevy
-[nikl-twitter]: https://twitter.com/nikl_me
-[firefox-sound-issue]: https://github.com/NiklasEi/bevy_kira_audio/issues/9
 [Bevy Cheat Book]: https://bevy-cheatbook.github.io/introduction.html
-[`wasm-server-runner`]: https://github.com/jakobhellermann/wasm-server-runner
 [trunk]: https://trunkrs.dev/
+

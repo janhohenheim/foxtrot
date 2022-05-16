@@ -49,9 +49,9 @@ embed-resource = "1.4"
 
 [patch.crates-io]
 matchbox_socket = { git = "https://github.com/johanhelsing/matchbox", rev = "b00002da1442396b8ce0babaf6d119c76b33f8d5" }
-ggrs = { git = "https://github.com/janhohenheim/ggrs", rev = "9e4a20a6317cfdcff9c352e6f2a37feb33576e54" }
+ggrs = { git = "https://github.com/gschup/ggrs?rev=9e4a20a6317cfdcff9c352e6f2a37feb33576e54"}
 bevy_ggrs = { git = "https://github.com/gschup/bevy_ggrs", rev = "928376df6b37f391ef6593e0355ba5a737ec1492" }
 
 
 [patch.'https://github.com/gschup/ggrs']
-ggrs = { git = "https://github.com/janhohenheim/ggrs", rev = "9e4a20a6317cfdcff9c352e6f2a37feb33576e54" }
+ggrs = { git = "https://github.com/gschup/ggrs?rev=9e4a20a6317cfdcff9c352e6f2a37feb33576e54" }

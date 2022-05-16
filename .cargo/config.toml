@@ -1,5 +1,3 @@
-# Add the contents of this file to `config.toml` to enable "fast build" configuration. Please read the notes below.
-
 # NOTE: For maximum performance, build using a nightly compiler
 # If you are using rust stable, remove the "-Zshare-generics=y" below.
 
@@ -26,7 +24,8 @@ run_native = "run --features editor,dynamic"
 run_native_release = "run --release"
 
 [target.wasm32-unknown-unknown]
-runner = "wasm-server-runner"
+# Not needed when using `trunk serve` instead of `cargo run`
+# runner = "wasm-server-runner"
 
 # Enable only a small amount of optimization in debug mode
 [profile.dev]

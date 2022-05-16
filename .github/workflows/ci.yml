@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  test:
+  test-native:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
@@ -34,13 +34,30 @@ jobs:
       - name: Install llvm tools
         run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
         if : runner.os == 'windows'
-      - name: Install cargo deps
-        run: cargo install wasm-server-runner
       - name: Build & run tests for native
-        run: cargo test --features editor
+        run: cargo test --all-features
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+      - name: Install alsa and udev
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Build for web
         run: cargo build --features editor --target wasm32-unknown-unknown 
-  all-doc-tests:
+  test-native-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -81,7 +98,7 @@ jobs:
           override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run clippy
-        run: cargo clippy --workspace --all-targets --all-features
       - name: Check format
         run: cargo fmt --all -- --check
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets --all-features -- --deny warnings

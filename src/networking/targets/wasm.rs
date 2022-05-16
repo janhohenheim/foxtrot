@@ -32,7 +32,7 @@ impl Config for WasmConfig {
 }
 
 fn start_matchbox_socket(mut commands: Commands, task_pool: Res<IoTaskPool>) {
-    let room_url = "wss://match.gschup.dev/next_2";
+    let room_url = "wss://matchbox.hohenheim.ch/extreme-bevy/next_2";
     log::info!("Connecting to matchbox server: {}", room_url);
     let (socket, message_loop) = WebRtcSocket::new(room_url);
 

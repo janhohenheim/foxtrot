@@ -6,22 +6,22 @@
     "configurations": [
         // this config bypasses waiting for debugger attachment, increasing speed
         {
-            "name": "Quick Launch",
+            "name": "Serve wasm",
             "type": "node-terminal",
             "request": "launch",
-            "command": "cargo run --features dev",
+            "command": "trunk serve",
         },
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
+            "name": "Debug native",
             "cargo": {
                 "args": [
                     "build",
                     "--bin=bevy_game",
                     "--package=bevy_game",
                     "--features",
-                    "dev"
+                    "dynamic"
                 ],
                 "filter": {
                     "name": "bevy_game",
@@ -42,7 +42,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests",
+            "name": "Debug native unit tests",
             "cargo": {
                 "args": [
                     "test",
@@ -50,7 +50,7 @@
                     "--bin=bevy_game",
                     "--package=bevy_game",
                     "--features",
-                    "dev"
+                    "dynamic"
                 ],
                 "filter": {
                     "name": "bevy_game",

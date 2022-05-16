@@ -52,12 +52,12 @@ impl Default for SpriteAssets {
         SpriteAssets {
             bevy_one: Sprite {
                 custom_size: Some(Vec2::new(1.0, 1.0)),
-                color: Color::rgb(0.0, 0.8, 0.0).into(),
+                color: Color::rgb(0.0, 0.8, 0.0),
                 ..default()
             },
             bevy_two: Sprite {
                 custom_size: Some(Vec2::new(1.0, 1.0)),
-                color: Color::rgb(0.8, 0.0, 0.0).into(),
+                color: Color::rgb(0.8, 0.0, 0.0),
                 ..default()
             },
         }

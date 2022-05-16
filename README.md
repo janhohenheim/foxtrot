@@ -1,7 +1,9 @@
 # My personal Bevy game template
 
 Template for a Game using the awesome [Bevy engine][bevy] featuring out of the box builds for Windows, Linux, macOS, and Web (Wasm).
-Adapted to my needs from [NiklasEi/bevy_game_template](https://github.com/NiklasEi/bevy_game_template).
+
+_Since Bevy is in heavy development, there regularly are unpublished new features or bug fixes. If you like living on the edge, you can use the branch `bevy_main` of this template to be close to the current state of Bevy's main branch_
+ 
 # What does this template give you?
 * small example ["game"](https://janhohenheim.github.io/bevy-game-template/) (*warning: biased; e.g., split into a lot of plugins and using `bevy_kira_audio` for sound*)
 * networking using ggrs
@@ -39,9 +41,13 @@ You should keep the `credits` directory up to date. The release workflow automat
 
 ## License
 
-This project is licensed under [CC0 1.0 Universal](LICENSE) except some content of `assets` and the Bevy icons in the `build` directory (see [Credits](credits/CREDITS.md)).
+This project is licensed under [CC0 1.0 Universal](LICENSE) except some content of `assets` and the Bevy icons in the `build` directory (see [Credits](credits/CREDITS.md)). Go crazy and feel free to show me whatever you build with this ([@nikl_me][nikl-twitter]).
 
 [bevy]: https://bevyengine.org/
+[bevy-learn]: https://bevyengine.org/learn/
+[bevy-discord]: https://discord.gg/bevy
+[nikl-twitter]: https://twitter.com/nikl_me
+[firefox-sound-issue]: https://github.com/NiklasEi/bevy_kira_audio/issues/9
 [Bevy Cheat Book]: https://bevy-cheatbook.github.io/introduction.html
+[`wasm-server-runner`]: https://github.com/jakobhellermann/wasm-server-runner
 [trunk]: https://trunkrs.dev/
-

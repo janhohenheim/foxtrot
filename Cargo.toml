@@ -23,35 +23,20 @@ dynamic = [
 ]
 
 [dependencies]
-bevy = { version = "0.7", default-features = false }
+bevy = { version = "0.9.1", default-features = false }
 rand = "0.8.3"
-bevy_kira_audio = "0.9"
-bevy_asset_loader = "0.10"
+bevy_kira_audio = "0.13.0"
+bevy_asset_loader = "0.14.1"
 bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", optional = true }
-ggrs = { version = "0.9.1", features = [ "sync-send" ] }
 bytemuck = { version = "1.9.1", features= [ "derive" ] }
 bitflags = "1.3.2"
 
 [target."cfg(target_os = \"linux\")".dependencies]
 winit = { version = "0.25", features = [ "x11" ]}
 
-[target."cfg(target_arch = \"wasm32\")".dependencies]
-bevy-web-resizer = "2.0.0"
-matchbox_socket = { version = "0.3.0", features = [ "ggrs-socket" ] }
-bevy_ggrs = { version = "0.9.0", features = [ "wasm-bindgen" ] }
-
 [target."cfg(not(target_arch = \"wasm32\"))".dependencies]
-bevy_ggrs = { version = "0.9.0" }
 clap = { version = "3.1.18", features = ["derive"] }
 
 [build-dependencies]
 embed-resource = "1.4"
 
-[patch.crates-io]
-matchbox_socket = { git = "https://github.com/johanhelsing/matchbox", rev = "b00002da1442396b8ce0babaf6d119c76b33f8d5" }
-ggrs = { git = "https://github.com/gschup/ggrs?rev=9e4a20a6317cfdcff9c352e6f2a37feb33576e54"}
-bevy_ggrs = { git = "https://github.com/gschup/bevy_ggrs", rev = "928376df6b37f391ef6593e0355ba5a737ec1492" }
-
-
-[patch.'https://github.com/gschup/ggrs']
-ggrs = { git = "https://github.com/gschup/ggrs?rev=9e4a20a6317cfdcff9c352e6f2a37feb33576e54" }

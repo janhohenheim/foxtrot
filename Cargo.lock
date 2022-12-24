@@ -524,7 +524,6 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_editor_pls",
  "bevy_kira_audio",
- "bitflags",
  "bytemuck",
  "clap",
  "embed-resource",

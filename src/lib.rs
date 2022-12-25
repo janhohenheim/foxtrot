@@ -1,10 +1,8 @@
 mod actions;
 mod audio;
-mod config;
 mod dev;
 mod loading;
 mod menu;
-mod networking;
 mod player;
 
 use crate::actions::ActionsPlugin;
@@ -12,7 +10,6 @@ use crate::audio::InternalAudioPlugin;
 use crate::dev::DevPlugin;
 use crate::loading::LoadingPlugin;
 use crate::menu::MenuPlugin;
-use crate::networking::NetworkingPlugin;
 use crate::player::PlayerPlugin;
 
 use bevy::app::App;
@@ -37,7 +34,6 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_state(GameState::Loading)
             .add_plugin(LoadingPlugin)
-            .add_plugin(NetworkingPlugin)
             .add_plugin(MenuPlugin)
             .add_plugin(ActionsPlugin)
             .add_plugin(InternalAudioPlugin)

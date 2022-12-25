@@ -35,14 +35,6 @@ You should keep the `credits` directory up to date. The release workflow automat
  2. Trigger the `deploy-github-page` workflow
  3. After a few minutes your game is live at `http://username.github.io/repository`
 
-## Known issues
-
-[Does currently not work on Firefox](https://github.com/johanhelsing/matchbox/issues/36)
-
-## License
-
-This project is licensed under [CC0 1.0 Universal](LICENSE) except some content of `assets` and the Bevy icons in the `build` directory (see [Credits](credits/CREDITS.md)). Go crazy and feel free to show me whatever you build with this ([@nikl_me][nikl-twitter]).
-
 [bevy]: https://bevyengine.org/
 [bevy-learn]: https://bevyengine.org/learn/
 [bevy-discord]: https://discord.gg/bevy

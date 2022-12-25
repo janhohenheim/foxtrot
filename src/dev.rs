@@ -6,7 +6,7 @@ use bevy_editor_pls::prelude::*;
 #[cfg(debug_assertions)]
 use bevy::diagnostic::LogDiagnosticsPlugin;
 
-/// Plugin with debugging utility intendend for use during development only.
+/// Plugin with debugging utility intended for use during development only.
 /// Will not do anything when used in a release build.
 pub struct DevPlugin;
 

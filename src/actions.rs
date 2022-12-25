@@ -1,67 +1,38 @@
-use bevy::{log, prelude::*};
+use bevy::prelude::*;
+
+use crate::actions::game_control::{get_movement, GameControl};
+use crate::GameState;
+
+mod game_control;
+
 pub struct ActionsPlugin;
 
 // This plugin listens for keyboard input and converts the input into Actions
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Vec<Actions>>();
+        app.init_resource::<Actions>().add_system_set(
+            SystemSet::on_update(GameState::Playing).with_system(set_movement_actions),
+        );
     }
 }
 
-#[derive(Debug, Component, Reflect, Default, Clone)]
+#[derive(Default, Resource)]
 pub struct Actions {
     pub player_movement: Option<Vec2>,
 }
 
+pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<Input<KeyCode>>) {
+    let player_movement = Vec2::new(
+        get_movement(GameControl::Right, &keyboard_input)
+            - get_movement(GameControl::Left, &keyboard_input),
+        get_movement(GameControl::Up, &keyboard_input)
+            - get_movement(GameControl::Down, &keyboard_input),
+    );
 
-
-enum GameControl {
-    Up,
-    Down,
-    Left,
-    Right,
-    Fire,
-}
-
-macro_rules! generate_bindings {
-    ( $( $game_control:pat => $key_codes:expr ),+ ) => {
-
-            impl GameControl {
-                #[allow(dead_code)]
-                fn just_released(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_just_released($key_codes),
-                        )+
-                    }
-                }
-
-                #[allow(dead_code)]
-                fn just_pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_just_pressed($key_codes),
-                        )+
-                    }
-                }
-
-                fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_pressed($key_codes),
-                        )+
-                    }
-                }
-            }
-
-    };
-}
-
-generate_bindings! {
-    GameControl::Up => [KeyCode::W, KeyCode::Up,],
-    GameControl::Down => [KeyCode::S, KeyCode::Down,],
-    GameControl::Left => [KeyCode::A, KeyCode::Left,],
-    GameControl::Right => [KeyCode::D, KeyCode::Right,],
-    GameControl::Fire => [KeyCode::Space, KeyCode::Return]
+    if player_movement != Vec2::ZERO {
+        actions.player_movement = Some(player_movement.normalize());
+    } else {
+        actions.player_movement = None;
+    }
 }

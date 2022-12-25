@@ -1,6 +1,5 @@
 mod actions;
 mod audio;
-mod config;
 mod dev;
 mod loading;
 mod menu;

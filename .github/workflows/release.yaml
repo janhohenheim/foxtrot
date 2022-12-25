@@ -7,12 +7,14 @@ on:
 
 # ToDo: adapt names
 env:
+  # heads-up: this value is used as a pattern in a sed command as a workaround for a trunk issue
+  #   if you use special characters, take a look at the 'Make paths relative' step in the 'build-web' job
   GAME_EXECUTABLE_NAME: bevy_game
   GAME_OSX_APP_NAME: BevyGame
 
 jobs:
   build-macOS:
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
       - name: Get tag
@@ -20,17 +22,30 @@ jobs:
         uses: dawidd6/action-get-tag@v1
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
       - name: Remove build script
         run: |
           rm build.rs
-      - name: Build release
+      - name: Install rust toolchain for Apple Silicon
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: aarch64-apple-darwin
+          override: true
+      - name: Build release for Apple Silicon
         run: |
-          cargo build --release
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version) cargo build --release --target=aarch64-apple-darwin
+      - name: Install rust toolchain for Apple x86
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: x86_64-apple-darwin
+          override: true
+      - name: Build release for x86 Apple
+        run: |
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version) cargo build --release --target=x86_64-apple-darwin
+      - name: Create Universal Binary
+        run: |
+          lipo -create -output target/release/${{ env.GAME_EXECUTABLE_NAME }} target/aarch64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }} target/x86_64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }}
       - name: Create release
         run: |
           mkdir -p build/macos/src/Game.app/Contents/MacOS/assets
@@ -140,7 +155,7 @@ jobs:
       - name: Install trunk
         uses: jetli/trunk-action@v0.1.0
         with:
-          version: 'latest'
+          version: latest
       - name: Add wasm target
         run: |
           rustup target add wasm32-unknown-unknown
@@ -151,6 +166,12 @@ jobs:
         uses: NiklasEi/wasm-opt-action@v2
         with:
           file: dist/*.wasm
+        # Trunk cannot import assets from relative paths (see e.g. https://github.com/thedodd/trunk/issues/395)
+        # On sites like itch.io, we don't know on which base path the game gets served, so we need to rewrite all links to be relative
+      - name: Make paths relative
+        run: |
+          sed -i 's/\/index/.\/index/g' dist/index.html
+          sed -i 's/\/${{ env.GAME_EXECUTABLE_NAME }}/.\/${{ env.GAME_EXECUTABLE_NAME }}/g' dist/index.html
       - name: Zip release
         uses: vimtor/action-zip@v1
         with:

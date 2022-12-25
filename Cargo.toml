@@ -23,18 +23,17 @@ dynamic = [
 ]
 
 [dependencies]
-bevy = { version = "0.9.1", default-features = false }
-rand = "0.8.3"
-bevy_kira_audio = "0.13.0"
-bevy_asset_loader = "0.14.1"
-bevy_editor_pls = { version = "0.2", optional = true }
-bytemuck = { version = "1.9.1", features= [ "derive" ] }
+bevy = { version = "0.9", default-features = false }
+bevy_kira_audio = "0.13"
+bevy_asset_loader = "0.14"
+
+[dependencies.bevy_editor_pls]
+git = "https://github.com/jakobhellermann/bevy_editor_pls"
+rev = "e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
+optional = true
 
 [target."cfg(target_os = \"linux\")".dependencies]
-winit = { version = "0.25", features = [ "x11" ]}
-
-[target."cfg(not(target_arch = \"wasm32\"))".dependencies]
-clap = { version = "3.1.18", features = ["derive"] }
+winit = { version = "0.27", features = [ "x11" ]}
 
 [build-dependencies]
 embed-resource = "1.4"

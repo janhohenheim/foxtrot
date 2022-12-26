@@ -9,6 +9,9 @@ pub struct PlayerPlugin;
 #[derive(Component)]
 pub struct Player;
 
+#[derive(Debug, Component, Default, Clone)]
+pub struct CharacterVelocity(Vec2);
+
 #[derive(Component, Default)]
 pub struct Grounded {
     time_since_last_grounded: Timer,
@@ -69,14 +72,22 @@ impl Plugin for PlayerPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(update_grounded.label("update_grounded"))
-                    .with_system(update_jump.label("update_jump").after("update_grounded"))
-                    .with_system(apply_gravity.label("apply_gravity").after("update_jump"))
+                    .with_system(
+                        handle_jump
+                            .after("update_grounded")
+                            .before("apply_velocity"),
+                    )
+                    .with_system(
+                        apply_gravity
+                            .after("update_grounded")
+                            .before("apply_velocity"),
+                    )
                     .with_system(
                         move_player
-                            .label("move_player")
-                            .after("update_jump")
-                            .before("apply_gravity"),
-                    ),
+                            .after("update_grounded")
+                            .before("apply_velocity"),
+                    )
+                    .with_system(apply_velocity.label("apply_velocity")),
             );
     }
 }
@@ -88,6 +99,7 @@ fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
         KinematicCharacterController::default(),
         Player,
         Grounded::default(),
+        CharacterVelocity::default(),
         Jump::default(),
         SpriteBundle {
             texture: textures.bevy.clone(),
@@ -111,55 +123,58 @@ fn update_grounded(
     }
 }
 
-fn apply_gravity(mut player_query: Query<(&mut KinematicCharacterController, &Grounded)>) {
-    for (mut controller, grounded) in &mut player_query {
+fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
+    for (mut velocity, grounded) in &mut player_query {
         let dt = <Timer as Into<f32>>::into(grounded.time_since_last_grounded);
         let g = -9.81;
         let max_gravity = g * 5.;
         let gravity = (g * dt).max(max_gravity);
-        let gravity = Vec2::new(0.0, gravity);
-        controller.translation = Some(
-            controller
-                .translation
-                .map(|translation| translation + gravity)
-                .unwrap_or(gravity),
-        );
+        velocity.0.y += gravity;
     }
 }
 
-fn update_jump(
+fn handle_jump(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut Jump), With<Player>>,
+    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
 ) {
+    let y_speed = 600.0;
     let dt = time.delta_seconds();
     let jump_requested = actions
         .player_movement
         .map(|movement| movement.y > 0.1)
         .unwrap_or_default();
-    for (grounded, mut jump) in &mut player_query {
+    for (grounded, mut velocity, mut jump) in &mut player_query {
         if jump_requested && <Timer as Into<f32>>::into(grounded.time_since_last_grounded) < 0.00001
         {
             jump.time_since_start.start();
         } else {
             jump.time_since_start.update(dt);
         }
+        velocity.0.y += jump.speed_fraction() * y_speed * dt
     }
 }
 
 fn move_player(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Jump, &mut KinematicCharacterController), With<Player>>,
+    mut player_query: Query<(&mut CharacterVelocity,), With<Player>>,
 ) {
     let dt = time.delta_seconds();
     let x_speed = 450.0;
-    let y_speed = 600.0;
-    for (jump, mut controller) in &mut player_query {
-        let movement = Vec2::new(
-            actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt,
-            jump.speed_fraction() * y_speed * dt,
-        );
-        controller.translation = Some(movement);
+    for (mut velocity,) in &mut player_query {
+        velocity.0.x += actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt
+    }
+}
+
+fn apply_velocity(
+    mut player_query: Query<
+        (&mut CharacterVelocity, &mut KinematicCharacterController),
+        With<Player>,
+    >,
+) {
+    for (mut velocity, mut controller) in &mut player_query {
+        controller.translation = Some(velocity.0);
+        velocity.0 = default();
     }
 }

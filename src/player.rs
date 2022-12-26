@@ -93,9 +93,10 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
+    let texture_size = 256.0;
     commands.spawn((
         RigidBody::KinematicVelocityBased,
-        Collider::ball(0.5),
+        Collider::ball(texture_size / 2.),
         KinematicCharacterController::default(),
         Player,
         Grounded::default(),
@@ -103,8 +104,12 @@ fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
         Jump::default(),
         SpriteBundle {
             texture: textures.bevy.clone(),
-            transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
-            ..Default::default()
+            transform: Transform {
+                translation: Vec3::new(0., 0., 1.),
+                scale: Vec3::new(0.4, 0.4, 1.),
+                ..default()
+            },
+            ..default()
         },
     ));
 }

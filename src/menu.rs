@@ -35,9 +35,6 @@ fn setup_menu(
     button_colors: Res<ButtonColors>,
 ) {
     commands
-        .spawn(Camera2dBundle::default())
-        .insert(Name::new("UI Camera"));
-    commands
         .spawn(ButtonBundle {
             style: Style {
                 size: Size::new(Val::Px(120.0), Val::Px(50.0)),

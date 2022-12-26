@@ -32,6 +32,14 @@ git = "https://github.com/jakobhellermann/bevy_editor_pls"
 rev = "e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
 optional = true
 
+[dependencies.bevy_rapier2d]
+version = "0.19.0"
+features = [
+    "debug-render",
+    "simd-nightly",
+    "parallel",
+]
+
 [target."cfg(target_os = \"linux\")".dependencies]
 winit = { version = "0.27", features = [ "x11" ]}
 

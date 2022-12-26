@@ -9,15 +9,14 @@ pub struct PlayerPlugin;
 #[derive(Component)]
 pub struct Player;
 
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Grounded {
     grounded: bool,
 }
 
-impl Default for Grounded {
-    fn default() -> Self {
-        Self { grounded: false }
-    }
+#[derive(Component, Default)]
+pub struct Jump {
+    time_since_start: f32,
 }
 
 /// This plugin handles player related stuff like movement
@@ -29,18 +28,20 @@ impl Plugin for PlayerPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(move_player.label("move_player"))
                     .with_system(add_gravity.label("add_gravity").after("move_player"))
-                    .with_system(check_ground.after("add_gravity")),
+                    .with_system(check_ground.after("add_gravity"))
+                    .with_system(apply_jump.after("add_gravity")),
             );
     }
 }
 
 fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
     commands.spawn((
-        RigidBody::KinematicPositionBased,
+        RigidBody::KinematicVelocityBased,
         Collider::ball(0.5),
         KinematicCharacterController::default(),
         Player,
         Grounded::default(),
+        Jump::default(),
         SpriteBundle {
             texture: textures.bevy.clone(),
             transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
@@ -63,7 +64,7 @@ fn add_gravity(
         if grounded.grounded {
             continue;
         }
-        let gravity = Vec2::new(0.0, -9.81 * 100.0 * time.delta_seconds());
+        let gravity = Vec2::new(0.0, -9.81 * 20.0 * time.delta_seconds());
         controller.translation = Some(
             controller
                 .translation
@@ -73,25 +74,51 @@ fn add_gravity(
     }
 }
 
+fn apply_jump(
+    time: Res<Time>,
+    actions: Res<Actions>,
+    mut player_query: Query<(&Grounded, &mut Jump), With<Player>>,
+) {
+    let dt = time.delta_seconds();
+    let jump_requested = actions
+        .player_movement
+        .map(|movement| movement.y > 0.001)
+        .unwrap_or_default();
+    for (grounded, mut jump) in &mut player_query {
+        if jump_requested && grounded.grounded {
+            jump.time_since_start = 0.0
+        } else {
+            jump.time_since_start += dt
+        }
+    }
+}
+
 fn move_player(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut KinematicCharacterController), With<Player>>,
+    mut player_query: Query<(&Jump, &mut KinematicCharacterController), With<Player>>,
 ) {
     if actions.player_movement.is_none() {
         return;
     }
-    let vertical_speed = 300.0;
-    let jump_speed = 1_000.0;
-    for (grounded, mut controller) in &mut player_query {
+    let dt = time.delta_seconds();
+    let x_speed = 300.0;
+    let y_speed = 600.0;
+    for (jump, mut controller) in &mut player_query {
         let movement = Vec2::new(
-            actions.player_movement.unwrap().x * vertical_speed * time.delta_seconds(),
-            if grounded.grounded {
-                actions.player_movement.unwrap().y * jump_speed * time.delta_seconds()
-            } else {
-                0.0
-            },
+            actions.player_movement.unwrap().x * x_speed * dt,
+            calculate_jump_speed(jump.time_since_start) * y_speed * dt,
         );
         controller.translation = Some(movement);
+    }
+}
+
+fn calculate_jump_speed(t: f32) -> f32 {
+    // shifted and scaled sigmoid
+    let suggestion = 1. / (1. + (6. * (t - 1. / 2.)).exp());
+    if suggestion > 0.001 {
+        suggestion
+    } else {
+        0.0
     }
 }

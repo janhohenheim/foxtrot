@@ -9,7 +9,7 @@ impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
             .insert_resource(RapierConfiguration {
-                gravity: Vec2::new(0.0, -9.81),
+                gravity: Vec2::new(0.0, -9.81 * 30.),
                 ..default()
             })
             .add_startup_system(setup_graphics)
@@ -39,6 +39,6 @@ fn setup_physics(mut commands: Commands) {
         RigidBody::Dynamic,
         Collider::ball(50.0),
         Restitution::coefficient(0.7),
-        TransformBundle::from(Transform::from_xyz(0.0, 500.0, 0.0)),
+        TransformBundle::from(Transform::from_xyz(200.0, 10.0, 0.0)),
     ));
 }

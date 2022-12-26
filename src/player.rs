@@ -83,7 +83,7 @@ impl Plugin for PlayerPlugin {
                             .before("apply_velocity"),
                     )
                     .with_system(
-                        move_player
+                        handle_horizontal_movement
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
@@ -155,7 +155,7 @@ fn handle_jump(
     }
 }
 
-fn move_player(
+fn handle_horizontal_movement(
     time: Res<Time>,
     actions: Res<Actions>,
     mut player_query: Query<(&mut CharacterVelocity,), With<Player>>,

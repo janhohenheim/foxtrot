@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::GameState;
 use bevy_rapier2d::prelude::*;
+use std::f32::consts::TAU;
 
 pub struct PhysicsPlugin;
 
@@ -28,13 +29,29 @@ fn setup_graphics(mut commands: Commands) {
 }
 
 fn setup_physics(mut commands: Commands) {
-    /* Create the ground. */
     commands.spawn((
         Collider::cuboid(500.0, 50.0),
         TransformBundle::from(Transform::from_xyz(0.0, -200.0, 0.0)),
     ));
 
-    /* Create the bouncing ball. */
+    commands.spawn((
+        Collider::cuboid(500.0, 50.0),
+        TransformBundle::from(Transform {
+            translation: Vec3::new(400.0, 0.0, 0.0),
+            rotation: Quat::from_rotation_z(TAU / 12.),
+            ..default()
+        }),
+    ));
+
+    commands.spawn((
+        Collider::cuboid(500.0, 50.0),
+        TransformBundle::from(Transform {
+            translation: Vec3::new(-400.0, 0.0, 0.0),
+            rotation: Quat::from_rotation_z(-TAU / 5.),
+            ..default()
+        }),
+    ));
+
     commands.spawn((
         RigidBody::Dynamic,
         Collider::ball(50.0),

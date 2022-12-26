@@ -97,7 +97,17 @@ fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
     commands.spawn((
         RigidBody::KinematicVelocityBased,
         Collider::ball(texture_size / 2.),
-        KinematicCharacterController::default(),
+        KinematicCharacterController {
+            // Don’t allow climbing slopes larger than 45 degrees.
+            max_slope_climb_angle: 45.0_f32.to_radians() as Real,
+            // Automatically slide down on slopes smaller than 30 degrees.
+            min_slope_slide_angle: 30.0_f32.to_radians() as Real,
+            // The character offset is set to 0.4 multiplied by the collider’s height.
+            offset: CharacterLength::Absolute(1.0),
+            // Snap to the ground if the vertical distance to the ground is smaller than 2.0.
+            snap_to_ground: Some(CharacterLength::Absolute(2.0)),
+            ..default()
+        },
         Player,
         Grounded::default(),
         CharacterVelocity::default(),
@@ -133,7 +143,8 @@ fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
         let dt = <Timer as Into<f32>>::into(grounded.time_since_last_grounded);
         let g = -9.81;
         let max_gravity = g * 5.;
-        let gravity = (g * dt).max(max_gravity);
+        let min_gravity = g * 1.;
+        let gravity = (g * dt).max(max_gravity).min(min_gravity);
         velocity.0.y += gravity;
     }
 }
@@ -143,7 +154,7 @@ fn handle_jump(
     actions: Res<Actions>,
     mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
 ) {
-    let y_speed = 600.0;
+    let y_speed = 1_100.0;
     let dt = time.delta_seconds();
     let jump_requested = actions
         .player_movement
@@ -168,17 +179,42 @@ fn handle_horizontal_movement(
     let dt = time.delta_seconds();
     let x_speed = 450.0;
     for (mut velocity,) in &mut player_query {
-        velocity.0.x += actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt
+        velocity.0.x += actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt;
     }
 }
 
 fn apply_velocity(
     mut player_query: Query<
-        (&mut CharacterVelocity, &mut KinematicCharacterController),
+        (
+            &mut CharacterVelocity,
+            &mut KinematicCharacterController,
+            Option<&KinematicCharacterControllerOutput>,
+        ),
         With<Player>,
     >,
 ) {
-    for (mut velocity, mut controller) in &mut player_query {
+    for (mut velocity, mut controller, output) in &mut player_query {
+        if let Some(output) = output {
+            let epsilon = 0.0001;
+            if output.effective_translation.x.abs() < epsilon && velocity.0.x.abs() > epsilon {
+                info!(
+                    "output.effective_translation.x: {:?}",
+                    output.effective_translation.x
+                );
+                info!(
+                    "output.desired_translation.x: {:?}",
+                    output.desired_translation.x
+                );
+                info!("output.grounded: {:?}", output.grounded);
+                info!("");
+                if output.desired_translation.x < 0.0 {
+                    velocity.0.x = velocity.0.x.max(0.0)
+                } else if output.desired_translation.x > 0.0 {
+                    velocity.0.x = velocity.0.x.min(0.0)
+                }
+            }
+        }
+
         controller.translation = Some(velocity.0);
         velocity.0 = default();
     }

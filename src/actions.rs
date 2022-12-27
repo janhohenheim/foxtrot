@@ -20,6 +20,7 @@ impl Plugin for ActionsPlugin {
 #[derive(Default, Resource)]
 pub struct Actions {
     pub player_movement: Option<Vec2>,
+    pub jump: bool,
 }
 
 pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<Input<KeyCode>>) {
@@ -35,4 +36,5 @@ pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<In
     } else {
         actions.player_movement = None;
     }
+    actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
 }

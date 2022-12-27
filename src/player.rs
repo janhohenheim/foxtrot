@@ -1,8 +1,8 @@
 use crate::actions::Actions;
-use crate::loading::TextureAssets;
+use crate::loading::MaterialAssets;
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
+use bevy_rapier3d::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -10,7 +10,7 @@ pub struct PlayerPlugin;
 pub struct Player;
 
 #[derive(Debug, Component, Default, Clone)]
-pub struct CharacterVelocity(Vec2);
+pub struct CharacterVelocity(Vect);
 
 #[derive(Component, Default)]
 pub struct Grounded {
@@ -92,7 +92,11 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
+fn spawn_player(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    materials: Res<MaterialAssets>,
+) {
     let texture_size = 256.0;
     commands.spawn((
         RigidBody::KinematicVelocityBased,
@@ -112,13 +116,12 @@ fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
         Grounded::default(),
         CharacterVelocity::default(),
         Jump::default(),
-        SpriteBundle {
-            texture: textures.bevy.clone(),
-            transform: Transform {
-                translation: Vec3::new(0., 0., 1.),
-                scale: Vec3::new(0.4, 0.4, 1.),
+        PbrBundle {
+            mesh: meshes.add(Mesh::from(shape::Icosphere {
+                radius: texture_size / 2.,
                 ..default()
-            },
+            })),
+            material: materials.dirt.clone(),
             ..default()
         },
     ));
@@ -156,10 +159,7 @@ fn handle_jump(
 ) {
     let y_speed = 1_100.0;
     let dt = time.delta_seconds();
-    let jump_requested = actions
-        .player_movement
-        .map(|movement| movement.y > 0.1)
-        .unwrap_or_default();
+    let jump_requested = actions.jump;
     for (grounded, mut velocity, mut jump) in &mut player_query {
         if jump_requested && <Timer as Into<f32>>::into(grounded.time_since_last_grounded) < 0.00001
         {
@@ -180,6 +180,7 @@ fn handle_horizontal_movement(
     let x_speed = 450.0;
     for (mut velocity,) in &mut player_query {
         velocity.0.x += actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt;
+        velocity.0.z += actions.player_movement.map(|mov| mov.y).unwrap_or_default() * x_speed * dt;
     }
 }
 
@@ -197,16 +198,6 @@ fn apply_velocity(
         if let Some(output) = output {
             let epsilon = 0.0001;
             if output.effective_translation.x.abs() < epsilon && velocity.0.x.abs() > epsilon {
-                info!(
-                    "output.effective_translation.x: {:?}",
-                    output.effective_translation.x
-                );
-                info!(
-                    "output.desired_translation.x: {:?}",
-                    output.desired_translation.x
-                );
-                info!("output.grounded: {:?}", output.grounded);
-                info!("");
                 if output.desired_translation.x < 0.0 {
                     velocity.0.x = velocity.0.x.max(0.0)
                 } else if output.desired_translation.x > 0.0 {

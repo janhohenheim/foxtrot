@@ -15,6 +15,7 @@ impl Plugin for LoadingPlugin {
                 .with_collection::<FontAssets>()
                 .with_collection::<AudioAssets>()
                 .with_collection::<TextureAssets>()
+                .with_collection::<MaterialAssets>()
                 .continue_to_state(GameState::Menu),
         );
     }
@@ -39,4 +40,14 @@ pub struct AudioAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/bevy.png")]
     pub bevy: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct MaterialAssets {
+    #[asset(standard_material)]
+    #[asset(path = "materials/dirt.png")]
+    pub dirt: Handle<StandardMaterial>,
+    #[asset(standard_material)]
+    #[asset(path = "materials/grass.png")]
+    pub grass: Handle<StandardMaterial>,
 }

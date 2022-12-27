@@ -5,6 +5,7 @@ pub enum GameControl {
     Down,
     Left,
     Right,
+    Jump,
 }
 
 macro_rules! generate_bindings {
@@ -53,5 +54,6 @@ generate_bindings! {
     GameControl::Up => [KeyCode::W, KeyCode::Up,],
     GameControl::Down => [KeyCode::S, KeyCode::Down,],
     GameControl::Left => [KeyCode::A, KeyCode::Left,],
-    GameControl::Right => [KeyCode::D, KeyCode::Right,]
+    GameControl::Right => [KeyCode::D, KeyCode::Right,],
+    GameControl::Jump => [KeyCode::Space]
 }

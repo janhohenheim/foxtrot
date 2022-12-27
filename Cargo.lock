@@ -508,7 +508,7 @@ dependencies = [
  "bevy_asset_loader",
  "bevy_editor_pls",
  "bevy_kira_audio",
- "bevy_rapier2d",
+ "bevy_rapier3d",
  "embed-resource",
  "winit",
 ]
@@ -714,16 +714,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ec44f7655039546bc5d34d98de877083473f3e9b2b81d560c528d6d74d3eff4"
 
 [[package]]
-name = "bevy_rapier2d"
+name = "bevy_rapier3d"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fe53a4fefd2d8bade79f2e5260bd206643bfcc951a3c5f86b3b7a0273eb19e0"
+checksum = "9e2805bef07b206854b417a544e32782677106c99f4e001d00d884f74ed4d37f"
 dependencies = [
  "bevy",
  "bitflags",
  "log",
  "nalgebra",
- "rapier2d",
+ "rapier3d",
 ]
 
 [[package]]
@@ -2881,10 +2881,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "parry2d"
+name = "parry3d"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2451e4bf2c6ba705bf584f94bb51772e22977e37c82575ce2445dd797eb35a9"
+checksum = "ee763b47e68f62d578bcfc3f83cf75d9d970aed5df20b6d90287ca9b3195155d"
 dependencies = [
  "approx",
  "arrayvec 0.7.2",
@@ -3028,10 +3028,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
 
 [[package]]
-name = "rapier2d"
+name = "rapier3d"
 version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32b1c1ed75065adaf01adb8c46a1dad3922fb28de8225dc981481e3584f3af07"
+checksum = "e9cc332c8953b5a33e86cacda7466a433a38064825175be8ddd2bc631d858115"
 dependencies = [
  "approx",
  "arrayvec 0.7.2",
@@ -3042,7 +3042,7 @@ dependencies = [
  "nalgebra",
  "num-derive",
  "num-traits",
- "parry2d",
+ "parry3d",
  "rayon",
  "rustc-hash",
  "simba",

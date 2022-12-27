@@ -25,14 +25,14 @@ dynamic = [
 [dependencies]
 bevy = { version = "0.9", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = "0.14"
+bevy_asset_loader = { version = "0.14", features = ["3d"] }
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"
 rev = "e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
 optional = true
 
-[dependencies.bevy_rapier2d]
+[dependencies.bevy_rapier3d]
 version = "0.19.0"
 features = [
     "debug-render",

@@ -9,36 +9,37 @@ pub enum GameControl {
 }
 
 macro_rules! generate_bindings {
-    ( $( $game_control:pat => $key_codes:expr ),+ ) => {
-
-            impl GameControl {
-                #[allow(dead_code)]
-                fn just_released(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_just_released($key_codes),
-                        )+
-                    }
-                }
-
-                #[allow(dead_code)]
-                fn just_pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_just_pressed($key_codes),
-                        )+
-                    }
-                }
-
-                fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
-                    match self {
-                        $ (
-                            $game_control => keyboard_input.any_pressed($key_codes),
-                        )+
-                    }
+    ( $( $game_control:pat => $key_codes:expr, )+ ) => {
+        impl GameControl {
+            #[allow(dead_code)]
+            fn just_released(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+                match self {
+                    $ (
+                        $game_control => keyboard_input.any_just_released($key_codes),
+                    )+
                 }
             }
 
+            #[allow(dead_code)]
+            fn just_pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+                match self {
+                    $ (
+                        $game_control => keyboard_input.any_just_pressed($key_codes),
+                    )+
+                }
+            }
+
+            fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+                match self {
+                    $ (
+                        $game_control => keyboard_input.any_pressed($key_codes),
+                    )+
+                }
+            }
+        }
+    };
+    ( $( $game_control:pat => $key_codes:expr ),+ ) => {
+        generate_bindings!($($game_control => $key_codes,)+);
     };
 }
 
@@ -55,5 +56,5 @@ generate_bindings! {
     GameControl::Down => [KeyCode::S, KeyCode::Down,],
     GameControl::Left => [KeyCode::A, KeyCode::Left,],
     GameControl::Right => [KeyCode::D, KeyCode::Right,],
-    GameControl::Jump => [KeyCode::Space]
+    GameControl::Jump => [KeyCode::Space],
 }

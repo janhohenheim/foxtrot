@@ -1,8 +1,10 @@
 use crate::actions::Actions;
 use crate::loading::MaterialAssets;
 use crate::GameState;
+use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use smooth_bevy_cameras::LookTransform;
 
 pub struct PlayerPlugin;
 
@@ -175,12 +177,29 @@ fn handle_horizontal_movement(
     time: Res<Time>,
     actions: Res<Actions>,
     mut player_query: Query<(&mut CharacterVelocity,), With<Player>>,
+    camera_query: Query<&mut LookTransform>,
 ) {
     let dt = time.delta_seconds();
-    let x_speed = 450.0;
+    let speed = 450.0;
+
+    let camera = match camera_query.iter().next() {
+        Some(transform) => transform,
+        None => return,
+    };
+    let forward = (camera.target - camera.eye)
+        .xz()
+        .try_normalize()
+        .unwrap_or(Vec2::Y);
+    let sideward = forward.perp();
+    let y_action = actions.player_movement.map(|mov| mov.y).unwrap_or_default();
+    let x_action = actions.player_movement.map(|mov| mov.x).unwrap_or_default();
+    let forward_action = forward * y_action;
+    let sideward_action = sideward * x_action;
+    let movement = (forward_action + sideward_action) * speed * dt;
+
     for (mut velocity,) in &mut player_query {
-        velocity.0.x += actions.player_movement.map(|mov| mov.x).unwrap_or_default() * x_speed * dt;
-        velocity.0.z += actions.player_movement.map(|mov| mov.y).unwrap_or_default() * x_speed * dt;
+        velocity.0.x += movement.x;
+        velocity.0.z += movement.y;
     }
 }
 

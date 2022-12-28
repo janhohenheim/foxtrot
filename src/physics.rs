@@ -14,19 +14,11 @@ impl Plugin for PhysicsPlugin {
                 gravity: Vect::new(0.0, -9.81 * 30., 0.0),
                 ..default()
             })
-            .add_startup_system(setup_graphics)
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup_physics));
 
         #[cfg(debug_assertions)]
         app.add_plugin(RapierDebugRenderPlugin::default());
     }
-}
-
-fn setup_graphics(mut commands: Commands) {
-    // Add a camera so we can see the debug-render.
-    commands
-        .spawn(Camera3dBundle::default())
-        .insert(Name::new("Camera"));
 }
 
 fn setup_physics(

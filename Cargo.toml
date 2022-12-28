@@ -26,6 +26,7 @@ dynamic = [
 bevy = { version = "0.9", default-features = false }
 bevy_kira_audio = "0.13"
 bevy_asset_loader = { version = "0.14", features = ["3d"] }
+smooth-bevy-cameras = "0.6.0"
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"

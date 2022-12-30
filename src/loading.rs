@@ -48,6 +48,8 @@ pub struct TextureAssets {
 pub struct SceneAssets {
     #[asset(path = "scenes/wallWoodDoorwayRound.glb")]
     pub wall_wood_doorway_round: Handle<Gltf>,
+    #[asset(path = "scenes/wallWood.glb")]
+    pub wall_wood: Handle<Gltf>,
 }
 
 #[derive(AssetCollection, Resource)]

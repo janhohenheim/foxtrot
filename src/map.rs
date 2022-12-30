@@ -14,6 +14,42 @@ impl Plugin for MapPlugin {
     }
 }
 
+const GRASS_SIZE: f32 = 1_024.;
+
+fn setup(
+    commands: Commands,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: Res<MaterialAssets>,
+    scenes: Res<SceneAssets>,
+    gltf: Res<Assets<Gltf>>,
+) {
+    let mut physics_assets = PhysicsAssets {
+        commands,
+        meshes,
+        materials,
+        scenes,
+        gltf,
+    };
+    let grass_x = 10;
+    let grass_z = 10;
+    for x in 0..grass_x {
+        for z in 0..grass_z {
+            physics_assets.spawn_grass(Transform::from_xyz(
+                GRASS_SIZE * (-grass_x / 2 + x) as f32,
+                -200.,
+                GRASS_SIZE * (-grass_z / 2 + z) as f32,
+            ));
+        }
+    }
+    physics_assets
+        .spawn_door(Transform::from_scale(Vec3::splat(1_000.)))
+        .spawn_light(Transform {
+            translation: Vec3::new(0.0, 2.0, 0.0),
+            rotation: Quat::from_rotation_x(-TAU / 8.),
+            ..default()
+        });
+}
+
 struct PhysicsAssets<'a, 'w, 's> {
     commands: Commands<'w, 's>,
     meshes: ResMut<'a, Assets<Mesh>>,
@@ -36,9 +72,9 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
     }
 
     fn spawn_grass(&mut self, transform: Transform) -> &mut Self {
-        let x = 1_024.0 * transform.scale.x;
+        let x = GRASS_SIZE * transform.scale.x;
         let y = 1. * transform.scale.y;
-        let z = 1_024.0 * transform.scale.z;
+        let z = GRASS_SIZE * transform.scale.z;
         self.commands.spawn((
             Collider::cuboid(x / 2., y / 2., z / 2.),
             PbrBundle {
@@ -79,27 +115,4 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
         });
         self
     }
-}
-fn setup(
-    commands: Commands,
-    meshes: ResMut<Assets<Mesh>>,
-    materials: Res<MaterialAssets>,
-    scenes: Res<SceneAssets>,
-    gltf: Res<Assets<Gltf>>,
-) {
-    let mut physics_assets = PhysicsAssets {
-        commands,
-        meshes,
-        materials,
-        scenes,
-        gltf,
-    };
-    physics_assets
-        .spawn_door(Transform::from_scale(Vec3::splat(1_000.)))
-        .spawn_grass(Transform::from_xyz(0., -200., 0.))
-        .spawn_light(Transform {
-            translation: Vec3::new(0.0, 2.0, 0.0),
-            rotation: Quat::from_rotation_x(-TAU / 8.),
-            ..default()
-        });
 }

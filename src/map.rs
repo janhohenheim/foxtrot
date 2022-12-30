@@ -14,7 +14,7 @@ impl Plugin for MapPlugin {
     }
 }
 
-const GRASS_SIZE: f32 = 1_024.;
+const GRASS_SIZE: f32 = 10.;
 
 fn setup(
     commands: Commands,
@@ -42,7 +42,7 @@ fn setup(
         }
     }
     physics_assets
-        .spawn_door(Transform::from_scale(Vec3::splat(1_000.)))
+        .spawn_door(Transform::from_scale(Vec3::splat(1.)))
         .spawn_light(Transform {
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),
@@ -62,18 +62,21 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
     fn spawn_door(&mut self, transform: Transform) -> &mut Self {
         // if the GLTF has loaded, we can navigate its contents
         if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood_doorway_round) {
-            self.commands.spawn((SceneBundle {
-                scene: gltf.scenes[0].clone(),
-                transform,
-                ..default()
-            },));
+            self.commands.spawn((
+                SceneBundle {
+                    scene: gltf.scenes[0].clone(),
+                    transform,
+                    ..default()
+                },
+                Collider::cuboid(0.5, 0.5, 0.5),
+            ));
         }
         self
     }
 
     fn spawn_grass(&mut self, transform: Transform) -> &mut Self {
         let x = GRASS_SIZE * transform.scale.x;
-        let y = 1. * transform.scale.y;
+        let y = 0.;
         let z = GRASS_SIZE * transform.scale.z;
         self.commands.spawn((
             Collider::cuboid(x / 2., y / 2., z / 2.),

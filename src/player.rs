@@ -5,6 +5,7 @@ use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use smooth_bevy_cameras::LookTransform;
+const G: f32 = -9.81;
 
 pub struct PlayerPlugin;
 
@@ -27,7 +28,7 @@ impl Jump {
     pub fn speed_fraction(&self) -> f32 {
         let t: f32 = self.time_since_start.into();
         // shifted and scaled sigmoid
-        let suggestion = 1. / (1. + (6. * (t - 1. / 2.)).exp());
+        let suggestion = 1. / (1. + (3. * (0.5 * t - 0.5)).exp());
         if suggestion > 0.001 {
             suggestion
         } else {
@@ -75,15 +76,12 @@ impl Plugin for PlayerPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(update_grounded.label("update_grounded"))
                     .with_system(
-                        handle_jump
-                            .after("update_grounded")
-                            .before("apply_velocity"),
-                    )
-                    .with_system(
                         apply_gravity
+                            .label("apply_gravity")
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
+                    .with_system(handle_jump.after("apply_gravity").before("apply_velocity"))
                     .with_system(
                         handle_horizontal_movement
                             .after("update_grounded")
@@ -99,19 +97,19 @@ fn spawn_player(
     mut meshes: ResMut<Assets<Mesh>>,
     materials: Res<MaterialAssets>,
 ) {
-    let texture_size = 256.0;
+    let radius = 0.5;
     commands.spawn((
         RigidBody::KinematicVelocityBased,
-        Collider::ball(texture_size / 2.),
+        Collider::ball(radius),
         KinematicCharacterController {
-            // Don’t allow climbing slopes larger than 45 degrees.
+            // Don’t allow climbing slopes larger than n degrees.
             max_slope_climb_angle: 45.0_f32.to_radians() as Real,
-            // Automatically slide down on slopes smaller than 30 degrees.
+            // Automatically slide down on slopes smaller than n degrees.
             min_slope_slide_angle: 30.0_f32.to_radians() as Real,
-            // The character offset is set to 0.4 multiplied by the collider’s height.
-            offset: CharacterLength::Absolute(1.0),
-            // Snap to the ground if the vertical distance to the ground is smaller than 2.0.
-            snap_to_ground: Some(CharacterLength::Absolute(2.0)),
+            // The character offset is set to n multiplied by the collider’s height.
+            offset: CharacterLength::Absolute(0.01),
+            // Snap to the ground if the vertical distance to the ground is smaller than n.
+            snap_to_ground: Some(CharacterLength::Absolute(0.0001)),
             ..default()
         },
         Player,
@@ -120,11 +118,11 @@ fn spawn_player(
         Jump::default(),
         PbrBundle {
             mesh: meshes.add(Mesh::from(shape::Icosphere {
-                radius: texture_size / 2.,
+                radius,
                 ..default()
             })),
             transform: Transform {
-                translation: Vec3::new(0., 100. + 10., 0.),
+                translation: Vec3::new(0., radius + 10., 0.),
                 scale: Vec3::splat(0.5),
                 ..default()
             },
@@ -150,13 +148,17 @@ fn update_grounded(
 
 fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
     for (mut velocity, grounded) in &mut player_query {
-        let dt = <Timer as Into<f32>>::into(grounded.time_since_last_grounded);
-        let g = -9.81;
-        let max_gravity = g * 5.;
-        let min_gravity = g * 1.;
-        let gravity = (g * dt).max(max_gravity).min(min_gravity);
+        let gravity = get_gravity(grounded);
         velocity.0.y += gravity;
     }
+}
+
+fn get_gravity(grounded: &Grounded) -> f32 {
+    let dt = f32::from(grounded.time_since_last_grounded);
+    let max_gravity = G * 5.;
+    let min_gravity = G * 0.01;
+    // min and max look swapped because gravity is negative
+    (G * dt).clamp(max_gravity, min_gravity)
 }
 
 fn handle_jump(
@@ -164,12 +166,11 @@ fn handle_jump(
     actions: Res<Actions>,
     mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
 ) {
-    let y_speed = 1_100.0;
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
     for (grounded, mut velocity, mut jump) in &mut player_query {
-        if jump_requested && <Timer as Into<f32>>::into(grounded.time_since_last_grounded) < 0.00001
-        {
+        let y_speed = (-get_gravity(grounded)).max(-G * 2.5);
+        if jump_requested && f32::from(grounded.time_since_last_grounded) < 0.00001 {
             jump.time_since_start.start();
         } else {
             jump.time_since_start.update(dt);
@@ -185,7 +186,7 @@ fn handle_horizontal_movement(
     camera_query: Query<&mut LookTransform>,
 ) {
     let dt = time.delta_seconds();
-    let speed = 450.0;
+    let speed = 10.0;
 
     let camera = match camera_query.iter().next() {
         Some(transform) => transform,
@@ -230,6 +231,7 @@ fn apply_velocity(
             }
         }
 
+        info!("velocity: {:?}", velocity.0);
         controller.translation = Some(velocity.0);
         velocity.0 = default();
     }

@@ -42,7 +42,7 @@ fn setup(
         }
     }
     physics_assets
-        .spawn_doorway(Transform::from_scale(Vec3::splat(1.)))
+        .spawn_doorway(Transform::from_scale(Vec3::splat(3.)))
         .spawn_light(Transform {
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),
@@ -61,21 +61,22 @@ struct PhysicsAssets<'a, 'w, 's> {
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
     fn spawn_doorway(&mut self, transform: Transform) -> &mut Self {
         // if the GLTF has loaded, we can navigate its contents
-        let global_transform = Transform {
-            translation: transform.translation + Vect::new(0.5, 0.5, 0.5),
-            ..transform
-        };
         if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood_doorway_round) {
-            self.commands.spawn((
-                SceneBundle {
-                    scene: gltf.scenes[0].clone(),
-                    transform,
-                    global_transform: global_transform.into(),
-                    ..default()
-                },
-                Collider::cuboid(0.1, 1.0, 0.25),
-                Name::new("Doorway"),
-            ));
+            self.commands
+                .spawn((
+                    SceneBundle {
+                        scene: gltf.scenes[0].clone(),
+                        transform,
+                        ..default()
+                    },
+                    Name::new("Doorway"),
+                ))
+                .with_children(|parent| {
+                    parent.spawn((
+                        TransformBundle::from_transform(Transform::from_xyz(-0.45, 0.5, 0.)),
+                        Collider::cuboid(0.04, 0.5, 0.5),
+                    ));
+                });
         }
         self
     }

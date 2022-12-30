@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::loading::{MaterialAssets, SceneAssets};
 use crate::GameState;
+use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -37,50 +38,13 @@ fn setup(
             //Collider::cuboid(50.0, 50.0, 50.0),
         ));
     }
-    commands.spawn((
-        Collider::cuboid(500.0, 50.0, 5_000.0),
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Box::new(500., 50., 5_000.))),
-            material: materials.grass.clone(),
-            transform: Transform::from_xyz(0.0, -200.0, 0.0),
-            ..default()
-        },
-    ));
 
-    commands.spawn((
-        Collider::cuboid(500.0, 50.0, 5_000.0),
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Box::new(500., 50., 5_000.))),
-            material: materials.grass.clone(),
-            transform: Transform {
-                translation: Vec3::new(400.0, 0.0, 0.0),
-                rotation: Quat::from_rotation_z(TAU / 12.),
-                ..default()
-            },
-            ..default()
-        },
-    ));
-
-    commands.spawn((
-        Collider::cuboid(500.0, 50.0, 5_000.0),
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Box::new(500., 50., 5_000.))),
-            material: materials.grass.clone(),
-            transform: Transform {
-                translation: Vec3::new(-400.0, 0.0, 0.0),
-                rotation: Quat::from_rotation_z(-TAU / 5.),
-                ..default()
-            },
-            ..default()
-        },
-    ));
-
-    commands.spawn((
-        RigidBody::Dynamic,
-        Collider::ball(50.0),
-        Restitution::coefficient(0.7),
-        TransformBundle::from(Transform::from_xyz(200.0, 10.0, 0.0)),
-    ));
+    spawn_grass(
+        &mut commands,
+        &mut meshes,
+        &materials,
+        Transform::from_xyz(0., -150., 0.),
+    );
 
     commands.insert_resource(AmbientLight {
         color: Color::ORANGE_RED,
@@ -111,4 +75,24 @@ fn setup(
         },
         ..default()
     });
+}
+
+fn spawn_grass<'w, 's, 'a>(
+    commands: &'a mut Commands<'w, 's>,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &Res<MaterialAssets>,
+    transform: Transform,
+) -> EntityCommands<'w, 's, 'a> {
+    let x = 1_024.0 * transform.scale.x;
+    let y = 1. * transform.scale.y;
+    let z = 1_024.0 * transform.scale.z;
+    commands.spawn((
+        Collider::cuboid(x / 2., y / 2., z / 2.),
+        PbrBundle {
+            mesh: meshes.add(Mesh::from(shape::Box::new(x, y, z))),
+            material: materials.grass.clone(),
+            transform,
+            ..default()
+        },
+    ))
 }

@@ -209,7 +209,7 @@ fn handle_horizontal_movement(
     camera_query: Query<&mut LookTransform>,
 ) {
     let dt = time.delta_seconds();
-    let speed = 10.0;
+    let speed = 6g.0;
 
     let camera = match camera_query.iter().next() {
         Some(transform) => transform,

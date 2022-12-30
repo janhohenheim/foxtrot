@@ -123,6 +123,11 @@ fn spawn_player(
                 radius: texture_size / 2.,
                 ..default()
             })),
+            transform: Transform {
+                translation: Vec3::new(0., 100. + 10., 0.),
+                scale: Vec3::splat(0.5),
+                ..default()
+            },
             material: materials.dirt.clone(),
             ..default()
         },

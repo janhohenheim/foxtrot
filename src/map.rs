@@ -36,7 +36,7 @@ fn setup(
         for z in 0..grass_z {
             physics_assets.spawn_grass(Transform::from_xyz(
                 GRASS_SIZE * (-grass_x / 2 + x) as f32,
-                -200.,
+                0.,
                 GRASS_SIZE * (-grass_z / 2 + z) as f32,
             ));
         }

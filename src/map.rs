@@ -42,7 +42,7 @@ fn setup(
         }
     }
     physics_assets
-        .spawn_door(Transform::from_scale(Vec3::splat(1.)))
+        .spawn_doorway(Transform::from_scale(Vec3::splat(1.)))
         .spawn_light(Transform {
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),
@@ -59,16 +59,22 @@ struct PhysicsAssets<'a, 'w, 's> {
 }
 
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
-    fn spawn_door(&mut self, transform: Transform) -> &mut Self {
+    fn spawn_doorway(&mut self, transform: Transform) -> &mut Self {
         // if the GLTF has loaded, we can navigate its contents
+        let global_transform = Transform {
+            translation: transform.translation + Vect::new(0.5, 0.5, 0.5),
+            ..transform
+        };
         if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood_doorway_round) {
             self.commands.spawn((
                 SceneBundle {
                     scene: gltf.scenes[0].clone(),
                     transform,
+                    global_transform: global_transform.into(),
                     ..default()
                 },
-                Collider::cuboid(0.5, 0.5, 0.5),
+                Collider::cuboid(0.1, 1.0, 0.25),
+                Name::new("Doorway"),
             ));
         }
         self
@@ -86,6 +92,7 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
                 transform,
                 ..default()
             },
+            Name::new("Grass"),
         ));
         self
     }
@@ -98,24 +105,27 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
 
         // directional 'sun' light
         const HALF_SIZE: f32 = 10.0;
-        self.commands.spawn(DirectionalLightBundle {
-            directional_light: DirectionalLight {
-                // Configure the projection to better fit the scene
-                shadow_projection: OrthographicProjection {
-                    left: -HALF_SIZE,
-                    right: HALF_SIZE,
-                    bottom: -HALF_SIZE,
-                    top: HALF_SIZE,
-                    near: -10.0 * HALF_SIZE,
-                    far: 10.0 * HALF_SIZE,
+        self.commands.spawn((
+            DirectionalLightBundle {
+                directional_light: DirectionalLight {
+                    // Configure the projection to better fit the scene
+                    shadow_projection: OrthographicProjection {
+                        left: -HALF_SIZE,
+                        right: HALF_SIZE,
+                        bottom: -HALF_SIZE,
+                        top: HALF_SIZE,
+                        near: -10.0 * HALF_SIZE,
+                        far: 10.0 * HALF_SIZE,
+                        ..default()
+                    },
+                    shadows_enabled: true,
                     ..default()
                 },
-                shadows_enabled: true,
+                transform,
                 ..default()
             },
-            transform,
-            ..default()
-        });
+            Name::new("Light"),
+        ));
         self
     }
 }

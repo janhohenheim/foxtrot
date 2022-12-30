@@ -30,7 +30,7 @@ smooth-bevy-cameras = "0.6.0"
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"
-rev = "e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
+rev = "50ea82bf08289bfe9fcf8a4f024d67d575f15548"
 optional = true
 
 [dependencies.bevy_rapier3d]

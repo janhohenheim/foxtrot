@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::CursorGrabMode;
 use bevy_rapier3d::na::{Matrix3, Vector3};
 
 use crate::actions::Actions;
@@ -14,7 +15,11 @@ impl Plugin for CameraPlugin {
         app.add_startup_system(setup_camera)
             // Enables the system that synchronizes your `Transform`s and `LookTransform`s.
             .add_plugin(LookTransformPlugin)
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(handle_camera));
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(handle_camera)
+                    .with_system(cursor_grab_system),
+            );
     }
 }
 
@@ -73,5 +78,26 @@ fn handle_camera(
         }
 
         camera.eye = camera.target - direction * max_distance;
+    }
+}
+
+fn cursor_grab_system(mut windows: ResMut<Windows>, key: Res<Input<KeyCode>>) {
+    let window = windows.get_primary_mut().unwrap();
+
+    if key.just_pressed(KeyCode::Escape) {
+        if matches!(window.cursor_grab_mode(), CursorGrabMode::None) {
+            // if you want to use the cursor, but not let it leave the window,
+            // use `Confined` mode:
+            window.set_cursor_grab_mode(CursorGrabMode::Confined);
+
+            // for a game that doesn't use the cursor (like a shooter):
+            // use `Locked` mode to keep the cursor in one place
+            window.set_cursor_grab_mode(CursorGrabMode::Locked);
+            // also hide the cursor
+            window.set_cursor_visibility(false);
+        } else {
+            window.set_cursor_grab_mode(CursorGrabMode::None);
+            window.set_cursor_visibility(true);
+        }
     }
 }

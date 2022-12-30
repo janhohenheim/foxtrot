@@ -127,6 +127,7 @@ fn spawn_player(
             ..default()
         },
         Player,
+        Name::new("Player"),
         Grounded::default(),
         CharacterVelocity::default(),
         Jump::default(),

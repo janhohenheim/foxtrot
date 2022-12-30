@@ -1,6 +1,5 @@
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-use bevy::window::CursorGrabMode;
 
 use crate::actions::game_control::{get_movement, GameControl};
 use crate::GameState;
@@ -14,9 +13,7 @@ pub struct ActionsPlugin;
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Actions>().add_system_set(
-            SystemSet::on_update(GameState::Playing)
-                .with_system(set_movement_actions)
-                .with_system(cursor_grab_system),
+            SystemSet::on_update(GameState::Playing).with_system(set_movement_actions),
         );
     }
 }
@@ -50,30 +47,5 @@ pub fn set_movement_actions(
     actions.camera_movement = None;
     for event in mouse_input.iter() {
         actions.camera_movement = Some(event.delta)
-    }
-}
-
-fn cursor_grab_system(
-    mut windows: ResMut<Windows>,
-    btn: Res<Input<MouseButton>>,
-    key: Res<Input<KeyCode>>,
-) {
-    let window = windows.get_primary_mut().unwrap();
-
-    if btn.just_pressed(MouseButton::Left) {
-        // if you want to use the cursor, but not let it leave the window,
-        // use `Confined` mode:
-        window.set_cursor_grab_mode(CursorGrabMode::Confined);
-
-        // for a game that doesn't use the cursor (like a shooter):
-        // use `Locked` mode to keep the cursor in one place
-        window.set_cursor_grab_mode(CursorGrabMode::Locked);
-        // also hide the cursor
-        window.set_cursor_visibility(false);
-    }
-
-    if key.just_pressed(KeyCode::Escape) {
-        window.set_cursor_grab_mode(CursorGrabMode::None);
-        window.set_cursor_visibility(true);
     }
 }

@@ -444,7 +444,7 @@ dependencies = [
 [[package]]
 name = "bevy_editor_pls"
 version = "0.2.0"
-source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f#e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
+source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=50ea82bf08289bfe9fcf8a4f024d67d575f15548#50ea82bf08289bfe9fcf8a4f024d67d575f15548"
 dependencies = [
  "bevy",
  "bevy_editor_pls_core",
@@ -455,7 +455,7 @@ dependencies = [
 [[package]]
 name = "bevy_editor_pls_core"
 version = "0.2.0"
-source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f#e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
+source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=50ea82bf08289bfe9fcf8a4f024d67d575f15548#50ea82bf08289bfe9fcf8a4f024d67d575f15548"
 dependencies = [
  "bevy",
  "bevy-inspector-egui",
@@ -465,7 +465,7 @@ dependencies = [
 [[package]]
 name = "bevy_editor_pls_default_windows"
 version = "0.2.0"
-source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f#e6d9bf8a919ca6c4a0bfa6207f368e66278a4e8f"
+source = "git+https://github.com/jakobhellermann/bevy_editor_pls?rev=50ea82bf08289bfe9fcf8a4f024d67d575f15548#50ea82bf08289bfe9fcf8a4f024d67d575f15548"
 dependencies = [
  "bevy",
  "bevy-inspector-egui",

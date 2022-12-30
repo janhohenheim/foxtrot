@@ -44,6 +44,10 @@ features = [
 [target."cfg(target_os = \"linux\")".dependencies]
 winit = { version = "0.27", features = [ "x11" ]}
 
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+
+
 [build-dependencies]
 embed-resource = "1.4"
 

@@ -90,7 +90,7 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
     fn spawn_light(&mut self, transform: Transform) -> &mut Self {
         self.commands.insert_resource(AmbientLight {
             color: Color::ORANGE_RED,
-            brightness: 0.02,
+            brightness: 0.1,
         });
 
         // directional 'sun' light

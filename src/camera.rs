@@ -36,7 +36,7 @@ fn handle_camera(
     mut camera_query: Query<&mut LookTransform>,
     actions: Res<Actions>,
 ) {
-    let max_distance = 10.0;
+    let max_distance = 6.0;
     let mouse_sensitivity = 0.01;
     let player = match player_query.iter().next() {
         Some(transform) => transform,

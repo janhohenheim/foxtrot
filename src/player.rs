@@ -5,7 +5,9 @@ use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use smooth_bevy_cameras::LookTransform;
-const G: f32 = -9.81;
+
+const G: f32 = -0.5;
+const JUMP_DURATION: f32 = 0.23;
 
 pub struct PlayerPlugin;
 
@@ -23,12 +25,24 @@ pub struct Grounded {
 #[derive(Component, Default)]
 pub struct Jump {
     time_since_start: Timer,
+    state: JumpState,
+}
+
+#[derive(Debug)]
+pub enum JumpState {
+    InProgress,
+    Done,
+}
+impl Default for JumpState {
+    fn default() -> Self {
+        Self::Done
+    }
 }
 impl Jump {
     pub fn speed_fraction(&self) -> f32 {
         let t: f32 = self.time_since_start.into();
         // shifted and scaled sigmoid
-        let suggestion = 1. / (1. + (3. * (0.5 * t - 0.5)).exp());
+        let suggestion = 1. / (1. + (40. * (t - 0.1)).exp());
         if suggestion > 0.001 {
             suggestion
         } else {
@@ -146,19 +160,19 @@ fn update_grounded(
     }
 }
 
-fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
-    for (mut velocity, grounded) in &mut player_query {
-        let gravity = get_gravity(grounded);
+fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
+    for (mut velocity, grounded, jump) in &mut player_query {
+        if matches!(jump.state, JumpState::InProgress) {
+            continue;
+        }
+        let dt = f32::from(grounded.time_since_last_grounded)
+            - f32::from(jump.time_since_start).min(JUMP_DURATION);
+        let max_gravity = G * 5.;
+        let min_gravity = G * 0.1;
+        // min and max look swapped because gravity is negative
+        let gravity = (G * dt).clamp(max_gravity, min_gravity);
         velocity.0.y += gravity;
     }
-}
-
-fn get_gravity(grounded: &Grounded) -> f32 {
-    let dt = f32::from(grounded.time_since_last_grounded);
-    let max_gravity = G * 5.;
-    let min_gravity = G * 0.01;
-    // min and max look swapped because gravity is negative
-    (G * dt).clamp(max_gravity, min_gravity)
 }
 
 fn handle_jump(
@@ -169,13 +183,21 @@ fn handle_jump(
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
     for (grounded, mut velocity, mut jump) in &mut player_query {
-        let y_speed = (-get_gravity(grounded)).max(-G * 2.5);
+        let y_speed = 10.;
         if jump_requested && f32::from(grounded.time_since_last_grounded) < 0.00001 {
             jump.time_since_start.start();
+            jump.state = JumpState::InProgress;
         } else {
             jump.time_since_start.update(dt);
+
+            let jump_ended = f32::from(jump.time_since_start) >= JUMP_DURATION;
+            if jump_ended {
+                jump.state = JumpState::Done;
+            }
         }
-        velocity.0.y += jump.speed_fraction() * y_speed * dt
+        if matches!(jump.state, JumpState::InProgress) {
+            velocity.0.y += jump.speed_fraction() * y_speed * dt
+        }
     }
 }
 
@@ -230,8 +252,6 @@ fn apply_velocity(
                 }
             }
         }
-
-        info!("velocity: {:?}", velocity.0);
         controller.translation = Some(velocity.0);
         velocity.0 = default();
     }

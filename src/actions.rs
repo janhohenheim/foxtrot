@@ -1,3 +1,4 @@
+use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
 use crate::actions::game_control::{get_movement, GameControl};
@@ -20,9 +21,15 @@ impl Plugin for ActionsPlugin {
 #[derive(Default, Resource)]
 pub struct Actions {
     pub player_movement: Option<Vec2>,
+    pub camera_movement: Option<Vec2>,
+    pub jump: bool,
 }
 
-pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<Input<KeyCode>>) {
+pub fn set_movement_actions(
+    mut actions: ResMut<Actions>,
+    keyboard_input: Res<Input<KeyCode>>,
+    mut mouse_input: EventReader<MouseMotion>,
+) {
     let player_movement = Vec2::new(
         get_movement(GameControl::Right, &keyboard_input)
             - get_movement(GameControl::Left, &keyboard_input),
@@ -34,5 +41,11 @@ pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<In
         actions.player_movement = Some(player_movement.normalize());
     } else {
         actions.player_movement = None;
+    }
+    actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+
+    actions.camera_movement = None;
+    for event in mouse_input.iter() {
+        actions.camera_movement = Some(event.delta)
     }
 }

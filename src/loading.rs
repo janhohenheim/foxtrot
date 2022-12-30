@@ -1,4 +1,5 @@
 use crate::GameState;
+use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
 use bevy_kira_audio::AudioSource;
@@ -15,6 +16,8 @@ impl Plugin for LoadingPlugin {
                 .with_collection::<FontAssets>()
                 .with_collection::<AudioAssets>()
                 .with_collection::<TextureAssets>()
+                .with_collection::<MaterialAssets>()
+                .with_collection::<SceneAssets>()
                 .continue_to_state(GameState::Menu),
         );
     }
@@ -39,4 +42,20 @@ pub struct AudioAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/bevy.png")]
     pub bevy: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct SceneAssets {
+    #[asset(path = "scenes/wallWoodDoorwayRound.glb")]
+    pub wall_wood_doorway_round: Handle<Gltf>,
+    #[asset(path = "scenes/wallWood.glb")]
+    pub wall_wood: Handle<Gltf>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct MaterialAssets {
+    #[asset(path = "materials/dirt.png", standard_material)]
+    pub dirt: Handle<StandardMaterial>,
+    #[asset(path = "materials/grass.png", standard_material)]
+    pub grass: Handle<StandardMaterial>,
 }

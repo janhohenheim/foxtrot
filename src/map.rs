@@ -23,7 +23,7 @@ struct PhysicsAssets<'a, 'w, 's> {
 }
 
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
-    fn spawn_door(mut self, transform: Transform) -> Self {
+    fn spawn_door(&mut self, transform: Transform) -> &mut Self {
         // if the GLTF has loaded, we can navigate its contents
         if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood_doorway_round) {
             self.commands.spawn((SceneBundle {
@@ -35,7 +35,7 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
         self
     }
 
-    fn spawn_grass(mut self, transform: Transform) -> Self {
+    fn spawn_grass(&mut self, transform: Transform) -> &mut Self {
         let x = 1_024.0 * transform.scale.x;
         let y = 1. * transform.scale.y;
         let z = 1_024.0 * transform.scale.z;
@@ -51,7 +51,7 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
         self
     }
 
-    fn spawn_light(mut self, transform: Transform) -> Self {
+    fn spawn_light(&mut self, transform: Transform) -> &mut Self {
         self.commands.insert_resource(AmbientLight {
             color: Color::ORANGE_RED,
             brightness: 0.02,
@@ -87,7 +87,7 @@ fn setup(
     scenes: Res<SceneAssets>,
     gltf: Res<Assets<Gltf>>,
 ) {
-    let physics_assets = PhysicsAssets {
+    let mut physics_assets = PhysicsAssets {
         commands,
         meshes,
         materials,
@@ -96,7 +96,7 @@ fn setup(
     };
     physics_assets
         .spawn_door(Transform::from_scale(Vec3::splat(1_000.)))
-        .spawn_grass(Transform::from_xyz(0., -150., 0.))
+        .spawn_grass(Transform::from_xyz(0., -200., 0.))
         .spawn_light(Transform {
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),

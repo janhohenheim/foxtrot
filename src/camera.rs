@@ -17,7 +17,8 @@ impl Plugin for CameraPlugin {
             .add_plugin(LookTransformPlugin)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_camera)
+                    .with_system(follow_player.label("follow_player"))
+                    .with_system(handle_camera_controls.after("follow_player"))
                     .with_system(cursor_grab_system),
             );
     }
@@ -36,49 +37,68 @@ fn setup_camera(mut commands: Commands) {
     ));
 }
 
-fn handle_camera(
-    player_query: Query<&Transform, With<Player>>,
+fn follow_player(
+    player_query: Query<(&KinematicCharacterControllerOutput, &Transform), With<Player>>,
     mut camera_query: Query<&mut LookTransform>,
-    actions: Res<Actions>,
 ) {
-    let max_distance = 6.0;
-    let mouse_sensitivity = 0.01;
-    let player = match player_query.iter().next() {
+    let (output, transform) = match player_query.iter().next() {
+        Some(player) => player,
+        None => return,
+    };
+    let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
-    for mut camera in &mut camera_query {
-        camera.target = player.translation;
-        let mut direction = camera.look_direction().unwrap_or(Vect::Z);
-        if let Some(camera_movement) = actions.camera_movement {
-            // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
-            let x_angle = mouse_sensitivity * camera_movement.x;
-            let y_angle = mouse_sensitivity * camera_movement.y;
 
-            let y_axis_rotation_matrix = Matrix3::from_row_iterator(
-                #[cfg_attr(rustfmt, rustfmt::skip)]
-                [
-                    x_angle.cos(), 0., -x_angle.sin(),
-                    0., 1., 0.,
-                    x_angle.sin(), 0., x_angle.cos(),
-                ].into_iter(),
-            );
+    camera.eye += output.effective_translation;
+    camera.target = transform.translation;
+}
 
-            let x_axis_rotation_matrix = Matrix3::from_row_iterator(
-                #[cfg_attr(rustfmt, rustfmt::skip)]
-                [
-                    1., 0., 0.,
-                    0., y_angle.cos(), -y_angle.sin(),
-                    0., y_angle.sin(), y_angle.cos(),
-                ].into_iter(),
-            );
+fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: Res<Actions>) {
+    let max_distance = 6.0;
+    let mouse_sensitivity = 0.01;
+    let mut camera = match camera_query.iter_mut().next() {
+        Some(transform) => transform,
+        None => return,
+    };
+    let camera_movement = match actions.camera_movement {
+        Some(vector) => vector,
+        None => return,
+    };
 
-            direction =
-                (y_axis_rotation_matrix * x_axis_rotation_matrix * Vector3::from(direction)).into();
-        }
+    let mut direction = camera.look_direction().unwrap_or(Vect::Z);
 
-        camera.eye = camera.target - direction * max_distance;
-    }
+    let x_angle = mouse_sensitivity * camera_movement.x;
+    let y_angle = mouse_sensitivity * camera_movement.y;
+
+    // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
+    let y_axis_rotation_matrix = get_y_axis_rotation_matrix(x_angle);
+    let x_axis_rotation_matrix = get_x_axis_rotation_matrix(y_angle);
+
+    direction = (y_axis_rotation_matrix * x_axis_rotation_matrix * Vector3::from(direction)).into();
+    camera.eye = camera.target - direction * max_distance;
+}
+
+fn get_x_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
+    Matrix3::from_row_iterator(
+        #[cfg_attr(rustfmt, rustfmt::skip)]
+        [
+            1., 0., 0.,
+            0., angle.cos(), -angle.sin(),
+            0., angle.sin(), angle.cos(),
+        ].into_iter(),
+    )
+}
+
+fn get_y_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
+    Matrix3::from_row_iterator(
+        #[cfg_attr(rustfmt, rustfmt::skip)]
+        [
+            angle.cos(), 0., -angle.sin(),
+            0., 1., 0.,
+            angle.sin(), 0., angle.cos(),
+        ].into_iter(),
+    )
 }
 
 fn cursor_grab_system(mut windows: ResMut<Windows>, key: Res<Input<KeyCode>>) {

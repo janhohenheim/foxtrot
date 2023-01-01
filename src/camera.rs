@@ -103,7 +103,7 @@ fn keep_target_visible(
         Some(transform) => transform,
         None => return,
     };
-    let direction = camera.eye - camera.target;
+    let direction = (camera.eye - camera.target).normalize() * MAX_DISTANCE;
     let max_toi = direction.length();
     let solid = true;
     let filter = QueryFilter::only_fixed();

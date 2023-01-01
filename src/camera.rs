@@ -1,12 +1,13 @@
-use bevy::prelude::*;
-use bevy::window::CursorGrabMode;
-use bevy_rapier3d::na::{Matrix3, Vector3};
-
 use crate::actions::Actions;
 use crate::player::Player;
 use crate::GameState;
+use bevy::math::Vec3Swizzles;
+use bevy::prelude::*;
+use bevy::window::CursorGrabMode;
+use bevy_rapier3d::na::{Matrix3, Vector3};
 use bevy_rapier3d::prelude::*;
 use smooth_bevy_cameras::{LookTransform, LookTransformBundle, LookTransformPlugin, Smoother};
+use std::f32::consts::TAU;
 
 const MAX_DISTANCE: f32 = 6.0;
 
@@ -25,14 +26,18 @@ impl Plugin for CameraPlugin {
                             .label("handle_camera_controls")
                             .after("follow_player"),
                     )
-                    .with_system(keep_target_visible.after("handle_camera_controls"))
+                    .with_system(
+                        keep_target_visible
+                            .label("keep_target_visible")
+                            .after("handle_camera_controls"),
+                    )
                     .with_system(cursor_grab_system),
             );
     }
 }
 
 fn setup_camera(mut commands: Commands) {
-    let eye = Vec3::default();
+    let eye = Vec3::new(MAX_DISTANCE, 0., 0.);
     let target = Vec3::default();
     commands.spawn((
         LookTransformBundle {
@@ -72,23 +77,28 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
         None => return,
     };
 
-    let mut direction = camera.look_direction().unwrap_or(Vect::Z);
-
+    let direction = camera.look_direction().unwrap_or(Vect::Z);
+    let horizontal_rotation_axis = direction.xz().perp();
+    let horizontal_rotation_axis =
+        Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
     let x_angle = mouse_sensitivity * camera_movement.x;
-    let y_angle = mouse_sensitivity * camera_movement.y;
+    let y_angle = -mouse_sensitivity * camera_movement.y;
+    let y_angle = clamp_vertical_rotation(direction, y_angle);
 
-    // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
-    let y_axis_rotation_matrix = get_y_axis_rotation_matrix(x_angle);
-    let x_axis_rotation_matrix = get_x_axis_rotation_matrix(y_angle);
+    let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(x_angle);
+    let vertical_rotation_matrix =
+        get_rotation_matrix_around_vector(y_angle, horizontal_rotation_axis);
 
-    direction = (y_axis_rotation_matrix * x_axis_rotation_matrix * Vector3::from(direction)).into();
-    camera.eye = camera.target - direction * MAX_DISTANCE;
+    let rotated_direction: Vec3 =
+        (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction)).into();
+    camera.eye = camera.target - rotated_direction * MAX_DISTANCE;
 }
 
 fn keep_target_visible(
     mut camera_query: Query<&mut LookTransform>,
     rapier_context: Res<RapierContext>,
 ) {
+    return;
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
@@ -110,6 +120,29 @@ fn keep_target_visible(
     }
 }
 
+fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
+    let current_angle = current_direction.angle_between(Vect::Y);
+    let new_angle = current_angle - angle;
+
+    let max_angle = TAU / (2.0 + 1. / 16.);
+    let min_angle = TAU / 16.0;
+
+    let clamped_angle = if new_angle > max_angle {
+        max_angle - current_angle
+    } else if new_angle < min_angle {
+        min_angle - current_angle
+    } else {
+        angle
+    };
+
+    if clamped_angle.abs() < 0.01 {
+        // This smooths use experience
+        return 0.;
+    } else {
+        clamped_angle
+    }
+}
+
 fn get_x_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
     Matrix3::from_row_iterator(
         #[cfg_attr(rustfmt, rustfmt::skip)]
@@ -121,7 +154,8 @@ fn get_x_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
     )
 }
 
-fn get_y_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
+fn get_rotation_matrix_around_y_axis(angle: f32) -> Matrix3<f32> {
+    // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
     Matrix3::from_row_iterator(
         #[cfg_attr(rustfmt, rustfmt::skip)]
         [
@@ -132,6 +166,19 @@ fn get_y_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
     )
 }
 
+fn get_rotation_matrix_around_vector(angle: f32, vector: Vector3<f32>) -> Matrix3<f32> {
+    // Source: https://math.stackexchange.com/a/142831/419398
+    let u = vector.normalize();
+    let w = Matrix3::from_row_iterator(
+        #[cfg_attr(rustfmt, rustfmt::skip)]
+        [
+            0., -u.z, u.y,
+            u.z, 0., -u.x,
+            -u.y, u.x, 0.
+        ].into_iter(),
+    );
+    Matrix3::identity() + (angle.sin()) * w + (2. * (angle / 2.).sin().powf(2.)) * w.pow(2)
+}
 fn cursor_grab_system(mut windows: ResMut<Windows>, key: Res<Input<KeyCode>>) {
     let window = windows.get_primary_mut().unwrap();
 

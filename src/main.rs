@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use bevy::prelude::*;
+use bevy::window::PresentMode;
 use bevy::DefaultPlugins;
 use bevy_game::GamePlugin;
 
@@ -15,6 +16,7 @@ fn main() {
                 height: 600.,
                 title: "Bevy game".to_string(), // ToDo
                 canvas: Some("#bevy".to_owned()),
+                present_mode: PresentMode::AutoVsync,
                 ..default()
             },
             ..default()

@@ -111,10 +111,11 @@ fn spawn_player(
     mut meshes: ResMut<Assets<Mesh>>,
     materials: Res<MaterialAssets>,
 ) {
+    let height = 1.0;
     let radius = 0.5;
     commands.spawn((
         RigidBody::KinematicVelocityBased,
-        Collider::ball(radius),
+        Collider::capsule_y(height / 2., radius),
         KinematicCharacterController {
             // Don’t allow climbing slopes larger than n degrees.
             max_slope_climb_angle: 45.0_f32.to_radians() as Real,
@@ -132,12 +133,13 @@ fn spawn_player(
         CharacterVelocity::default(),
         Jump::default(),
         PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Icosphere {
+            mesh: meshes.add(Mesh::from(shape::Capsule {
                 radius,
+                depth: height,
                 ..default()
             })),
             transform: Transform {
-                translation: Vec3::new(0., radius + 10., 0.),
+                translation: Vec3::new(0., 10., 0.),
                 scale: Vec3::splat(0.5),
                 ..default()
             },

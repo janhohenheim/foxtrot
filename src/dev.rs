@@ -20,5 +20,11 @@ impl Plugin for DevPlugin {
         {
             app.add_plugin(LogDiagnosticsPlugin::default());
         }
+
+        #[cfg(not(any(feature = "editor", debug_assertions)))]
+        {
+            // Suppress warning of unused app in release builds.
+            let _ = app;
+        }
     }
 }

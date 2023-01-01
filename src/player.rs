@@ -124,7 +124,7 @@ fn spawn_player(
             // The character offset is set to n multiplied by the collider’s height.
             offset: CharacterLength::Absolute(0.01),
             // Snap to the ground if the vertical distance to the ground is smaller than n.
-            snap_to_ground: Some(CharacterLength::Absolute(0.0001)),
+            snap_to_ground: Some(CharacterLength::Absolute(0.001)),
             ..default()
         },
         Player,
@@ -217,16 +217,19 @@ fn handle_horizontal_movement(
         Some(transform) => transform,
         None => return,
     };
+    let actions = match actions.player_movement {
+        Some(actions) => actions,
+        None => return,
+    };
+
     let forward = (camera.target - camera.eye)
         .xz()
         .try_normalize()
         .unwrap_or(Vec2::Y);
     let sideward = forward.perp();
-    let y_action = actions.player_movement.map(|mov| mov.y).unwrap_or_default();
-    let x_action = actions.player_movement.map(|mov| mov.x).unwrap_or_default();
-    let forward_action = forward * y_action;
-    let sideward_action = sideward * x_action;
-    let movement = (forward_action + sideward_action) * speed * dt;
+    let forward_action = forward * actions.y;
+    let sideward_action = sideward * actions.x;
+    let movement = (forward_action + sideward_action).normalize() * speed * dt;
 
     for (mut velocity,) in &mut player_query {
         velocity.0.x += movement.x;

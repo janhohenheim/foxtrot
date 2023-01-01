@@ -18,7 +18,12 @@ impl Plugin for CameraPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(follow_player.label("follow_player"))
-                    .with_system(handle_camera_controls.after("follow_player"))
+                    .with_system(
+                        handle_camera_controls
+                            .label("handle_camera_controls")
+                            .after("follow_player"),
+                    )
+                    .with_system(keep_target_visible.after("handle_camera_controls"))
                     .with_system(cursor_grab_system),
             );
     }
@@ -77,6 +82,29 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
 
     direction = (y_axis_rotation_matrix * x_axis_rotation_matrix * Vector3::from(direction)).into();
     camera.eye = camera.target - direction * max_distance;
+}
+
+fn keep_target_visible(
+    mut camera_query: Query<&mut LookTransform>,
+    rapier_context: Res<RapierContext>,
+) {
+    let mut camera = match camera_query.iter_mut().next() {
+        Some(transform) => transform,
+        None => return,
+    };
+    let origin = camera.target;
+    let direction = camera.eye - camera.target;
+    let max_toi = direction.length();
+    let solid = true;
+    let filter = QueryFilter::only_fixed();
+    if let Some((entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
+    {
+        // The first collider hit has the entity `entity` and it hit after
+        // the ray travelled a distance equal to `ray_dir * toi`.
+        let hit_point = origin + direction * toi;
+        camera.eye = hit_point;
+        info!("Entity {:?} hit at point {}", entity, hit_point);
+    }
 }
 
 fn get_x_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {

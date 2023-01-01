@@ -37,12 +37,13 @@ impl Plugin for CameraPlugin {
 }
 
 fn setup_camera(mut commands: Commands) {
-    let eye = Vec3::new(MAX_DISTANCE, 0., 0.);
+    let eye = Vec3::new(1., 2., 0.);
     let target = Vec3::default();
     commands.spawn((
         LookTransformBundle {
             transform: LookTransform::new(eye, target),
-            smoother: Smoother::new(0.5), // Value between 0.0 and 1.0, higher is smoother.
+            // Value between 0.0 and 1.0, higher is smoother.
+            smoother: Smoother::new(0.6),
         },
         Camera3dBundle::default(),
         Name::new("Camera"),
@@ -81,13 +82,13 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
     let horizontal_rotation_axis = direction.xz().perp();
     let horizontal_rotation_axis =
         Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
-    let x_angle = mouse_sensitivity * camera_movement.x;
-    let y_angle = -mouse_sensitivity * camera_movement.y;
-    let y_angle = clamp_vertical_rotation(direction, y_angle);
+    let horizontal_angle = mouse_sensitivity * camera_movement.x;
+    let vertical_angle = -mouse_sensitivity * camera_movement.y;
+    let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
 
-    let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(x_angle);
+    let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);
     let vertical_rotation_matrix =
-        get_rotation_matrix_around_vector(y_angle, horizontal_rotation_axis);
+        get_rotation_matrix_around_vector(vertical_angle, horizontal_rotation_axis);
 
     let rotated_direction: Vec3 =
         (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction)).into();
@@ -98,25 +99,25 @@ fn keep_target_visible(
     mut camera_query: Query<&mut LookTransform>,
     rapier_context: Res<RapierContext>,
 ) {
-    return;
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
-    let origin = camera.target;
     let direction = camera.eye - camera.target;
     let max_toi = direction.length();
     let solid = true;
     let filter = QueryFilter::only_fixed();
-    if let Some((_entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
+    if let Some((_entity, toi)) =
+        rapier_context.cast_ray(camera.target, direction, max_toi, solid, filter)
     {
-        let line_of_sight = direction * toi;
+        let min_distance_to_objects = 0.001;
+        let line_of_sight = direction * (toi - min_distance_to_objects);
         let clamped_line_of_sight = if line_of_sight.length() > MAX_DISTANCE {
             line_of_sight.normalize() * MAX_DISTANCE
         } else {
             line_of_sight
         };
-        camera.eye = origin + clamped_line_of_sight;
+        camera.eye = camera.target + clamped_line_of_sight;
     }
 }
 
@@ -124,8 +125,9 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
     let current_angle = current_direction.angle_between(Vect::Y);
     let new_angle = current_angle - angle;
 
-    let max_angle = TAU / (2.0 + 1. / 16.);
-    let min_angle = TAU / 16.0;
+    let angle_from_extremes = TAU / 32.;
+    let max_angle = TAU / 2.0 - angle_from_extremes;
+    let min_angle = 0.0 + angle_from_extremes;
 
     let clamped_angle = if new_angle > max_angle {
         max_angle - current_angle
@@ -136,22 +138,11 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
     };
 
     if clamped_angle.abs() < 0.01 {
-        // This smooths use experience
+        // This smooths user experience
         return 0.;
     } else {
         clamped_angle
     }
-}
-
-fn get_x_axis_rotation_matrix(angle: f32) -> Matrix3<f32> {
-    Matrix3::from_row_iterator(
-        #[cfg_attr(rustfmt, rustfmt::skip)]
-        [
-            1., 0., 0.,
-            0., angle.cos(), -angle.sin(),
-            0., angle.sin(), angle.cos(),
-        ].into_iter(),
-    )
 }
 
 fn get_rotation_matrix_around_y_axis(angle: f32) -> Matrix3<f32> {

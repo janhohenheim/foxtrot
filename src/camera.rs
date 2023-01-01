@@ -8,6 +8,8 @@ use crate::GameState;
 use bevy_rapier3d::prelude::*;
 use smooth_bevy_cameras::{LookTransform, LookTransformBundle, LookTransformPlugin, Smoother};
 
+const MAX_DISTANCE: f32 = 6.0;
+
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -35,7 +37,7 @@ fn setup_camera(mut commands: Commands) {
     commands.spawn((
         LookTransformBundle {
             transform: LookTransform::new(eye, target),
-            smoother: Smoother::new(0.9), // Value between 0.0 and 1.0, higher is smoother.
+            smoother: Smoother::new(0.5), // Value between 0.0 and 1.0, higher is smoother.
         },
         Camera3dBundle::default(),
         Name::new("Camera"),
@@ -60,7 +62,6 @@ fn follow_player(
 }
 
 fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: Res<Actions>) {
-    let max_distance = 6.0;
     let mouse_sensitivity = 0.01;
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
@@ -81,7 +82,7 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
     let x_axis_rotation_matrix = get_x_axis_rotation_matrix(y_angle);
 
     direction = (y_axis_rotation_matrix * x_axis_rotation_matrix * Vector3::from(direction)).into();
-    camera.eye = camera.target - direction * max_distance;
+    camera.eye = camera.target - direction * MAX_DISTANCE;
 }
 
 fn keep_target_visible(
@@ -97,13 +98,15 @@ fn keep_target_visible(
     let max_toi = direction.length();
     let solid = true;
     let filter = QueryFilter::only_fixed();
-    if let Some((entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
+    if let Some((_entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
     {
-        // The first collider hit has the entity `entity` and it hit after
-        // the ray travelled a distance equal to `ray_dir * toi`.
-        let hit_point = origin + direction * toi;
-        camera.eye = hit_point;
-        info!("Entity {:?} hit at point {}", entity, hit_point);
+        let line_of_sight = direction * toi;
+        let clamped_line_of_sight = if line_of_sight.length() > MAX_DISTANCE {
+            line_of_sight.normalize() * MAX_DISTANCE
+        } else {
+            line_of_sight
+        };
+        camera.eye = origin + clamped_line_of_sight;
     }
 }
 

@@ -60,6 +60,8 @@ pub struct AnimationAssets {
     #[asset(path = "scenes/Fox.glb#Animation0")]
     pub character_idle: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation1")]
+    pub character_walking: Handle<AnimationClip>,
+    #[asset(path = "scenes/Fox.glb#Animation2")]
     pub character_running: Handle<AnimationClip>,
 }
 

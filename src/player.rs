@@ -1,8 +1,8 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
-use crate::loading::{AnimationAssets, MaterialAssets, SceneAssets};
+use crate::loading::{AnimationAssets, SceneAssets};
+use crate::math::look_at;
 use crate::GameState;
-use bevy::ecs::query::QuerySingleError;
 use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -15,6 +15,9 @@ pub struct PlayerPlugin;
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct PlayerModel;
 
 #[derive(Debug, Component, Default, Clone)]
 pub struct CharacterVelocity(Vect);
@@ -119,13 +122,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<MaterialAssets>,
-    scenes: Res<SceneAssets>,
-    gltf: Res<Assets<Gltf>>,
-) {
+fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>) {
     let model = gltf
         .get(&scenes.character)
         .expect("Failed to load player model");
@@ -170,15 +167,19 @@ fn spawn_player(
                 },
                 Name::new("Player Camera"),
             ));
-            parent.spawn((SceneBundle {
-                scene: model.scenes[0].clone(),
-                transform: Transform {
-                    translation: Vec3::new(0., -height, 0.),
-                    scale: Vec3::splat(0.02),
+            parent.spawn((
+                SceneBundle {
+                    scene: model.scenes[0].clone(),
+                    transform: Transform {
+                        translation: Vec3::new(0., -height, 0.),
+                        scale: Vec3::splat(0.02),
+                        ..default()
+                    },
                     ..default()
                 },
-                ..default()
-            },));
+                PlayerModel,
+                Name::new("Player Model"),
+            ));
         });
 }
 
@@ -304,18 +305,37 @@ fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>)
 
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<&mut CharacterVelocity, With<Player>>,
+    player_query: Query<(&CharacterVelocity, &Grounded), With<Player>>,
+    mut model_query: Query<&mut Transform, With<PlayerModel>>,
     animations: Res<AnimationAssets>,
 ) {
     let mut animation_player = match animation_player.get_single_mut() {
         Ok(player) => player,
         _ => return,
     };
-    for velocity in &player_query {
-        if velocity.0.xz().length() < 0.0001 {
-            animation_player.play(animations.character_idle.clone_weak()).repeat();
+    for (velocity, grounded) in &player_query {
+        let horizontal_velocity = Vec3 {
+            y: 0.,
+            ..velocity.0
+        };
+        if f32::from(grounded.time_since_last_grounded) > 1e-4 {
+            animation_player
+                .play(animations.character_running.clone_weak())
+                .repeat();
+            for mut model in &mut model_query {
+                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+            }
+        } else if horizontal_velocity.length() > 1e-4 {
+            animation_player
+                .play(animations.character_walking.clone_weak())
+                .repeat();
+            for mut model in &mut model_query {
+                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+            }
         } else {
-            animation_player.play(animations.character_running.clone_weak()).repeat();
+            animation_player
+                .play(animations.character_idle.clone_weak())
+                .repeat();
         }
     }
 }

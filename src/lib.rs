@@ -4,6 +4,7 @@ mod camera;
 mod dev;
 mod loading;
 mod map;
+mod math;
 mod menu;
 mod physics;
 mod player;

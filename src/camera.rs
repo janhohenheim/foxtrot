@@ -1,10 +1,11 @@
 use crate::actions::Actions;
+use crate::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis, look_at};
 use crate::player::Player;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
-use bevy_rapier3d::na::{Matrix3, Vector3};
+use bevy_rapier3d::na::Vector3;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
 
@@ -86,13 +87,6 @@ fn face_target(mut camera_query: Query<&mut Transform, With<PlayerCamera>>) {
     }
 }
 
-fn look_at(forward: Vec3, up: Vec3) -> Quat {
-    // Source: https://github.com/bitshifter/glam-rs/issues/293#issuecomment-1281380951
-    let right = up.cross(forward).normalize();
-    let up = forward.cross(right);
-    Quat::from_mat3(&Mat3::from_cols(right, up, forward))
-}
-
 fn keep_line_of_sight(
     mut camera_query: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>,
     mut player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
@@ -145,31 +139,6 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
     }
 }
 
-fn get_rotation_matrix_around_y_axis(angle: f32) -> Matrix3<f32> {
-    // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
-    Matrix3::from_row_iterator(
-        #[cfg_attr(rustfmt, rustfmt::skip)]
-        [
-            angle.cos(), 0., -angle.sin(),
-            0., 1., 0.,
-            angle.sin(), 0., angle.cos(),
-        ].into_iter(),
-    )
-}
-
-fn get_rotation_matrix_around_vector(angle: f32, vector: Vector3<f32>) -> Matrix3<f32> {
-    // Source: https://math.stackexchange.com/a/142831/419398
-    let u = vector.normalize();
-    let w = Matrix3::from_row_iterator(
-        #[cfg_attr(rustfmt, rustfmt::skip)]
-        [
-            0., -u.z, u.y,
-            u.z, 0., -u.x,
-            -u.y, u.x, 0.
-        ].into_iter(),
-    );
-    Matrix3::identity() + (angle.sin()) * w + (2. * (angle / 2.).sin().powf(2.)) * w.pow(2)
-}
 fn cursor_grab_system(mut windows: ResMut<Windows>, key: Res<Input<KeyCode>>) {
     let window = windows.get_primary_mut().unwrap();
 

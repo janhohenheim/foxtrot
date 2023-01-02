@@ -1,4 +1,5 @@
 use crate::actions::Actions;
+use crate::player::Player;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -93,16 +94,21 @@ fn look_at(forward: Vec3, up: Vec3) -> Quat {
 }
 
 fn keep_line_of_sight(
-    mut camera_query: Query<(&mut Transform, &GlobalTransform), With<PlayerCamera>>,
+    mut camera_query: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>,
+    mut player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    let (mut transform, global_transform) = match camera_query.iter_mut().next() {
+    let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
-    let origin = global_transform.translation() - transform.translation;
-    let direction = transform.translation.try_normalize().unwrap_or(Vect::Z) * MAX_DISTANCE;
-    let max_toi = direction.length();
+    let player = match player_query.iter_mut().next() {
+        Some(transform) => transform,
+        None => return,
+    };
+    let origin = player.translation;
+    let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
+    let max_toi = MAX_DISTANCE;
     let solid = true;
     let filter = QueryFilter::only_fixed();
     if let Some((_entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
@@ -114,7 +120,9 @@ fn keep_line_of_sight(
         } else {
             line_of_sight
         };
-        //transform.translation = clamped_line_of_sight;
+        camera.translation = clamped_line_of_sight;
+    } else {
+        camera.translation = direction * MAX_DISTANCE;
     }
 }
 

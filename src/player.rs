@@ -1,7 +1,8 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
-use crate::loading::MaterialAssets;
+use crate::loading::{MaterialAssets, SceneAssets};
 use crate::GameState;
+use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -110,11 +111,26 @@ fn spawn_player(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     materials: Res<MaterialAssets>,
+    scenes: Res<SceneAssets>,
+    gltf: Res<Assets<Gltf>>,
 ) {
+    let model = match gltf.get(&scenes.character) {
+        None => return,
+        Some(gltf) => gltf,
+    };
+
     let height = 1.0;
-    let radius = 0.5;
+    let radius = 0.4;
     commands
         .spawn((
+            PbrBundle {
+                transform: Transform {
+                    translation: Vec3::new(0., 5., 0.),
+                    scale: Vec3::splat(0.5),
+                    ..default()
+                },
+                ..default()
+            },
             RigidBody::KinematicVelocityBased,
             Collider::capsule_y(height / 2., radius),
             KinematicCharacterController {
@@ -133,20 +149,6 @@ fn spawn_player(
             Grounded::default(),
             CharacterVelocity::default(),
             Jump::default(),
-            PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Capsule {
-                    radius,
-                    depth: height,
-                    ..default()
-                })),
-                transform: Transform {
-                    translation: Vec3::new(0., 10., 0.),
-                    scale: Vec3::splat(0.5),
-                    ..default()
-                },
-                material: materials.dirt.clone(),
-                ..default()
-            },
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -157,6 +159,15 @@ fn spawn_player(
                 },
                 Name::new("Player Camera"),
             ));
+            parent.spawn((SceneBundle {
+                scene: model.scenes[0].clone(),
+                transform: Transform {
+                    translation: Vec3::new(0., -height, 0.),
+                    scale: Vec3::splat(0.005),
+                    ..default()
+                },
+                ..default()
+            },));
         });
 }
 

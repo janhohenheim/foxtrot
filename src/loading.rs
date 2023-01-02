@@ -18,6 +18,7 @@ impl Plugin for LoadingPlugin {
                 .with_collection::<TextureAssets>()
                 .with_collection::<MaterialAssets>()
                 .with_collection::<SceneAssets>()
+                .with_collection::<AnimationAssets>()
                 .continue_to_state(GameState::Menu),
         );
     }
@@ -50,6 +51,14 @@ pub struct SceneAssets {
     pub wall_wood_doorway_round: Handle<Gltf>,
     #[asset(path = "scenes/wallWood.glb")]
     pub wall_wood: Handle<Gltf>,
+    #[asset(path = "scenes/characterMedium.glb")]
+    pub character: Handle<Gltf>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct AnimationAssets {
+    //#[asset(path = "animations/idle.glb")]
+    //pub character_idle: Handle<AnimationClip>,
 }
 
 #[derive(AssetCollection, Resource)]

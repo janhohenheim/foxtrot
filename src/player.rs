@@ -318,24 +318,27 @@ fn play_animations(
             y: 0.,
             ..velocity.0
         };
-        if f32::from(grounded.time_since_last_grounded) > 1e-4 {
+        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
+        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+
+        if is_in_air {
             animation_player
                 .play(animations.character_running.clone_weak())
                 .repeat();
-            for mut model in &mut model_query {
-                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
-            }
-        } else if horizontal_velocity.length() > 1e-4 {
+        } else if has_horizontal_movement {
             animation_player
                 .play(animations.character_walking.clone_weak())
                 .repeat();
-            for mut model in &mut model_query {
-                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
-            }
         } else {
             animation_player
                 .play(animations.character_idle.clone_weak())
                 .repeat();
+        }
+
+        if has_horizontal_movement {
+            for mut model in &mut model_query {
+                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+            }
         }
     }
 }

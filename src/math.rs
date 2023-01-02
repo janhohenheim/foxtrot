@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::na::{Matrix3, Vector3};
 
 pub fn look_at(forward: Vec3, up: Vec3) -> Quat {
-    //debug_assert!(forward.is_normalized(), "forward vector is not normalized");
+    debug_assert!(forward.is_normalized(), "forward vector is not normalized");
 
     // Source: https://github.com/bitshifter/glam-rs/issues/293#issuecomment-1281380951
     let right = up.cross(forward).normalize();

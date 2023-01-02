@@ -51,14 +51,16 @@ pub struct SceneAssets {
     pub wall_wood_doorway_round: Handle<Gltf>,
     #[asset(path = "scenes/wallWood.glb")]
     pub wall_wood: Handle<Gltf>,
-    #[asset(path = "scenes/characterMedium.glb")]
+    #[asset(path = "scenes/Fox.glb")]
     pub character: Handle<Gltf>,
 }
 
 #[derive(AssetCollection, Resource)]
 pub struct AnimationAssets {
-    //#[asset(path = "animations/idle.glb")]
-    //pub character_idle: Handle<AnimationClip>,
+    #[asset(path = "scenes/Fox.glb#Animation0")]
+    pub character_idle: Handle<AnimationClip>,
+    #[asset(path = "scenes/Fox.glb#Animation1")]
+    pub character_running: Handle<AnimationClip>,
 }
 
 #[derive(AssetCollection, Resource)]

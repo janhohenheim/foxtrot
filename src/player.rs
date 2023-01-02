@@ -1,7 +1,8 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
-use crate::loading::{MaterialAssets, SceneAssets};
+use crate::loading::{AnimationAssets, MaterialAssets, SceneAssets};
 use crate::GameState;
+use bevy::ecs::query::QuerySingleError;
 use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -107,6 +108,12 @@ impl Plugin for PlayerPlugin {
                         reset_velocity
                             .label("reset_velocity")
                             .after("apply_velocity"),
+                    )
+                    .with_system(
+                        play_animations
+                            .label("play_animations")
+                            .after("apply_velocity")
+                            .before("reset_velocity"),
                     ),
             );
     }
@@ -119,10 +126,9 @@ fn spawn_player(
     scenes: Res<SceneAssets>,
     gltf: Res<Assets<Gltf>>,
 ) {
-    let model = match gltf.get(&scenes.character) {
-        None => return,
-        Some(gltf) => gltf,
-    };
+    let model = gltf
+        .get(&scenes.character)
+        .expect("Failed to load player model");
 
     let height = 1.0;
     let radius = 0.4;
@@ -168,7 +174,7 @@ fn spawn_player(
                 scene: model.scenes[0].clone(),
                 transform: Transform {
                     translation: Vec3::new(0., -height, 0.),
-                    scale: Vec3::splat(0.005),
+                    scale: Vec3::splat(0.02),
                     ..default()
                 },
                 ..default()
@@ -293,5 +299,23 @@ fn apply_velocity(
 fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>) {
     for mut velocity in &mut player_query {
         velocity.0 = default();
+    }
+}
+
+fn play_animations(
+    mut animation_player: Query<&mut AnimationPlayer>,
+    player_query: Query<&mut CharacterVelocity, With<Player>>,
+    animations: Res<AnimationAssets>,
+) {
+    let mut animation_player = match animation_player.get_single_mut() {
+        Ok(player) => player,
+        _ => return,
+    };
+    for velocity in &player_query {
+        if velocity.0.xz().length() < 0.0001 {
+            animation_player.play(animations.character_idle.clone_weak()).repeat();
+        } else {
+            animation_player.play(animations.character_running.clone_weak()).repeat();
+        }
     }
 }

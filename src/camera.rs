@@ -67,14 +67,19 @@ fn follow_player(
     camera.target = transform.translation;
 }
 
-fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: Res<Actions>) {
-    let mouse_sensitivity = 0.01;
+fn handle_camera_controls(
+    time: Res<Time>,
+    mut camera_query: Query<&mut LookTransform>,
+    actions: Res<Actions>,
+) {
+    let dt = time.delta_seconds();
+    let mouse_sensitivity = 0.5;
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
     let camera_movement = match actions.camera_movement {
-        Some(vector) => vector,
+        Some(vector) => vector * mouse_sensitivity * dt,
         None => return,
     };
 
@@ -82,8 +87,8 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
     let horizontal_rotation_axis = direction.xz().perp();
     let horizontal_rotation_axis =
         Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
-    let horizontal_angle = mouse_sensitivity * camera_movement.x;
-    let vertical_angle = -mouse_sensitivity * camera_movement.y;
+    let horizontal_angle = camera_movement.x;
+    let vertical_angle = -camera_movement.y;
     let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
 
     let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);

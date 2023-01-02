@@ -4,6 +4,7 @@ mod actions;
 mod audio;
 mod camera;
 mod dev;
+mod dialog;
 mod loading;
 mod map;
 mod math;
@@ -15,6 +16,7 @@ use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
 use crate::camera::CameraPlugin;
 use crate::dev::DevPlugin;
+use crate::dialog::DialogPlugin;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
@@ -48,6 +50,7 @@ impl Plugin for GamePlugin {
             .add_plugin(PlayerPlugin)
             .add_plugin(CameraPlugin)
             .add_plugin(PhysicsPlugin)
+            .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(DevPlugin);
     }

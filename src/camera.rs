@@ -106,24 +106,19 @@ fn keep_line_of_sight(
         Some(transform) => transform,
         None => return,
     };
+
     let origin = player.translation;
     let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
     let max_toi = MAX_DISTANCE;
     let solid = true;
     let filter = QueryFilter::only_fixed();
-    if let Some((_entity, toi)) = rapier_context.cast_ray(origin, direction, max_toi, solid, filter)
-    {
-        let min_distance_to_objects = 0.001;
-        let line_of_sight = direction * (toi - min_distance_to_objects);
-        let clamped_line_of_sight = if line_of_sight.length() > MAX_DISTANCE {
-            line_of_sight.normalize() * MAX_DISTANCE
-        } else {
-            line_of_sight
-        };
-        camera.translation = clamped_line_of_sight;
-    } else {
-        camera.translation = direction * MAX_DISTANCE;
-    }
+
+    let min_distance_to_objects = 0.001;
+    let distance = rapier_context
+        .cast_ray(origin, direction, max_toi, solid, filter)
+        .map(|(_entity, toi)| toi - min_distance_to_objects)
+        .unwrap_or(MAX_DISTANCE);
+    camera.translation = direction * distance;
 }
 
 fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {

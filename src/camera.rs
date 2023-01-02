@@ -6,84 +6,69 @@ use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::na::{Matrix3, Vector3};
 use bevy_rapier3d::prelude::*;
-use smooth_bevy_cameras::{LookTransform, LookTransformBundle, LookTransformPlugin, Smoother};
 use std::f32::consts::TAU;
 
-const MAX_DISTANCE: f32 = 6.0;
+const MAX_DISTANCE: f32 = 10.0;
 
 pub struct CameraPlugin;
 
+#[derive(Component)]
+pub struct UiCamera;
+
+#[derive(Component)]
+pub struct PlayerCamera;
+
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_camera)
+        app.add_startup_system(spawn_ui_camera)
             // Enables the system that synchronizes your `Transform`s and `LookTransform`s.
-            .add_plugin(LookTransformPlugin)
+            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(follow_player.label("follow_player"))
+                    .with_system(handle_camera_controls.label("handle_camera_controls"))
                     .with_system(
-                        handle_camera_controls
-                            .label("handle_camera_controls")
-                            .after("follow_player"),
-                    )
-                    .with_system(
-                        keep_target_visible
-                            .label("keep_target_visible")
+                        keep_line_of_sight
+                            .label("keep_line_of_sight")
                             .after("handle_camera_controls"),
                     )
+                    .with_system(face_target.label("face_target").after("keep_line_of_sight"))
                     .with_system(cursor_grab_system),
             );
     }
 }
 
-fn setup_camera(mut commands: Commands) {
-    let eye = Vec3::new(1., 2., 0.);
-    let target = Vec3::default();
-    commands.spawn((
-        LookTransformBundle {
-            transform: LookTransform::new(eye, target),
-            // Value between 0.0 and 1.0, higher is smoother.
-            smoother: Smoother::new(0.6),
-        },
-        Camera3dBundle::default(),
-        Name::new("Camera"),
-    ));
+fn spawn_ui_camera(mut commands: Commands) {
+    commands.spawn((Camera2dBundle::default(), UiCamera, Name::new("Camera")));
 }
 
-fn follow_player(
-    player_query: Query<(&KinematicCharacterControllerOutput, &Transform), With<Player>>,
-    mut camera_query: Query<&mut LookTransform>,
+fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>>) {
+    for entity in &query {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+fn handle_camera_controls(
+    time: Res<Time>,
+    mut camera_query: Query<&mut Transform, With<PlayerCamera>>,
+    actions: Res<Actions>,
 ) {
-    let (output, transform) = match player_query.iter().next() {
-        Some(player) => player,
-        None => return,
-    };
-    let mut camera = match camera_query.iter_mut().next() {
-        Some(transform) => transform,
-        None => return,
-    };
-
-    camera.eye += output.effective_translation;
-    camera.target = transform.translation;
-}
-
-fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: Res<Actions>) {
-    let mouse_sensitivity = 0.01;
+    let dt = time.delta_seconds();
+    let mouse_sensitivity = 0.5;
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
     let camera_movement = match actions.camera_movement {
-        Some(vector) => vector,
+        Some(vector) => vector * mouse_sensitivity * dt,
         None => return,
     };
 
-    let direction = camera.look_direction().unwrap_or(Vect::Z);
+    let direction = -camera.translation.try_normalize().unwrap_or(Vect::Z);
     let horizontal_rotation_axis = direction.xz().perp();
     let horizontal_rotation_axis =
         Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
-    let horizontal_angle = mouse_sensitivity * camera_movement.x;
-    let vertical_angle = -mouse_sensitivity * camera_movement.y;
+    let horizontal_angle = camera_movement.x;
+    let vertical_angle = -camera_movement.y;
     let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
 
     let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);
@@ -92,33 +77,48 @@ fn handle_camera_controls(mut camera_query: Query<&mut LookTransform>, actions: 
 
     let rotated_direction: Vec3 =
         (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction)).into();
-    camera.eye = camera.target - rotated_direction * MAX_DISTANCE;
+    camera.translation = -rotated_direction * MAX_DISTANCE;
 }
 
-fn keep_target_visible(
-    mut camera_query: Query<&mut LookTransform>,
+fn face_target(mut camera_query: Query<&mut Transform, With<PlayerCamera>>) {
+    for mut camera in &mut camera_query {
+        camera.rotation = look_at(camera.translation.normalize(), Vect::Y);
+    }
+}
+
+fn look_at(forward: Vec3, up: Vec3) -> Quat {
+    // Source: https://github.com/bitshifter/glam-rs/issues/293#issuecomment-1281380951
+    let right = up.cross(forward).normalize();
+    let up = forward.cross(right);
+    Quat::from_mat3(&Mat3::from_cols(right, up, forward))
+}
+
+fn keep_line_of_sight(
+    mut camera_query: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>,
+    mut player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
     rapier_context: Res<RapierContext>,
 ) {
     let mut camera = match camera_query.iter_mut().next() {
         Some(transform) => transform,
         None => return,
     };
-    let direction = (camera.eye - camera.target).normalize() * MAX_DISTANCE;
-    let max_toi = direction.length();
+    let player = match player_query.iter_mut().next() {
+        Some(transform) => transform,
+        None => return,
+    };
+
+    let origin = player.translation;
+    let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
+    let max_toi = MAX_DISTANCE;
     let solid = true;
     let filter = QueryFilter::only_fixed();
-    if let Some((_entity, toi)) =
-        rapier_context.cast_ray(camera.target, direction, max_toi, solid, filter)
-    {
-        let min_distance_to_objects = 0.001;
-        let line_of_sight = direction * (toi - min_distance_to_objects);
-        let clamped_line_of_sight = if line_of_sight.length() > MAX_DISTANCE {
-            line_of_sight.normalize() * MAX_DISTANCE
-        } else {
-            line_of_sight
-        };
-        camera.eye = camera.target + clamped_line_of_sight;
-    }
+
+    let min_distance_to_objects = 0.001;
+    let distance = rapier_context
+        .cast_ray(origin, direction, max_toi, solid, filter)
+        .map(|(_entity, toi)| toi - min_distance_to_objects)
+        .unwrap_or(MAX_DISTANCE);
+    camera.translation = direction * distance;
 }
 
 fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {

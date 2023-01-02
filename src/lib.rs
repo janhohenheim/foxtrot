@@ -1,3 +1,5 @@
+#![feature(stmt_expr_attributes)]
+
 mod actions;
 mod audio;
 mod camera;

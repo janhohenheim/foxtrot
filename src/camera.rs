@@ -133,7 +133,7 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
 
     if clamped_angle.abs() < 0.01 {
         // This smooths user experience
-        return 0.;
+        0.
     } else {
         clamped_angle
     }

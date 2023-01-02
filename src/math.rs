@@ -13,7 +13,7 @@ pub fn look_at(forward: Vec3, up: Vec3) -> Quat {
 pub fn get_rotation_matrix_around_y_axis(angle: f32) -> Matrix3<f32> {
     // See https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
     #[rustfmt::skip]
-    Matrix3::new(        
+    Matrix3::new(
         angle.cos(), 0., -angle.sin(),
         0., 1., 0.,
         angle.sin(), 0., angle.cos(),

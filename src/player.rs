@@ -1,7 +1,9 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
-use crate::loading::MaterialAssets;
+use crate::loading::{AnimationAssets, SceneAssets};
+use crate::math::look_at;
 use crate::GameState;
+use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -13,6 +15,9 @@ pub struct PlayerPlugin;
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct PlayerModel;
 
 #[derive(Debug, Component, Default, Clone)]
 pub struct CharacterVelocity(Vect);
@@ -101,20 +106,39 @@ impl Plugin for PlayerPlugin {
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
-                    .with_system(apply_velocity.label("apply_velocity")),
+                    .with_system(apply_velocity.label("apply_velocity"))
+                    .with_system(
+                        reset_velocity
+                            .label("reset_velocity")
+                            .after("apply_velocity"),
+                    )
+                    .with_system(
+                        play_animations
+                            .label("play_animations")
+                            .after("apply_velocity")
+                            .before("reset_velocity"),
+                    ),
             );
     }
 }
 
-fn spawn_player(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<MaterialAssets>,
-) {
+fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>) {
+    let model = gltf
+        .get(&scenes.character)
+        .expect("Failed to load player model");
+
     let height = 1.0;
-    let radius = 0.5;
+    let radius = 0.4;
     commands
         .spawn((
+            PbrBundle {
+                transform: Transform {
+                    translation: Vec3::new(0., 5., 0.),
+                    scale: Vec3::splat(0.5),
+                    ..default()
+                },
+                ..default()
+            },
             RigidBody::KinematicVelocityBased,
             Collider::capsule_y(height / 2., radius),
             KinematicCharacterController {
@@ -133,20 +157,6 @@ fn spawn_player(
             Grounded::default(),
             CharacterVelocity::default(),
             Jump::default(),
-            PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Capsule {
-                    radius,
-                    depth: height,
-                    ..default()
-                })),
-                transform: Transform {
-                    translation: Vec3::new(0., 10., 0.),
-                    scale: Vec3::splat(0.5),
-                    ..default()
-                },
-                material: materials.dirt.clone(),
-                ..default()
-            },
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -156,6 +166,19 @@ fn spawn_player(
                     ..default()
                 },
                 Name::new("Player Camera"),
+            ));
+            parent.spawn((
+                SceneBundle {
+                    scene: model.scenes[0].clone(),
+                    transform: Transform {
+                        translation: Vec3::new(0., -height, 0.),
+                        scale: Vec3::splat(0.02),
+                        ..default()
+                    },
+                    ..default()
+                },
+                PlayerModel,
+                Name::new("Player Model"),
             ));
         });
 }
@@ -248,6 +271,7 @@ fn handle_horizontal_movement(
     }
 }
 
+/// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
     mut player_query: Query<
         (
@@ -270,6 +294,51 @@ fn apply_velocity(
             }
         }
         controller.translation = Some(velocity.0);
+    }
+}
+
+fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>) {
+    for mut velocity in &mut player_query {
         velocity.0 = default();
+    }
+}
+
+fn play_animations(
+    mut animation_player: Query<&mut AnimationPlayer>,
+    player_query: Query<(&CharacterVelocity, &Grounded), With<Player>>,
+    mut model_query: Query<&mut Transform, With<PlayerModel>>,
+    animations: Res<AnimationAssets>,
+) {
+    let mut animation_player = match animation_player.get_single_mut() {
+        Ok(player) => player,
+        _ => return,
+    };
+    for (velocity, grounded) in &player_query {
+        let horizontal_velocity = Vec3 {
+            y: 0.,
+            ..velocity.0
+        };
+        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
+        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+
+        if is_in_air {
+            animation_player
+                .play(animations.character_running.clone_weak())
+                .repeat();
+        } else if has_horizontal_movement {
+            animation_player
+                .play(animations.character_walking.clone_weak())
+                .repeat();
+        } else {
+            animation_player
+                .play(animations.character_idle.clone_weak())
+                .repeat();
+        }
+
+        if has_horizontal_movement {
+            for mut model in &mut model_query {
+                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+            }
+        }
     }
 }

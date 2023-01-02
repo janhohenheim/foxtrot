@@ -13,19 +13,21 @@ const MAX_DISTANCE: f32 = 6.0;
 
 pub struct CameraPlugin;
 
+#[derive(Component)]
+pub struct UiCamera;
+
+#[derive(Component)]
+pub struct PlayerCamera;
+
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_camera)
+        app.add_startup_system(spawn_ui_camera)
             // Enables the system that synchronizes your `Transform`s and `LookTransform`s.
             .add_plugin(LookTransformPlugin)
+            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(follow_player.label("follow_player"))
-                    .with_system(
-                        handle_camera_controls
-                            .label("handle_camera_controls")
-                            .after("follow_player"),
-                    )
+                    .with_system(handle_camera_controls.label("handle_camera_controls"))
                     .with_system(
                         keep_target_visible
                             .label("keep_target_visible")
@@ -36,35 +38,14 @@ impl Plugin for CameraPlugin {
     }
 }
 
-fn setup_camera(mut commands: Commands) {
-    let eye = Vec3::new(1., 2., 0.);
-    let target = Vec3::default();
-    commands.spawn((
-        LookTransformBundle {
-            transform: LookTransform::new(eye, target),
-            // Value between 0.0 and 1.0, higher is smoother.
-            smoother: Smoother::new(0.6),
-        },
-        Camera3dBundle::default(),
-        Name::new("Camera"),
-    ));
+fn spawn_ui_camera(mut commands: Commands) {
+    commands.spawn((Camera2dBundle::default(), UiCamera, Name::new("Camera")));
 }
 
-fn follow_player(
-    player_query: Query<(&KinematicCharacterControllerOutput, &Transform), With<Player>>,
-    mut camera_query: Query<&mut LookTransform>,
-) {
-    let (output, transform) = match player_query.iter().next() {
-        Some(player) => player,
-        None => return,
-    };
-    let mut camera = match camera_query.iter_mut().next() {
-        Some(transform) => transform,
-        None => return,
-    };
-
-    camera.eye += output.effective_translation;
-    camera.target = transform.translation;
+fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>>) {
+    for entity in &query {
+        commands.entity(entity).despawn_recursive();
+    }
 }
 
 fn handle_camera_controls(

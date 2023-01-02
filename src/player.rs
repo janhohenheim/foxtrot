@@ -102,7 +102,12 @@ impl Plugin for PlayerPlugin {
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
-                    .with_system(apply_velocity.label("apply_velocity")),
+                    .with_system(apply_velocity.label("apply_velocity"))
+                    .with_system(
+                        reset_velocity
+                            .label("reset_velocity")
+                            .after("apply_velocity"),
+                    ),
             );
     }
 }
@@ -259,6 +264,7 @@ fn handle_horizontal_movement(
     }
 }
 
+/// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
     mut player_query: Query<
         (
@@ -281,6 +287,11 @@ fn apply_velocity(
             }
         }
         controller.translation = Some(velocity.0);
+    }
+}
+
+fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>) {
+    for mut velocity in &mut player_query {
         velocity.0 = default();
     }
 }

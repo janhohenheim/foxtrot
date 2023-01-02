@@ -1,10 +1,10 @@
 use crate::actions::Actions;
+use crate::camera::PlayerCamera;
 use crate::loading::MaterialAssets;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use smooth_bevy_cameras::LookTransform;
 
 const G: f32 = -0.5;
 const JUMP_DURATION: f32 = 0.23;
@@ -113,40 +113,51 @@ fn spawn_player(
 ) {
     let height = 1.0;
     let radius = 0.5;
-    commands.spawn((
-        RigidBody::KinematicVelocityBased,
-        Collider::capsule_y(height / 2., radius),
-        KinematicCharacterController {
-            // Don’t allow climbing slopes larger than n degrees.
-            max_slope_climb_angle: 45.0_f32.to_radians() as Real,
-            // Automatically slide down on slopes smaller than n degrees.
-            min_slope_slide_angle: 30.0_f32.to_radians() as Real,
-            // The character offset is set to n multiplied by the collider’s height.
-            offset: CharacterLength::Absolute(0.01),
-            // Snap to the ground if the vertical distance to the ground is smaller than n.
-            snap_to_ground: Some(CharacterLength::Absolute(0.0001)),
-            ..default()
-        },
-        Player,
-        Name::new("Player"),
-        Grounded::default(),
-        CharacterVelocity::default(),
-        Jump::default(),
-        PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Capsule {
-                radius,
-                depth: height,
-                ..default()
-            })),
-            transform: Transform {
-                translation: Vec3::new(0., 10., 0.),
-                scale: Vec3::splat(0.5),
+    commands
+        .spawn((
+            RigidBody::KinematicVelocityBased,
+            Collider::capsule_y(height / 2., radius),
+            KinematicCharacterController {
+                // Don’t allow climbing slopes larger than n degrees.
+                max_slope_climb_angle: 45.0_f32.to_radians() as Real,
+                // Automatically slide down on slopes smaller than n degrees.
+                min_slope_slide_angle: 30.0_f32.to_radians() as Real,
+                // The character offset is set to n multiplied by the collider’s height.
+                offset: CharacterLength::Absolute(0.01),
+                // Snap to the ground if the vertical distance to the ground is smaller than n.
+                snap_to_ground: Some(CharacterLength::Absolute(0.001)),
                 ..default()
             },
-            material: materials.dirt.clone(),
-            ..default()
-        },
-    ));
+            Player,
+            Name::new("Player"),
+            Grounded::default(),
+            CharacterVelocity::default(),
+            Jump::default(),
+            PbrBundle {
+                mesh: meshes.add(Mesh::from(shape::Capsule {
+                    radius,
+                    depth: height,
+                    ..default()
+                })),
+                transform: Transform {
+                    translation: Vec3::new(0., 10., 0.),
+                    scale: Vec3::splat(0.5),
+                    ..default()
+                },
+                material: materials.dirt.clone(),
+                ..default()
+            },
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                PlayerCamera,
+                Camera3dBundle {
+                    transform: Transform::from_xyz(10., 2., 0.),
+                    ..default()
+                },
+                Name::new("Player Camera"),
+            ));
+        });
 }
 
 fn update_grounded(
@@ -208,7 +219,7 @@ fn handle_horizontal_movement(
     time: Res<Time>,
     actions: Res<Actions>,
     mut player_query: Query<(&mut CharacterVelocity,), With<Player>>,
-    camera_query: Query<&mut LookTransform>,
+    camera_query: Query<&Transform, With<PlayerCamera>>,
 ) {
     let dt = time.delta_seconds();
     let speed = 6.0;
@@ -217,16 +228,19 @@ fn handle_horizontal_movement(
         Some(transform) => transform,
         None => return,
     };
-    let forward = (camera.target - camera.eye)
+    let actions = match actions.player_movement {
+        Some(actions) => actions,
+        None => return,
+    };
+
+    let forward = (-camera.translation)
         .xz()
         .try_normalize()
         .unwrap_or(Vec2::Y);
     let sideward = forward.perp();
-    let y_action = actions.player_movement.map(|mov| mov.y).unwrap_or_default();
-    let x_action = actions.player_movement.map(|mov| mov.x).unwrap_or_default();
-    let forward_action = forward * y_action;
-    let sideward_action = sideward * x_action;
-    let movement = (forward_action + sideward_action) * speed * dt;
+    let forward_action = forward * actions.y;
+    let sideward_action = sideward * actions.x;
+    let movement = (forward_action + sideward_action).normalize() * speed * dt;
 
     for (mut velocity,) in &mut player_query {
         velocity.0.x += movement.x;

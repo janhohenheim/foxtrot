@@ -5,7 +5,6 @@ use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use smooth_bevy_cameras::LookTransform;
 
 const G: f32 = -0.5;
 const JUMP_DURATION: f32 = 0.23;

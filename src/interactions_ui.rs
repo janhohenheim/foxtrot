@@ -33,11 +33,7 @@ fn update_interaction_possibilities(
     player_query: Query<Entity, With<PlayerSensor>>,
     dialog_target_query: Query<&DialogTarget>,
     mut interaction_ui: ResMut<InteractionUi>,
-    actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
-    if actions_frozen.is_some() {
-        return;
-    }
     for event in collision_events.iter() {
         let (entity_a, entity_b, kind, ongoing) = match event {
             CollisionEvent::Started(entity_a, entity_b, kind) => (entity_a, entity_b, kind, true),
@@ -75,15 +71,24 @@ fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
     mut egui_context: ResMut<EguiContext>,
+    windows: Res<Windows>,
+    actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
+    if actions_frozen.is_some() {
+        return;
+    }
+
     let dialog_id = match &interaction_ui.0 {
         Some(InteractionKind::Dialog(dialog_id)) => dialog_id,
         _ => return,
     };
+
+    let window = windows.get_primary().unwrap();
     egui::Window::new("Interaction")
-        .fixed_size((300., 300.))
         .collapsible(false)
-        .fixed_pos((300., 300.))
+        .title_bar(false)
+        .auto_sized()
+        .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
         .show(egui_context.ctx_mut(), |ui| {
             if ui.button("Talk").clicked() {
                 dialog_event_writer.send(DialogEvent(dialog_id.dialog_id.clone()));

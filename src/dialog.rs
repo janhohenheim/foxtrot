@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::utils::HashMap;
+use bevy::utils::{HashMap, HashSet};
 use bevy_egui::EguiPlugin;
 
 pub struct DialogPlugin;
@@ -15,33 +15,47 @@ pub struct Dialogs(HashMap<DialogId, Dialog>);
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Dialog {
-    pages: HashMap<PageId, Page>,
+    pub initial_page: Vec<InitialPage>,
+    pub pages: HashMap<PageId, Page>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct InitialPage {
+    pub id: PageId,
+    pub positive_requirements: HashSet<ConditionId>,
+    pub negative_requirements: HashSet<ConditionId>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Page {
-    text: String,
-    next_page: NextPage,
+    /// If `None`, this is a dummy page for other pages to converge to while still showing their own text.
+    /// This means the text of the last page will be displayed.
+    pub text: Option<String>,
+    pub next_page: NextPage,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum NextPage {
-    Forced(PageId),
-    Chosen(HashMap<ChoiceId, Choice>),
+    /// There is only one automatic option for the next page
+    Continue(PageId),
+    /// The user can choose between different answers that determine the next page
+    Choice(HashMap<ConditionId, DialogChoice>),
+    /// Exit dialog after this page
     Exit,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct Choice {
+pub struct DialogChoice {
+    /// The player's answer
     pub text: String,
-    pub next_page: NextPage,
-    pub positive_requirements: Vec<ChoiceId>,
-    pub negative_requirements: Vec<ChoiceId>,
+    pub next_page: PageId,
+    pub positive_requirements: HashSet<ConditionId>,
+    pub negative_requirements: HashSet<ConditionId>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
-pub struct ChoiceId(pub String);
-impl ChoiceId {
+pub struct ConditionId(pub String);
+impl ConditionId {
     pub fn new(id: &str) -> Self {
         Self(id.to_string())
     }

@@ -529,6 +529,8 @@ dependencies = [
  "bevy_kira_audio",
  "bevy_rapier3d",
  "embed-resource",
+ "serde",
+ "serde_json",
  "winit",
 ]
 

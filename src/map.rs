@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::dialog::DialogId;
 use crate::loading::{MaterialAssets, SceneAssets};
 use crate::GameState;
 use bevy::gltf::Gltf;
@@ -15,6 +16,11 @@ impl Plugin for MapPlugin {
 }
 
 const GRASS_SIZE: f32 = 10.;
+
+#[derive(Component)]
+pub struct Npc {
+    dialog_id: DialogId,
+}
 
 fn setup(
     commands: Commands,
@@ -61,7 +67,7 @@ fn setup(
             ..default()
         })
         .spawn_character(Transform {
-            translation: Vec3::new(0., 0.5, 0.),
+            translation: Vec3::new(-5., 0.5, 0.),
             scale: Vec3::splat(0.7),
             ..default()
         });
@@ -194,11 +200,19 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
                     transform,
                     ..default()
                 },
+                Name::new("NPC"),
                 RigidBody::Fixed,
                 Collider::capsule_y(height / 2., radius),
-                Name::new("NPC"),
             ))
             .with_children(|parent| {
+                parent.spawn((
+                    Npc {
+                        dialog_id: DialogId::new("sample"),
+                    },
+                    Name::new("NPC Dialog Collider"),
+                    Collider::capsule_y(height / 2., radius * 3.),
+                    Sensor,
+                ));
                 parent.spawn((
                     SceneBundle {
                         scene: model.scenes[0].clone(),

@@ -151,6 +151,7 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
                 offset: CharacterLength::Absolute(0.01),
                 // Snap to the ground if the vertical distance to the ground is smaller than n.
                 snap_to_ground: Some(CharacterLength::Absolute(0.001)),
+                filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
                 ..default()
             },
             Player,

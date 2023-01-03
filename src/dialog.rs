@@ -1,6 +1,6 @@
 use crate::actions::ActionsFrozen;
-pub use crate::dialog::resources::{ActiveConditions, DialogEvent};
-use crate::dialog::resources::{CurrentDialog, Dialog, DialogId, NextPage};
+pub use crate::dialog::resources::{ActiveConditions, DialogEvent, DialogId};
+use crate::dialog::resources::{CurrentDialog, Dialog, NextPage};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext, EguiPlugin};

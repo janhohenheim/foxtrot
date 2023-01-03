@@ -20,22 +20,11 @@
         "Choice": {
           "choice:who": {
             "text": "Who are you?",
-            "next_page": {
-              "Continue": "page:me"
-            }
+            "next_page_id": "page:me"
           },
           "choice:nest": {
             "text": "Give me a moment to think more on this",
-            "next_page": {
-              "Choice": {
-                "choice:unnest": {
-                  "text": "I have thought enough, let us go back.",
-                  "next_page": {
-                    "Continue": "page:main-choice-alt"
-                  }
-                }
-              }
-            }
+            "next_page_id": "page:nested"
           },
           "choice:exhaust": {
             "text": "Did we talk about everything?",
@@ -43,23 +32,30 @@
               "choice:who",
               "choice:nest"
             ],
-            "next_page": {
-              "Continue": "page:exhaust"
-            }
+            "next_page_id": "page:exhaust"
           },
           "choice:bye": {
             "text": "You may go now.",
-            "next_page": {
-              "Continue": "page:exit"
-            }
+            "next_page_id": "page:exit"
           }
         }
       }
     },
-    "page:main-choice-alt": {
+    "page:nested": {
       "text": "*The creature looks right through you, its expression completely devoid of any trace of emotion.*",
       "next_page": {
-        "SameAs": "page:main_choice"
+        "Choice": {
+          "choice:unnest": {
+            "text": "I have thought enough, yet I have nothing to say",
+            "next_page_id": "page:main-choice-unnest"
+          }
+        }
+      }
+    },
+    "page:main-choice-unnest": {
+      "text": "*The creature does not answer. It seems as if it did not even register your words.*",
+      "next_page": {
+        "SameAs": "page:main-choice"
       }
     },
     "page:me": {
@@ -75,7 +71,7 @@
       }
     },
     "page:exit": {
-      "text": "Goodbye. *The creature's gaze shifts ever so slightly. It now looks just past you into the void.*",
+      "text": "Goodbye.\n*The creature's gaze shifts ever so slightly. It now looks just past you into the void.*",
       "next_page": "Exit"
     },
     "page:again": {

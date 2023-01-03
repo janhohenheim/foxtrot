@@ -15,7 +15,11 @@ pub struct CurrentDialog {
 }
 impl CurrentDialog {
     pub fn fetch_page(&self, page_id: &PageId) -> Page {
-        self.dialog.pages.get(&page_id).unwrap().clone()
+        self.dialog
+            .pages
+            .get(&page_id)
+            .unwrap_or_else(|| panic!("Failed to fetch page with id {}", page_id.0))
+            .clone()
     }
     pub fn fetch_current_page(&self) -> Page {
         self.fetch_page(&self.current_page)
@@ -66,7 +70,7 @@ pub enum NextPage {
 pub struct DialogChoice {
     /// The player's answer
     pub text: String,
-    pub next_page: NextPage,
+    pub next_page_id: PageId,
     #[serde(default)]
     pub positive_requirements: HashSet<ConditionId>,
     #[serde(default)]

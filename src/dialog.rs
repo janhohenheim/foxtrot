@@ -15,7 +15,6 @@ impl Plugin for DialogPlugin {
         app.add_plugin(EguiPlugin)
             .init_resource::<ActiveConditions>()
             .add_event::<DialogEvent>()
-            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(init_dialog))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(set_current_dialog)
@@ -24,8 +23,9 @@ impl Plugin for DialogPlugin {
     }
 }
 
-fn init_dialog(mut dialog_event_writer: EventWriter<DialogEvent>) {
-    //dialog_event_writer.send(DialogEvent(DialogId::new("sample")))
+#[derive(Component, Debug, Clone, Eq, PartialEq)]
+pub struct DialogTarget {
+    pub dialog_id: DialogId,
 }
 
 fn set_current_dialog(

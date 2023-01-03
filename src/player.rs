@@ -17,6 +17,9 @@ pub struct PlayerPlugin;
 pub struct Player;
 
 #[derive(Component)]
+pub struct PlayerSensor;
+
+#[derive(Component)]
 pub struct PlayerModel;
 
 #[derive(Debug, Component, Default, Clone)]
@@ -161,6 +164,13 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
             Jump::default(),
         ))
         .with_children(|parent| {
+            parent.spawn((
+                Collider::capsule_y(height / 2., radius),
+                Sensor,
+                PlayerSensor,
+                ActiveCollisionTypes::all(),
+                Name::new("Player Sensor"),
+            ));
             parent.spawn((
                 PlayerCamera,
                 Camera3dBundle {

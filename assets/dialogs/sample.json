@@ -9,21 +9,33 @@
   ],
   "pages": {
     "page:greet": {
-      "text": "Hello, traveler!\nHow can I help you on this fine day?",
+      "text": "Greetings, player.",
       "next_page": {
-        "Continue": "page:main-choices"
+        "Continue": "page:main-choice"
       }
     },
-    "page:main-choices": {
+    "page:main-choice": {
+      "text": "What is your will?",
       "next_page": {
         "Choice": {
           "choice:who": {
             "text": "Who are you?",
-            "next_page": "page:me"
+            "next_page": {
+              "Continue": "page:me"
+            }
           },
           "choice:nest": {
-            "text": "(I need more options)",
-            "next_page": "page:sub-choices"
+            "text": "Give me a moment to think more on this",
+            "next_page": {
+              "Choice": {
+                "choice:unnest": {
+                  "text": "I have thought enough, let us go back.",
+                  "next_page": {
+                    "Continue": "page:main-choice-alt"
+                  }
+                }
+              }
+            }
           },
           "choice:exhaust": {
             "text": "Did we talk about everything?",
@@ -31,39 +43,45 @@
               "choice:who",
               "choice:nest"
             ],
-            "next_page": "page:exhaust"
+            "next_page": {
+              "Continue": "page:exhaust"
+            }
           },
           "choice:bye": {
-            "text": "That was enough for now",
-            "next_page": "page:exit"
+            "text": "You may go now.",
+            "next_page": {
+              "Continue": "page:exit"
+            }
           }
         }
       }
     },
-    "page:sub-choices": {
+    "page:main-choice-alt": {
+      "text": "*The creature looks right through you, its expression completely devoid of any trace of emotion.*",
       "next_page": {
-        "Choice": {
-          "choice:nevermind": {
-            "text": "(Nevermind)",
-            "next_page": "page:main-choices"
-          }
-        }
+        "SameAs": "page:main_choice"
+      }
+    },
+    "page:me": {
+      "text": "I am a testing character, player.\nMy sole purpose is to fill the air with diverse, but ultimately meaningless conversation.",
+      "next_page": {
+        "SameAs": "page:main-choice"
       }
     },
     "page:exhaust": {
-      "text": "Yep, I think so!",
+      "text": "I have exhausted my repertoire. We can only treat old ground now.",
       "next_page": {
-        "Continue": "page:main-choices"
+        "SameAs": "page:main-choice"
       }
     },
     "page:exit": {
-      "text": "Goodbye/",
+      "text": "Goodbye. *The creature's gaze shifts ever so slightly. It now looks just past you into the void.*",
       "next_page": "Exit"
     },
     "page:again": {
-      "text": "And so, we meet again!",
+      "text": "Greetings, player. Do you wish some further testing?",
       "next_page": {
-        "Continue": "page:main-choices"
+        "SameAs": "page:greet"
       }
     }
   }

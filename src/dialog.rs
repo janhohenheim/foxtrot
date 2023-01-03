@@ -1,13 +1,14 @@
+pub use crate::dialog::resources::{ActiveConditions, DialogEvent};
+use crate::dialog::resources::{CurrentDialog, Dialog, DialogId, NextPage};
 use crate::GameState;
 use bevy::prelude::*;
-use bevy::reflect::erased_serde::__private::serde::{Deserialize, Serialize};
-use bevy::utils::{HashMap, HashSet};
-use bevy_egui::EguiPlugin;
+use bevy_egui::{egui, EguiContext, EguiPlugin};
 use std::fs;
 use std::path::Path;
 
-pub struct DialogPlugin;
+mod resources;
 
+pub struct DialogPlugin;
 impl Plugin for DialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
@@ -33,13 +34,10 @@ fn set_current_dialog(
 ) {
     for DialogEvent(id) in dialog_events.iter() {
         let dialog = load_dialog(id);
-        let current_page = dialog
+        let starting_page = dialog
             .initial_page
             .iter()
-            .filter(|page| {
-                page.positive_requirements.is_subset(&active_conditions.0)
-                    && page.negative_requirements.is_disjoint(&active_conditions.0)
-            })
+            .filter(|page| page.is_available(&active_conditions))
             .next()
             .unwrap_or_else(|| {
                 panic!(
@@ -51,33 +49,70 @@ fn set_current_dialog(
             .clone();
         commands.insert_resource(CurrentDialog {
             dialog,
-            current_page,
+            current_page: starting_page,
         });
     }
 }
 
-fn show_dialog(current_dialog: Option<Res<CurrentDialog>>) {
-    let current_dialog = match current_dialog {
+fn show_dialog(
+    mut commands: Commands,
+    mut current_dialog: Option<ResMut<CurrentDialog>>,
+    mut active_conditions: ResMut<ActiveConditions>,
+    mut egui_context: ResMut<EguiContext>,
+) {
+    let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
         None => return,
     };
-    let _current_page = current_dialog
-        .dialog
-        .pages
-        .get(&current_dialog.current_page)
-        .unwrap();
+    egui::Window::new("Hello")
+        .fixed_size((300., 300.))
+        .collapsible(false)
+        .fixed_pos((300., 300.))
+        .show(egui_context.ctx_mut(), |ui| {
+            let current_page = current_dialog.fetch_current_page();
+            ui.label(current_page.text.clone());
+            present_choices(
+                ui,
+                commands,
+                &mut current_dialog,
+                &mut active_conditions,
+                current_page.next_page,
+            )
+        });
 }
 
-#[derive(Debug)]
-pub struct DialogEvent(DialogId);
-
-#[derive(Resource, Default, Debug)]
-pub struct ActiveConditions(HashSet<ConditionId>);
-
-#[derive(Resource, Debug)]
-pub struct CurrentDialog {
-    dialog: Dialog,
-    current_page: PageId,
+fn present_choices(
+    ui: &mut egui::Ui,
+    mut commands: Commands,
+    current_dialog: &mut CurrentDialog,
+    active_conditions: &mut ActiveConditions,
+    next_page: NextPage,
+) {
+    match next_page {
+        NextPage::Continue(next_page_id) => {
+            if ui.button("Continue").clicked() {
+                current_dialog.current_page = next_page_id.clone();
+            }
+        }
+        NextPage::Choice(choices) => {
+            for (choice_id, choice) in choices.iter() {
+                if choice.is_available(&active_conditions)
+                    && ui.button(choice.text.clone()).clicked()
+                {
+                    active_conditions.0.insert(choice_id.clone());
+                }
+            }
+        }
+        NextPage::SameAs(other_page_id) => {
+            let next_page = current_dialog.fetch_page(&other_page_id).next_page;
+            present_choices(ui, commands, current_dialog, active_conditions, next_page);
+        }
+        NextPage::Exit => {
+            if ui.button("Exit").clicked() {
+                commands.remove_resource::<CurrentDialog>();
+            }
+        }
+    }
 }
 
 fn load_dialog(id: &DialogId) -> Dialog {
@@ -87,72 +122,4 @@ fn load_dialog(id: &DialogId) -> Dialog {
         .unwrap_or_else(|e| panic!("Failed to open dialog file at {:?}: {}", path, e));
     serde_json::from_str(&json)
         .unwrap_or_else(|e| panic!("Failed to parse dialog file at {:?}: {}", path, e))
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct Dialog {
-    pub initial_page: Vec<InitialPage>,
-    pub pages: HashMap<PageId, Page>,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct InitialPage {
-    pub id: PageId,
-    #[serde(default)]
-    pub positive_requirements: HashSet<ConditionId>,
-    #[serde(default)]
-    pub negative_requirements: HashSet<ConditionId>,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct Page {
-    /// If `None`, this is a dummy page for other pages to converge to while still showing their own text.
-    /// This means the text of the last page will be displayed.
-    pub text: Option<String>,
-    pub next_page: NextPage,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub enum NextPage {
-    /// There is only one automatic option for the next page
-    Continue(PageId),
-    /// The user can choose between different answers that determine the next page
-    Choice(HashMap<ConditionId, DialogChoice>),
-    /// Exit dialog after this page
-    Exit,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct DialogChoice {
-    /// The player's answer
-    pub text: String,
-    pub next_page: PageId,
-    #[serde(default)]
-    pub positive_requirements: HashSet<ConditionId>,
-    #[serde(default)]
-    pub negative_requirements: HashSet<ConditionId>,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct ConditionId(pub String);
-impl ConditionId {
-    pub fn new(id: &str) -> Self {
-        Self(id.to_string())
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct DialogId(pub String);
-impl DialogId {
-    pub fn new(id: &str) -> Self {
-        Self(id.to_string())
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct PageId(pub String);
-impl PageId {
-    pub fn new(id: &str) -> Self {
-        Self(id.to_string())
-    }
 }

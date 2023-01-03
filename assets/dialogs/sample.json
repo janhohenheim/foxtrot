@@ -1,0 +1,70 @@
+{
+  "initial_page": [
+    {
+      "id": "page:again",
+      "positive_requirements": [ "choice:bye" ]
+    }, {
+      "id": "page:greet"
+    }
+  ],
+  "pages": {
+    "page:greet": {
+      "text": "Hello, traveler!\nHow can I help you on this fine day?",
+      "next_page": {
+        "Continue": "page:main-choices"
+      }
+    },
+    "page:main-choices": {
+      "next_page": {
+        "Choice": {
+          "choice:who": {
+            "text": "Who are you?",
+            "next_page": "page:me"
+          },
+          "choice:nest": {
+            "text": "(I need more options)",
+            "next_page": "page:sub-choices"
+          },
+          "choice:exhaust": {
+            "text": "Did we talk about everything?",
+            "positive_requirements": [
+              "choice:who",
+              "choice:nest"
+            ],
+            "next_page": "page:exhaust"
+          },
+          "choice:bye": {
+            "text": "That was enough for now",
+            "next_page": "page:exit"
+          }
+        }
+      }
+    },
+    "page:sub-choices": {
+      "next_page": {
+        "Choice": {
+          "choice:nevermind": {
+            "text": "(Nevermind)",
+            "next_page": "page:main-choices"
+          }
+        }
+      }
+    },
+    "page:exhaust": {
+      "text": "Yep, I think so!",
+      "next_page": {
+        "Continue": "page:main-choices"
+      }
+    },
+    "page:exit": {
+      "text": "Goodbye/",
+      "next_page": "Exit"
+    },
+    "page:again": {
+      "text": "And so, we meet again!",
+      "next_page": {
+        "Continue": "page:main-choices"
+      }
+    }
+  }
+}

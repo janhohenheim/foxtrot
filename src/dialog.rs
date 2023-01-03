@@ -3,6 +3,7 @@ pub use crate::dialog::resources::{ActiveConditions, DialogEvent, DialogId};
 use crate::dialog::resources::{CurrentDialog, Dialog, NextPage};
 use crate::GameState;
 use bevy::prelude::*;
+use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use std::fs;
 use std::path::Path;
@@ -67,20 +68,29 @@ fn show_dialog(
         Some(current_dialog) => current_dialog,
         None => return,
     };
-    egui::Window::new("Dialog")
-        .fixed_size((300., 300.))
-        .collapsible(false)
-        .fixed_pos((300., 300.))
+    let height = 150.;
+    egui::TopBottomPanel::bottom("Dialog")
+        .resizable(false)
+        .exact_height(height)
+        .frame(egui::Frame {
+            fill: Color32::from_black_alpha(250),
+            ..default()
+        })
         .show(egui_context.ctx_mut(), |ui| {
             let current_page = current_dialog.fetch_current_page();
-            ui.label(current_page.text.clone());
-            present_choices(
-                ui,
-                &mut commands,
-                &mut current_dialog,
-                &mut active_conditions,
-                current_page.next_page,
-            )
+            ui.vertical_centered_justified(|ui| {
+                ui.add_space(5.);
+                ui.label(current_page.text.clone());
+                ui.add_space(8.);
+                present_choices(
+                    ui,
+                    &mut commands,
+                    &mut current_dialog,
+                    &mut active_conditions,
+                    current_page.next_page,
+                );
+                ui.add_space(5.);
+            });
         });
 }
 

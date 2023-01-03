@@ -50,6 +50,7 @@ fn set_current_dialog(
         commands.insert_resource(CurrentDialog {
             dialog,
             current_page: starting_page,
+            last_choice: None,
         });
     }
 }
@@ -83,7 +84,7 @@ fn show_dialog(
 
 fn present_choices(
     ui: &mut egui::Ui,
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     current_dialog: &mut CurrentDialog,
     active_conditions: &mut ActiveConditions,
     next_page: NextPage,
@@ -96,10 +97,17 @@ fn present_choices(
         }
         NextPage::Choice(choices) => {
             for (choice_id, choice) in choices.iter() {
+                let was_just_picked = current_dialog
+                    .last_choice
+                    .as_ref()
+                    .map(|id| id == choice_id)
+                    .unwrap_or_default();
                 if choice.is_available(&active_conditions)
+                    && !was_just_picked
                     && ui.button(choice.text.clone()).clicked()
                 {
                     active_conditions.0.insert(choice_id.clone());
+                    current_dialog.last_choice = Some(choice_id.clone());
                     current_dialog.current_page = choice.next_page_id.clone();
                 }
             }

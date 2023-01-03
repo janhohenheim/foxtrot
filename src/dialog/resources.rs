@@ -12,6 +12,7 @@ pub struct ActiveConditions(pub HashSet<ConditionId>);
 pub struct CurrentDialog {
     pub dialog: Dialog,
     pub current_page: PageId,
+    pub last_choice: Option<ConditionId>,
 }
 impl CurrentDialog {
     pub fn fetch_page(&self, page_id: &PageId) -> Page {

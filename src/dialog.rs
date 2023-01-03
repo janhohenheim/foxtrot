@@ -25,7 +25,7 @@ impl Plugin for DialogPlugin {
 }
 
 fn init_dialog(mut dialog_event_writer: EventWriter<DialogEvent>) {
-    dialog_event_writer.send(DialogEvent(DialogId::new("sample")))
+    //dialog_event_writer.send(DialogEvent(DialogId::new("sample")))
 }
 
 fn set_current_dialog(

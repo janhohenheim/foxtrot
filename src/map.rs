@@ -59,6 +59,11 @@ fn setup(
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),
             ..default()
+        })
+        .spawn_character(Transform {
+            translation: Vec3::new(0., 0.5, 0.),
+            scale: Vec3::splat(0.7),
+            ..default()
         });
 }
 
@@ -172,6 +177,41 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
             },
             Name::new("Light"),
         ));
+        self
+    }
+
+    fn spawn_character(&mut self, transform: Transform) -> &mut Self {
+        let model = self
+            .gltf
+            .get(&self.scenes.character)
+            .expect("Failed to load npc model");
+
+        let height = 1.0;
+        let radius = 0.4;
+        self.commands
+            .spawn((
+                PbrBundle {
+                    transform,
+                    ..default()
+                },
+                RigidBody::Fixed,
+                Collider::capsule_y(height / 2., radius),
+                Name::new("NPC"),
+            ))
+            .with_children(|parent| {
+                parent.spawn((
+                    SceneBundle {
+                        scene: model.scenes[0].clone(),
+                        transform: Transform {
+                            translation: Vec3::new(0., -height, 0.),
+                            scale: Vec3::splat(0.02),
+                            ..default()
+                        },
+                        ..default()
+                    },
+                    Name::new("NPC Model"),
+                ));
+            });
         self
     }
 }

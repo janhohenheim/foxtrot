@@ -1,10 +1,12 @@
 #![feature(stmt_expr_attributes)]
+#![feature(let_chains)]
 
 mod actions;
 mod audio;
 mod camera;
 mod dev;
 mod dialog;
+mod interactions_ui;
 mod loading;
 mod map;
 mod math;
@@ -17,6 +19,7 @@ use crate::audio::InternalAudioPlugin;
 use crate::camera::CameraPlugin;
 use crate::dev::DevPlugin;
 use crate::dialog::DialogPlugin;
+use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
@@ -50,6 +53,7 @@ impl Plugin for GamePlugin {
             .add_plugin(PlayerPlugin)
             .add_plugin(CameraPlugin)
             .add_plugin(PhysicsPlugin)
+            .add_plugin(InteractionsUi)
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(DevPlugin);

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::reflect::erased_serde::__private::serde::{Deserialize, Serialize};
 use bevy::utils::{HashMap, HashSet};
+use indexmap::IndexMap;
 
 #[derive(Debug)]
 pub struct DialogEvent(pub DialogId);
@@ -60,7 +61,7 @@ pub enum NextPage {
     /// There is only one automatic option for the next page
     Continue(PageId),
     /// The user can choose between different answers that determine the next page
-    Choice(HashMap<ConditionId, DialogChoice>),
+    Choice(IndexMap<ConditionId, DialogChoice>),
     /// Use `next_page` of the specified `Page`
     SameAs(PageId),
     /// Exit dialog after this page
@@ -87,11 +88,6 @@ impl DialogChoice {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct ConditionId(pub String);
-impl ConditionId {
-    pub fn new(id: &str) -> Self {
-        Self(id.to_string())
-    }
-}
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct DialogId(pub String);
@@ -103,8 +99,3 @@ impl DialogId {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct PageId(pub String);
-impl PageId {
-    pub fn new(id: &str) -> Self {
-        Self(id.to_string())
-    }
-}

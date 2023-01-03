@@ -529,6 +529,7 @@ dependencies = [
  "bevy_kira_audio",
  "bevy_rapier3d",
  "embed-resource",
+ "indexmap",
  "serde",
  "serde_json",
  "winit",
@@ -2158,6 +2159,7 @@ checksum = "1885e79c1fc4b10f0e172c475f458b7f7b93061064d98c3293e98c5ba0c8b399"
 dependencies = [
  "autocfg",
  "hashbrown",
+ "serde",
 ]
 
 [[package]]

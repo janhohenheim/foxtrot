@@ -57,7 +57,7 @@ fn set_current_dialog(
 
 fn show_dialog(
     mut commands: Commands,
-    mut current_dialog: Option<ResMut<CurrentDialog>>,
+    current_dialog: Option<ResMut<CurrentDialog>>,
     mut active_conditions: ResMut<ActiveConditions>,
     mut egui_context: ResMut<EguiContext>,
 ) {
@@ -65,7 +65,7 @@ fn show_dialog(
         Some(current_dialog) => current_dialog,
         None => return,
     };
-    egui::Window::new("Hello")
+    egui::Window::new("Dialog")
         .fixed_size((300., 300.))
         .collapsible(false)
         .fixed_pos((300., 300.))

@@ -105,7 +105,8 @@ fn keep_line_of_sight(
     let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
     let max_toi = MAX_DISTANCE;
     let solid = true;
-    let filter = QueryFilter::only_fixed();
+    let mut filter = QueryFilter::only_fixed();
+    filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
 
     let min_distance_to_objects = 0.001;
     let distance = rapier_context

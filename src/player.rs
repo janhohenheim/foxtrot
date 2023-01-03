@@ -7,85 +7,16 @@ use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use components::*;
+pub use components::{Player, PlayerSensor};
+
+mod components;
 
 const G: f32 = -0.5;
 const JUMP_DURATION: f32 = 0.23;
 
 pub struct PlayerPlugin;
 
-#[derive(Component)]
-pub struct Player;
-
-#[derive(Component)]
-pub struct PlayerModel;
-
-#[derive(Debug, Component, Default, Clone)]
-pub struct CharacterVelocity(Vect);
-
-#[derive(Component, Default)]
-pub struct Grounded {
-    time_since_last_grounded: Timer,
-}
-
-#[derive(Component, Default)]
-pub struct Jump {
-    time_since_start: Timer,
-    state: JumpState,
-}
-
-#[derive(Debug)]
-pub enum JumpState {
-    InProgress,
-    Done,
-}
-impl Default for JumpState {
-    fn default() -> Self {
-        Self::Done
-    }
-}
-impl Jump {
-    pub fn speed_fraction(&self) -> f32 {
-        let t: f32 = self.time_since_start.into();
-        // shifted and scaled sigmoid
-        let suggestion = 1. / (1. + (40. * (t - 0.1)).exp());
-        if suggestion > 0.001 {
-            suggestion
-        } else {
-            0.0
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct Timer {
-    elapsed_time: f32,
-}
-impl Default for Timer {
-    fn default() -> Self {
-        Self {
-            elapsed_time: f32::MAX,
-        }
-    }
-}
-
-impl From<Timer> for f32 {
-    fn from(timer: Timer) -> Self {
-        timer.elapsed_time
-    }
-}
-
-impl Timer {
-    pub fn start(&mut self) {
-        self.elapsed_time = 0.0
-    }
-    pub fn update(&mut self, dt: f32) {
-        self.elapsed_time = if self.elapsed_time < f32::MAX - dt - 0.1 {
-            self.elapsed_time + dt
-        } else {
-            f32::MAX
-        }
-    }
-}
 /// This plugin handles player related stuff like movement
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
@@ -93,6 +24,7 @@ impl Plugin for PlayerPlugin {
         app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
+                    .with_system(link_animations)
                     .with_system(update_grounded.label("update_grounded"))
                     .with_system(
                         apply_gravity
@@ -150,6 +82,7 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
                 offset: CharacterLength::Absolute(0.01),
                 // Snap to the ground if the vertical distance to the ground is smaller than n.
                 snap_to_ground: Some(CharacterLength::Absolute(0.001)),
+                filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
                 ..default()
             },
             Player,
@@ -159,6 +92,13 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
             Jump::default(),
         ))
         .with_children(|parent| {
+            parent.spawn((
+                Collider::capsule_y(height / 2., radius),
+                Sensor,
+                PlayerSensor,
+                ActiveCollisionTypes::all(),
+                Name::new("Player Sensor"),
+            ));
             parent.spawn((
                 PlayerCamera,
                 Camera3dBundle {
@@ -305,40 +245,82 @@ fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>)
 
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<(&CharacterVelocity, &Grounded), With<Player>>,
+    player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink), With<Player>>,
     mut model_query: Query<&mut Transform, With<PlayerModel>>,
     animations: Res<AnimationAssets>,
 ) {
-    let mut animation_player = match animation_player.get_single_mut() {
-        Ok(player) => player,
-        _ => return,
-    };
-    for (velocity, grounded) in &player_query {
-        let horizontal_velocity = Vec3 {
-            y: 0.,
-            ..velocity.0
-        };
-        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
-        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
-
-        if is_in_air {
-            animation_player
-                .play(animations.character_running.clone_weak())
-                .repeat();
-        } else if has_horizontal_movement {
-            animation_player
-                .play(animations.character_walking.clone_weak())
-                .repeat();
-        } else {
-            animation_player
-                .play(animations.character_idle.clone_weak())
-                .repeat();
+    let (velocity, grounded, animation_entity_link) = match player_query.iter().next() {
+        Some(player) => player,
+        _ => {
+            return;
         }
+    };
+    let mut animation_player = match animation_player.get_mut(animation_entity_link.0) {
+        Ok(player) => player,
+        _ => {
+            error!("No animation player found for player character");
+            return;
+        }
+    };
 
-        if has_horizontal_movement {
-            for mut model in &mut model_query {
-                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
-            }
+    let horizontal_velocity = Vec3 {
+        y: 0.,
+        ..velocity.0
+    };
+    let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
+    let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+
+    if is_in_air {
+        animation_player
+            .play(animations.character_running.clone_weak())
+            .repeat();
+    } else if has_horizontal_movement {
+        animation_player
+            .play(animations.character_walking.clone_weak())
+            .repeat();
+    } else {
+        animation_player
+            .play(animations.character_idle.clone_weak())
+            .repeat();
+    }
+
+    if has_horizontal_movement {
+        for mut model in &mut model_query {
+            model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+        }
+    }
+}
+
+#[derive(Component)]
+pub struct AnimationEntityLink(pub Entity);
+
+/// Source: <https://github.com/bevyengine/bevy/discussions/5564>
+fn get_top_parent(mut curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
+    loop {
+        if let Ok(parent) = parent_query.get(curr_entity) {
+            curr_entity = parent.get();
+        } else {
+            break;
+        }
+    }
+    curr_entity
+}
+
+pub fn link_animations(
+    player_query: Query<Entity, Added<AnimationPlayer>>,
+    parent_query: Query<&Parent>,
+    animations_entity_link_query: Query<&AnimationEntityLink>,
+    mut commands: Commands,
+) {
+    for entity in player_query.iter() {
+        let top_entity = get_top_parent(entity, &parent_query);
+
+        if animations_entity_link_query.get(top_entity).is_ok() {
+            warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
+        } else {
+            commands
+                .entity(top_entity)
+                .insert(AnimationEntityLink(entity.clone()));
         }
     }
 }

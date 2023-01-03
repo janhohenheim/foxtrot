@@ -8,6 +8,9 @@ mod game_control;
 
 pub struct ActionsPlugin;
 
+#[derive(Resource, Default)]
+pub struct ActionsFrozen;
+
 // This plugin listens for keyboard input and converts the input into Actions
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
@@ -29,7 +32,12 @@ pub fn set_movement_actions(
     mut actions: ResMut<Actions>,
     keyboard_input: Res<Input<KeyCode>>,
     mut mouse_input: EventReader<MouseMotion>,
+    actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
+    if actions_frozen.is_some() {
+        return;
+    }
+
     let player_movement = Vec2::new(
         get_movement(GameControl::Right, &keyboard_input)
             - get_movement(GameControl::Left, &keyboard_input),

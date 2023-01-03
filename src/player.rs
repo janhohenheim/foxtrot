@@ -93,6 +93,7 @@ impl Plugin for PlayerPlugin {
         app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
+                    .with_system(link_animations)
                     .with_system(update_grounded.label("update_grounded"))
                     .with_system(
                         apply_gravity
@@ -305,40 +306,82 @@ fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>)
 
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<(&CharacterVelocity, &Grounded), With<Player>>,
+    player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink), With<Player>>,
     mut model_query: Query<&mut Transform, With<PlayerModel>>,
     animations: Res<AnimationAssets>,
 ) {
-    let mut animation_player = match animation_player.get_single_mut() {
-        Ok(player) => player,
-        _ => return,
-    };
-    for (velocity, grounded) in &player_query {
-        let horizontal_velocity = Vec3 {
-            y: 0.,
-            ..velocity.0
-        };
-        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
-        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
-
-        if is_in_air {
-            animation_player
-                .play(animations.character_running.clone_weak())
-                .repeat();
-        } else if has_horizontal_movement {
-            animation_player
-                .play(animations.character_walking.clone_weak())
-                .repeat();
-        } else {
-            animation_player
-                .play(animations.character_idle.clone_weak())
-                .repeat();
+    let (velocity, grounded, animation_entity_link) = match player_query.iter().next() {
+        Some(player) => player,
+        _ => {
+            return;
         }
+    };
+    let mut animation_player = match animation_player.get_mut(animation_entity_link.0) {
+        Ok(player) => player,
+        _ => {
+            error!("No animation player found for player character");
+            return;
+        }
+    };
 
-        if has_horizontal_movement {
-            for mut model in &mut model_query {
-                model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
-            }
+    let horizontal_velocity = Vec3 {
+        y: 0.,
+        ..velocity.0
+    };
+    let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
+    let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+
+    if is_in_air {
+        animation_player
+            .play(animations.character_running.clone_weak())
+            .repeat();
+    } else if has_horizontal_movement {
+        animation_player
+            .play(animations.character_walking.clone_weak())
+            .repeat();
+    } else {
+        animation_player
+            .play(animations.character_idle.clone_weak())
+            .repeat();
+    }
+
+    if has_horizontal_movement {
+        for mut model in &mut model_query {
+            model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+        }
+    }
+}
+
+#[derive(Component)]
+pub struct AnimationEntityLink(pub Entity);
+
+/// Source: <https://github.com/bevyengine/bevy/discussions/5564>
+fn get_top_parent(mut curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
+    loop {
+        if let Ok(parent) = parent_query.get(curr_entity) {
+            curr_entity = parent.get();
+        } else {
+            break;
+        }
+    }
+    curr_entity
+}
+
+pub fn link_animations(
+    player_query: Query<Entity, Added<AnimationPlayer>>,
+    parent_query: Query<&Parent>,
+    animations_entity_link_query: Query<&AnimationEntityLink>,
+    mut commands: Commands,
+) {
+    for entity in player_query.iter() {
+        let top_entity = get_top_parent(entity, &parent_query);
+
+        if animations_entity_link_query.get(top_entity).is_ok() {
+            warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
+        } else {
+            commands
+                .entity(top_entity)
+                .insert(AnimationEntityLink(entity.clone()));
         }
     }
 }

@@ -1,3 +1,4 @@
+use crate::actions::ActionsFrozen;
 pub use crate::dialog::resources::{ActiveConditions, DialogEvent};
 use crate::dialog::resources::{CurrentDialog, Dialog, DialogId, NextPage};
 use crate::GameState;
@@ -52,6 +53,7 @@ fn set_current_dialog(
             current_page: starting_page,
             last_choice: None,
         });
+        commands.init_resource::<ActionsFrozen>();
     }
 }
 
@@ -119,6 +121,7 @@ fn present_choices(
         NextPage::Exit => {
             if ui.button("Exit").clicked() {
                 commands.remove_resource::<CurrentDialog>();
+                commands.remove_resource::<ActionsFrozen>();
             }
         }
     }

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::dialog::{DialogId, DialogTarget};
 use crate::loading::{MaterialAssets, SceneAssets};
 use crate::GameState;
 use bevy::gltf::Gltf;
@@ -59,6 +60,11 @@ fn setup(
             translation: Vec3::new(0.0, 2.0, 0.0),
             rotation: Quat::from_rotation_x(-TAU / 8.),
             ..default()
+        })
+        .spawn_character(Transform {
+            translation: Vec3::new(-5., 0.5, 0.),
+            scale: Vec3::splat(0.7),
+            rotation: Quat::from_rotation_y(TAU / 4.),
         });
 }
 
@@ -172,6 +178,51 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
             },
             Name::new("Light"),
         ));
+        self
+    }
+
+    fn spawn_character(&mut self, transform: Transform) -> &mut Self {
+        let model = self
+            .gltf
+            .get(&self.scenes.character)
+            .expect("Failed to load npc model");
+
+        let height = 1.0;
+        let radius = 0.4;
+        self.commands
+            .spawn((
+                PbrBundle {
+                    transform,
+                    ..default()
+                },
+                Name::new("NPC"),
+                RigidBody::Fixed,
+                Collider::capsule_y(height / 2., radius),
+            ))
+            .with_children(|parent| {
+                parent.spawn((
+                    DialogTarget {
+                        dialog_id: DialogId::new("sample"),
+                    },
+                    Name::new("NPC Dialog Collider"),
+                    Collider::cylinder(height / 2., radius * 5.),
+                    Sensor,
+                    ActiveEvents::COLLISION_EVENTS,
+                    ActiveCollisionTypes::KINEMATIC_STATIC,
+                ));
+                parent.spawn((
+                    SceneBundle {
+                        scene: model.scenes[0].clone(),
+                        transform: Transform {
+                            translation: Vec3::new(0., -height, 0.),
+                            scale: Vec3::splat(0.02),
+                            ..default()
+                        },
+                        ..default()
+                    },
+                    Name::new("NPC Model"),
+                ));
+            });
         self
     }
 }

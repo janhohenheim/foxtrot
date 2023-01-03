@@ -205,7 +205,7 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
                         dialog_id: DialogId::new("sample"),
                     },
                     Name::new("NPC Dialog Collider"),
-                    Collider::capsule_y(height / 2., radius * 3.),
+                    Collider::cylinder(height / 2., radius * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
                     ActiveCollisionTypes::KINEMATIC_STATIC,

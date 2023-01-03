@@ -73,7 +73,7 @@ fn show_dialog(
             ui.label(current_page.text.clone());
             present_choices(
                 ui,
-                commands,
+                &mut commands,
                 &mut current_dialog,
                 &mut active_conditions,
                 current_page.next_page,
@@ -83,7 +83,7 @@ fn show_dialog(
 
 fn present_choices(
     ui: &mut egui::Ui,
-    mut commands: Commands,
+    mut commands: &mut Commands,
     current_dialog: &mut CurrentDialog,
     active_conditions: &mut ActiveConditions,
     next_page: NextPage,
@@ -100,6 +100,13 @@ fn present_choices(
                     && ui.button(choice.text.clone()).clicked()
                 {
                     active_conditions.0.insert(choice_id.clone());
+                    handle_choice(
+                        ui,
+                        commands,
+                        current_dialog,
+                        active_conditions,
+                        choice.next_page.clone(),
+                    );
                 }
             }
         }
@@ -112,6 +119,28 @@ fn present_choices(
                 commands.remove_resource::<CurrentDialog>();
             }
         }
+    }
+}
+
+fn handle_choice(
+    ui: &mut egui::Ui,
+    commands: &mut Commands,
+    current_dialog: &mut CurrentDialog,
+    active_conditions: &mut ActiveConditions,
+    next_page: NextPage,
+) {
+    match next_page {
+        NextPage::Continue(page_id) => {
+            current_dialog.current_page = page_id.clone();
+        }
+        NextPage::Choice(ref _choices) => {
+            present_choices(ui, commands, current_dialog, active_conditions, next_page)
+        }
+        NextPage::SameAs(page_id) => {
+            let next_page = current_dialog.fetch_page(&page_id).next_page;
+            handle_choice(ui, commands, current_dialog, active_conditions, next_page)
+        }
+        NextPage::Exit => commands.remove_resource::<CurrentDialog>(),
     }
 }
 

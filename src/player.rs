@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use components::*;
 pub use components::{Player, PlayerSensor};
+use serde::{Deserialize, Serialize};
 
 mod components;
 
@@ -291,8 +292,15 @@ fn play_animations(
     }
 }
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct AnimationEntityLink(pub Entity);
+
+impl Default for AnimationEntityLink {
+    fn default() -> Self {
+        Self(Entity::from_raw(0))
+    }
+}
 
 /// Source: <https://github.com/bevyengine/bevy/discussions/5564>
 fn get_top_parent(mut curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {

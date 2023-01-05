@@ -5,6 +5,7 @@ use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
@@ -24,7 +25,8 @@ impl Plugin for DialogPlugin {
     }
 }
 
-#[derive(Component, Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct DialogTarget {
     pub dialog_id: DialogId,
 }

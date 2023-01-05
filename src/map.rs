@@ -11,12 +11,18 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup));
+        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(load_scene));
     }
 }
 
 const GRASS_SIZE: f32 = 10.;
 
+fn load_scene(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(DynamicSceneBundle {
+        scene: asset_server.load("scenes/demo.scn.ron"),
+        ..default()
+    });
+}
 fn setup(
     commands: Commands,
     meshes: ResMut<Assets<Mesh>>,

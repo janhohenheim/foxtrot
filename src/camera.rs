@@ -7,16 +7,19 @@ use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::na::Vector3;
 use bevy_rapier3d::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 const MAX_DISTANCE: f32 = 10.0;
 
 pub struct CameraPlugin;
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct UiCamera;
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct PlayerCamera;
 
 impl Plugin for CameraPlugin {

@@ -17,6 +17,7 @@ default = [
 
 editor = [
     "dep:bevy_editor_pls",
+    "bevy/filesystem_watcher"
 ]
 
 dynamic = [

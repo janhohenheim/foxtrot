@@ -15,9 +15,8 @@ pub struct ActionsFrozen;
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Actions>().add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(set_movement_actions),
-        );
+        app.init_resource::<Actions>()
+            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
     }
 }
 
@@ -25,11 +24,12 @@ impl Plugin for ActionsPlugin {
 pub struct Actions {
     pub player_movement: Option<Vec2>,
     pub camera_movement: Option<Vec2>,
-    pub editor_toggle: bool,
+    pub toggle_editor: bool,
+    pub interact: bool,
     pub jump: bool,
 }
 
-pub fn set_movement_actions(
+pub fn set_actions(
     mut actions: ResMut<Actions>,
     keyboard_input: Res<Input<ScanCode>>,
     mut mouse_input: EventReader<MouseMotion>,
@@ -54,6 +54,8 @@ pub fn set_movement_actions(
         actions.player_movement = None;
     }
     actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+    actions.interact = get_movement(GameControl::Interact, &keyboard_input) > 0.5;
+    actions.toggle_editor = get_movement(GameControl::ToggleEditor, &keyboard_input) > 0.5;
 
     actions.camera_movement = None;
     for event in mouse_input.iter() {

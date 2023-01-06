@@ -6,6 +6,8 @@ pub enum GameControl {
     Left,
     Right,
     Jump,
+    ToggleEditor,
+    Interact,
 }
 
 macro_rules! generate_bindings {
@@ -70,5 +72,11 @@ generate_bindings! {
     ],
     GameControl::Jump => [
         ScanCode(49), // Space
+    ],
+    GameControl::ToggleEditor => [
+        ScanCode(12), // Q
+    ],
+    GameControl::Interact => [
+        ScanCode(14), // E
     ],
 }

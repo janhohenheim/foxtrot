@@ -25,19 +25,22 @@ impl Plugin for ActionsPlugin {
 pub struct Actions {
     pub player_movement: Option<Vec2>,
     pub camera_movement: Option<Vec2>,
+    pub editor_toggle: bool,
     pub jump: bool,
 }
 
 pub fn set_movement_actions(
     mut actions: ResMut<Actions>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<Input<ScanCode>>,
     mut mouse_input: EventReader<MouseMotion>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
     if actions_frozen.is_some() {
         return;
     }
-
+    if let Some(key) = keyboard_input.get_pressed().next() {
+        info!("{}", key.0);
+    }
     let player_movement = Vec2::new(
         get_movement(GameControl::Right, &keyboard_input)
             - get_movement(GameControl::Left, &keyboard_input),

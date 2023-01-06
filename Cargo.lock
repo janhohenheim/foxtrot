@@ -749,6 +749,7 @@ dependencies = [
  "log",
  "nalgebra",
  "rapier3d",
+ "serde",
 ]
 
 [[package]]
@@ -1062,6 +1063,9 @@ name = "bit-vec"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bitflags"
@@ -2552,6 +2556,7 @@ dependencies = [
  "num-complex",
  "num-rational 0.4.1",
  "num-traits",
+ "serde",
  "simba",
  "typenum",
 ]
@@ -2750,6 +2755,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ae39348c8bc5fbd7f40c727a9925f03517afd2ab27d46702108b6a7e5414c19"
 dependencies = [
  "num-traits",
+ "serde",
 ]
 
 [[package]]
@@ -3000,6 +3006,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "rustc-hash",
+ "serde",
  "simba",
  "slab",
  "smallvec",
@@ -3150,6 +3157,7 @@ dependencies = [
  "parry3d",
  "rayon",
  "rustc-hash",
+ "serde",
  "simba",
  "vec_map",
 ]

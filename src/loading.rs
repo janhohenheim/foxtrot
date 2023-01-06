@@ -19,6 +19,7 @@ impl Plugin for LoadingPlugin {
                 .with_collection::<MaterialAssets>()
                 .with_collection::<SceneAssets>()
                 .with_collection::<AnimationAssets>()
+                .with_collection::<DynamicSceneAssets>()
                 .continue_to_state(GameState::Menu),
         );
     }
@@ -54,6 +55,12 @@ pub struct SceneAssets {
     #[asset(path = "scenes/Fox.glb")]
     /// Source: <https://opengameart.org/content/fox-and-shiba>
     pub character: Handle<Gltf>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct DynamicSceneAssets {
+    #[asset(path = "scenes/demo.scn.ron")]
+    pub demo: Handle<DynamicScene>,
 }
 
 #[derive(AssetCollection, Resource)]

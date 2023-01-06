@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy::reflect::erased_serde::__private::serde::{Deserialize, Serialize};
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct DialogEvent(pub DialogId);

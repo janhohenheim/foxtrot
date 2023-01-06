@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::dialog::{DialogId, DialogTarget};
-use crate::loading::{MaterialAssets, SceneAssets};
+use crate::loading::{DynamicSceneAssets, MaterialAssets, SceneAssets};
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*;
@@ -11,15 +11,15 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(load_scene));
+        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup));
     }
 }
 
 const GRASS_SIZE: f32 = 10.;
 
-fn load_scene(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
     commands.spawn(DynamicSceneBundle {
-        scene: asset_server.load("scenes/demo.scn.ron"),
+        scene: scenes.demo.clone(),
         ..default()
     });
 }

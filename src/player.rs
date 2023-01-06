@@ -22,7 +22,16 @@ pub struct PlayerPlugin;
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
+        app.register_type::<AnimationEntityLink>()
+            .register_type::<components::Timer>()
+            .register_type::<components::PlayerModel>()
+            .register_type::<components::Player>()
+            .register_type::<components::PlayerSensor>()
+            .register_type::<components::JumpState>()
+            .register_type::<components::Grounded>()
+            .register_type::<components::Jump>()
+            .register_type::<components::CharacterVelocity>()
+            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(link_animations)

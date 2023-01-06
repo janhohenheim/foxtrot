@@ -44,6 +44,7 @@ features = [
     "debug-render",
     "simd-nightly",
     "parallel",
+    "serde-serialize",
 ]
 
 [target."cfg(target_os = \"linux\")".dependencies]

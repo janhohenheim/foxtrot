@@ -24,7 +24,9 @@ pub struct PlayerCamera;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(spawn_ui_camera)
+        app.register_type::<UiCamera>()
+            .register_type::<PlayerCamera>()
+            .add_startup_system(spawn_ui_camera)
             // Enables the system that synchronizes your `Transform`s and `LookTransform`s.
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(

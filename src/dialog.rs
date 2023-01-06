@@ -16,6 +16,8 @@ impl Plugin for DialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
             .init_resource::<ActiveConditions>()
+            .register_type::<DialogTarget>()
+            .register_type::<resources::DialogId>()
             .add_event::<DialogEvent>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)

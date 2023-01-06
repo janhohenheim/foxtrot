@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_egui::egui::{Align, Color32, ScrollArea};
 use bevy_egui::{egui, EguiContext};
 
 use crate::actions::{Actions, ActionsFrozen};
@@ -51,7 +52,7 @@ fn handle_toggle(
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
     windows: Res<Windows>,
-    mut scene_editor_status: ResMut<SceneEditorStatus>,
+    scene_editor_status: Res<SceneEditorStatus>,
 ) {
     if !scene_editor_status.active {
         return;
@@ -62,10 +63,25 @@ fn show_editor(
         .title_bar(false)
         .auto_sized()
         .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
-        .show(
-            egui_context.ctx_mut(),
-            |ui| {
-                if ui.button("foo").clicked() {}
-            },
-        );
+        .show(egui_context.ctx_mut(), |ui| {
+            ScrollArea::vertical()
+                .max_height(200.0)
+                .auto_shrink([true; 2])
+                .show(ui, |ui| {
+                    ui.vertical(|ui| {
+                        for item in 1..=50 {
+                            let item_to_track = 12;
+                            let track_item = false;
+                            let item_to_track_align = Some(Align::Center);
+                            if track_item && item == item_to_track {
+                                let response = ui.button(format!("This is item {item}"));
+                                response.scroll_to_me(item_to_track_align);
+                                if response.clicked() {}
+                            } else {
+                                if ui.button(format!("This is item {item}")).clicked() {};
+                            }
+                        }
+                    });
+                });
+        });
 }

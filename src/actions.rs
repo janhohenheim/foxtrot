@@ -35,12 +35,11 @@ pub fn set_actions(
     mut mouse_input: EventReader<MouseMotion>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
+    actions.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
     if actions_frozen.is_some() {
         return;
     }
-    if let Some(key) = keyboard_input.get_pressed().next() {
-        info!("{}", key.0);
-    }
+
     let player_movement = Vec2::new(
         get_movement(GameControl::Right, &keyboard_input)
             - get_movement(GameControl::Left, &keyboard_input),
@@ -54,8 +53,7 @@ pub fn set_actions(
         actions.player_movement = None;
     }
     actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
-    actions.interact = get_movement(GameControl::Interact, &keyboard_input) > 0.5;
-    actions.toggle_editor = get_movement(GameControl::ToggleEditor, &keyboard_input) > 0.5;
+    actions.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
     actions.camera_movement = None;
     for event in mouse_input.iter() {

@@ -14,7 +14,7 @@ macro_rules! generate_bindings {
     ( $( $game_control:pat => $key_codes:expr, )+ ) => {
         impl GameControl {
             #[allow(dead_code)]
-            fn just_released(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
+            pub fn just_released(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_just_released($key_codes),
@@ -23,7 +23,7 @@ macro_rules! generate_bindings {
             }
 
             #[allow(dead_code)]
-            fn just_pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
+            pub fn just_pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_just_pressed($key_codes),
@@ -31,7 +31,7 @@ macro_rules! generate_bindings {
                 }
             }
 
-            fn pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
+            pub fn pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_pressed($key_codes),

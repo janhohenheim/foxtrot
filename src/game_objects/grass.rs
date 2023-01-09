@@ -1,4 +1,4 @@
-use crate::game_objects::{GameObjectsRetriever, Objects};
+use crate::game_objects::{GameObjectsRetriever, Object};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
@@ -22,8 +22,8 @@ impl<'a> GameObjectsRetriever<'a> {
         (
             Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
             PbrBundle {
-                mesh: self.game_objects.meshes[&Objects::Grass].clone(),
-                material: self.game_objects.materials[&Objects::Grass].clone(),
+                mesh: self.game_objects.meshes[&Object::Grass].clone(),
+                material: self.game_objects.materials[&Object::Grass].clone(),
                 transform,
                 ..default()
             },

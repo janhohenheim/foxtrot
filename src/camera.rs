@@ -105,20 +105,31 @@ fn keep_line_of_sight(
         Some(transform) => transform,
         None => return,
     };
+    let location = get_raycast_location(player, camera.as_ref(), &rapier_context, MAX_DISTANCE);
 
-    let origin = player.translation;
-    let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
-    let max_toi = MAX_DISTANCE;
+    camera.translation = location;
+}
+
+pub fn get_raycast_location(
+    origin: &Transform,
+    target: &Transform,
+    rapier_context: &Res<RapierContext>,
+    max_distance: f32,
+) -> Vec3 {
+    let origin = origin.translation;
+    let direction = target.translation.try_normalize().unwrap_or(Vect::Z);
+    let max_toi = max_distance;
     let solid = true;
     let mut filter = QueryFilter::only_fixed();
-    filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
+    filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS | QueryFilterFlags::EXCLUDE_KINEMATIC;
 
     let min_distance_to_objects = 0.001;
     let distance = rapier_context
         .cast_ray(origin, direction, max_toi, solid, filter)
         .map(|(_entity, toi)| toi - min_distance_to_objects)
-        .unwrap_or(MAX_DISTANCE);
-    camera.translation = direction * distance;
+        .unwrap_or(max_distance);
+
+    direction * distance
 }
 
 fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {

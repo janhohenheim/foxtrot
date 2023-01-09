@@ -1,10 +1,8 @@
-use crate::loading::{MaterialAssets, SceneAssets};
-use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 mod grass;
+use strum_macros::EnumIter;
 
 pub struct GameObjectsPlugin;
 
@@ -14,16 +12,16 @@ impl Plugin for GameObjectsPlugin {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
+#[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-pub enum Objects {
+pub enum Object {
     Grass,
 }
 
 #[derive(Resource)]
 pub struct GameObjects {
-    meshes: HashMap<Objects, Handle<Mesh>>,
-    materials: HashMap<Objects, Handle<StandardMaterial>>,
+    meshes: HashMap<Object, Handle<Mesh>>,
+    materials: HashMap<Object, Handle<StandardMaterial>>,
 }
 
 #[derive(Resource)]
@@ -44,6 +42,14 @@ where
     }
 }
 
+impl<'a> GameObjectsRetriever<'a> {
+    pub fn get(&self, object: &Object, transform: Transform) -> impl Bundle {
+        match *object {
+            Object::Grass => self.grass(transform),
+        }
+    }
+}
+
 fn setup_game_objects(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -51,11 +57,11 @@ fn setup_game_objects(
     mut material_assets: ResMut<Assets<StandardMaterial>>,
 ) {
     let mut meshes = HashMap::new();
-    meshes.insert(Objects::Grass, grass::create_mesh(&mut mesh_assets));
+    meshes.insert(Object::Grass, grass::create_mesh(&mut mesh_assets));
 
     let mut materials = HashMap::new();
     materials.insert(
-        Objects::Grass,
+        Object::Grass,
         grass::create_material(&asset_server, &mut material_assets),
     );
 

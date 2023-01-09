@@ -15,10 +15,6 @@ pub struct SceneEditorStatus {
     active: bool,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct ColliderCreationData {}
-
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
         #[cfg(feature = "editor")]

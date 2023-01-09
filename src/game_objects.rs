@@ -23,6 +23,7 @@ pub enum Objects {
 #[derive(Resource)]
 pub struct GameObjects {
     meshes: HashMap<Objects, Handle<Mesh>>,
+    materials: HashMap<Objects, Handle<StandardMaterial>>,
 }
 
 #[derive(Resource)]
@@ -43,8 +44,20 @@ where
     }
 }
 
-fn setup_game_objects(mut commands: Commands, mut mesh_assets: ResMut<Assets<Mesh>>) {
+fn setup_game_objects(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut mesh_assets: ResMut<Assets<Mesh>>,
+    mut material_assets: ResMut<Assets<StandardMaterial>>,
+) {
     let mut meshes = HashMap::new();
     meshes.insert(Objects::Grass, grass::create_mesh(&mut mesh_assets));
-    commands.insert_resource(GameObjects { meshes });
+
+    let mut materials = HashMap::new();
+    materials.insert(
+        Objects::Grass,
+        grass::create_material(&asset_server, &mut material_assets),
+    );
+
+    commands.insert_resource(GameObjects { meshes, materials });
 }

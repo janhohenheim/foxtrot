@@ -5,19 +5,25 @@ use bevy_rapier3d::prelude::*;
 pub const GRASS_SIZE: f32 = 10.;
 pub const PATH: &str = "materials/grass.png";
 
-pub fn create_mesh(meshes: &mut ResMut<Assets<Mesh>>) -> Handle<Mesh> {
-    meshes.add(Mesh::from(shape::Box::new(GRASS_SIZE, 0., GRASS_SIZE)))
+pub fn create_mesh(assets: &mut ResMut<Assets<Mesh>>) -> Handle<Mesh> {
+    assets.add(Mesh::from(shape::Box::new(GRASS_SIZE, 0., GRASS_SIZE)))
+}
+
+pub fn create_material(
+    asset_server: &Res<AssetServer>,
+    assets: &mut ResMut<Assets<StandardMaterial>>,
+) -> Handle<StandardMaterial> {
+    let image: Handle<Image> = asset_server.load(PATH);
+    assets.add(image.into())
 }
 
 impl<'a> GameObjectsRetriever<'a> {
     pub fn grass(&self, transform: Transform) -> impl Bundle {
-        let material = self.asset_server.load(PATH);
-        let Vec3 { x, y, z } = transform.translation;
         (
-            Collider::cuboid(x / 2., y / 2., z / 2.),
+            Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
             PbrBundle {
                 mesh: self.game_objects.meshes[&Objects::Grass].clone(),
-                material,
+                material: self.game_objects.materials[&Objects::Grass].clone(),
                 transform,
                 ..default()
             },

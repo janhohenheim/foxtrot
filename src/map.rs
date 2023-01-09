@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
 use crate::dialog::{DialogId, DialogTarget};
-use crate::loading::{DynamicSceneAssets, MaterialAssets, SceneAssets};
+use crate::game_objects::GameObjects;
+use crate::loading::{DynamicSceneAssets, SceneAssets};
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*;
@@ -24,30 +25,29 @@ fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
     });
 }
 fn setup(
-    commands: Commands,
-    meshes: ResMut<Assets<Mesh>>,
-    materials: Res<MaterialAssets>,
+    mut commands: Commands,
     scenes: Res<SceneAssets>,
     gltf: Res<Assets<Gltf>>,
+    game_objects: Res<GameObjects>,
+    asset_server: Res<AssetServer>,
 ) {
-    let mut physics_assets = PhysicsAssets {
-        commands,
-        meshes,
-        materials,
-        scenes,
-        gltf,
-    };
     let grass_x = 10;
     let grass_z = 10;
+    let game_objects = game_objects.retrieve_with(asset_server);
     for x in 0..grass_x {
         for z in 0..grass_z {
-            physics_assets.spawn_grass(Transform::from_xyz(
+            commands.spawn(game_objects.grass(Transform::from_xyz(
                 GRASS_SIZE * (-grass_x / 2 + x) as f32,
                 0.,
                 GRASS_SIZE * (-grass_z / 2 + z) as f32,
-            ));
+            )));
         }
     }
+    let mut physics_assets = PhysicsAssets {
+        commands,
+        scenes,
+        gltf,
+    };
     let wall_width = 1.;
     let scale = 3.;
     physics_assets
@@ -76,8 +76,6 @@ fn setup(
 
 struct PhysicsAssets<'a, 'w, 's> {
     commands: Commands<'w, 's>,
-    meshes: ResMut<'a, Assets<Mesh>>,
-    materials: Res<'a, MaterialAssets>,
     scenes: Res<'a, SceneAssets>,
     gltf: Res<'a, Assets<Gltf>>,
 }
@@ -135,23 +133,6 @@ impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
                     ));
                 });
         }
-        self
-    }
-
-    fn spawn_grass(&mut self, transform: Transform) -> &mut Self {
-        let x = GRASS_SIZE * transform.scale.x;
-        let y = 0.;
-        let z = GRASS_SIZE * transform.scale.z;
-        self.commands.spawn((
-            Collider::cuboid(x / 2., y / 2., z / 2.),
-            PbrBundle {
-                mesh: self.meshes.add(Mesh::from(shape::Box::new(x, y, z))),
-                material: self.materials.grass.clone(),
-                transform,
-                ..default()
-            },
-            Name::new("Grass"),
-        ));
         self
     }
 

@@ -6,6 +6,7 @@ mod audio;
 mod camera;
 mod dev;
 mod dialog;
+mod game_objects;
 mod interactions_ui;
 mod loading;
 mod map;
@@ -20,6 +21,7 @@ use crate::audio::InternalAudioPlugin;
 use crate::camera::CameraPlugin;
 use crate::dev::DevPlugin;
 use crate::dialog::DialogPlugin;
+use crate::game_objects::GameObjectsPlugin;
 use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
@@ -59,6 +61,7 @@ impl Plugin for GamePlugin {
             .add_plugin(SceneEditorPlugin)
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
+            .add_plugin(GameObjectsPlugin)
             .add_plugin(DevPlugin);
     }
 }

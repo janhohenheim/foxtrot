@@ -43,7 +43,7 @@ fn setup(scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>, mut spawner: EventWr
     let scale = 3.;
     spawner.send(SpawnEvent {
         object: GameObject::Doorway,
-        transform: Transform::from_scale(Vec3::splat(scale)),
+        transform: default(),
     });
     /*
     let wall_width = 1.;

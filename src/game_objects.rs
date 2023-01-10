@@ -15,48 +15,48 @@ impl Plugin for GameObjectsPlugin {
 
 #[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-pub enum Object {
+pub enum GameObject {
     Grass,
 }
 
 #[derive(Resource)]
-pub struct GameObjects {
-    meshes: HashMap<Object, Handle<Mesh>>,
-    materials: HashMap<Object, Handle<StandardMaterial>>,
+pub struct GameObjectSpawner {
+    meshes: HashMap<GameObject, Handle<Mesh>>,
+    materials: HashMap<GameObject, Handle<StandardMaterial>>,
 }
 
 #[derive(Resource)]
-pub struct GameObjectsRetriever<'w, 's, 'a> {
-    game_objects: &'a GameObjects,
-    asset_server: &'a Res<'a, AssetServer>,
+pub struct PrimedGameObjectSpawner<'w, 's, 'a> {
+    handles: &'a GameObjectSpawner,
+    assets: &'a Res<'a, AssetServer>,
     commands: &'a mut Commands<'w, 's>,
 }
 
-impl<'a, 'b> GameObjects
+impl<'a, 'b> GameObjectSpawner
 where
     'b: 'a,
 {
-    pub fn retrieve_with<'w, 's>(
+    pub fn attach<'w, 's>(
         &'b self,
         asset_server: &'a Res<'a, AssetServer>,
         commands: &'a mut Commands<'w, 's>,
-    ) -> GameObjectsRetriever<'w, 's, 'a> {
-        GameObjectsRetriever {
-            game_objects: self,
-            asset_server,
+    ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
+        PrimedGameObjectSpawner {
+            handles: self,
+            assets: asset_server,
             commands,
         }
     }
 }
 
-impl<'w, 's, 'a> GameObjectsRetriever<'w, 's, 'a> {
+impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn spawn(
         &'a mut self,
-        object: &Object,
+        object: &GameObject,
         transform: Transform,
     ) -> EntityCommands<'w, 's, 'a> {
         match *object {
-            Object::Grass => self.spawn_grass(transform),
+            GameObject::Grass => self.spawn_grass(transform),
         }
     }
 }
@@ -68,13 +68,13 @@ fn setup_game_objects(
     mut material_assets: ResMut<Assets<StandardMaterial>>,
 ) {
     let mut meshes = HashMap::new();
-    meshes.insert(Object::Grass, grass::create_mesh(&mut mesh_assets));
+    meshes.insert(GameObject::Grass, grass::create_mesh(&mut mesh_assets));
 
     let mut materials = HashMap::new();
     materials.insert(
-        Object::Grass,
+        GameObject::Grass,
         grass::create_material(&asset_server, &mut material_assets),
     );
 
-    commands.insert_resource(GameObjects { meshes, materials });
+    commands.insert_resource(GameObjectSpawner { meshes, materials });
 }

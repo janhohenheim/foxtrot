@@ -1,4 +1,4 @@
-use crate::game_objects::{GameObjectsRetriever, Object};
+use crate::game_objects::{PrimedGameObjectSpawner, GameObject};
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -18,13 +18,13 @@ pub fn create_material(
     assets.add(image.into())
 }
 
-impl<'w, 's, 'a> GameObjectsRetriever<'w, 's, 'a> {
+impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn spawn_grass(&'a mut self, transform: Transform) -> EntityCommands<'w, 's, 'a> {
         self.commands.spawn((
             Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
             PbrBundle {
-                mesh: self.game_objects.meshes[&Object::Grass].clone(),
-                material: self.game_objects.materials[&Object::Grass].clone(),
+                mesh: self.handles.meshes[&GameObject::Grass].clone(),
+                material: self.handles.materials[&GameObject::Grass].clone(),
                 transform,
                 ..default()
             },

@@ -1,6 +1,6 @@
 use crate::actions::{Actions, ActionsFrozen};
 use crate::camera::{get_raycast_location, PlayerCamera};
-use crate::game_objects::{GameObjects, Object};
+use crate::game_objects::{GameObjectSpawner, GameObject};
 use crate::player::Player;
 use crate::GameState;
 use bevy::prelude::*;
@@ -19,7 +19,7 @@ pub struct SceneEditorStatus {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct SpawnEvent(pub Object);
+struct SpawnEvent(pub GameObject);
 
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
@@ -77,8 +77,8 @@ fn show_editor(
                 .auto_shrink([true; 2])
                 .show(ui, |ui| {
                     ui.vertical(|ui| {
-                        for item in Object::iter() {
-                            let item_to_track = Object::Grass;
+                        for item in GameObject::iter() {
+                            let item_to_track = GameObject::Grass;
                             let track_item = false;
                             let item_to_track_align = Some(Align::Center);
                             let response = ui.button(format!("{item:?}"));
@@ -97,7 +97,7 @@ fn show_editor(
 fn spawn_objects(
     mut commands: Commands,
     mut spawn_events: EventReader<SpawnEvent>,
-    game_objects: Res<GameObjects>,
+    spawner: Res<GameObjectSpawner>,
     asset_server: Res<AssetServer>,
     camera_query: Query<&Transform, (With<PlayerCamera>, Without<Player>)>,
     player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
@@ -122,8 +122,8 @@ fn spawn_objects(
             get_raycast_location(&origin, &direction, &rapier_context, MAX_SPAWN_DISTANCE)
                 + offset_to_not_spawn_in_ground;
 
-        let mut game_objects = game_objects.retrieve_with(&asset_server, &mut commands);
-        game_objects.spawn(&object.0, Transform::from_translation(location));
-        //commands.spawn(bundle);
+        spawner
+            .attach(&asset_server, &mut commands)
+            .spawn(&object.0, Transform::from_translation(location));
     }
 }

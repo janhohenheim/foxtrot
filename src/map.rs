@@ -30,30 +30,28 @@ fn setup(mut spawner: EventWriter<SpawnEvent>) {
 
     for x in 0..grass_x {
         for z in 0..grass_z {
-            spawner.send(SpawnEvent {
-                object: GameObject::Grass,
-                transform: Transform::from_xyz(
+            SpawnEventSender::new(&mut spawner)
+                .object(GameObject::Grass)
+                .translation((
                     GRASS_SIZE * (-grass_x / 2 + x) as f32,
                     0.,
                     GRASS_SIZE * (-grass_z / 2 + z) as f32,
-                ),
-                parent: Some("Grass Container".into()),
-            });
+                ))
+                .parent("Grass Container")
+                .send();
         }
     }
 
-    let house_parent = "House";
-    SpawnEventSender::new(GameObject::Doorway)
-        .with_parent(house_parent)
-        .send(&mut spawner);
-
     let wall_width = 3.;
-    SpawnEventSender::new(GameObject::Wall)
-        .with_parent(house_parent)
-        .with_translation((0., 0., wall_width))
-        .send(&mut spawner)
-        .with_translation((0., 0., -wall_width))
-        .send(&mut spawner);
+    SpawnEventSender::new(&mut spawner)
+        .parent("House")
+        .object(GameObject::Doorway)
+        .send()
+        .object(GameObject::Wall)
+        .translation((0., 0., wall_width))
+        .send()
+        .translation((0., 0., -wall_width))
+        .send();
 
     /*
 

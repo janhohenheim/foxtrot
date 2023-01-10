@@ -1,5 +1,6 @@
 #![feature(stmt_expr_attributes)]
 #![feature(let_chains)]
+#![feature(fs_try_exists)]
 
 mod actions;
 mod audio;
@@ -14,8 +15,8 @@ mod menu;
 mod physics;
 mod player;
 mod scene_editor;
-mod world_serialization;
 mod spawning;
+mod world_serialization;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -29,8 +30,8 @@ use crate::menu::MenuPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::scene_editor::SceneEditorPlugin;
-use crate::world_serialization::WorldSerializationPlugin;
 use crate::spawning::SpawningPlugin;
+use crate::world_serialization::WorldSerializationPlugin;
 use bevy::app::App;
 use bevy::prelude::*;
 

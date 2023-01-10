@@ -2,6 +2,7 @@ use crate::actions::{Actions, ActionsFrozen};
 use crate::camera::{get_raycast_location, PlayerCamera};
 use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
+use crate::world_serialization::SaveRequest;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::{Align, ScrollArea};
@@ -58,20 +59,34 @@ fn handle_toggle(
 
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
-    windows: Res<Windows>,
     scene_editor_status: Res<SceneEditorStatus>,
     mut spawn_events: EventWriter<SpawnEvent>,
+    mut save_writes: EventWriter<SaveRequest>,
 ) {
     if !scene_editor_status.active {
         return;
     }
-    let window = windows.get_primary().unwrap();
     egui::Window::new("Scene Editor")
         .collapsible(false)
         .title_bar(false)
         .auto_sized()
-        .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
+        .fixed_pos(egui::Pos2::new(0., 0.))
         .show(egui_context.ctx_mut(), |ui| {
+            ui.heading("Level Editor");
+            let mut save = "demo".to_owned();
+            ui.horizontal(|ui| {
+                ui.label("Save name: ");
+                ui.text_edit_singleline(&mut save);
+            });
+            ui.horizontal(|ui| {
+                if ui.button("Save").clicked() {
+                    save_writes.send(SaveRequest {
+                        filename: save.clone(),
+                    })
+                }
+                if ui.button("Load").clicked() {}
+            });
+
             ScrollArea::vertical()
                 .max_height(200.0)
                 .auto_shrink([true; 2])

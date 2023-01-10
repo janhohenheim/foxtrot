@@ -1,8 +1,8 @@
 use crate::spawning::{SpawnEvent, SpawnTracker};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::path::Path;
+use std::{fs, iter};
 
 pub struct WorldSerializationPlugin;
 
@@ -15,24 +15,49 @@ impl Plugin for WorldSerializationPlugin {
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub struct SaveRequest {
-    filename: Option<String>,
+    pub filename: String,
 }
 
 fn save_world(
-    time: Res<Time>,
     mut save_requests: EventReader<SaveRequest>,
     spawn_query: Query<(&SpawnTracker, &Transform)>,
 ) {
     for save in save_requests.iter() {
-        let filename = save
-            .filename
-            .clone()
-            .unwrap_or_else(|| format!("{}", time.elapsed_seconds()));
-        let filename = format!("{filename}.ron");
-        let path = Path::new("saves").join(filename);
-        let serialized_world = serialize_world(&spawn_query);
-        fs::write(path.clone(), serialized_world)
-            .unwrap_or_else(|e| panic!("Failed to save {path:?}: {e}"));
+        let scene = save.filename.clone();
+        let valid_candidates: Vec<_> = iter::once(scene.clone())
+            .chain((1..).into_iter().map(|n| format!("{0}-{n}", scene.clone())))
+            .map(|filename| {
+                Path::new("assets")
+                    .join("scenes")
+                    .join(format!("{filename}.scn.ron"))
+            })
+            .map(|path| (path.clone(), fs::try_exists(path).ok()))
+            .take(10)
+            .filter_map(|(path, maybe_exists)| maybe_exists.map(|exists| (path, exists)))
+            .collect();
+        if valid_candidates.is_empty() {
+            error!("Failed to save scene \"{}\": Invalid path", scene);
+        } else {
+            if let Some(path) = valid_candidates
+                .iter()
+                .filter_map(|(path, exists)| (!exists).then(|| path))
+                .next()
+            {
+                let serialized_world = serialize_world(&spawn_query);
+                fs::write(path, serialized_world)
+                    .unwrap_or_else(|e| error!("Failed to save scene \"{}\": {}", scene, e));
+                info!(
+                    "Successfully saved scene \"{}\" at {}",
+                    scene,
+                    path.to_string_lossy()
+                );
+            } else {
+                error!(
+                    "Failed to save scene \"{}\": Already got too many saves with this name",
+                    scene
+                );
+            }
+        }
     }
 }
 

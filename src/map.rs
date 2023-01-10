@@ -41,22 +41,24 @@ fn setup(mut spawner: EventWriter<SpawnEvent>) {
             });
         }
     }
+
+    let house_parent = "House".to_owned();
     spawner.send(SpawnEvent {
         object: GameObject::Doorway,
         transform: default(),
-        parent: None,
+        parent: Some(house_parent.clone()),
     });
 
     let wall_width = 3.;
     spawner.send(SpawnEvent {
         object: GameObject::Wall,
         transform: Transform::from_translation(Vec3::new(0., 0., wall_width)),
-        parent: None,
+        parent: Some(house_parent.clone()),
     });
     spawner.send(SpawnEvent {
         object: GameObject::Wall,
         transform: Transform::from_translation(Vec3::new(0., 0., -wall_width)),
-        parent: None,
+        parent: Some(house_parent),
     });
     /*
 

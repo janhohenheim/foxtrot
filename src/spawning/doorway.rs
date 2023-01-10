@@ -15,7 +15,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         let gltf = self
             .gltf
             .get(&self.handles.scenes[&GameObject::Doorway])
-            .expect("Failed to load doorway scene");
+            .unwrap_or_else(|| panic!("Failed to load scene from {PATH}"));
         let mut entity_commands = self.commands.spawn(SceneBundle {
             scene: gltf.scenes[0].clone(),
             transform: Transform::from_scale(Vec3::splat(3.)),

@@ -33,7 +33,7 @@ fn setup(
     let grass_x = 10;
     let grass_z = 10;
 
-    let parent = commands
+    let grass_parent = commands
         .spawn((
             Name::new("Grass Container"),
             VisibilityBundle::default(),
@@ -49,41 +49,39 @@ fn setup(
                     0.,
                     GRASS_SIZE * (-grass_z / 2 + z) as f32,
                 ),
-                parent: Some(parent),
+                parent: Some(grass_parent),
             });
         }
     }
-    let scale = 3.;
     spawner.send(SpawnEvent {
         object: GameObject::Doorway,
         transform: default(),
         parent: None,
     });
-    /*
-    let wall_width = 1.;
 
-    physics_assets
-        .spawn_doorway(Transform::from_scale(Vec3::splat(scale)))
-        .spawn_wall(Transform {
-            translation: Vec3::new(0., 0., wall_width * scale),
-            scale: Vec3::splat(scale),
-            ..default()
-        })
-        .spawn_wall(Transform {
-            translation: Vec3::new(0., 0., -wall_width * scale),
-            scale: Vec3::splat(scale),
-            ..default()
-        })
-        .spawn_light(Transform {
-            translation: Vec3::new(0.0, 2.0, 0.0),
-            rotation: Quat::from_rotation_x(-TAU / 8.),
-            ..default()
-        })
-        .spawn_character(Transform {
-            translation: Vec3::new(-5., 0.5, 0.),
-            scale: Vec3::splat(0.7),
-            rotation: Quat::from_rotation_y(TAU / 4.),
-        });*/
+    let wall_width = 3.;
+    spawner.send(SpawnEvent {
+        object: GameObject::Wall,
+        transform: Transform::from_translation(Vec3::new(0., 0., wall_width)),
+        parent: None,
+    });
+    spawner.send(SpawnEvent {
+        object: GameObject::Wall,
+        transform: Transform::from_translation(Vec3::new(0., 0., -wall_width)),
+        parent: None,
+    });
+    /*
+
+    .spawn_light(Transform {
+        translation: Vec3::new(0.0, 2.0, 0.0),
+        rotation: Quat::from_rotation_x(-TAU / 8.),
+        ..default()
+    })
+    .spawn_character(Transform {
+        translation: Vec3::new(-5., 0.5, 0.),
+        scale: Vec3::splat(0.7),
+        rotation: Quat::from_rotation_y(TAU / 4.),
+    });*/
 }
 
 struct PhysicsAssets<'a, 'w, 's> {
@@ -93,27 +91,6 @@ struct PhysicsAssets<'a, 'w, 's> {
 }
 
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
-    fn spawn_wall(&mut self, transform: Transform) -> &mut Self {
-        if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood) {
-            self.commands
-                .spawn((
-                    SceneBundle {
-                        scene: gltf.scenes[0].clone(),
-                        transform,
-                        ..default()
-                    },
-                    Name::new("Wall Wood"),
-                ))
-                .with_children(|parent| {
-                    parent.spawn((
-                        TransformBundle::from_transform(Transform::from_xyz(-0.45, 0.5, 0.)),
-                        Collider::cuboid(0.04, 0.5, 0.5),
-                    ));
-                });
-        }
-        self
-    }
-
     fn spawn_light(&mut self, transform: Transform) -> &mut Self {
         self.commands.insert_resource(AmbientLight {
             color: Color::ORANGE_RED,

@@ -8,13 +8,22 @@ pub struct WorldSerializationPlugin;
 
 impl Plugin for WorldSerializationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SaveRequest>().add_system(save_world);
+        app.add_event::<SaveRequest>()
+            .add_event::<LoadRequest>()
+            .add_system(save_world)
+            .add_system(load_world);
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub struct SaveRequest {
+    pub filename: String,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct LoadRequest {
     pub filename: String,
 }
 
@@ -61,6 +70,36 @@ fn save_world(
     }
 }
 
+fn load_world(
+    mut commands: Commands,
+    mut load_requests: EventReader<LoadRequest>,
+    current_spawn_query: Query<Entity, (With<SpawnTracker>, With<Transform>)>,
+    mut spawn_requests: EventWriter<SpawnEvent>,
+) {
+    for load in load_requests.iter() {
+        let path = Path::new("assets")
+            .join("scenes")
+            .join(format!("{}.scn.ron", load.filename));
+        match fs::read_to_string(&path) {
+            Ok(serialized_world) => {
+                let spawn_events = deserialize_world(&serialized_world);
+                for entity in &current_spawn_query {
+                    commands.entity(entity).despawn_recursive();
+                }
+                for event in spawn_events {
+                    spawn_requests.send(event);
+                }
+                info!(
+                    "Successfully loaded scene \"{}\" from {}",
+                    load.filename,
+                    path.to_string_lossy()
+                )
+            }
+            Err(e) => error!("Failed to load scene \"{}\": {}", load.filename, e),
+        };
+    }
+}
+
 fn serialize_world(spawn_query: &Query<(&SpawnTracker, &Transform)>) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
@@ -71,4 +110,8 @@ fn serialize_world(spawn_query: &Query<(&SpawnTracker, &Transform)>) -> String {
         })
         .collect();
     ron::to_string(&objects).expect("Failed to serialize world")
+}
+
+fn deserialize_world(serialized_world: &str) -> Vec<SpawnEvent> {
+    ron::from_str(serialized_world).expect("Failed to deserialize world")
 }

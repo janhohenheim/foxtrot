@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::dialog::{DialogId, DialogTarget};
-use crate::game_objects::GameObjects;
+use crate::game_objects::GameObjectSpawner;
 use crate::loading::{DynamicSceneAssets, SceneAssets};
 use crate::GameState;
 use bevy::gltf::Gltf;
@@ -28,12 +28,12 @@ fn setup(
     mut commands: Commands,
     scenes: Res<SceneAssets>,
     gltf: Res<Assets<Gltf>>,
-    game_objects: Res<GameObjects>,
-    asset_server: Res<AssetServer>,
+    spawner: Res<GameObjectSpawner>,
+    assets: Res<AssetServer>,
 ) {
     let grass_x = 10;
     let grass_z = 10;
-    let game_objects = game_objects.retrieve_with(&asset_server, &mut commands);
+    let game_objects = spawner.attach(&assets, &mut commands);
     /*
     for x in 0..grass_x {
         for z in 0..grass_z {

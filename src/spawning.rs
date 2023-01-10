@@ -1,16 +1,16 @@
+use crate::GameState;
 use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use bevy_rapier3d::parry::transformation::utils::transform;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use strum_macros::EnumIter;
 
 mod doorway;
 mod grass;
+mod sunlight;
 mod wall;
-use crate::GameState;
-use strum_macros::EnumIter;
 
 pub struct GameObjectsPlugin;
 
@@ -53,7 +53,12 @@ impl<'a, 'w, 's> SpawnEventSender<'a, 'w, 's> {
     }
 
     pub fn translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
-        self.transform = Transform::from_translation(translation.into());
+        self.transform.translation = translation.into();
+        self
+    }
+
+    pub fn rotation(&mut self, rotation: impl Into<Quat>) -> &mut Self {
+        self.transform.rotation = rotation.into();
         self
     }
 
@@ -85,6 +90,7 @@ pub enum GameObject {
     Grass,
     Doorway,
     Wall,
+    Sunlight,
 }
 
 #[derive(Resource)]
@@ -124,6 +130,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Grass => self.spawn_grass(),
             GameObject::Doorway => self.spawn_doorway(),
             GameObject::Wall => self.spawn_wall(),
+            GameObject::Sunlight => self.spawn_sunlight(),
         }
     }
 }

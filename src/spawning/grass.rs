@@ -26,16 +26,13 @@ impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
             TransformBundle::from_transform(transform),
         ));
         entity_commands.with_children(|parent| {
+            const HALF_EXTENT: Vec3 = Vec3::new(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.);
             parent.spawn((
-                Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
+                Collider::cuboid(HALF_EXTENT.x, HALF_EXTENT.y, HALF_EXTENT.z),
                 PbrBundle {
                     mesh: self.handles.meshes[&GameObject::Grass].clone(),
                     material: self.handles.materials[&GameObject::Grass].clone(),
-                    transform: Transform::from_translation(Vec3::new(
-                        GRASS_SIZE / 2.,
-                        0.,
-                        GRASS_SIZE / 2.,
-                    )),
+                    transform: Transform::from_translation(HALF_EXTENT),
                     ..default()
                 },
             ));

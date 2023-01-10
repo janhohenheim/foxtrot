@@ -106,6 +106,7 @@ fn serialize_world(spawn_query: &Query<(&SpawnTracker, &Transform)>) -> String {
         .map(|(spawn_tracker, transform)| SpawnEvent {
             object: spawn_tracker.object,
             transform: *transform,
+            name: spawn_tracker.name.clone(),
             parent: spawn_tracker.parent.clone(),
         })
         .collect();

@@ -37,6 +37,10 @@ pub fn set_actions(
 ) {
     actions.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
     if actions_frozen.is_some() {
+        *actions = Actions {
+            toggle_editor: actions.toggle_editor,
+            ..default()
+        };
         return;
     }
 

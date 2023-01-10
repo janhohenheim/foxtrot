@@ -6,7 +6,7 @@ pub const GRASS_SIZE: f32 = 10.;
 pub const PATH: &str = "materials/grass.png";
 
 pub fn create_mesh(assets: &mut ResMut<Assets<Mesh>>) -> Handle<Mesh> {
-    assets.add(Mesh::from(shape::Box::new(GRASS_SIZE, 0., GRASS_SIZE)))
+    assets.add(Mesh::from(shape::Plane { size: GRASS_SIZE }))
 }
 
 pub fn create_material(

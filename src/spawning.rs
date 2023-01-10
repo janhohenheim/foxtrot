@@ -30,7 +30,10 @@ impl Plugin for SpawningPlugin {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
+    #[serde(default)]
     pub parent: Option<Cow<'static, str>>,
+    #[serde(default)]
+    pub name: Option<Cow<'static, str>>,
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -38,12 +41,14 @@ pub struct SpawnEvent {
 pub struct SpawnTracker {
     pub object: GameObject,
     pub parent: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'static, str>>,
 }
 impl From<SpawnEvent> for SpawnTracker {
     fn from(value: SpawnEvent) -> Self {
         Self {
             object: value.object,
             parent: value.parent,
+            name: value.name,
         }
     }
 }
@@ -156,8 +161,14 @@ fn spawn_requested(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for spawn in spawn_requests.iter() {
+        let name = spawn
+            .name
+            .clone()
+            .map(|name| name.to_string())
+            .unwrap_or_else(|| format!("{:?}", spawn.object));
+
         let bundle = (
-            Name::new(format!("{:?}", spawn.object)),
+            Name::new(name),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
             SpawnTracker::from(spawn.clone()),

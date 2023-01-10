@@ -1,4 +1,4 @@
-use crate::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::spawning::{PrimedGameObjectSpawner, GameObject};
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -10,7 +10,7 @@ pub fn create_mesh(assets: &mut ResMut<Assets<Mesh>>) -> Handle<Mesh> {
     assets.add(Mesh::from(shape::Plane { size: GRASS_SIZE }))
 }
 
-pub fn create_material(
+pub fn load_material(
     asset_server: &Res<AssetServer>,
     assets: &mut ResMut<Assets<StandardMaterial>>,
 ) -> Handle<StandardMaterial> {

@@ -16,7 +16,6 @@ impl Plugin for LoadingPlugin {
                 .with_collection::<FontAssets>()
                 .with_collection::<AudioAssets>()
                 .with_collection::<TextureAssets>()
-                .with_collection::<MaterialAssets>()
                 .with_collection::<SceneAssets>()
                 .with_collection::<AnimationAssets>()
                 .with_collection::<DynamicSceneAssets>()
@@ -48,8 +47,6 @@ pub struct TextureAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct SceneAssets {
-    #[asset(path = "scenes/wallWoodDoorwayRound.glb")]
-    pub wall_wood_doorway_round: Handle<Gltf>,
     #[asset(path = "scenes/wallWood.glb")]
     pub wall_wood: Handle<Gltf>,
     #[asset(path = "scenes/Fox.glb")]
@@ -71,12 +68,4 @@ pub struct AnimationAssets {
     pub character_walking: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation2")]
     pub character_running: Handle<AnimationClip>,
-}
-
-#[derive(AssetCollection, Resource)]
-pub struct MaterialAssets {
-    #[asset(path = "materials/dirt.png", standard_material)]
-    pub dirt: Handle<StandardMaterial>,
-    #[asset(path = "materials/grass.png", standard_material)]
-    pub grass: Handle<StandardMaterial>,
 }

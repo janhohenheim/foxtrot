@@ -1,7 +1,6 @@
-use crate::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::spawning::PrimedGameObjectSpawner;
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_sunlight(&'a mut self) -> EntityCommands<'w, 's, 'a> {

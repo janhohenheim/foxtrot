@@ -9,6 +9,7 @@ use strum_macros::EnumIter;
 
 mod doorway;
 mod grass;
+mod npc;
 mod sunlight;
 mod wall;
 
@@ -91,6 +92,7 @@ pub enum GameObject {
     Doorway,
     Wall,
     Sunlight,
+    Npc,
 }
 
 #[derive(Resource)]
@@ -131,6 +133,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Doorway => self.spawn_doorway(),
             GameObject::Wall => self.spawn_wall(),
             GameObject::Sunlight => self.spawn_sunlight(),
+            GameObject::Npc => self.spawn_npc(),
         }
     }
 }
@@ -153,6 +156,7 @@ fn load_assets_for_spawner(
     let mut scenes = HashMap::new();
     scenes.insert(GameObject::Doorway, doorway::load_scene(&asset_server));
     scenes.insert(GameObject::Wall, wall::load_scene(&asset_server));
+    scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
 
     commands.insert_resource(GameObjectSpawner {
         meshes,

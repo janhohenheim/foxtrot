@@ -17,31 +17,36 @@ impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
             .get(&self.handles.scenes[&GameObject::Doorway])
             .expect("Failed to load doorway scene");
         let mut entity_commands = self.commands.spawn((
-            SceneBundle {
-                scene: gltf.scenes[0].clone(),
-                transform,
-                ..default()
-            },
+            TransformBundle::from_transform(transform),
+            VisibilityBundle::default(),
             Name::new("Wall Wood Doorway Round"),
         ));
         entity_commands.with_children(|parent| {
-            let offset = 0.002;
-            parent.spawn((
-                TransformBundle::from_transform(Transform::from_xyz(
-                    -0.45,
-                    0.5,
-                    0.5 / 3. * 2. + 5. * offset,
-                )),
-                Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
-            ));
-            parent.spawn((
-                TransformBundle::from_transform(Transform::from_xyz(
-                    -0.45,
-                    0.5,
-                    -0.5 / 3. * 2. - 5. * offset,
-                )),
-                Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
-            ));
+            parent
+                .spawn(SceneBundle {
+                    scene: gltf.scenes[0].clone(),
+                    transform: Transform::from_scale(Vec3::splat(3.)),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    let offset = 0.002;
+                    parent.spawn((
+                        TransformBundle::from_transform(Transform::from_xyz(
+                            -0.45,
+                            0.5,
+                            0.5 / 3. * 2. + 5. * offset,
+                        )),
+                        Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
+                    ));
+                    parent.spawn((
+                        TransformBundle::from_transform(Transform::from_xyz(
+                            -0.45,
+                            0.5,
+                            -0.5 / 3. * 2. - 5. * offset,
+                        )),
+                        Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
+                    ));
+                });
         });
         entity_commands
     }

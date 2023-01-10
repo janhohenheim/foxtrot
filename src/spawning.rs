@@ -22,6 +22,7 @@ impl Plugin for GameObjectsPlugin {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
+    pub parent: Option<Entity>,
 }
 
 #[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
@@ -39,21 +40,21 @@ pub struct GameObjectSpawner {
 }
 
 #[derive(Resource)]
-pub struct PrimedGameObjectSpawner<'w, 's, 'a> {
+pub struct PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     handles: &'a GameObjectSpawner,
     gltf: &'a Res<'a, Assets<Gltf>>,
-    commands: &'a mut Commands<'w, 's>,
+    commands: &'a mut ChildBuilder<'w, 's, 'b>,
 }
 
-impl<'a, 'b> GameObjectSpawner
+impl<'a, 'b, 'c, 'w, 's> GameObjectSpawner
 where
-    'b: 'a,
+    'c: 'a,
 {
-    pub fn attach<'w, 's>(
-        &'b self,
-        commands: &'a mut Commands<'w, 's>,
+    pub fn attach(
+        &'c self,
+        commands: &'a mut ChildBuilder<'w, 's, 'b>,
         gltf: &'a Res<'a, Assets<Gltf>>,
-    ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
+    ) -> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         PrimedGameObjectSpawner {
             handles: self,
             commands,
@@ -62,15 +63,11 @@ where
     }
 }
 
-impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
-    pub fn spawn(
-        &'a mut self,
-        object: &GameObject,
-        transform: Transform,
-    ) -> EntityCommands<'w, 's, 'a> {
+impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
+    pub fn spawn(&'a mut self, object: &GameObject) -> EntityCommands<'w, 's, 'a> {
         match *object {
-            GameObject::Grass => self.spawn_grass(transform),
-            GameObject::Doorway => self.spawn_doorway(transform),
+            GameObject::Grass => self.spawn_grass(),
+            GameObject::Doorway => self.spawn_doorway(),
         }
     }
 }
@@ -107,8 +104,28 @@ fn spawn_requested(
     spawner: Res<GameObjectSpawner>,
 ) {
     for spawn in spawn_requests.iter() {
-        spawner
-            .attach(&mut commands, &gltf)
-            .spawn(&spawn.object, spawn.transform);
+        if let Some(parent) = spawn.parent {
+            commands.entity(parent).with_children(|parent| {
+                parent
+                    .spawn((
+                        Name::new(format!("{:?}", spawn.object)),
+                        VisibilityBundle::default(),
+                        TransformBundle::from_transform(spawn.transform),
+                    ))
+                    .with_children(|parent| {
+                        spawner.attach(parent, &gltf).spawn(&spawn.object);
+                    });
+            });
+        } else {
+            commands
+                .spawn((
+                    Name::new(format!("{:?}", spawn.object)),
+                    VisibilityBundle::default(),
+                    TransformBundle::from_transform(spawn.transform),
+                ))
+                .with_children(|parent| {
+                    spawner.attach(parent, &gltf).spawn(&spawn.object);
+                });
+        }
     }
 }

@@ -123,6 +123,7 @@ fn relay_spawn_requests(
         spawn_requester.send(SpawnRequestEvent {
             object: object.0,
             transform: Transform::from_translation(location),
+            parent: None,
         });
     }
 }

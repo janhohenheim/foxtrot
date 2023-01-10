@@ -1,4 +1,5 @@
 use crate::game_objects::{GameObjectsRetriever, Object};
+use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
@@ -17,9 +18,9 @@ pub fn create_material(
     assets.add(image.into())
 }
 
-impl<'a> GameObjectsRetriever<'a> {
-    pub fn grass(&self, transform: Transform) -> impl Bundle {
-        (
+impl<'w, 's, 'a> GameObjectsRetriever<'w, 's, 'a> {
+    pub fn spawn_grass(&'a mut self, transform: Transform) -> EntityCommands<'w, 's, 'a> {
+        self.commands.spawn((
             Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
             PbrBundle {
                 mesh: self.game_objects.meshes[&Object::Grass].clone(),
@@ -28,6 +29,6 @@ impl<'a> GameObjectsRetriever<'a> {
                 ..default()
             },
             Name::new("Grass"),
-        )
+        ))
     }
 }

@@ -30,43 +30,51 @@ pub struct SpawnEvent {
     pub parent: Option<Cow<'static, str>>,
 }
 
-pub struct SpawnEventSender {
-    pub object: GameObject,
+pub struct SpawnEventSender<'a, 'w, 's> {
+    pub object: Option<GameObject>,
     pub transform: Transform,
     pub parent: Option<Cow<'static, str>>,
+    pub event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>,
 }
 
-impl SpawnEventSender {
-    pub fn new(object: GameObject) -> Self {
+impl<'a, 'w, 's> SpawnEventSender<'a, 'w, 's> {
+    pub fn new(event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>) -> Self {
         Self {
-            object,
+            event_writer,
+            object: default(),
             transform: default(),
             parent: default(),
         }
     }
 
-    pub fn with_transform(&mut self, transform: Transform) -> &mut Self {
+    pub fn transform(&mut self, transform: Transform) -> &mut Self {
         self.transform = transform;
         self
     }
 
-    pub fn with_translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
+    pub fn translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
         self.transform = Transform::from_translation(translation.into());
         self
     }
 
-    pub fn with_parent(&mut self, parent: impl Into<Cow<'static, str>>) -> &mut Self {
+    pub fn object(&mut self, object: GameObject) -> &mut Self {
+        self.object = Some(object);
+        self
+    }
+    pub fn parent(&mut self, parent: impl Into<Cow<'static, str>>) -> &mut Self {
         self.parent = Some(parent.into());
         self
     }
 
-    pub fn send(&mut self, events: &mut EventWriter<SpawnEvent>) -> &mut Self {
+    pub fn send(&mut self) -> &mut Self {
         let event = SpawnEvent {
-            object: self.object,
+            object: self.object.expect(
+                "Called SpawnEventSender::send() without calling SpawnEventSender::object() first",
+            ),
             transform: self.transform,
             parent: self.parent.clone(),
         };
-        events.send(event);
+        self.event_writer.send(event);
         self
     }
 }

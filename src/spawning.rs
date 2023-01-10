@@ -104,28 +104,21 @@ fn spawn_requested(
     spawner: Res<GameObjectSpawner>,
 ) {
     for spawn in spawn_requests.iter() {
+        let bundle = (
+            Name::new(format!("{:?}", spawn.object)),
+            VisibilityBundle::default(),
+            TransformBundle::from_transform(spawn.transform),
+        );
+        let spawn_children = |parent: &mut ChildBuilder| {
+            spawner.attach(parent, &gltf).spawn(&spawn.object);
+        };
+
         if let Some(parent) = spawn.parent {
             commands.entity(parent).with_children(|parent| {
-                parent
-                    .spawn((
-                        Name::new(format!("{:?}", spawn.object)),
-                        VisibilityBundle::default(),
-                        TransformBundle::from_transform(spawn.transform),
-                    ))
-                    .with_children(|parent| {
-                        spawner.attach(parent, &gltf).spawn(&spawn.object);
-                    });
+                parent.spawn(bundle).with_children(spawn_children);
             });
         } else {
-            commands
-                .spawn((
-                    Name::new(format!("{:?}", spawn.object)),
-                    VisibilityBundle::default(),
-                    TransformBundle::from_transform(spawn.transform),
-                ))
-                .with_children(|parent| {
-                    spawner.attach(parent, &gltf).spawn(&spawn.object);
-                });
+            commands.spawn(bundle).with_children(spawn_children);
         }
     }
 }

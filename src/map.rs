@@ -40,14 +40,14 @@ fn setup(scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>, mut spawner: EventWr
             });
         }
     }
-    /*
-    let mut physics_assets = PhysicsAssets {
-        commands,
-        scenes,
-        gltf,
-    };
-    let wall_width = 1.;
     let scale = 3.;
+    spawner.send(SpawnEvent {
+        object: GameObject::Doorway,
+        transform: Transform::from_scale(Vec3::splat(scale)),
+    });
+    /*
+    let wall_width = 1.;
+
     physics_assets
         .spawn_doorway(Transform::from_scale(Vec3::splat(scale)))
         .spawn_wall(Transform {
@@ -79,40 +79,6 @@ struct PhysicsAssets<'a, 'w, 's> {
 }
 
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
-    fn spawn_doorway(&mut self, transform: Transform) -> &mut Self {
-        if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood_doorway_round) {
-            self.commands
-                .spawn((
-                    SceneBundle {
-                        scene: gltf.scenes[0].clone(),
-                        transform,
-                        ..default()
-                    },
-                    Name::new("Wall Wood Doorway Round"),
-                ))
-                .with_children(|parent| {
-                    let offset = 0.002;
-                    parent.spawn((
-                        TransformBundle::from_transform(Transform::from_xyz(
-                            -0.45,
-                            0.5,
-                            0.5 / 3. * 2. + 5. * offset,
-                        )),
-                        Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
-                    ));
-                    parent.spawn((
-                        TransformBundle::from_transform(Transform::from_xyz(
-                            -0.45,
-                            0.5,
-                            -0.5 / 3. * 2. - 5. * offset,
-                        )),
-                        Collider::cuboid(0.04, 0.5, 0.5 / 3. + offset),
-                    ));
-                });
-        }
-        self
-    }
-
     fn spawn_wall(&mut self, transform: Transform) -> &mut Self {
         if let Some(gltf) = self.gltf.get(&self.scenes.wall_wood) {
             self.commands

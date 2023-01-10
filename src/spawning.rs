@@ -21,7 +21,11 @@ impl Plugin for SpawningPlugin {
         app.add_event::<SpawnEvent>()
             .init_resource::<SpawnContainerRegistry>()
             .add_startup_system(load_assets_for_spawner)
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(spawn_requested));
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(spawn_requested.label("spawn_requested"))
+                    .with_system(sync_container_registry.before("spawn_requested")),
+            );
     }
 }
 
@@ -152,6 +156,16 @@ fn load_assets_for_spawner(
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
 struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
+
+fn sync_container_registry(
+    name_query: Query<(Entity, &Name), Changed<Name>>,
+    mut spawn_containers: ResMut<SpawnContainerRegistry>,
+) {
+    for (entity, name) in name_query.iter() {
+        let name = name.to_string();
+        spawn_containers.0.insert(name.into(), entity);
+    }
+}
 
 fn spawn_requested(
     mut commands: Commands,

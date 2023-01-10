@@ -1,13 +1,10 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::camera::{get_raycast_location, PlayerCamera};
-use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
 use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::{Align, ScrollArea};
 use bevy_egui::{egui, EguiContext};
-use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use strum::IntoEnumIterator;

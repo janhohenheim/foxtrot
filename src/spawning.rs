@@ -41,7 +41,6 @@ pub struct GameObjectSpawner {
 #[derive(Resource)]
 pub struct PrimedGameObjectSpawner<'w, 's, 'a> {
     handles: &'a GameObjectSpawner,
-    assets: &'a Res<'a, AssetServer>,
     gltf: &'a Res<'a, Assets<Gltf>>,
     commands: &'a mut Commands<'w, 's>,
 }
@@ -52,13 +51,11 @@ where
 {
     pub fn attach<'w, 's>(
         &'b self,
-        assets: &'a Res<'a, AssetServer>,
         commands: &'a mut Commands<'w, 's>,
         gltf: &'a Res<'a, Assets<Gltf>>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
         PrimedGameObjectSpawner {
             handles: self,
-            assets,
             commands,
             gltf,
         }
@@ -105,14 +102,13 @@ fn load_assets_for_spawner(
 
 fn spawn_requested(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
     gltf: Res<Assets<Gltf>>,
     mut spawn_requests: EventReader<SpawnEvent>,
     spawner: Res<GameObjectSpawner>,
 ) {
     for spawn in spawn_requests.iter() {
         spawner
-            .attach(&asset_server, &mut commands, &gltf)
+            .attach(&mut commands, &gltf)
             .spawn(&spawn.object, spawn.transform);
     }
 }

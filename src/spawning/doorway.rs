@@ -12,15 +12,8 @@ pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_doorway(&'a mut self) -> EntityCommands<'w, 's, 'a> {
-        let gltf = self
-            .gltf
-            .get(&self.handles.scenes[&GameObject::Doorway])
-            .unwrap_or_else(|| panic!("Failed to load scene from {PATH}"));
-        let mut entity_commands = self.commands.spawn(SceneBundle {
-            scene: gltf.scenes[0].clone(),
-            transform: Transform::from_scale(Vec3::splat(3.)),
-            ..default()
-        });
+        let mut entity_commands =
+            self.spawn_gltf(GameObject::Doorway, Transform::from_scale(Vec3::splat(3.)));
         entity_commands.with_children(|parent| {
             let offset = 0.002;
             parent.spawn((

@@ -1,4 +1,4 @@
-use bevy::prelude::{Input, KeyCode, Res};
+use bevy::prelude::{Input, Res, ScanCode};
 
 pub enum GameControl {
     Up,
@@ -6,13 +6,15 @@ pub enum GameControl {
     Left,
     Right,
     Jump,
+    ToggleEditor,
+    Interact,
 }
 
 macro_rules! generate_bindings {
     ( $( $game_control:pat => $key_codes:expr, )+ ) => {
         impl GameControl {
             #[allow(dead_code)]
-            fn just_released(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+            pub fn just_released(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_just_released($key_codes),
@@ -21,7 +23,7 @@ macro_rules! generate_bindings {
             }
 
             #[allow(dead_code)]
-            fn just_pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+            pub fn just_pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_just_pressed($key_codes),
@@ -29,7 +31,7 @@ macro_rules! generate_bindings {
                 }
             }
 
-            fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {
+            pub fn pressed(&self, keyboard_input: &Res<Input<ScanCode>>) -> bool {
                 match self {
                     $ (
                         $game_control => keyboard_input.any_pressed($key_codes),
@@ -43,7 +45,7 @@ macro_rules! generate_bindings {
     };
 }
 
-pub fn get_movement(control: GameControl, input: &Res<Input<KeyCode>>) -> f32 {
+pub fn get_movement(control: GameControl, input: &Res<Input<ScanCode>>) -> f32 {
     if control.pressed(input) {
         1.0
     } else {
@@ -52,9 +54,29 @@ pub fn get_movement(control: GameControl, input: &Res<Input<KeyCode>>) -> f32 {
 }
 
 generate_bindings! {
-    GameControl::Up => [KeyCode::W, KeyCode::Up,],
-    GameControl::Down => [KeyCode::S, KeyCode::Down,],
-    GameControl::Left => [KeyCode::A, KeyCode::Left,],
-    GameControl::Right => [KeyCode::D, KeyCode::Right,],
-    GameControl::Jump => [KeyCode::Space],
+    GameControl::Up => [
+        ScanCode(13), // W
+        ScanCode(126), // Up arrow
+    ],
+    GameControl::Down => [
+        ScanCode(1), // S
+        ScanCode(125), // Down arrow
+    ],
+    GameControl::Left => [
+        ScanCode(0), // A
+        ScanCode(123), // Left arrow
+    ],
+    GameControl::Right => [
+        ScanCode(2), // D
+        ScanCode(124), // Right arrow
+    ],
+    GameControl::Jump => [
+        ScanCode(49), // Space
+    ],
+    GameControl::ToggleEditor => [
+        ScanCode(12), // Q
+    ],
+    GameControl::Interact => [
+        ScanCode(14), // E
+    ],
 }

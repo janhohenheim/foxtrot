@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy::reflect::erased_serde::__private::serde::{Deserialize, Serialize};
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct DialogEvent(pub DialogId);
@@ -89,7 +89,8 @@ impl DialogChoice {
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct ConditionId(pub String);
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct DialogId(pub String);
 impl DialogId {
     pub fn new(id: &str) -> Self {

@@ -5,6 +5,7 @@ use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
@@ -15,6 +16,8 @@ impl Plugin for DialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
             .init_resource::<ActiveConditions>()
+            .register_type::<DialogTarget>()
+            .register_type::<resources::DialogId>()
             .add_event::<DialogEvent>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
@@ -24,7 +27,8 @@ impl Plugin for DialogPlugin {
     }
 }
 
-#[derive(Component, Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct DialogTarget {
     pub dialog_id: DialogId,
 }

@@ -13,6 +13,8 @@ mod math;
 mod menu;
 mod physics;
 mod player;
+mod scene_editor;
+mod spawning;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -25,6 +27,8 @@ use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
+use crate::scene_editor::SceneEditorPlugin;
+use crate::spawning::GameObjectsPlugin;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -54,8 +58,10 @@ impl Plugin for GamePlugin {
             .add_plugin(CameraPlugin)
             .add_plugin(PhysicsPlugin)
             .add_plugin(InteractionsUi)
+            .add_plugin(SceneEditorPlugin)
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
+            .add_plugin(GameObjectsPlugin)
             .add_plugin(DevPlugin);
     }
 }

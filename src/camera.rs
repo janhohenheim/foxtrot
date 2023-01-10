@@ -7,21 +7,26 @@ use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::na::Vector3;
 use bevy_rapier3d::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 const MAX_DISTANCE: f32 = 10.0;
 
 pub struct CameraPlugin;
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct UiCamera;
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct PlayerCamera;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(spawn_ui_camera)
+        app.register_type::<UiCamera>()
+            .register_type::<PlayerCamera>()
+            .add_startup_system(spawn_ui_camera)
             // Enables the system that synchronizes your `Transform`s and `LookTransform`s.
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
@@ -100,20 +105,37 @@ fn keep_line_of_sight(
         Some(transform) => transform,
         None => return,
     };
+    // camera.translation is the direction because it is a child of the entity with `Player`.
+    // Thus, its `Transform` is relative to the player's, which makes it a direction.
+    let location = get_raycast_location(
+        &player.translation,
+        &camera.translation,
+        &rapier_context,
+        MAX_DISTANCE,
+    );
 
-    let origin = player.translation;
-    let direction = camera.translation.try_normalize().unwrap_or(Vect::Z);
-    let max_toi = MAX_DISTANCE;
+    camera.translation = location;
+}
+
+pub fn get_raycast_location(
+    origin: &Vec3,
+    direction: &Vec3,
+    rapier_context: &Res<RapierContext>,
+    max_distance: f32,
+) -> Vec3 {
+    let direction = direction.try_normalize().unwrap_or(Vect::Z);
+    let max_toi = max_distance;
     let solid = true;
     let mut filter = QueryFilter::only_fixed();
     filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
 
     let min_distance_to_objects = 0.001;
     let distance = rapier_context
-        .cast_ray(origin, direction, max_toi, solid, filter)
+        .cast_ray(*origin, direction, max_toi, solid, filter)
         .map(|(_entity, toi)| toi - min_distance_to_objects)
-        .unwrap_or(MAX_DISTANCE);
-    camera.translation = direction * distance;
+        .unwrap_or(max_distance);
+
+    direction * distance
 }
 
 fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {

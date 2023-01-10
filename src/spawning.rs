@@ -3,14 +3,23 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use serde::{Deserialize, Serialize};
 mod grass;
+use crate::GameState;
 use strum_macros::EnumIter;
 
 pub struct GameObjectsPlugin;
 
 impl Plugin for GameObjectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(load_assets_for_spawner);
+        app.add_event::<SpawnEvent>()
+            .add_startup_system(load_assets_for_spawner)
+            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(spawn_requested));
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SpawnEvent {
+    pub object: GameObject,
+    pub transform: Transform,
 }
 
 #[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
@@ -77,4 +86,17 @@ fn load_assets_for_spawner(
     );
 
     commands.insert_resource(GameObjectSpawner { meshes, materials });
+}
+
+fn spawn_requested(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut spawn_requests: EventReader<SpawnEvent>,
+    spawner: Res<GameObjectSpawner>,
+) {
+    for spawn in spawn_requests.iter() {
+        spawner
+            .attach(&asset_server, &mut commands)
+            .spawn(&spawn.object, spawn.transform);
+    }
 }

@@ -1,7 +1,7 @@
 use crate::actions::{Actions, ActionsFrozen};
 use crate::camera::{get_raycast_location, PlayerCamera};
-use crate::game_objects::{GameObjectSpawner, GameObject};
 use crate::player::Player;
+use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::{Align, ScrollArea};
@@ -30,7 +30,7 @@ impl Plugin for SceneEditorPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_toggle)
                     .with_system(show_editor)
-                    .with_system(spawn_objects),
+                    .with_system(relay_spawn_requests),
             );
 
         let _ = app;
@@ -94,11 +94,9 @@ fn show_editor(
         });
 }
 
-fn spawn_objects(
-    mut commands: Commands,
-    mut spawn_events: EventReader<SpawnEvent>,
-    spawner: Res<GameObjectSpawner>,
-    asset_server: Res<AssetServer>,
+fn relay_spawn_requests(
+    mut spawn_requests: EventReader<SpawnEvent>,
+    mut spawn_requester: EventWriter<SpawnRequestEvent>,
     camera_query: Query<&Transform, (With<PlayerCamera>, Without<Player>)>,
     player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
     rapier_context: Res<RapierContext>,
@@ -112,7 +110,7 @@ fn spawn_objects(
         None => return,
     };
 
-    for object in spawn_events.iter() {
+    for object in spawn_requests.iter() {
         let eye_height_offset = Vec3::new(0., 1., 0.);
         let origin = player.translation + eye_height_offset;
         let direction = -(camera.rotation * Vec3::Z);
@@ -122,8 +120,9 @@ fn spawn_objects(
             get_raycast_location(&origin, &direction, &rapier_context, MAX_SPAWN_DISTANCE)
                 + offset_to_not_spawn_in_ground;
 
-        spawner
-            .attach(&asset_server, &mut commands)
-            .spawn(&object.0, Transform::from_translation(location));
+        spawn_requester.send(SpawnRequestEvent {
+            object: object.0,
+            transform: Transform::from_translation(location),
+        });
     }
 }

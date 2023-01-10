@@ -1,4 +1,4 @@
-use crate::spawning::{PrimedGameObjectSpawner, GameObject};
+use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -20,15 +20,26 @@ pub fn load_material(
 
 impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn spawn_grass(&'a mut self, transform: Transform) -> EntityCommands<'w, 's, 'a> {
-        self.commands.spawn((
-            Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
-            PbrBundle {
-                mesh: self.handles.meshes[&GameObject::Grass].clone(),
-                material: self.handles.materials[&GameObject::Grass].clone(),
-                transform,
-                ..default()
-            },
+        let mut entity_commands = self.commands.spawn((
             Name::new("Grass"),
-        ))
+            VisibilityBundle::default(),
+            TransformBundle::from_transform(transform),
+        ));
+        entity_commands.with_children(|parent| {
+            parent.spawn((
+                Collider::cuboid(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.),
+                PbrBundle {
+                    mesh: self.handles.meshes[&GameObject::Grass].clone(),
+                    material: self.handles.materials[&GameObject::Grass].clone(),
+                    transform: Transform::from_translation(Vec3::new(
+                        GRASS_SIZE / 2.,
+                        0.,
+                        GRASS_SIZE / 2.,
+                    )),
+                    ..default()
+                },
+            ));
+        });
+        entity_commands
     }
 }

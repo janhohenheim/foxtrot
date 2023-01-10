@@ -54,8 +54,6 @@ impl Plugin for SceneEditorPlugin {
     }
 }
 
-const MAX_SPAWN_DISTANCE: f32 = 30.0;
-
 fn handle_toggle(
     mut commands: Commands,
     actions: Res<Actions>,

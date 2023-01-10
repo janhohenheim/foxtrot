@@ -24,7 +24,12 @@ fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
         ..default()
     });
 }
-fn setup(mut spawner: EventWriter<SpawnEvent>) {
+fn setup(mut commands: Commands, mut spawner: EventWriter<SpawnEvent>) {
+    commands.insert_resource(AmbientLight {
+        color: Color::ORANGE_RED,
+        brightness: 0.1,
+    });
+
     let grass_x = 10;
     let grass_z = 10;
 
@@ -53,13 +58,12 @@ fn setup(mut spawner: EventWriter<SpawnEvent>) {
         .translation((0., 0., -wall_width))
         .send();
 
+    SpawnEventSender::new(&mut spawner)
+        .object(GameObject::Sunlight)
+        .rotation(Quat::from_rotation_x(-TAU / 8.))
+        .send();
     /*
 
-    .spawn_light(Transform {
-        translation: Vec3::new(0.0, 2.0, 0.0),
-        rotation: Quat::from_rotation_x(-TAU / 8.),
-        ..default()
-    })
     .spawn_character(Transform {
         translation: Vec3::new(-5., 0.5, 0.),
         scale: Vec3::splat(0.7),
@@ -74,38 +78,6 @@ struct PhysicsAssets<'a, 'w, 's> {
 }
 
 impl<'a, 'w, 's> PhysicsAssets<'a, 'w, 's> {
-    fn spawn_light(&mut self, transform: Transform) -> &mut Self {
-        self.commands.insert_resource(AmbientLight {
-            color: Color::ORANGE_RED,
-            brightness: 0.1,
-        });
-
-        // directional 'sun' light
-        const HALF_SIZE: f32 = 10.0;
-        self.commands.spawn((
-            DirectionalLightBundle {
-                directional_light: DirectionalLight {
-                    // Configure the projection to better fit the scene
-                    shadow_projection: OrthographicProjection {
-                        left: -HALF_SIZE,
-                        right: HALF_SIZE,
-                        bottom: -HALF_SIZE,
-                        top: HALF_SIZE,
-                        near: -10.0 * HALF_SIZE,
-                        far: 10.0 * HALF_SIZE,
-                        ..default()
-                    },
-                    shadows_enabled: true,
-                    ..default()
-                },
-                transform,
-                ..default()
-            },
-            Name::new("Light"),
-        ));
-        self
-    }
-
     fn spawn_character(&mut self, transform: Transform) -> &mut Self {
         let model = self
             .gltf

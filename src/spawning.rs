@@ -48,60 +48,6 @@ impl From<SpawnEvent> for SpawnTracker {
     }
 }
 
-pub struct SpawnEventSender<'a, 'w, 's> {
-    pub object: Option<GameObject>,
-    pub transform: Transform,
-    pub parent: Option<Cow<'static, str>>,
-    pub event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>,
-}
-
-impl<'a, 'w, 's> SpawnEventSender<'a, 'w, 's> {
-    pub fn new(event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>) -> Self {
-        Self {
-            event_writer,
-            object: default(),
-            transform: default(),
-            parent: default(),
-        }
-    }
-
-    pub fn transform(&mut self, transform: Transform) -> &mut Self {
-        self.transform = transform;
-        self
-    }
-
-    pub fn translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
-        self.transform.translation = translation.into();
-        self
-    }
-
-    pub fn rotation(&mut self, rotation: impl Into<Quat>) -> &mut Self {
-        self.transform.rotation = rotation.into();
-        self
-    }
-
-    pub fn object(&mut self, object: GameObject) -> &mut Self {
-        self.object = Some(object);
-        self
-    }
-    pub fn parent(&mut self, parent: impl Into<Cow<'static, str>>) -> &mut Self {
-        self.parent = Some(parent.into());
-        self
-    }
-
-    pub fn send(&mut self) -> &mut Self {
-        let event = SpawnEvent {
-            object: self.object.expect(
-                "Called SpawnEventSender::send() without calling SpawnEventSender::object() first",
-            ),
-            transform: self.transform,
-            parent: self.parent.clone(),
-        };
-        self.event_writer.send(event);
-        self
-    }
-}
-
 #[derive(
     Debug, EnumIter, Component, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize,
 )]

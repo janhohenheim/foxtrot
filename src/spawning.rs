@@ -159,11 +159,22 @@ struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
 fn sync_container_registry(
     name_query: Query<(Entity, &Name), Changed<Name>>,
+    removed_names: RemovedComponents<Name>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for (entity, name) in name_query.iter() {
         let name = name.to_string();
         spawn_containers.0.insert(name.into(), entity);
+    }
+    for removed_entity in removed_names.iter() {
+        let names: Vec<_> = spawn_containers
+            .0
+            .iter()
+            .filter_map(|(name, entity)| (*entity == removed_entity).then(|| name.clone()))
+            .collect();
+        for name in names {
+            spawn_containers.0.remove(&name);
+        }
     }
 }
 
@@ -207,7 +218,19 @@ fn spawn_requested(
                         .id()
                 });
 
-            commands.entity(*parent).with_children(|parent| {
+            let mut entity_commands = if commands.get_entity(*parent).is_some() {
+                commands.entity(*parent)
+            } else {
+                // parent was removed at some prior point
+                let entity = commands.spawn((
+                    Name::new(parent_name.clone()),
+                    VisibilityBundle::default(),
+                    TransformBundle::default(),
+                ));
+                spawn_containers.0.insert(parent_name.clone(), entity.id());
+                entity
+            };
+            entity_commands.with_children(|parent| {
                 parent.spawn(bundle).with_children(spawn_children);
             });
         } else {

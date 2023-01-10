@@ -8,9 +8,9 @@ use std::borrow::Cow;
 use strum_macros::EnumIter;
 
 mod doorway;
-mod empty;
 pub mod grass;
 mod npc;
+mod primitives;
 mod sunlight;
 mod wall;
 
@@ -59,6 +59,9 @@ pub enum GameObject {
     Sunlight,
     Npc,
     Empty,
+    Box,
+    Sphere,
+    Capsule,
 }
 
 impl Default for GameObject {
@@ -107,6 +110,9 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
             GameObject::Empty => self.spawn_empty(),
+            GameObject::Box => self.spawn_box(),
+            GameObject::Sphere => self.spawn_sphere(),
+            GameObject::Capsule => self.spawn_capsule(),
         }
     }
 }

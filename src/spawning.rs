@@ -8,9 +8,9 @@ use std::borrow::Cow;
 use strum_macros::EnumIter;
 
 mod doorway;
-mod empty;
 pub mod grass;
 mod npc;
+mod primitives;
 mod sunlight;
 mod wall;
 
@@ -21,7 +21,11 @@ impl Plugin for SpawningPlugin {
         app.add_event::<SpawnEvent>()
             .init_resource::<SpawnContainerRegistry>()
             .add_startup_system(load_assets_for_spawner)
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(spawn_requested));
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(spawn_requested.label("spawn_requested"))
+                    .with_system(sync_container_registry.before("spawn_requested")),
+            );
     }
 }
 
@@ -30,7 +34,10 @@ impl Plugin for SpawningPlugin {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
+    #[serde(default)]
     pub parent: Option<Cow<'static, str>>,
+    #[serde(default)]
+    pub name: Option<Cow<'static, str>>,
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -38,12 +45,14 @@ pub struct SpawnEvent {
 pub struct SpawnTracker {
     pub object: GameObject,
     pub parent: Option<Cow<'static, str>>,
+    pub name: Option<Cow<'static, str>>,
 }
 impl From<SpawnEvent> for SpawnTracker {
     fn from(value: SpawnEvent) -> Self {
         Self {
             object: value.object,
             parent: value.parent,
+            name: value.name,
         }
     }
 }
@@ -59,6 +68,9 @@ pub enum GameObject {
     Sunlight,
     Npc,
     Empty,
+    Box,
+    Sphere,
+    Capsule,
 }
 
 impl Default for GameObject {
@@ -107,6 +119,9 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
             GameObject::Empty => self.spawn_empty(),
+            GameObject::Box => self.spawn_box(),
+            GameObject::Sphere => self.spawn_sphere(),
+            GameObject::Capsule => self.spawn_capsule(),
         }
     }
 }
@@ -142,6 +157,27 @@ fn load_assets_for_spawner(
 #[reflect(Resource, Serialize, Deserialize)]
 struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
+fn sync_container_registry(
+    name_query: Query<(Entity, &Name), Changed<Name>>,
+    removed_names: RemovedComponents<Name>,
+    mut spawn_containers: ResMut<SpawnContainerRegistry>,
+) {
+    for (entity, name) in name_query.iter() {
+        let name = name.to_string();
+        spawn_containers.0.insert(name.into(), entity);
+    }
+    for removed_entity in removed_names.iter() {
+        let names: Vec<_> = spawn_containers
+            .0
+            .iter()
+            .filter_map(|(name, entity)| (*entity == removed_entity).then(|| name.clone()))
+            .collect();
+        for name in names {
+            spawn_containers.0.remove(&name);
+        }
+    }
+}
+
 fn spawn_requested(
     mut commands: Commands,
     gltf: Res<Assets<Gltf>>,
@@ -150,8 +186,14 @@ fn spawn_requested(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for spawn in spawn_requests.iter() {
+        let name = spawn
+            .name
+            .clone()
+            .map(|name| name.to_string())
+            .unwrap_or_else(|| format!("{:?}", spawn.object));
+
         let bundle = (
-            Name::new(format!("{:?}", spawn.object)),
+            Name::new(name),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
             SpawnTracker::from(spawn.clone()),
@@ -176,7 +218,19 @@ fn spawn_requested(
                         .id()
                 });
 
-            commands.entity(*parent).with_children(|parent| {
+            let mut entity_commands = if commands.get_entity(*parent).is_some() {
+                commands.entity(*parent)
+            } else {
+                // parent was removed at some prior point
+                let entity = commands.spawn((
+                    Name::new(parent_name.clone()),
+                    VisibilityBundle::default(),
+                    TransformBundle::default(),
+                ));
+                spawn_containers.0.insert(parent_name.clone(), entity.id());
+                entity
+            };
+            entity_commands.with_children(|parent| {
                 parent.spawn(bundle).with_children(spawn_children);
             });
         } else {

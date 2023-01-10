@@ -1,14 +1,12 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::camera::{get_raycast_location, PlayerCamera};
-use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
 use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::{Align, ScrollArea};
 use bevy_egui::{egui, EguiContext};
-use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 use strum::IntoEnumIterator;
 
 pub struct SceneEditorPlugin;
@@ -18,19 +16,27 @@ pub struct SceneEditorPlugin;
 pub struct SceneEditorState {
     active: bool,
     save_name: String,
+    spawn_name: String,
+    parent_name: String,
 }
 
 impl Default for SceneEditorState {
     fn default() -> Self {
         Self {
             save_name: "demo".to_owned(),
-            active: false,
+            active: default(),
+            spawn_name: default(),
+            parent_name: default(),
         }
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct SpawnEvent(pub GameObject);
+struct SpawnEvent {
+    object: GameObject,
+    name: Option<Cow<'static, str>>,
+    parent: Option<Cow<'static, str>>,
+}
 
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
@@ -47,8 +53,6 @@ impl Plugin for SceneEditorPlugin {
         let _ = app;
     }
 }
-
-const MAX_SPAWN_DISTANCE: f32 = 30.0;
 
 fn handle_toggle(
     mut commands: Commands,
@@ -82,7 +86,7 @@ fn show_editor(
         .show(egui_context.ctx_mut(), |ui| {
             ui.horizontal(|ui| {
                 ui.label("Save name: ");
-                egui::TextEdit::singleline(&mut editor_state.save_name).show(ui);
+                ui.text_edit_singleline(&mut editor_state.save_name);
             });
             ui.horizontal(|ui| {
                 if ui.button("Save").clicked() {
@@ -98,7 +102,15 @@ fn show_editor(
             });
 
             ui.separator();
-            ui.label("Spawn object");
+            ui.heading("Spawn object");
+            ui.horizontal(|ui| {
+                ui.label("Name: ");
+                ui.text_edit_singleline(&mut editor_state.spawn_name);
+            });
+            ui.horizontal(|ui| {
+                ui.label("Parent: ");
+                ui.text_edit_singleline(&mut editor_state.parent_name);
+            });
             ui.add_space(3.);
 
             ScrollArea::vertical()
@@ -117,7 +129,18 @@ fn show_editor(
                                     spawn_button.scroll_to_me(item_to_track_align)
                                 }
                                 if spawn_button.clicked() {
-                                    spawn_events.send(SpawnEvent(item));
+                                    let name = editor_state.spawn_name.clone();
+                                    editor_state.spawn_name = default();
+                                    let name = (!name.is_empty()).then(|| name.into());
+
+                                    let parent = editor_state.parent_name.clone();
+                                    editor_state.parent_name = default();
+                                    let parent = (!parent.is_empty()).then(|| parent.into());
+                                    spawn_events.send(SpawnEvent {
+                                        object: item,
+                                        name,
+                                        parent,
+                                    });
                                 }
                             });
                         }
@@ -129,33 +152,13 @@ fn show_editor(
 fn relay_spawn_requests(
     mut spawn_requests: EventReader<SpawnEvent>,
     mut spawn_requester: EventWriter<SpawnRequestEvent>,
-    camera_query: Query<&Transform, (With<PlayerCamera>, Without<Player>)>,
-    player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
-    rapier_context: Res<RapierContext>,
 ) {
-    let camera = match camera_query.iter().next() {
-        Some(transform) => transform,
-        None => return,
-    };
-    let player = match player_query.iter().next() {
-        Some(transform) => transform,
-        None => return,
-    };
-
     for object in spawn_requests.iter() {
-        let eye_height_offset = Vec3::new(0., 1., 0.);
-        let origin = player.translation + eye_height_offset;
-        let direction = -(camera.rotation * Vec3::Z);
-
-        let offset_to_not_spawn_in_ground = Vec3::new(0., 2., 0.);
-        let location =
-            get_raycast_location(&origin, &direction, &rapier_context, MAX_SPAWN_DISTANCE)
-                + offset_to_not_spawn_in_ground;
-
         spawn_requester.send(SpawnRequestEvent {
-            object: object.0,
-            transform: Transform::from_translation(location),
-            parent: None,
+            object: object.object,
+            transform: Transform::default(),
+            parent: object.parent.clone(),
+            name: object.name.clone(),
         });
     }
 }

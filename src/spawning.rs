@@ -9,7 +9,7 @@ use strum_macros::EnumIter;
 
 mod doorway;
 mod empty;
-mod grass;
+pub mod grass;
 mod npc;
 mod sunlight;
 mod wall;

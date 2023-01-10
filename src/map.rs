@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::loading::DynamicSceneAssets;
+use crate::spawning::grass::GRASS_SIZE;
 use crate::spawning::{GameObject, SpawnEvent, SpawnEventSender};
 use crate::GameState;
 use std::f32::consts::TAU;
@@ -13,14 +13,6 @@ impl Plugin for MapPlugin {
     }
 }
 
-const GRASS_SIZE: f32 = 10.;
-
-fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
-    commands.spawn(DynamicSceneBundle {
-        scene: scenes.demo.clone(),
-        ..default()
-    });
-}
 fn setup(mut commands: Commands, mut spawner: EventWriter<SpawnEvent>) {
     commands.insert_resource(AmbientLight {
         color: Color::ORANGE_RED,

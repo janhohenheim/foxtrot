@@ -8,14 +8,15 @@ use std::borrow::Cow;
 use strum_macros::EnumIter;
 
 mod doorway;
-mod grass;
+mod empty;
+pub mod grass;
 mod npc;
 mod sunlight;
 mod wall;
 
-pub struct GameObjectsPlugin;
+pub struct SpawningPlugin;
 
-impl Plugin for GameObjectsPlugin {
+impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
             .init_resource::<SpawnContainerRegistry>()
@@ -24,75 +25,46 @@ impl Plugin for GameObjectsPlugin {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
     pub parent: Option<Cow<'static, str>>,
 }
 
-pub struct SpawnEventSender<'a, 'w, 's> {
-    pub object: Option<GameObject>,
-    pub transform: Transform,
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct SpawnTracker {
+    pub object: GameObject,
     pub parent: Option<Cow<'static, str>>,
-    pub event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>,
 }
-
-impl<'a, 'w, 's> SpawnEventSender<'a, 'w, 's> {
-    pub fn new(event_writer: &'a mut EventWriter<'w, 's, SpawnEvent>) -> Self {
+impl From<SpawnEvent> for SpawnTracker {
+    fn from(value: SpawnEvent) -> Self {
         Self {
-            event_writer,
-            object: default(),
-            transform: default(),
-            parent: default(),
+            object: value.object,
+            parent: value.parent,
         }
     }
-
-    pub fn transform(&mut self, transform: Transform) -> &mut Self {
-        self.transform = transform;
-        self
-    }
-
-    pub fn translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
-        self.transform.translation = translation.into();
-        self
-    }
-
-    pub fn rotation(&mut self, rotation: impl Into<Quat>) -> &mut Self {
-        self.transform.rotation = rotation.into();
-        self
-    }
-
-    pub fn object(&mut self, object: GameObject) -> &mut Self {
-        self.object = Some(object);
-        self
-    }
-    pub fn parent(&mut self, parent: impl Into<Cow<'static, str>>) -> &mut Self {
-        self.parent = Some(parent.into());
-        self
-    }
-
-    pub fn send(&mut self) -> &mut Self {
-        let event = SpawnEvent {
-            object: self.object.expect(
-                "Called SpawnEventSender::send() without calling SpawnEventSender::object() first",
-            ),
-            transform: self.transform,
-            parent: self.parent.clone(),
-        };
-        self.event_writer.send(event);
-        self
-    }
 }
 
-#[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
+#[derive(
+    Debug, EnumIter, Component, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize,
+)]
+#[reflect(Component, Serialize, Deserialize)]
 pub enum GameObject {
     Grass,
     Doorway,
     Wall,
     Sunlight,
     Npc,
+    Empty,
+}
+
+impl Default for GameObject {
+    fn default() -> Self {
+        Self::Empty
+    }
 }
 
 #[derive(Resource)]
@@ -134,6 +106,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Wall => self.spawn_wall(),
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
+            GameObject::Empty => self.spawn_empty(),
         }
     }
 }
@@ -181,6 +154,7 @@ fn spawn_requested(
             Name::new(format!("{:?}", spawn.object)),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
+            SpawnTracker::from(spawn.clone()),
         );
         let spawn_children = |parent: &mut ChildBuilder| {
             spawner.attach(parent, &gltf).spawn(&spawn.object);

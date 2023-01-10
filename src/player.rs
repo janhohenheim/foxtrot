@@ -75,7 +75,7 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
         .spawn((
             PbrBundle {
                 transform: Transform {
-                    translation: Vec3::new(0., 5., 0.),
+                    translation: Vec3::new(0., 10., 0.),
                     scale: Vec3::splat(0.5),
                     ..default()
                 },
@@ -89,7 +89,7 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
                 // Automatically slide down on slopes smaller than n degrees.
                 min_slope_slide_angle: 30.0_f32.to_radians() as Real,
                 // The character offset is set to n multiplied by the collider’s height.
-                offset: CharacterLength::Absolute(2e-2),
+                offset: CharacterLength::Relative(2e-2),
                 // Snap to the ground if the vertical distance to the ground is smaller than n.
                 snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
                 filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,

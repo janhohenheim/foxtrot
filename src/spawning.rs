@@ -11,7 +11,11 @@ mod doorway;
 pub mod grass;
 mod npc;
 mod primitives;
+mod roof;
+mod roof_left;
+mod roof_right;
 mod sunlight;
+mod util;
 mod wall;
 
 pub struct SpawningPlugin;
@@ -65,6 +69,9 @@ pub enum GameObject {
     Grass,
     Doorway,
     Wall,
+    Roof,
+    RoofRight,
+    RoofLeft,
     Sunlight,
     Npc,
     Empty,
@@ -116,6 +123,9 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Grass => self.spawn_grass(),
             GameObject::Doorway => self.spawn_doorway(),
             GameObject::Wall => self.spawn_wall(),
+            GameObject::Roof => self.spawn_roof(),
+            GameObject::RoofRight => self.spawn_roof_right(),
+            GameObject::RoofLeft => self.spawn_roof_left(),
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
             GameObject::Empty => self.spawn_empty(),
@@ -144,6 +154,9 @@ fn load_assets_for_spawner(
     let mut scenes = HashMap::new();
     scenes.insert(GameObject::Doorway, doorway::load_scene(&asset_server));
     scenes.insert(GameObject::Wall, wall::load_scene(&asset_server));
+    scenes.insert(GameObject::Roof, roof::load_scene(&asset_server));
+    scenes.insert(GameObject::RoofRight, roof_right::load_scene(&asset_server));
+    scenes.insert(GameObject::RoofLeft, roof_left::load_scene(&asset_server));
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
 
     commands.insert_resource(GameObjectSpawner {

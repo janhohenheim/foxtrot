@@ -9,7 +9,7 @@ pub struct GameObjectsPlugin;
 
 impl Plugin for GameObjectsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup_game_objects);
+        app.add_startup_system(load_assets_for_spawner);
     }
 }
 
@@ -61,7 +61,7 @@ impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     }
 }
 
-fn setup_game_objects(
+fn load_assets_for_spawner(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut mesh_assets: ResMut<Assets<Mesh>>,

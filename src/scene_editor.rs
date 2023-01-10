@@ -115,7 +115,11 @@ fn spawn_objects(
     let game_objects = game_objects.retrieve_with(asset_server);
 
     for object in spawn_events.iter() {
-        let location = get_raycast_location(camera, player, &rapier_context, MAX_SPAWN_DISTANCE);
+        let origin = player.translation + Vec3::new(0., 1., 0.);
+        let direction = -(camera.rotation * Vec3::Z);
+        let location =
+            get_raycast_location(&origin, &direction, &rapier_context, MAX_SPAWN_DISTANCE)
+                + Vec3::new(0., 2., 0.);
         let bundle = game_objects.get(&object.0, Transform::from_translation(location));
         commands.spawn(bundle);
     }

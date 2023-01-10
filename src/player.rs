@@ -89,9 +89,9 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
                 // Automatically slide down on slopes smaller than n degrees.
                 min_slope_slide_angle: 30.0_f32.to_radians() as Real,
                 // The character offset is set to n multiplied by the collider’s height.
-                offset: CharacterLength::Absolute(0.01),
+                offset: CharacterLength::Absolute(2e-2),
                 // Snap to the ground if the vertical distance to the ground is smaller than n.
-                snap_to_ground: Some(CharacterLength::Absolute(0.001)),
+                snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
                 filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
                 ..default()
             },

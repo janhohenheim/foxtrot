@@ -1,4 +1,4 @@
-use crate::actions::ActionsFrozen;
+use crate::actions::{Actions, ActionsFrozen};
 use crate::dialog::{DialogEvent, DialogTarget};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
@@ -71,6 +71,7 @@ fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
     mut egui_context: ResMut<EguiContext>,
+    actions: Res<Actions>,
     windows: Res<Windows>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
@@ -90,8 +91,9 @@ fn display_interaction_prompt(
         .auto_sized()
         .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
         .show(egui_context.ctx_mut(), |ui| {
-            if ui.button("Talk").clicked() {
-                dialog_event_writer.send(DialogEvent(dialog_id.dialog_id.clone()));
-            }
+            ui.label("Talk");
         });
+    if actions.interact {
+        dialog_event_writer.send(DialogEvent(dialog_id.dialog_id.clone()));
+    }
 }

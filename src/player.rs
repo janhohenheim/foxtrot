@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use components::*;
 pub use components::{Player, PlayerSensor};
+use serde::{Deserialize, Serialize};
 
 mod components;
 
@@ -21,7 +22,16 @@ pub struct PlayerPlugin;
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
+        app.register_type::<AnimationEntityLink>()
+            .register_type::<components::Timer>()
+            .register_type::<components::PlayerModel>()
+            .register_type::<components::Player>()
+            .register_type::<components::PlayerSensor>()
+            .register_type::<components::JumpState>()
+            .register_type::<components::Grounded>()
+            .register_type::<components::Jump>()
+            .register_type::<components::CharacterVelocity>()
+            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(link_animations)
@@ -79,9 +89,9 @@ fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Asse
                 // Automatically slide down on slopes smaller than n degrees.
                 min_slope_slide_angle: 30.0_f32.to_radians() as Real,
                 // The character offset is set to n multiplied by the collider’s height.
-                offset: CharacterLength::Absolute(0.01),
+                offset: CharacterLength::Absolute(2e-2),
                 // Snap to the ground if the vertical distance to the ground is smaller than n.
-                snap_to_ground: Some(CharacterLength::Absolute(0.001)),
+                snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
                 filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
                 ..default()
             },
@@ -291,8 +301,15 @@ fn play_animations(
     }
 }
 
-#[derive(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct AnimationEntityLink(pub Entity);
+
+impl Default for AnimationEntityLink {
+    fn default() -> Self {
+        Self(Entity::from_raw(0))
+    }
+}
 
 /// Source: <https://github.com/bevyengine/bevy/discussions/5564>
 fn get_top_parent(mut curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {

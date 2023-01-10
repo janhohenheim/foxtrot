@@ -47,8 +47,6 @@ pub struct TextureAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct SceneAssets {
-    #[asset(path = "scenes/wallWood.glb")]
-    pub wall_wood: Handle<Gltf>,
     #[asset(path = "scenes/Fox.glb")]
     /// Source: <https://opengameart.org/content/fox-and-shiba>
     pub character: Handle<Gltf>,

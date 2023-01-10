@@ -2,7 +2,7 @@ use crate::actions::{Actions, ActionsFrozen};
 use crate::camera::{get_raycast_location, PlayerCamera};
 use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
-use crate::world_serialization::SaveRequest;
+use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::{Align, ScrollArea};
@@ -13,10 +13,20 @@ use strum::IntoEnumIterator;
 
 pub struct SceneEditorPlugin;
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct SceneEditorStatus {
+pub struct SceneEditorState {
     active: bool,
+    save_name: String,
+}
+
+impl Default for SceneEditorState {
+    fn default() -> Self {
+        Self {
+            save_name: "demo".to_owned(),
+            active: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
@@ -26,7 +36,7 @@ impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
         #[cfg(feature = "editor")]
         app.add_event::<SpawnEvent>()
-            .init_resource::<SceneEditorStatus>()
+            .init_resource::<SceneEditorState>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_toggle)
@@ -43,14 +53,14 @@ const MAX_SPAWN_DISTANCE: f32 = 30.0;
 fn handle_toggle(
     mut commands: Commands,
     actions: Res<Actions>,
-    mut scene_editor_status: ResMut<SceneEditorStatus>,
+    mut scene_editor_state: ResMut<SceneEditorState>,
 ) {
     if !actions.toggle_editor {
         return;
     }
-    scene_editor_status.active = !scene_editor_status.active;
+    scene_editor_state.active = !scene_editor_state.active;
 
-    if scene_editor_status.active {
+    if scene_editor_state.active {
         commands.init_resource::<ActionsFrozen>();
     } else {
         commands.remove_resource::<ActionsFrozen>();
@@ -59,28 +69,32 @@ fn handle_toggle(
 
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
-    scene_editor_status: Res<SceneEditorStatus>,
     mut spawn_events: EventWriter<SpawnEvent>,
-    mut save_writes: EventWriter<SaveRequest>,
+    mut save_writer: EventWriter<SaveRequest>,
+    mut save_loader: EventWriter<LoadRequest>,
+    mut editor_state: ResMut<SceneEditorState>,
 ) {
-    if !scene_editor_status.active {
+    if !editor_state.active {
         return;
     }
     egui::Window::new("Scene Editor")
         .fixed_size(egui::Vec2::new(150., 150.))
         .show(egui_context.ctx_mut(), |ui| {
-            let mut save = "demo".to_owned();
             ui.horizontal(|ui| {
                 ui.label("Save name: ");
-                egui::TextEdit::singleline(&mut save).show(ui);
+                egui::TextEdit::singleline(&mut editor_state.save_name).show(ui);
             });
             ui.horizontal(|ui| {
                 if ui.button("Save").clicked() {
-                    save_writes.send(SaveRequest {
-                        filename: save.clone(),
+                    save_writer.send(SaveRequest {
+                        filename: editor_state.save_name.clone(),
                     })
                 }
-                if ui.button("Load").clicked() {}
+                if ui.button("Load").clicked() {
+                    save_loader.send(LoadRequest {
+                        filename: editor_state.save_name.clone(),
+                    })
+                }
             });
 
             ui.separator();

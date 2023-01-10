@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::dialog::{DialogId, DialogTarget};
 use crate::loading::{DynamicSceneAssets, SceneAssets};
-use crate::spawning::{GameObject, SpawnEvent};
+use crate::spawning::{GameObject, SpawnEvent, SpawnEventSender};
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*;
@@ -37,29 +37,24 @@ fn setup(mut spawner: EventWriter<SpawnEvent>) {
                     0.,
                     GRASS_SIZE * (-grass_z / 2 + z) as f32,
                 ),
-                parent: Some("Grass Container".to_owned()),
+                parent: Some("Grass Container".into()),
             });
         }
     }
 
-    let house_parent = "House".to_owned();
-    spawner.send(SpawnEvent {
-        object: GameObject::Doorway,
-        transform: default(),
-        parent: Some(house_parent.clone()),
-    });
+    let house_parent = "House";
+    SpawnEventSender::new(GameObject::Doorway)
+        .with_parent(house_parent)
+        .send(&mut spawner);
 
     let wall_width = 3.;
-    spawner.send(SpawnEvent {
-        object: GameObject::Wall,
-        transform: Transform::from_translation(Vec3::new(0., 0., wall_width)),
-        parent: Some(house_parent.clone()),
-    });
-    spawner.send(SpawnEvent {
-        object: GameObject::Wall,
-        transform: Transform::from_translation(Vec3::new(0., 0., -wall_width)),
-        parent: Some(house_parent),
-    });
+    SpawnEventSender::new(GameObject::Wall)
+        .with_parent(house_parent)
+        .with_translation((0., 0., wall_width))
+        .send(&mut spawner)
+        .with_translation((0., 0., -wall_width))
+        .send(&mut spawner);
+
     /*
 
     .spawn_light(Transform {

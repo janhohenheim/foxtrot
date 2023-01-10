@@ -2,7 +2,10 @@ use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use bevy_rapier3d::parry::transformation::utils::transform;
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
+
 mod doorway;
 mod grass;
 mod wall;
@@ -24,7 +27,48 @@ impl Plugin for GameObjectsPlugin {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
-    pub parent: Option<String>,
+    pub parent: Option<Cow<'static, str>>,
+}
+
+pub struct SpawnEventSender {
+    pub object: GameObject,
+    pub transform: Transform,
+    pub parent: Option<Cow<'static, str>>,
+}
+
+impl SpawnEventSender {
+    pub fn new(object: GameObject) -> Self {
+        Self {
+            object,
+            transform: default(),
+            parent: default(),
+        }
+    }
+
+    pub fn with_transform(&mut self, transform: Transform) -> &mut Self {
+        self.transform = transform;
+        self
+    }
+
+    pub fn with_translation(&mut self, translation: impl Into<Vec3>) -> &mut Self {
+        self.transform = Transform::from_translation(translation.into());
+        self
+    }
+
+    pub fn with_parent(&mut self, parent: impl Into<Cow<'static, str>>) -> &mut Self {
+        self.parent = Some(parent.into());
+        self
+    }
+
+    pub fn send(&mut self, events: &mut EventWriter<SpawnEvent>) -> &mut Self {
+        let event = SpawnEvent {
+            object: self.object,
+            transform: self.transform,
+            parent: self.parent.clone(),
+        };
+        events.send(event);
+        self
+    }
 }
 
 #[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
@@ -104,7 +148,7 @@ fn load_assets_for_spawner(
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-struct SpawnContainerRegistry(HashMap<String, Entity>);
+struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
 fn spawn_requested(
     mut commands: Commands,
@@ -128,7 +172,7 @@ fn spawn_requested(
             // so we need to keep an own list of already "spawned" parents
             let parent = spawn_containers
                 .0
-                .entry(parent_name.clone())
+                .entry(parent_name.to_owned())
                 .or_insert_with(|| {
                     commands
                         .spawn((

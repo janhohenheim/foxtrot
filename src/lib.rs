@@ -14,6 +14,7 @@ mod menu;
 mod physics;
 mod player;
 mod scene_editor;
+mod world_serialization;
 mod spawning;
 
 use crate::actions::ActionsPlugin;
@@ -28,7 +29,8 @@ use crate::menu::MenuPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::scene_editor::SceneEditorPlugin;
-use crate::spawning::GameObjectsPlugin;
+use crate::world_serialization::WorldSerializationPlugin;
+use crate::spawning::SpawningPlugin;
 use bevy::app::App;
 use bevy::prelude::*;
 
@@ -61,7 +63,8 @@ impl Plugin for GamePlugin {
             .add_plugin(SceneEditorPlugin)
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
-            .add_plugin(GameObjectsPlugin)
+            .add_plugin(SpawningPlugin)
+            .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }
 }

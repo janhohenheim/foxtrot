@@ -8,14 +8,15 @@ use std::borrow::Cow;
 use strum_macros::EnumIter;
 
 mod doorway;
+mod empty;
 mod grass;
 mod npc;
 mod sunlight;
 mod wall;
 
-pub struct GameObjectsPlugin;
+pub struct SpawningPlugin;
 
-impl Plugin for GameObjectsPlugin {
+impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
             .init_resource::<SpawnContainerRegistry>()
@@ -24,11 +25,27 @@ impl Plugin for GameObjectsPlugin {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
     pub parent: Option<Cow<'static, str>>,
+}
+
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct SpawnTracker {
+    pub object: GameObject,
+    pub parent: Option<Cow<'static, str>>,
+}
+impl From<SpawnEvent> for SpawnTracker {
+    fn from(value: SpawnEvent) -> Self {
+        Self {
+            object: value.object,
+            parent: value.parent,
+        }
+    }
 }
 
 pub struct SpawnEventSender<'a, 'w, 's> {
@@ -85,14 +102,23 @@ impl<'a, 'w, 's> SpawnEventSender<'a, 'w, 's> {
     }
 }
 
-#[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
+#[derive(
+    Debug, EnumIter, Component, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize,
+)]
+#[reflect(Component, Serialize, Deserialize)]
 pub enum GameObject {
     Grass,
     Doorway,
     Wall,
     Sunlight,
     Npc,
+    Empty,
+}
+
+impl Default for GameObject {
+    fn default() -> Self {
+        Self::Empty
+    }
 }
 
 #[derive(Resource)]
@@ -134,6 +160,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Wall => self.spawn_wall(),
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
+            GameObject::Empty => self.spawn_empty(),
         }
     }
 }
@@ -181,6 +208,7 @@ fn spawn_requested(
             Name::new(format!("{:?}", spawn.object)),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
+            SpawnTracker::from(spawn.clone()),
         );
         let spawn_children = |parent: &mut ChildBuilder| {
             spawner.attach(parent, &gltf).spawn(&spawn.object);

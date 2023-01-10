@@ -12,6 +12,7 @@ default = [
     "bevy/png",
     "bevy/x11",
     "bevy/animation",
+    "bevy/serialize",
     "bevy_kira_audio/ogg",
 ]
 

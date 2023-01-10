@@ -1,4 +1,4 @@
-use crate::game_objects::{PrimedGameObjectSpawner, GameObject};
+use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;

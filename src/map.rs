@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
 use crate::dialog::{DialogId, DialogTarget};
-use crate::game_objects::GameObjectSpawner;
 use crate::loading::{DynamicSceneAssets, SceneAssets};
+use crate::spawning::{GameObject, SpawnEvent};
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy_rapier3d::prelude::*;
@@ -24,26 +24,23 @@ fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
         ..default()
     });
 }
-fn setup(
-    mut commands: Commands,
-    scenes: Res<SceneAssets>,
-    gltf: Res<Assets<Gltf>>,
-    spawner: Res<GameObjectSpawner>,
-    assets: Res<AssetServer>,
-) {
+fn setup(scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>, mut spawner: EventWriter<SpawnEvent>) {
     let grass_x = 10;
     let grass_z = 10;
-    let game_objects = spawner.attach(&assets, &mut commands);
-    /*
+
     for x in 0..grass_x {
         for z in 0..grass_z {
-            commands.spawn(game_objects.grass(Transform::from_xyz(
-                GRASS_SIZE * (-grass_x / 2 + x) as f32,
-                0.,
-                GRASS_SIZE * (-grass_z / 2 + z) as f32,
-            )));
+            spawner.send(SpawnEvent {
+                object: GameObject::Grass,
+                transform: Transform::from_xyz(
+                    GRASS_SIZE * (-grass_x / 2 + x) as f32,
+                    0.,
+                    GRASS_SIZE * (-grass_z / 2 + z) as f32,
+                ),
+            });
         }
     }
+    /*
     let mut physics_assets = PhysicsAssets {
         commands,
         scenes,

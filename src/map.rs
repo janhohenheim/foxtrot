@@ -33,7 +33,8 @@ fn setup(
 ) {
     let grass_x = 10;
     let grass_z = 10;
-    let game_objects = game_objects.retrieve_with(asset_server);
+    let game_objects = game_objects.retrieve_with(&asset_server, &mut commands);
+    /*
     for x in 0..grass_x {
         for z in 0..grass_z {
             commands.spawn(game_objects.grass(Transform::from_xyz(
@@ -71,7 +72,7 @@ fn setup(
             translation: Vec3::new(-5., 0.5, 0.),
             scale: Vec3::splat(0.7),
             rotation: Quat::from_rotation_y(TAU / 4.),
-        });
+        });*/
 }
 
 struct PhysicsAssets<'a, 'w, 's> {

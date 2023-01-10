@@ -112,8 +112,6 @@ fn spawn_objects(
         None => return,
     };
 
-    let game_objects = game_objects.retrieve_with(asset_server);
-
     for object in spawn_events.iter() {
         let eye_height_offset = Vec3::new(0., 1., 0.);
         let origin = player.translation + eye_height_offset;
@@ -124,7 +122,8 @@ fn spawn_objects(
             get_raycast_location(&origin, &direction, &rapier_context, MAX_SPAWN_DISTANCE)
                 + offset_to_not_spawn_in_ground;
 
-        let bundle = game_objects.get(&object.0, Transform::from_translation(location));
-        commands.spawn(bundle);
+        let mut game_objects = game_objects.retrieve_with(&asset_server, &mut commands);
+        game_objects.spawn(&object.0, Transform::from_translation(location));
+        //commands.spawn(bundle);
     }
 }

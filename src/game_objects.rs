@@ -1,3 +1,4 @@
+use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use serde::{Deserialize, Serialize};
@@ -25,27 +26,37 @@ pub struct GameObjects {
 }
 
 #[derive(Resource)]
-pub struct GameObjectsRetriever<'a> {
+pub struct GameObjectsRetriever<'w, 's, 'a> {
     game_objects: &'a GameObjects,
-    asset_server: Res<'a, AssetServer>,
+    asset_server: &'a Res<'a, AssetServer>,
+    commands: &'a mut Commands<'w, 's>,
 }
 
 impl<'a, 'b> GameObjects
 where
     'b: 'a,
 {
-    pub fn retrieve_with(&'b self, asset_server: Res<'a, AssetServer>) -> GameObjectsRetriever<'a> {
+    pub fn retrieve_with<'w, 's>(
+        &'b self,
+        asset_server: &'a Res<'a, AssetServer>,
+        commands: &'a mut Commands<'w, 's>,
+    ) -> GameObjectsRetriever<'w, 's, 'a> {
         GameObjectsRetriever {
             game_objects: self,
             asset_server,
+            commands,
         }
     }
 }
 
-impl<'a> GameObjectsRetriever<'a> {
-    pub fn get(&self, object: &Object, transform: Transform) -> impl Bundle {
+impl<'w, 's, 'a> GameObjectsRetriever<'w, 's, 'a> {
+    pub fn spawn(
+        &'a mut self,
+        object: &Object,
+        transform: Transform,
+    ) -> EntityCommands<'w, 's, 'a> {
         match *object {
-            Object::Grass => self.grass(transform),
+            Object::Grass => self.spawn_grass(transform),
         }
     }
 }

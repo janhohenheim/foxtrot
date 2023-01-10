@@ -14,6 +14,7 @@ pub struct GameObjectsPlugin;
 impl Plugin for GameObjectsPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
+            .init_resource::<SpawnContainerRegistry>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(SystemSet::on_update(GameState::Playing).with_system(spawn_requested));
     }
@@ -23,7 +24,7 @@ impl Plugin for GameObjectsPlugin {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
-    pub parent: Option<Entity>,
+    pub parent: Option<String>,
 }
 
 #[derive(Debug, EnumIter, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
@@ -101,11 +102,16 @@ fn load_assets_for_spawner(
     });
 }
 
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Resource, Serialize, Deserialize)]
+struct SpawnContainerRegistry(HashMap<String, Entity>);
+
 fn spawn_requested(
     mut commands: Commands,
     gltf: Res<Assets<Gltf>>,
     mut spawn_requests: EventReader<SpawnEvent>,
     spawner: Res<GameObjectSpawner>,
+    mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for spawn in spawn_requests.iter() {
         let bundle = (
@@ -117,8 +123,23 @@ fn spawn_requested(
             spawner.attach(parent, &gltf).spawn(&spawn.object);
         };
 
-        if let Some(parent) = spawn.parent {
-            commands.entity(parent).with_children(|parent| {
+        if let Some(ref parent_name) = spawn.parent {
+            // command.spawn() takes a tick to actually spawn stuff,
+            // so we need to keep an own list of already "spawned" parents
+            let parent = spawn_containers
+                .0
+                .entry(parent_name.clone())
+                .or_insert_with(|| {
+                    commands
+                        .spawn((
+                            Name::new(parent_name.clone()),
+                            VisibilityBundle::default(),
+                            TransformBundle::default(),
+                        ))
+                        .id()
+                });
+
+            commands.entity(*parent).with_children(|parent| {
                 parent.spawn(bundle).with_children(spawn_children);
             });
         } else {

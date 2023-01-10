@@ -24,22 +24,10 @@ fn load_scene(mut commands: Commands, scenes: Res<DynamicSceneAssets>) {
         ..default()
     });
 }
-fn setup(
-    mut commands: Commands,
-    scenes: Res<SceneAssets>,
-    gltf: Res<Assets<Gltf>>,
-    mut spawner: EventWriter<SpawnEvent>,
-) {
+fn setup(mut spawner: EventWriter<SpawnEvent>) {
     let grass_x = 10;
     let grass_z = 10;
 
-    let grass_parent = commands
-        .spawn((
-            Name::new("Grass Container"),
-            VisibilityBundle::default(),
-            TransformBundle::default(),
-        ))
-        .id();
     for x in 0..grass_x {
         for z in 0..grass_z {
             spawner.send(SpawnEvent {
@@ -49,7 +37,7 @@ fn setup(
                     0.,
                     GRASS_SIZE * (-grass_z / 2 + z) as f32,
                 ),
-                parent: Some(grass_parent),
+                parent: Some("Grass Container".to_owned()),
             });
         }
     }

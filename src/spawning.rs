@@ -231,23 +231,19 @@ impl SpawnContainerRegistry {
 }
 
 fn sync_container_registry(
-    name_query: Query<(Entity, &Name), Changed<Name>>,
-    removed_names: RemovedComponents<Name>,
+    name_query: Query<(Entity, &Name)>,
+    spawn_events: EventReader<SpawnEvent>,
+    parenting_events: EventReader<ParentChangeEvent>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
+    if spawn_events.is_empty() && parenting_events.is_empty() {
+        return;
+    }
+    spawn_containers.0 = default();
+
     for (entity, name) in name_query.iter() {
         let name = name.to_string();
         spawn_containers.0.insert(name.into(), entity);
-    }
-    for removed_entity in removed_names.iter() {
-        let names: Vec<_> = spawn_containers
-            .0
-            .iter()
-            .filter_map(|(name, entity)| (*entity == removed_entity).then(|| name.clone()))
-            .collect();
-        for name in names {
-            spawn_containers.0.remove(&name);
-        }
     }
 }
 

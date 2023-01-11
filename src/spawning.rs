@@ -46,14 +46,13 @@ impl Plugin for SpawningPlugin {
 #[reflect(Serialize, Deserialize)]
 pub struct ParentChangeEvent {
     pub name: Cow<'static, str>,
-    pub new_parent: Cow<'static, str>,
+    pub new_parent: Option<Cow<'static, str>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct DuplicationEvent {
     pub name: Cow<'static, str>,
-    pub parent: Option<Cow<'static, str>>,
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -267,7 +266,7 @@ fn spawn_requested(
             .unwrap_or_else(|| format!("{:?}", spawn.object));
 
         let bundle = (
-            Name::new(name),
+            Name::new(name.clone()),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
             SpawnTracker::from(spawn.clone()),
@@ -282,26 +281,22 @@ fn spawn_requested(
                 parent.spawn(bundle).with_children(spawn_children);
             });
         } else {
-            commands.spawn(bundle).with_children(spawn_children);
+            let identity = commands.spawn(bundle).with_children(spawn_children).id();
+            spawn_containers.0.insert(name.into(), identity);
         }
     }
 }
 
 fn duplicate(
-    mut commands: Commands,
     mut duplication_requests: EventReader<DuplicationEvent>,
-    mut spawn_containers: ResMut<SpawnContainerRegistry>,
+    spawn_containers: Res<SpawnContainerRegistry>,
     mut spawn_requests: EventWriter<SpawnEvent>,
-    spawn_tracker_query: Query<(&SpawnTracker, &Children)>,
+    spawn_tracker_query: Query<(&SpawnTracker, Option<&Transform>, &Children)>,
 ) {
     for duplication in duplication_requests.iter() {
-        let entity = spawn_containers.get_or_spawn(duplication.name.clone(), &mut commands);
-        send_recursive_spawn_events(
-            entity,
-            duplication.parent.clone(),
-            &mut spawn_requests,
-            &spawn_tracker_query,
-        );
+        let entity = spawn_containers.0.get(&duplication.name).unwrap();
+
+        send_recursive_spawn_events(*entity, None, &mut spawn_requests, &spawn_tracker_query);
     }
 }
 
@@ -309,12 +304,17 @@ fn send_recursive_spawn_events(
     entity: Entity,
     parent: Option<Cow<'static, str>>,
     spawn_requests: &mut EventWriter<SpawnEvent>,
-    spawn_tracker_query: &Query<(&SpawnTracker, &Children)>,
+    spawn_tracker_query: &Query<(&SpawnTracker, Option<&Transform>, &Children)>,
 ) {
-    let (spawn_tracker, children) = spawn_tracker_query.get(entity).unwrap();
+    let (spawn_tracker, transform, children) = match spawn_tracker_query.get(entity) {
+        Ok(result) => result,
+        Err(_) => {
+            return;
+        }
+    };
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,
-        transform: Default::default(),
+        transform: transform.map(Clone::clone).unwrap_or_default(),
         parent,
         name: spawn_tracker.name.clone(),
     });
@@ -334,8 +334,12 @@ fn change_parent(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for change in parent_changes.iter() {
-        let child = spawn_containers.get_or_spawn(change.name.clone(), &mut commands);
-        let parent = spawn_containers.get_or_spawn(change.new_parent.clone(), &mut commands);
-        commands.entity(child).set_parent(parent);
+        let child = *spawn_containers.0.get(&change.name).unwrap();
+        if let Some(parent) = change.new_parent.clone() {
+            let parent = spawn_containers.get_or_spawn(parent, &mut commands);
+            commands.entity(child).set_parent(parent);
+        } else {
+            commands.entity(child).remove_parent();
+        }
     }
 }

@@ -1,5 +1,4 @@
 use crate::GameState;
-use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -70,14 +69,18 @@ pub struct SpawnEvent {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnTracker {
     pub object: GameObject,
-    pub name: Option<Cow<'static, str>>,
+}
+
+impl SpawnTracker {
+    pub fn get_default_name(&self) -> String {
+        format!("{:?}", self.object)
+    }
 }
 
 impl From<SpawnEvent> for SpawnTracker {
     fn from(value: SpawnEvent) -> Self {
         Self {
             object: value.object,
-            name: value.name,
         }
     }
 }
@@ -139,7 +142,7 @@ where
 }
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn(&'a mut self, object: &GameObject) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn(&'a mut self, object: &GameObject) {
         match *object {
             GameObject::Grass => self.spawn_grass(),
             GameObject::Doorway => self.spawn_doorway(),
@@ -153,7 +156,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Box => self.spawn_box(),
             GameObject::Sphere => self.spawn_sphere(),
             GameObject::Capsule => self.spawn_capsule(),
-        }
+        };
     }
 }
 
@@ -206,10 +209,7 @@ impl SpawnContainerRegistry {
                     Name::new(name.clone()),
                     VisibilityBundle::default(),
                     TransformBundle::default(),
-                    SpawnTracker {
-                        name: Some(name.clone()),
-                        ..default()
-                    },
+                    SpawnTracker::default(),
                 ))
                 .id()
         };
@@ -234,16 +234,17 @@ fn sync_container_registry(
     name_query: Query<(Entity, &Name)>,
     spawn_events: EventReader<SpawnEvent>,
     parenting_events: EventReader<ParentChangeEvent>,
+    duplication_events: EventReader<DuplicationEvent>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
-    if spawn_events.is_empty() && parenting_events.is_empty() {
+    if spawn_events.is_empty() && parenting_events.is_empty() && duplication_events.is_empty() {
         return;
     }
     spawn_containers.0 = default();
 
     for (entity, name) in name_query.iter() {
         let name = name.to_string();
-        spawn_containers.0.insert(name.into(), entity);
+        spawn_containers.0.insert(name.clone().into(), entity);
     }
 }
 
@@ -287,7 +288,7 @@ fn duplicate(
     mut duplication_requests: EventReader<DuplicationEvent>,
     spawn_containers: Res<SpawnContainerRegistry>,
     mut spawn_requests: EventWriter<SpawnEvent>,
-    spawn_tracker_query: Query<(&SpawnTracker, Option<&Transform>, &Children)>,
+    spawn_tracker_query: Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
 ) {
     for duplication in duplication_requests.iter() {
         let entity = spawn_containers.0.get(&duplication.name).unwrap();
@@ -300,27 +301,23 @@ fn send_recursive_spawn_events(
     entity: Entity,
     parent: Option<Cow<'static, str>>,
     spawn_requests: &mut EventWriter<SpawnEvent>,
-    spawn_tracker_query: &Query<(&SpawnTracker, Option<&Transform>, &Children)>,
+    spawn_tracker_query: &Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
 ) {
-    let (spawn_tracker, transform, children) = match spawn_tracker_query.get(entity) {
+    let (spawn_tracker, name, transform, children) = match spawn_tracker_query.get(entity) {
         Ok(result) => result,
         Err(_) => {
             return;
         }
     };
+    let name = Some(String::from(name).into());
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,
         transform: transform.map(Clone::clone).unwrap_or_default(),
         parent,
-        name: spawn_tracker.name.clone(),
+        name: name.clone(),
     });
     for &child in children {
-        send_recursive_spawn_events(
-            child,
-            spawn_tracker.name.clone(),
-            spawn_requests,
-            spawn_tracker_query,
-        );
+        send_recursive_spawn_events(child, name.clone(), spawn_requests, spawn_tracker_query);
     }
 }
 

@@ -2,7 +2,6 @@ use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 
 pub const PATH: &str = "scenes/roofHigh.glb";
 
@@ -12,9 +11,6 @@ pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_roof(&'a mut self) -> EntityCommands<'w, 's, 'a> {
-        let mut entity_commands =
-            self.spawn_gltf(GameObject::Roof, Transform::from_scale(Vec3::splat(3.)));
-        entity_commands.with_children(|parent| {});
-        entity_commands
+        self.spawn_gltf(GameObject::Roof, Transform::from_scale(Vec3::splat(3.)))
     }
 }

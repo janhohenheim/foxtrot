@@ -23,14 +23,23 @@ pub struct SpawningPlugin;
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
+            .add_event::<ParentChangeEvent>()
             .init_resource::<SpawnContainerRegistry>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))
-                    .with_system(sync_container_registry.before("spawn_requested")),
+                    .with_system(sync_container_registry.before("spawn_requested"))
+                    .with_system(change_parent.after("spawn_requested")),
             );
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct ParentChangeEvent {
+    pub name: Cow<'static, str>,
+    pub new_parent: Cow<'static, str>,
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -170,6 +179,46 @@ fn load_assets_for_spawner(
 #[reflect(Resource, Serialize, Deserialize)]
 struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
+impl SpawnContainerRegistry {
+    pub fn get_or_spawn(
+        &mut self,
+        name: impl Into<Cow<'static, str>>,
+        commands: &mut Commands,
+    ) -> Entity {
+        // command.spawn() takes a tick to actually spawn stuff,
+        // so we need to keep an own list of already "spawned" parents
+        let name = name.into();
+        let parent = self
+            .0
+            .entry(name.clone())
+            .or_insert_with(|| {
+                commands
+                    .spawn((
+                        Name::new(name.clone()),
+                        VisibilityBundle::default(),
+                        TransformBundle::default(),
+                    ))
+                    .id()
+            })
+            .clone();
+
+        if commands.get_entity(parent).is_some() {
+            parent
+        } else {
+            // parent was removed at some prior point
+            let entity = commands
+                .spawn((
+                    Name::new(name.clone()),
+                    VisibilityBundle::default(),
+                    TransformBundle::default(),
+                ))
+                .id();
+            self.0.insert(name.clone(), entity);
+            entity
+        }
+    }
+}
+
 fn sync_container_registry(
     name_query: Query<(Entity, &Name), Changed<Name>>,
     removed_names: RemovedComponents<Name>,
@@ -216,38 +265,28 @@ fn spawn_requested(
         };
 
         if let Some(ref parent_name) = spawn.parent {
-            // command.spawn() takes a tick to actually spawn stuff,
-            // so we need to keep an own list of already "spawned" parents
-            let parent = spawn_containers
-                .0
-                .entry(parent_name.to_owned())
-                .or_insert_with(|| {
-                    commands
-                        .spawn((
-                            Name::new(parent_name.clone()),
-                            VisibilityBundle::default(),
-                            TransformBundle::default(),
-                        ))
-                        .id()
-                });
-
-            let mut entity_commands = if commands.get_entity(*parent).is_some() {
-                commands.entity(*parent)
-            } else {
-                // parent was removed at some prior point
-                let entity = commands.spawn((
-                    Name::new(parent_name.clone()),
-                    VisibilityBundle::default(),
-                    TransformBundle::default(),
-                ));
-                spawn_containers.0.insert(parent_name.clone(), entity.id());
-                entity
-            };
-            entity_commands.with_children(|parent| {
+            let entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
+            commands.entity(entity).with_children(|parent| {
                 parent.spawn(bundle).with_children(spawn_children);
             });
         } else {
             commands.spawn(bundle).with_children(spawn_children);
         }
+    }
+}
+
+fn change_parent(
+    mut commands: Commands,
+    mut parent_changes: EventReader<ParentChangeEvent>,
+    mut spawn_containers: ResMut<SpawnContainerRegistry>,
+) {
+    for change in parent_changes.iter() {
+        let child = spawn_containers
+            .0
+            .get(&change.name)
+            .map(|&entity| entity)
+            .unwrap_or_else(|| panic!("Failed to get child"));
+        let parent = spawn_containers.get_or_spawn(change.new_parent.clone(), &mut commands);
+        commands.entity(child).set_parent(parent);
     }
 }

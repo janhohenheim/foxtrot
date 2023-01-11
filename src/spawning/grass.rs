@@ -1,5 +1,4 @@
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
-use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
@@ -19,7 +18,7 @@ pub fn load_material(
 }
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_grass(&'a mut self) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn_grass(&'a mut self) {
         const HALF_EXTENT: Vec3 = Vec3::new(GRASS_SIZE / 2., 0., GRASS_SIZE / 2.);
         self.commands.spawn((
             Collider::cuboid(HALF_EXTENT.x, HALF_EXTENT.y, HALF_EXTENT.z),
@@ -29,6 +28,6 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 transform: Transform::from_translation(HALF_EXTENT),
                 ..default()
             },
-        ))
+        ));
     }
 }

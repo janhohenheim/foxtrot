@@ -1,9 +1,11 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
+use crate::spawning::{
+    DuplicationEvent, GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent,
+};
 use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_egui::egui::{Align, ScrollArea};
+use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -16,8 +18,9 @@ pub struct SceneEditorPlugin;
 pub struct SceneEditorState {
     active: bool,
     save_name: String,
-    spawn_name: String,
     parent_name: String,
+    entity_name: String,
+    spawn_item: GameObject,
 }
 
 impl Default for SceneEditorState {
@@ -25,8 +28,9 @@ impl Default for SceneEditorState {
         Self {
             save_name: "demo".to_owned(),
             active: default(),
-            spawn_name: default(),
             parent_name: default(),
+            entity_name: default(),
+            spawn_item: default(),
         }
     }
 }
@@ -74,75 +78,112 @@ fn handle_toggle(
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
     mut spawn_events: EventWriter<SpawnEvent>,
-    mut save_writer: EventWriter<SaveRequest>,
-    mut save_loader: EventWriter<LoadRequest>,
-    mut editor_state: ResMut<SceneEditorState>,
+    mut save_events: EventWriter<SaveRequest>,
+    mut load_events: EventWriter<LoadRequest>,
+    mut parenting_events: EventWriter<ParentChangeEvent>,
+    mut duplication_events: EventWriter<DuplicationEvent>,
+    mut state: ResMut<SceneEditorState>,
 ) {
-    if !editor_state.active {
+    if !state.active {
         return;
     }
+    const HEIGHT: f32 = 200.;
+    const WIDTH: f32 = 150.;
+
     egui::Window::new("Scene Editor")
-        .fixed_size(egui::Vec2::new(150., 150.))
+        .default_size(egui::Vec2::new(HEIGHT, WIDTH))
         .show(egui_context.ctx_mut(), |ui| {
+            ui.heading("Scene Control");
             ui.horizontal(|ui| {
                 ui.label("Save name: ");
-                ui.text_edit_singleline(&mut editor_state.save_name);
+                ui.text_edit_singleline(&mut state.save_name);
             });
+
+            ui.add_enabled_ui(!state.save_name.is_empty(), |ui| {
+                ui.horizontal(|ui| {
+                    if ui.button("Save").clicked() {
+                        save_events.send(SaveRequest {
+                            filename: state.save_name.clone(),
+                        })
+                    }
+                    if ui.button("Load").clicked() {
+                        load_events.send(LoadRequest {
+                            filename: state.save_name.clone(),
+                        })
+                    }
+                });
+            });
+            ui.separator();
+            ui.heading("Entity Control");
             ui.horizontal(|ui| {
-                if ui.button("Save").clicked() {
-                    save_writer.send(SaveRequest {
-                        filename: editor_state.save_name.clone(),
-                    })
-                }
-                if ui.button("Load").clicked() {
-                    save_loader.send(LoadRequest {
-                        filename: editor_state.save_name.clone(),
-                    })
+                ui.label("Entity:");
+                ui.text_edit_singleline(&mut state.entity_name);
+            });
+            let has_entity = !state.entity_name.is_empty();
+
+            ui.add_space(10.);
+            ui.horizontal(|ui| {
+                ui.label("New Parent:");
+                ui.text_edit_singleline(&mut state.parent_name);
+            });
+            let has_valid_parent = !state.parent_name.is_empty()
+                && has_entity
+                && state.entity_name != state.parent_name;
+            ui.horizontal(|ui| {
+                ui.add_enabled_ui(has_valid_parent, |ui| {
+                    if ui.button("Set Parent").clicked() {
+                        parenting_events.send(ParentChangeEvent {
+                            name: state.entity_name.clone().into(),
+                            new_parent: Some(state.parent_name.clone().into()),
+                        });
+                        state.entity_name = default();
+                        state.parent_name = default();
+                    }
+                });
+                if ui.button("Remove Parent").clicked() {
+                    parenting_events.send(ParentChangeEvent {
+                        name: state.entity_name.clone().into(),
+                        new_parent: None,
+                    });
+                    state.entity_name = default();
+                    state.parent_name = default();
                 }
             });
 
-            ui.separator();
-            ui.heading("Spawn object");
+            ui.add_space(10.);
+            ui.label("Spawning");
             ui.horizontal(|ui| {
-                ui.label("Name: ");
-                ui.text_edit_singleline(&mut editor_state.spawn_name);
+                ui.add_enabled_ui(has_entity, |ui| {
+                    if ui.button("Duplicate").clicked() {
+                        duplication_events.send(DuplicationEvent {
+                            name: state.entity_name.clone().into(),
+                        });
+                        state.entity_name = default();
+                        state.parent_name = default();
+                    }
+                });
+                if ui.button("Spawn").clicked() {
+                    let name = state.entity_name.clone();
+                    let name = (!name.is_empty()).then(|| name.into());
+
+                    spawn_events.send(SpawnEvent {
+                        object: state.spawn_item,
+                        name,
+                        parent: None,
+                    });
+                    state.entity_name = default();
+                    state.parent_name = default();
+                }
             });
-            ui.horizontal(|ui| {
-                ui.label("Parent: ");
-                ui.text_edit_singleline(&mut editor_state.parent_name);
-            });
+
             ui.add_space(3.);
 
             ScrollArea::vertical()
-                .max_height(100.0)
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
                     ui.vertical(|ui| {
                         for item in GameObject::iter() {
-                            let item_to_track = GameObject::Grass;
-                            let track_item = false;
-                            let item_to_track_align = Some(Align::Center);
-                            ui.horizontal(|ui| {
-                                let spawn_button = ui.button("⬛");
-                                ui.label(format!("{item:?}"));
-                                if track_item && item == item_to_track {
-                                    spawn_button.scroll_to_me(item_to_track_align)
-                                }
-                                if spawn_button.clicked() {
-                                    let name = editor_state.spawn_name.clone();
-                                    editor_state.spawn_name = default();
-                                    let name = (!name.is_empty()).then(|| name.into());
-
-                                    let parent = editor_state.parent_name.clone();
-                                    editor_state.parent_name = default();
-                                    let parent = (!parent.is_empty()).then(|| parent.into());
-                                    spawn_events.send(SpawnEvent {
-                                        object: item,
-                                        name,
-                                        parent,
-                                    });
-                                }
-                            });
+                            ui.radio_value(&mut state.spawn_item, item, format!("{item:?}"));
                         }
                     });
                 });

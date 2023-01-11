@@ -29,7 +29,7 @@ pub struct LoadRequest {
 
 fn save_world(
     mut save_requests: EventReader<SaveRequest>,
-    spawn_query: Query<(&SpawnTracker, &Transform)>,
+    spawn_query: Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
 ) {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
@@ -73,7 +73,7 @@ fn save_world(
 fn load_world(
     mut commands: Commands,
     mut load_requests: EventReader<LoadRequest>,
-    current_spawn_query: Query<Entity, (With<SpawnTracker>, With<Transform>)>,
+    current_spawn_query: Query<Entity, With<SpawnTracker>>,
     mut spawn_requests: EventWriter<SpawnEvent>,
 ) {
     for load in load_requests.iter() {
@@ -100,14 +100,26 @@ fn load_world(
     }
 }
 
-fn serialize_world(spawn_query: &Query<(&SpawnTracker, &Transform)>) -> String {
+fn serialize_world(
+    spawn_query: &Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
+) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
-        .map(|(spawn_tracker, transform)| SpawnEvent {
-            object: spawn_tracker.object,
-            transform: *transform,
-            name: spawn_tracker.name.clone(),
-            parent: spawn_tracker.parent.clone(),
+        .map(|(spawn_tracker, name, parent, transform)| {
+            let parent = parent
+                .map(|parent| spawn_query.get(parent.get()).ok())
+                .flatten()
+                .map(|(spawn_tracker, name, _, _)| {
+                    (spawn_tracker.get_default_name() != name.as_str())
+                        .then(|| name.to_string().into())
+                })
+                .flatten();
+            SpawnEvent {
+                object: spawn_tracker.object,
+                transform: transform.map(Clone::clone).unwrap_or_default(),
+                name: Some(String::from(name).into()),
+                parent,
+            }
         })
         .collect();
     ron::to_string(&objects).expect("Failed to serialize world")

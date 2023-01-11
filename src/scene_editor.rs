@@ -119,53 +119,61 @@ fn show_editor(
                 ui.label("Entity:");
                 ui.text_edit_singleline(&mut state.entity_name);
             });
+            let has_entity = !state.entity_name.is_empty();
+
+            ui.add_space(10.);
             ui.horizontal(|ui| {
-                ui.label("(New) Parent:");
+                ui.label("New Parent:");
                 ui.text_edit_singleline(&mut state.parent_name);
             });
-            let has_entity = !state.entity_name.is_empty();
             let has_valid_parent = !state.parent_name.is_empty()
                 && has_entity
                 && state.entity_name != state.parent_name;
             ui.horizontal(|ui| {
                 ui.add_enabled_ui(has_valid_parent, |ui| {
-                    if ui.button("Set parent").clicked() {
+                    if ui.button("Set Parent").clicked() {
                         parenting_events.send(ParentChangeEvent {
                             name: state.entity_name.clone().into(),
-                            new_parent: state.parent_name.clone().into(),
+                            new_parent: Some(state.parent_name.clone().into()),
                         });
                         state.entity_name = default();
                         state.parent_name = default();
                     }
                 });
+                if ui.button("Remove Parent").clicked() {
+                    parenting_events.send(ParentChangeEvent {
+                        name: state.entity_name.clone().into(),
+                        new_parent: None,
+                    });
+                    state.entity_name = default();
+                    state.parent_name = default();
+                }
+            });
+
+            ui.add_space(10.);
+            ui.label("Spawning");
+            ui.horizontal(|ui| {
                 ui.add_enabled_ui(has_entity, |ui| {
                     if ui.button("Duplicate").clicked() {
-                        let parent = (!state.parent_name.is_empty())
-                            .then(|| state.parent_name.clone().into());
                         duplication_events.send(DuplicationEvent {
                             name: state.entity_name.clone().into(),
-                            parent,
                         });
                         state.entity_name = default();
                         state.parent_name = default();
                     }
                 });
-                ui.add_enabled_ui(has_entity, |ui| {
-                    if ui.button("Spawn").clicked() {
-                        let name = state.entity_name.clone();
-                        let name = (!name.is_empty()).then(|| name.into());
+                if ui.button("Spawn").clicked() {
+                    let name = state.entity_name.clone();
+                    let name = (!name.is_empty()).then(|| name.into());
 
-                        let parent = state.parent_name.clone();
-                        let parent = (!parent.is_empty()).then(|| parent.into());
-                        spawn_events.send(SpawnEvent {
-                            object: state.spawn_item,
-                            name,
-                            parent,
-                        });
-                        state.entity_name = default();
-                        state.parent_name = default();
-                    }
-                });
+                    spawn_events.send(SpawnEvent {
+                        object: state.spawn_item,
+                        name,
+                        parent: None,
+                    });
+                    state.entity_name = default();
+                    state.parent_name = default();
+                }
             });
 
             ui.add_space(3.);

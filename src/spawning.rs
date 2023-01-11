@@ -75,6 +75,10 @@ impl From<SpawnEvent> for SpawnTracker {
 )]
 #[reflect(Component, Serialize, Deserialize)]
 pub enum GameObject {
+    Empty,
+    Box,
+    Sphere,
+    Capsule,
     Grass,
     Doorway,
     Wall,
@@ -83,10 +87,6 @@ pub enum GameObject {
     RoofLeft,
     Sunlight,
     Npc,
-    Empty,
-    Box,
-    Sphere,
-    Capsule,
 }
 
 impl Default for GameObject {

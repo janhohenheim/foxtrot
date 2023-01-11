@@ -1,5 +1,5 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::spawning::{GameObject, SpawnEvent as SpawnRequestEvent};
+use crate::spawning::{GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent};
 use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
@@ -18,6 +18,8 @@ pub struct SceneEditorState {
     save_name: String,
     spawn_name: String,
     parent_name: String,
+    parenting_name: String,
+    parenting_parent_name: String,
 }
 
 impl Default for SceneEditorState {
@@ -27,6 +29,8 @@ impl Default for SceneEditorState {
             active: default(),
             spawn_name: default(),
             parent_name: default(),
+            parenting_name: default(),
+            parenting_parent_name: default(),
         }
     }
 }
@@ -76,6 +80,7 @@ fn show_editor(
     mut spawn_events: EventWriter<SpawnEvent>,
     mut save_writer: EventWriter<SaveRequest>,
     mut save_loader: EventWriter<LoadRequest>,
+    mut parenting_writer: EventWriter<ParentChangeEvent>,
     mut editor_state: ResMut<SceneEditorState>,
 ) {
     if !editor_state.active {
@@ -105,6 +110,32 @@ fn show_editor(
             });
 
             ui.separator();
+            ui.heading("Set parent");
+            ui.horizontal(|ui| {
+                ui.label("Name: ");
+                ui.text_edit_singleline(&mut editor_state.parenting_name);
+            });
+            ui.horizontal(|ui| {
+                ui.label("Parent: ");
+                ui.text_edit_singleline(&mut editor_state.parenting_parent_name);
+            });
+            ui.add_enabled_ui(
+                !(editor_state.parenting_name.is_empty()
+                    || editor_state.parenting_parent_name.is_empty())
+                    && editor_state.parenting_name != editor_state.parenting_parent_name,
+                |ui| {
+                    if ui.button("Set parent").clicked() {
+                        parenting_writer.send(ParentChangeEvent {
+                            name: editor_state.parenting_name.clone().into(),
+                            new_parent: editor_state.parenting_parent_name.clone().into(),
+                        });
+                        editor_state.parenting_name = default();
+                        editor_state.parenting_parent_name = default();
+                    }
+                },
+            );
+
+            ui.separator();
             ui.heading("Spawn object");
             ui.horizontal(|ui| {
                 ui.label("Name: ");
@@ -114,6 +145,7 @@ fn show_editor(
                 ui.label("Parent: ");
                 ui.text_edit_singleline(&mut editor_state.parent_name);
             });
+
             ui.add_space(3.);
 
             ScrollArea::vertical()

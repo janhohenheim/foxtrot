@@ -281,11 +281,7 @@ fn change_parent(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for change in parent_changes.iter() {
-        let child = spawn_containers
-            .0
-            .get(&change.name)
-            .map(|&entity| entity)
-            .unwrap_or_else(|| panic!("Failed to get child"));
+        let child = spawn_containers.get_or_spawn(change.name.clone(), &mut commands);
         let parent = spawn_containers.get_or_spawn(change.new_parent.clone(), &mut commands);
         commands.entity(child).set_parent(parent);
     }

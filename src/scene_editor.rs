@@ -1,5 +1,7 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::spawning::{GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent};
+use crate::spawning::{
+    DuplicationEvent, GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent,
+};
 use crate::world_serialization::{LoadRequest, SaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
@@ -16,7 +18,6 @@ pub struct SceneEditorPlugin;
 pub struct SceneEditorState {
     active: bool,
     save_name: String,
-    spawn_name: String,
     parent_name: String,
     entity_name: String,
     spawn_item: GameObject,
@@ -27,7 +28,6 @@ impl Default for SceneEditorState {
         Self {
             save_name: "demo".to_owned(),
             active: default(),
-            spawn_name: default(),
             parent_name: default(),
             entity_name: default(),
             spawn_item: default(),
@@ -81,6 +81,7 @@ fn show_editor(
     mut save_events: EventWriter<SaveRequest>,
     mut load_events: EventWriter<LoadRequest>,
     mut parenting_events: EventWriter<ParentChangeEvent>,
+    mut duplication_events: EventWriter<DuplicationEvent>,
     mut state: ResMut<SceneEditorState>,
 ) {
     if !state.active {
@@ -139,13 +140,19 @@ fn show_editor(
                 });
                 ui.add_enabled_ui(has_entity, |ui| {
                     if ui.button("Duplicate").clicked() {
+                        let parent = (!state.parent_name.is_empty())
+                            .then(|| state.parent_name.clone().into());
+                        duplication_events.send(DuplicationEvent {
+                            name: state.entity_name.clone().into(),
+                            parent,
+                        });
                         state.entity_name = default();
                         state.parent_name = default();
                     }
                 });
                 ui.add_enabled_ui(has_entity, |ui| {
                     if ui.button("Spawn").clicked() {
-                        let name = state.spawn_name.clone();
+                        let name = state.entity_name.clone();
                         let name = (!name.is_empty()).then(|| name.into());
 
                         let parent = state.parent_name.clone();

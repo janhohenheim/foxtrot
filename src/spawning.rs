@@ -231,7 +231,7 @@ impl SpawnContainerRegistry {
 }
 
 fn sync_container_registry(
-    name_query: Query<(Entity, &Name)>,
+    name_query: Query<(Entity, &Name), With<SpawnTracker>>,
     spawn_events: EventReader<SpawnEvent>,
     parenting_events: EventReader<ParentChangeEvent>,
     duplication_events: EventReader<DuplicationEvent>,
@@ -289,11 +289,17 @@ fn duplicate(
     spawn_containers: Res<SpawnContainerRegistry>,
     mut spawn_requests: EventWriter<SpawnEvent>,
     spawn_tracker_query: Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
+    parent_query: Query<&Parent>,
 ) {
     for duplication in duplication_requests.iter() {
-        let entity = spawn_containers.0.get(&duplication.name).unwrap();
-
-        send_recursive_spawn_events(*entity, None, &mut spawn_requests, &spawn_tracker_query);
+        let entity = *spawn_containers.0.get(&duplication.name).unwrap();
+        let parent = parent_query
+            .get(entity)
+            .ok()
+            .map(|parent| spawn_tracker_query.get(parent.get()).ok())
+            .flatten()
+            .map(|(_, name, _, _)| name.to_string().into());
+        send_recursive_spawn_events(entity, parent, &mut spawn_requests, &spawn_tracker_query);
     }
 }
 
@@ -327,7 +333,13 @@ fn change_parent(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for change in parent_changes.iter() {
-        let child = *spawn_containers.0.get(&change.name).unwrap();
+        let child = match spawn_containers.0.get(&change.name) {
+            None => {
+                error!("Failed to fetch child: {}", change.name);
+                continue;
+            }
+            Some(&entity) => entity,
+        };
         if let Some(parent) = change.new_parent.clone() {
             let parent = spawn_containers.get_or_spawn(parent, &mut commands);
             commands.entity(child).set_parent(parent);

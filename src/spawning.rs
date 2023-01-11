@@ -65,6 +65,15 @@ pub struct SpawnEvent {
     pub name: Option<Cow<'static, str>>,
 }
 
+impl SpawnEvent {
+    pub fn get_name_or_default(&self) -> String {
+        self.name
+            .clone()
+            .map(|name| name.to_string())
+            .unwrap_or_else(|| format!("{:?}", self.object))
+    }
+}
+
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnTracker {
@@ -256,11 +265,7 @@ fn spawn_requested(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for spawn in spawn_requests.iter() {
-        let name = spawn
-            .name
-            .clone()
-            .map(|name| name.to_string())
-            .unwrap_or_else(|| format!("{:?}", spawn.object));
+        let name = spawn.get_name_or_default();
 
         let bundle = (
             Name::new(name.clone()),
@@ -273,10 +278,15 @@ fn spawn_requested(
         };
 
         if let Some(ref parent_name) = spawn.parent {
-            let entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
-            commands.entity(entity).with_children(|parent| {
-                parent.spawn(bundle).with_children(spawn_children);
-            });
+            let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
+            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.into())
+                && matches!(spawn.object, GameObject::Empty) {
+                commands.entity(existing_entity).set_parent(parent_entity).insert(bundle);
+            }  else {
+                commands.entity(parent_entity).with_children(|parent| {
+                    parent.spawn(bundle).with_children(spawn_children);
+                });
+            }
         } else {
             let identity = commands.spawn(bundle).with_children(spawn_children).id();
             spawn_containers.0.insert(name.into(), identity);

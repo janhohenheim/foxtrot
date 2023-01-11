@@ -81,8 +81,11 @@ fn show_editor(
     if !editor_state.active {
         return;
     }
+    const HEIGHT: f32 = 200.;
+    const WIDTH: f32 = 150.;
+
     egui::Window::new("Scene Editor")
-        .fixed_size(egui::Vec2::new(150., 150.))
+        .default_size(egui::Vec2::new(HEIGHT, WIDTH))
         .show(egui_context.ctx_mut(), |ui| {
             ui.horizontal(|ui| {
                 ui.label("Save name: ");
@@ -114,7 +117,6 @@ fn show_editor(
             ui.add_space(3.);
 
             ScrollArea::vertical()
-                .max_height(100.0)
                 .auto_shrink([false; 2])
                 .show(ui, |ui| {
                     ui.vertical(|ui| {

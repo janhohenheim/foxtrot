@@ -279,8 +279,9 @@ fn spawn_requested(
 
         if let Some(ref parent_name) = spawn.parent {
             let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
-            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.into())
+            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
                 && matches!(spawn.object, GameObject::Empty) {
+                info!("{}", name);
                 commands.entity(existing_entity).set_parent(parent_entity).insert(bundle);
             }  else {
                 commands.entity(parent_entity).with_children(|parent| {
@@ -325,7 +326,9 @@ fn send_recursive_spawn_events(
             return;
         }
     };
-    let name = Some(String::from(name).into());
+
+    let name = Some(format!("{} copy", name).into());
+
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,
         transform: transform.map(Clone::clone).unwrap_or_default(),

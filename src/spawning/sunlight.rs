@@ -1,9 +1,8 @@
 use crate::spawning::PrimedGameObjectSpawner;
-use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_sunlight(&'a mut self) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn_sunlight(&'a mut self) {
         // directional 'sun' light
         const HALF_SIZE: f32 = 10.0;
         self.commands.spawn((
@@ -25,6 +24,6 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 ..default()
             },
             Name::new("Light"),
-        ))
+        ));
     }
 }

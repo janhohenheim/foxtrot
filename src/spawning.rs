@@ -1,5 +1,4 @@
 use crate::GameState;
-use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -11,7 +10,11 @@ mod doorway;
 pub mod grass;
 mod npc;
 mod primitives;
+mod roof;
+mod roof_left;
+mod roof_right;
 mod sunlight;
+mod util;
 mod wall;
 
 pub struct SpawningPlugin;
@@ -19,14 +22,36 @@ pub struct SpawningPlugin;
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
+            .add_event::<ParentChangeEvent>()
+            .add_event::<DuplicationEvent>()
             .init_resource::<SpawnContainerRegistry>()
+            .register_type::<SpawnEvent>()
+            .register_type::<ParentChangeEvent>()
+            .register_type::<DuplicationEvent>()
+            .register_type::<SpawnTracker>()
+            .register_type::<SpawnContainerRegistry>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))
-                    .with_system(sync_container_registry.before("spawn_requested")),
+                    .with_system(sync_container_registry.before("spawn_requested"))
+                    .with_system(change_parent.after("spawn_requested"))
+                    .with_system(duplicate.after("spawn_requested")),
             );
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct ParentChangeEvent {
+    pub name: Cow<'static, str>,
+    pub new_parent: Option<Cow<'static, str>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct DuplicationEvent {
+    pub name: Cow<'static, str>,
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -40,19 +65,31 @@ pub struct SpawnEvent {
     pub name: Option<Cow<'static, str>>,
 }
 
+impl SpawnEvent {
+    pub fn get_name_or_default(&self) -> String {
+        self.name
+            .clone()
+            .map(|name| name.to_string())
+            .unwrap_or_else(|| format!("{:?}", self.object))
+    }
+}
+
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnTracker {
     pub object: GameObject,
-    pub parent: Option<Cow<'static, str>>,
-    pub name: Option<Cow<'static, str>>,
 }
+
+impl SpawnTracker {
+    pub fn get_default_name(&self) -> String {
+        format!("{:?}", self.object)
+    }
+}
+
 impl From<SpawnEvent> for SpawnTracker {
     fn from(value: SpawnEvent) -> Self {
         Self {
             object: value.object,
-            parent: value.parent,
-            name: value.name,
         }
     }
 }
@@ -62,15 +99,18 @@ impl From<SpawnEvent> for SpawnTracker {
 )]
 #[reflect(Component, Serialize, Deserialize)]
 pub enum GameObject {
-    Grass,
-    Doorway,
-    Wall,
-    Sunlight,
-    Npc,
     Empty,
     Box,
     Sphere,
     Capsule,
+    Grass,
+    Doorway,
+    Wall,
+    Roof,
+    RoofRight,
+    RoofLeft,
+    Sunlight,
+    Npc,
 }
 
 impl Default for GameObject {
@@ -111,18 +151,21 @@ where
 }
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn(&'a mut self, object: &GameObject) -> EntityCommands<'w, 's, 'a> {
+    pub fn spawn(&'a mut self, object: &GameObject) {
         match *object {
             GameObject::Grass => self.spawn_grass(),
             GameObject::Doorway => self.spawn_doorway(),
             GameObject::Wall => self.spawn_wall(),
+            GameObject::Roof => self.spawn_roof(),
+            GameObject::RoofRight => self.spawn_roof_right(),
+            GameObject::RoofLeft => self.spawn_roof_left(),
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
             GameObject::Empty => self.spawn_empty(),
             GameObject::Box => self.spawn_box(),
             GameObject::Sphere => self.spawn_sphere(),
             GameObject::Capsule => self.spawn_capsule(),
-        }
+        };
     }
 }
 
@@ -144,6 +187,9 @@ fn load_assets_for_spawner(
     let mut scenes = HashMap::new();
     scenes.insert(GameObject::Doorway, doorway::load_scene(&asset_server));
     scenes.insert(GameObject::Wall, wall::load_scene(&asset_server));
+    scenes.insert(GameObject::Roof, roof::load_scene(&asset_server));
+    scenes.insert(GameObject::RoofRight, roof_right::load_scene(&asset_server));
+    scenes.insert(GameObject::RoofLeft, roof_left::load_scene(&asset_server));
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
 
     commands.insert_resource(GameObjectSpawner {
@@ -157,24 +203,57 @@ fn load_assets_for_spawner(
 #[reflect(Resource, Serialize, Deserialize)]
 struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
+impl SpawnContainerRegistry {
+    pub fn get_or_spawn(
+        &mut self,
+        name: impl Into<Cow<'static, str>>,
+        commands: &mut Commands,
+    ) -> Entity {
+        // command.spawn() takes a tick to actually spawn stuff,
+        // so we need to keep an own list of already "spawned" parents
+        let name = name.into();
+        let spawn_parent = |commands: &mut Commands| {
+            commands
+                .spawn((
+                    Name::new(name.clone()),
+                    VisibilityBundle::default(),
+                    TransformBundle::default(),
+                    SpawnTracker::default(),
+                ))
+                .id()
+        };
+        let parent = self
+            .0
+            .entry(name.clone())
+            .or_insert_with(|| spawn_parent(commands))
+            .clone();
+
+        if commands.get_entity(parent).is_some() {
+            parent
+        } else {
+            // parent was removed at some prior point
+            let entity = spawn_parent(commands);
+            self.0.insert(name.clone(), entity);
+            entity
+        }
+    }
+}
+
 fn sync_container_registry(
-    name_query: Query<(Entity, &Name), Changed<Name>>,
-    removed_names: RemovedComponents<Name>,
+    name_query: Query<(Entity, &Name), With<SpawnTracker>>,
+    spawn_events: EventReader<SpawnEvent>,
+    parenting_events: EventReader<ParentChangeEvent>,
+    duplication_events: EventReader<DuplicationEvent>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
+    if spawn_events.is_empty() && parenting_events.is_empty() && duplication_events.is_empty() {
+        return;
+    }
+    spawn_containers.0 = default();
+
     for (entity, name) in name_query.iter() {
         let name = name.to_string();
-        spawn_containers.0.insert(name.into(), entity);
-    }
-    for removed_entity in removed_names.iter() {
-        let names: Vec<_> = spawn_containers
-            .0
-            .iter()
-            .filter_map(|(name, entity)| (*entity == removed_entity).then(|| name.clone()))
-            .collect();
-        for name in names {
-            spawn_containers.0.remove(&name);
-        }
+        spawn_containers.0.insert(name.clone().into(), entity);
     }
 }
 
@@ -186,14 +265,10 @@ fn spawn_requested(
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
 ) {
     for spawn in spawn_requests.iter() {
-        let name = spawn
-            .name
-            .clone()
-            .map(|name| name.to_string())
-            .unwrap_or_else(|| format!("{:?}", spawn.object));
+        let name = spawn.get_name_or_default();
 
         let bundle = (
-            Name::new(name),
+            Name::new(name.clone()),
             VisibilityBundle::default(),
             TransformBundle::from_transform(spawn.transform),
             SpawnTracker::from(spawn.clone()),
@@ -203,38 +278,86 @@ fn spawn_requested(
         };
 
         if let Some(ref parent_name) = spawn.parent {
-            // command.spawn() takes a tick to actually spawn stuff,
-            // so we need to keep an own list of already "spawned" parents
-            let parent = spawn_containers
-                .0
-                .entry(parent_name.to_owned())
-                .or_insert_with(|| {
-                    commands
-                        .spawn((
-                            Name::new(parent_name.clone()),
-                            VisibilityBundle::default(),
-                            TransformBundle::default(),
-                        ))
-                        .id()
+            let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
+            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
+                && matches!(spawn.object, GameObject::Empty) {
+                info!("{}", name);
+                commands.entity(existing_entity).set_parent(parent_entity).insert(bundle);
+            }  else {
+                commands.entity(parent_entity).with_children(|parent| {
+                    parent.spawn(bundle).with_children(spawn_children);
                 });
-
-            let mut entity_commands = if commands.get_entity(*parent).is_some() {
-                commands.entity(*parent)
-            } else {
-                // parent was removed at some prior point
-                let entity = commands.spawn((
-                    Name::new(parent_name.clone()),
-                    VisibilityBundle::default(),
-                    TransformBundle::default(),
-                ));
-                spawn_containers.0.insert(parent_name.clone(), entity.id());
-                entity
-            };
-            entity_commands.with_children(|parent| {
-                parent.spawn(bundle).with_children(spawn_children);
-            });
+            }
         } else {
-            commands.spawn(bundle).with_children(spawn_children);
+            let identity = commands.spawn(bundle).with_children(spawn_children).id();
+            spawn_containers.0.insert(name.into(), identity);
+        }
+    }
+}
+
+fn duplicate(
+    mut duplication_requests: EventReader<DuplicationEvent>,
+    spawn_containers: Res<SpawnContainerRegistry>,
+    mut spawn_requests: EventWriter<SpawnEvent>,
+    spawn_tracker_query: Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
+    parent_query: Query<&Parent>,
+) {
+    for duplication in duplication_requests.iter() {
+        let entity = *spawn_containers.0.get(&duplication.name).unwrap();
+        let parent = parent_query
+            .get(entity)
+            .ok()
+            .map(|parent| spawn_tracker_query.get(parent.get()).ok())
+            .flatten()
+            .map(|(_, name, _, _)| name.to_string().into());
+        send_recursive_spawn_events(entity, parent, &mut spawn_requests, &spawn_tracker_query);
+    }
+}
+
+fn send_recursive_spawn_events(
+    entity: Entity,
+    parent: Option<Cow<'static, str>>,
+    spawn_requests: &mut EventWriter<SpawnEvent>,
+    spawn_tracker_query: &Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
+) {
+    let (spawn_tracker, name, transform, children) = match spawn_tracker_query.get(entity) {
+        Ok(result) => result,
+        Err(_) => {
+            return;
+        }
+    };
+
+    let name = Some(format!("{} copy", name).into());
+
+    spawn_requests.send(SpawnEvent {
+        object: spawn_tracker.object,
+        transform: transform.map(Clone::clone).unwrap_or_default(),
+        parent,
+        name: name.clone(),
+    });
+    for &child in children {
+        send_recursive_spawn_events(child, name.clone(), spawn_requests, spawn_tracker_query);
+    }
+}
+
+fn change_parent(
+    mut commands: Commands,
+    mut parent_changes: EventReader<ParentChangeEvent>,
+    mut spawn_containers: ResMut<SpawnContainerRegistry>,
+) {
+    for change in parent_changes.iter() {
+        let child = match spawn_containers.0.get(&change.name) {
+            None => {
+                error!("Failed to fetch child: {}", change.name);
+                continue;
+            }
+            Some(&entity) => entity,
+        };
+        if let Some(parent) = change.new_parent.clone() {
+            let parent = spawn_containers.get_or_spawn(parent, &mut commands);
+            commands.entity(child).set_parent(parent);
+        } else {
+            commands.entity(child).remove_parent();
         }
     }
 }

@@ -1,5 +1,4 @@
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
-use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 
@@ -10,7 +9,7 @@ pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
 }
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_roof(&'a mut self) -> EntityCommands<'w, 's, 'a> {
-        self.spawn_gltf(GameObject::Roof, Transform::from_scale(Vec3::splat(3.)))
+    pub fn spawn_roof(&'a mut self) {
+        self.spawn_gltf(GameObject::Roof, Transform::from_scale(Vec3::splat(3.)));
     }
 }

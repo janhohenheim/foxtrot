@@ -1,4 +1,4 @@
-use crate::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::spawning::{SpawnEvent, SpawnTracker};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -29,7 +29,7 @@ pub struct LoadRequest {
 
 fn save_world(
     mut save_requests: EventReader<SaveRequest>,
-    spawn_query: Query<(&SpawnTracker, Option<&Parent>, Option<&Transform>)>,
+    spawn_query: Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
 ) {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
@@ -101,24 +101,25 @@ fn load_world(
 }
 
 fn serialize_world(
-    spawn_query: &Query<(&SpawnTracker, Option<&Parent>, Option<&Transform>)>,
+    spawn_query: &Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
 ) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
-        .filter_map(|(spawn_tracker, parent, transform)| {
-            (!matches!(spawn_tracker.object, GameObject::Empty)).then(|| {
-                let parent = parent
-                    .map(|parent| spawn_query.get(parent.get()).ok())
-                    .flatten()
-                    .map(|(spawn_tracker, _, _)| spawn_tracker.name.clone())
-                    .flatten();
-                SpawnEvent {
-                    object: spawn_tracker.object,
-                    transform: transform.map(Clone::clone).unwrap_or_default(),
-                    name: spawn_tracker.name.clone(),
-                    parent,
-                }
-            })
+        .map(|(spawn_tracker, name, parent, transform)| {
+            let parent = parent
+                .map(|parent| spawn_query.get(parent.get()).ok())
+                .flatten()
+                .map(|(spawn_tracker, name, _, _)| {
+                    (spawn_tracker.get_default_name() != name.as_str())
+                        .then(|| name.to_string().into())
+                })
+                .flatten();
+            SpawnEvent {
+                object: spawn_tracker.object,
+                transform: transform.map(Clone::clone).unwrap_or_default(),
+                name: Some(String::from(name).into()),
+                parent,
+            }
         })
         .collect();
     ron::to_string(&objects).expect("Failed to serialize world")

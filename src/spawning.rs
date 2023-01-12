@@ -105,6 +105,7 @@ impl From<SpawnEvent> for SpawnTracker {
 pub enum GameObject {
     Empty,
     Box,
+    Triangle,
     Sphere,
     Capsule,
     Grass,
@@ -169,6 +170,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Box => self.spawn_box(),
             GameObject::Sphere => self.spawn_sphere(),
             GameObject::Capsule => self.spawn_capsule(),
+            GameObject::Triangle => self.spawn_triangle(),
         };
     }
 }
@@ -338,7 +340,16 @@ fn duplicate(
     mut counter: ResMut<Counter>,
 ) {
     for duplication in duplication_requests.iter() {
-        let entity = *spawn_containers.0.get(&duplication.name).unwrap();
+        let entity = match spawn_containers.0.get(&duplication.name) {
+            None => {
+                error!(
+                    "Failed to find entity \"{}\" for duplication",
+                    duplication.name
+                );
+                continue;
+            }
+            Some(entity) => *entity,
+        };
         let parent = parent_query
             .get(entity)
             .ok()

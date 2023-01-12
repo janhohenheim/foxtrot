@@ -10,8 +10,8 @@ impl Plugin for WorldSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SaveRequest>()
             .add_event::<LoadRequest>()
-            .add_system(save_world)
-            .add_system(load_world);
+            .add_system(save_world.after("spawn_requested"))
+            .add_system(load_world.after("spawn_requested"));
     }
 }
 
@@ -84,7 +84,10 @@ fn load_world(
             Ok(serialized_world) => {
                 let spawn_events = deserialize_world(&serialized_world);
                 for entity in &current_spawn_query {
-                    commands.entity(entity).despawn_recursive();
+                    commands
+                        .get_entity(entity)
+                        .unwrap_or_else(|| panic!("Failed to get entity while loading"))
+                        .despawn_recursive();
                 }
                 for event in spawn_events {
                     spawn_requests.send(event);

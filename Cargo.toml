@@ -36,6 +36,7 @@ indexmap = { version = "1.9.2", features = ["serde-1"] }
 strum = "0.24.1"
 strum_macros = "0.24.3"
 ron = "0.8.0"
+regex = "1"
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"

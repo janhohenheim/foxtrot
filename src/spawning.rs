@@ -2,8 +2,10 @@ use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use std::str::FromStr;
 use strum_macros::EnumIter;
 
 mod doorway;
@@ -25,11 +27,13 @@ impl Plugin for SpawningPlugin {
             .add_event::<ParentChangeEvent>()
             .add_event::<DuplicationEvent>()
             .init_resource::<SpawnContainerRegistry>()
+            .init_resource::<Counter>()
             .register_type::<SpawnEvent>()
             .register_type::<ParentChangeEvent>()
             .register_type::<DuplicationEvent>()
             .register_type::<SpawnTracker>()
             .register_type::<SpawnContainerRegistry>()
+            .register_type::<Counter>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
@@ -201,6 +205,27 @@ fn load_assets_for_spawner(
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
+struct Counter(HashMap<String, usize>);
+
+impl Counter {
+    pub fn next(&mut self, name: &str) -> usize {
+        *self
+            .0
+            .entry(name.to_owned())
+            .and_modify(|count| *count += 1)
+            .or_insert(1)
+    }
+
+    pub fn set_at_least(&mut self, name: &str, count: usize) {
+        self.0
+            .entry(name.to_owned())
+            .and_modify(|current| *current = (*current).max(count))
+            .or_insert(count);
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Resource, Serialize, Deserialize)]
 struct SpawnContainerRegistry(HashMap<Cow<'static, str>, Entity>);
 
 impl SpawnContainerRegistry {
@@ -263,9 +288,18 @@ fn spawn_requested(
     mut spawn_requests: EventReader<SpawnEvent>,
     spawner: Res<GameObjectSpawner>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
+    mut counter: ResMut<Counter>,
 ) {
     for spawn in spawn_requests.iter() {
         let name = spawn.get_name_or_default();
+
+        let re = Regex::new(r"(^.*) (\d+)$").unwrap();
+        if let Some(captures) = re.captures(&name)
+            && let Some(name) = captures.get(1).map(|match_| match_.as_str().to_owned())
+            && let Some(number) = captures.get(2)
+            && let Ok(number) = usize::from_str(number.as_str()) {
+            counter.set_at_least(&name, number);
+        }
 
         let bundle = (
             Name::new(name.clone()),
@@ -281,10 +315,9 @@ fn spawn_requested(
             let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
             if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
                 && matches!(spawn.object, GameObject::Empty) {
-                info!("{}", name);
-                commands.entity(existing_entity).set_parent(parent_entity).insert(bundle);
+                commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {}", name)).set_parent(parent_entity).insert(bundle);
             }  else {
-                commands.entity(parent_entity).with_children(|parent| {
+                commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {}", parent_name)).with_children(|parent| {
                     let entity = parent.spawn(bundle).with_children(spawn_children).id();
                     spawn_containers.0.insert(name.into(), entity);
                 });
@@ -302,6 +335,7 @@ fn duplicate(
     mut spawn_requests: EventWriter<SpawnEvent>,
     spawn_tracker_query: Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
     parent_query: Query<&Parent>,
+    mut counter: ResMut<Counter>,
 ) {
     for duplication in duplication_requests.iter() {
         let entity = *spawn_containers.0.get(&duplication.name).unwrap();
@@ -311,7 +345,13 @@ fn duplicate(
             .map(|parent| spawn_tracker_query.get(parent.get()).ok())
             .flatten()
             .map(|(_, name, _, _)| name.to_string().into());
-        send_recursive_spawn_events(entity, parent, &mut spawn_requests, &spawn_tracker_query);
+        send_recursive_spawn_events(
+            entity,
+            parent,
+            &mut spawn_requests,
+            &spawn_tracker_query,
+            &mut counter,
+        );
     }
 }
 
@@ -320,6 +360,7 @@ fn send_recursive_spawn_events(
     parent: Option<Cow<'static, str>>,
     spawn_requests: &mut EventWriter<SpawnEvent>,
     spawn_tracker_query: &Query<(&SpawnTracker, &Name, Option<&Transform>, &Children)>,
+    counter: &mut ResMut<Counter>,
 ) {
     let (spawn_tracker, name, transform, children) = match spawn_tracker_query.get(entity) {
         Ok(result) => result,
@@ -328,7 +369,16 @@ fn send_recursive_spawn_events(
         }
     };
 
-    let name = Some(format!("{} copy", name).into());
+    let name = name.to_string();
+
+    let re = Regex::new(r"^(.*) \d+$").unwrap();
+    let name = if let Some(captures) = re.captures(&name) && let Some(unnumbered_name) = captures.get(1) {
+        unnumbered_name.as_str()
+    } else {
+        &name
+    };
+    let number = counter.next(name);
+    let name = Some(format!("{} {}", name, number).into());
 
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,
@@ -337,7 +387,13 @@ fn send_recursive_spawn_events(
         name: name.clone(),
     });
     for &child in children {
-        send_recursive_spawn_events(child, name.clone(), spawn_requests, spawn_tracker_query);
+        send_recursive_spawn_events(
+            child,
+            name.clone(),
+            spawn_requests,
+            spawn_tracker_query,
+            counter,
+        );
     }
 }
 
@@ -354,11 +410,18 @@ fn change_parent(
             }
             Some(&entity) => entity,
         };
+
         if let Some(parent) = change.new_parent.clone() {
             let parent = spawn_containers.get_or_spawn(parent, &mut commands);
-            commands.entity(child).set_parent(parent);
+            commands
+                .get_entity(child)
+                .unwrap_or_else(|| panic!("Failed to fetch entity with name {}", change.name))
+                .set_parent(parent);
         } else {
-            commands.entity(child).remove_parent();
+            commands
+                .get_entity(child)
+                .unwrap_or_else(|| panic!("Failed to fetch entity with name {}", change.name))
+                .remove_parent();
         }
     }
 }

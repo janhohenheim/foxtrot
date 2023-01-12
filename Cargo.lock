@@ -532,6 +532,7 @@ dependencies = [
  "bevy_rapier3d",
  "embed-resource",
  "indexmap",
+ "regex",
  "ron",
  "serde",
  "serde_json",

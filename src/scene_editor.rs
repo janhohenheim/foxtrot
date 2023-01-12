@@ -136,8 +136,6 @@ fn show_editor(
                             name: state.entity_name.clone().into(),
                             new_parent: Some(state.parent_name.clone().into()),
                         });
-                        state.entity_name = default();
-                        state.parent_name = default();
                     }
                 });
                 if ui.button("Remove Parent").clicked() {
@@ -145,8 +143,6 @@ fn show_editor(
                         name: state.entity_name.clone().into(),
                         new_parent: None,
                     });
-                    state.entity_name = default();
-                    state.parent_name = default();
                 }
             });
 
@@ -158,21 +154,19 @@ fn show_editor(
                         duplication_events.send(DuplicationEvent {
                             name: state.entity_name.clone().into(),
                         });
-                        state.entity_name = default();
-                        state.parent_name = default();
                     }
                 });
                 if ui.button("Spawn").clicked() {
                     let name = state.entity_name.clone();
                     let name = (!name.is_empty()).then(|| name.into());
+                    let parent =
+                        (!state.parent_name.is_empty()).then(|| state.parent_name.clone().into());
 
                     spawn_events.send(SpawnEvent {
                         object: state.spawn_item,
                         name,
-                        parent: None,
+                        parent,
                     });
-                    state.entity_name = default();
-                    state.parent_name = default();
                 }
             });
 

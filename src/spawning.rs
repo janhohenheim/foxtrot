@@ -285,12 +285,13 @@ fn spawn_requested(
                 commands.entity(existing_entity).set_parent(parent_entity).insert(bundle);
             }  else {
                 commands.entity(parent_entity).with_children(|parent| {
-                    parent.spawn(bundle).with_children(spawn_children);
+                    let entity = parent.spawn(bundle).with_children(spawn_children).id();
+                    spawn_containers.0.insert(name.into(), entity);
                 });
             }
         } else {
-            let identity = commands.spawn(bundle).with_children(spawn_children).id();
-            spawn_containers.0.insert(name.into(), identity);
+            let entity = commands.spawn(bundle).with_children(spawn_children).id();
+            spawn_containers.0.insert(name.into(), entity);
         }
     }
 }

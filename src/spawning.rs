@@ -11,6 +11,7 @@ use strum_macros::EnumIter;
 mod doorway;
 pub mod grass;
 mod npc;
+mod point_light;
 mod primitives;
 mod roof;
 mod roof_left;
@@ -115,6 +116,7 @@ pub enum GameObject {
     RoofRight,
     RoofLeft,
     Sunlight,
+    PointLight,
     Npc,
 }
 
@@ -171,6 +173,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Sphere => self.spawn_sphere(),
             GameObject::Capsule => self.spawn_capsule(),
             GameObject::Triangle => self.spawn_triangle(),
+            GameObject::PointLight => self.spawn_point_light(),
         };
     }
 }

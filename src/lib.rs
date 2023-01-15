@@ -5,6 +5,7 @@
 mod actions;
 mod audio;
 mod camera;
+mod condition;
 mod dev;
 mod dialog;
 mod interactions_ui;
@@ -22,6 +23,7 @@ mod world_serialization;
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
 use crate::camera::CameraPlugin;
+use crate::condition::ConditionPlugin;
 use crate::dev::DevPlugin;
 use crate::dialog::DialogPlugin;
 use crate::interactions_ui::InteractionsUi;
@@ -67,6 +69,7 @@ impl Plugin for GamePlugin {
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(SpawningPlugin)
+            .add_plugin(ConditionPlugin)
             .add_plugin(SavingPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);

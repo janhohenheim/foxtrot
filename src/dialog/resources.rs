@@ -1,3 +1,4 @@
+use crate::condition::{ActiveConditions, ConditionId};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
@@ -6,10 +7,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub struct DialogEvent(pub DialogId);
-
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Resource, Serialize, Deserialize)]
-pub struct ActiveConditions(pub HashSet<ConditionId>);
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct CurrentDialog {
@@ -94,10 +91,6 @@ impl DialogChoice {
             && self.negative_requirements.is_disjoint(&active_conditions.0)
     }
 }
-
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
-pub struct ConditionId(pub String);
 
 #[derive(
     Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,

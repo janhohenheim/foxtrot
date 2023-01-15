@@ -1,6 +1,7 @@
 use crate::actions::ActionsFrozen;
+use crate::condition::ActiveConditions;
 pub use crate::dialog::resources::{
-    ActiveConditions, CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
+    CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
 use crate::GameState;
 use bevy::prelude::*;
@@ -16,7 +17,6 @@ pub struct DialogPlugin;
 impl Plugin for DialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
-            .init_resource::<ActiveConditions>()
             .register_type::<DialogTarget>()
             .register_type::<DialogId>()
             .add_event::<DialogEvent>()

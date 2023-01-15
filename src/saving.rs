@@ -1,4 +1,5 @@
-use crate::dialog::{ActiveConditions, CurrentDialog};
+use crate::condition::ActiveConditions;
+use crate::dialog::CurrentDialog;
 use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent};
 use crate::world_serialization::{CurrentLevel, WorldLoadRequest};

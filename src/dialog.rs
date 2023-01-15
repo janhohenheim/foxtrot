@@ -1,5 +1,5 @@
 use crate::actions::ActionsFrozen;
-use crate::condition::ActiveConditions;
+use crate::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
@@ -66,7 +66,8 @@ fn set_current_dialog(
 fn show_dialog(
     mut commands: Commands,
     current_dialog: Option<ResMut<CurrentDialog>>,
-    mut active_conditions: ResMut<ActiveConditions>,
+    active_conditions: Res<ActiveConditions>,
+    mut condition_writer: EventWriter<ConditionAddEvent>,
     mut egui_context: ResMut<EguiContext>,
 ) {
     let mut current_dialog = match current_dialog {
@@ -91,7 +92,8 @@ fn show_dialog(
                     ui,
                     &mut commands,
                     &mut current_dialog,
-                    &mut active_conditions,
+                    &active_conditions,
+                    &mut condition_writer,
                     current_page.next_page,
                 );
                 ui.add_space(5.);
@@ -103,7 +105,8 @@ fn present_choices(
     ui: &mut egui::Ui,
     commands: &mut Commands,
     current_dialog: &mut CurrentDialog,
-    active_conditions: &mut ActiveConditions,
+    active_conditions: &ActiveConditions,
+    condition_writer: &mut EventWriter<ConditionAddEvent>,
     next_page: NextPage,
 ) {
     match next_page {
@@ -123,7 +126,7 @@ fn present_choices(
                     && !was_just_picked
                     && ui.button(choice.text.clone()).clicked()
                 {
-                    active_conditions.0.insert(choice_id.clone());
+                    condition_writer.send(ConditionAddEvent(choice_id.clone()));
                     current_dialog.last_choice = Some(choice_id.clone());
                     current_dialog.current_page = choice.next_page_id.clone();
                 }
@@ -131,7 +134,14 @@ fn present_choices(
         }
         NextPage::SameAs(other_page_id) => {
             let next_page = current_dialog.fetch_page(&other_page_id).next_page;
-            present_choices(ui, commands, current_dialog, active_conditions, next_page);
+            present_choices(
+                ui,
+                commands,
+                current_dialog,
+                active_conditions,
+                condition_writer,
+                next_page,
+            );
         }
         NextPage::Exit => {
             if ui.button("Exit").clicked() {

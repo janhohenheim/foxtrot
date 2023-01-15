@@ -1,5 +1,4 @@
 use crate::spawning::{GameObject, SpawnEvent, SpawnTracker};
-use crate::GameState;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -94,10 +93,10 @@ fn load_world(
             Ok(serialized_world) => {
                 let spawn_events = deserialize_world(&serialized_world);
                 for entity in &current_spawn_query {
-                    /*commands
-                    .get_entity(entity)
-                    .unwrap_or_else(|| panic!("Failed to get entity while loading"))
-                    .despawn_recursive();*/
+                    commands
+                        .get_entity(entity)
+                        .unwrap_or_else(|| panic!("Failed to get entity while loading"))
+                        .despawn_recursive();
                 }
                 for event in spawn_events {
                     spawn_requests.send(event);

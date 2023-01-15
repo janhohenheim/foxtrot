@@ -1,10 +1,11 @@
 use crate::spawning::counter::Counter;
 use crate::spawning::event::SpawnEvent;
 use crate::spawning::spawn_container::SpawnContainerRegistry;
-use crate::spawning::{GameObject, GameObjectSpawner, SpawnTracker};
+use crate::spawning::{DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker};
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::str::FromStr;
 
@@ -52,5 +53,30 @@ pub fn spawn_requested(
             let entity = commands.spawn(bundle).with_children(spawn_children).id();
             spawn_containers.0.insert(name.into(), entity);
         }
+    }
+}
+
+#[derive(Debug, Resource, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Resource, Serialize, Deserialize)]
+pub struct DelayedSpawnEvents(Vec<DelayedSpawnEvent>);
+
+pub fn spawn_delayed(
+    mut incoming_delayed_events: EventReader<DelayedSpawnEvent>,
+    mut existing_delayed_events: ResMut<DelayedSpawnEvents>,
+    mut spawn_events: EventWriter<SpawnEvent>,
+) {
+    for delay in incoming_delayed_events.iter() {
+        existing_delayed_events.0.push(delay.clone());
+    }
+    let mut events_to_delete = vec![];
+    for (index, delay) in existing_delayed_events.0.iter_mut().enumerate() {
+        let delay = delay.pass_tick();
+        if delay.is_done() {
+            spawn_events.send(delay.event.clone());
+            events_to_delete.push(index)
+        }
+    }
+    for index in events_to_delete {
+        existing_delayed_events.0.remove(index);
     }
 }

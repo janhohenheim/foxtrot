@@ -16,7 +16,9 @@ pub struct DuplicationEvent {
     pub name: Cow<'static, str>,
 }
 
-#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[derive(
+    Debug, Component, Clone, PartialEq, Default, Reflect, FromReflect, Serialize, Deserialize,
+)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnEvent {
     pub object: GameObject,
@@ -25,6 +27,34 @@ pub struct SpawnEvent {
     pub parent: Option<Cow<'static, str>>,
     #[serde(default)]
     pub name: Option<Cow<'static, str>>,
+}
+
+#[derive(
+    Debug,
+    Component,
+    Resource,
+    Clone,
+    PartialEq,
+    Default,
+    Reflect,
+    FromReflect,
+    Serialize,
+    Deserialize,
+)]
+#[reflect(Component, Resource, Serialize, Deserialize)]
+pub struct DelayedSpawnEvent {
+    pub tick_delay: usize,
+    pub event: SpawnEvent,
+}
+
+impl DelayedSpawnEvent {
+    pub fn pass_tick(&mut self) -> &mut Self {
+        self.tick_delay = self.tick_delay.saturating_sub(1);
+        self
+    }
+    pub fn is_done(&self) -> bool {
+        self.tick_delay == 0
+    }
 }
 
 impl SpawnEvent {

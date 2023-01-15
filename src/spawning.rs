@@ -3,7 +3,7 @@ use crate::spawning::change_parent::change_parent;
 use crate::spawning::counter::Counter;
 use crate::spawning::duplication::duplicate;
 use crate::spawning::objects::*;
-use crate::spawning::spawn::spawn_requested;
+use crate::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
 use crate::spawning::spawn_container::{sync_container_registry, SpawnContainerRegistry};
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
@@ -29,19 +29,24 @@ impl Plugin for SpawningPlugin {
         app.add_event::<SpawnEvent>()
             .add_event::<ParentChangeEvent>()
             .add_event::<DuplicationEvent>()
+            .add_event::<DelayedSpawnEvent>()
             .init_resource::<SpawnContainerRegistry>()
             .init_resource::<Counter>()
+            .init_resource::<DelayedSpawnEvents>()
+            .register_type::<DelayedSpawnEvent>()
             .register_type::<SpawnEvent>()
             .register_type::<ParentChangeEvent>()
             .register_type::<DuplicationEvent>()
             .register_type::<SpawnTracker>()
             .register_type::<SpawnContainerRegistry>()
+            .register_type::<DelayedSpawnEvents>()
             .register_type::<Counter>()
             .register_type::<AnimationEntityLink>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))
+                    .with_system(spawn_delayed)
                     .with_system(sync_container_registry.before("spawn_requested"))
                     .with_system(change_parent.after("spawn_requested"))
                     .with_system(duplicate.after("spawn_requested"))
@@ -123,7 +128,18 @@ impl From<SpawnEvent> for SpawnTracker {
 }
 
 #[derive(
-    Debug, EnumIter, Component, Clone, Copy, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize,
+    Debug,
+    EnumIter,
+    Component,
+    Clone,
+    Copy,
+    Eq,
+    PartialEq,
+    Hash,
+    Reflect,
+    FromReflect,
+    Serialize,
+    Deserialize,
 )]
 #[reflect(Component, Serialize, Deserialize)]
 pub enum GameObject {

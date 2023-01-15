@@ -1,5 +1,5 @@
-use crate::condition::ActiveConditions;
-use crate::dialog::CurrentDialog;
+use crate::condition::{ActiveConditions, ConditionAddEvent};
+use crate::dialog::{CurrentDialog, DialogEvent};
 use crate::player::Player;
 use crate::spawning::{GameObject, SpawnEvent};
 use crate::world_serialization::{CurrentLevel, WorldLoadRequest};
@@ -22,7 +22,8 @@ impl Plugin for SavingPlugin {
             .add_system_set(
                 SystemSet::on_in_stack_update(GameState::Playing)
                     .with_system(handle_load_requests.label("handle_game_load_requests"))
-                    .with_system(handle_save_requests.after("handle_game_load_requests")),
+                    .with_system(handle_save_requests.after("handle_game_load_requests"))
+                    .with_system(save_after_new_condition),
             );
     }
 }
@@ -44,7 +45,7 @@ struct SaveModel {
     scene: String,
     conditions: ActiveConditions,
     player_transform: Transform,
-    current_dialog: Option<CurrentDialog>,
+    dialog_event: Option<DialogEvent>,
 }
 
 fn handle_load_requests(
@@ -52,6 +53,7 @@ fn handle_load_requests(
     mut load_events: EventReader<GameLoadRequest>,
     mut loader: EventWriter<WorldLoadRequest>,
     mut spawner: EventWriter<SpawnEvent>,
+    mut dialog_event_writer: EventWriter<DialogEvent>,
 ) {
     for load in load_events.iter() {
         let path = get_save_path(load.filename.clone());
@@ -78,8 +80,8 @@ fn handle_load_requests(
         loader.send(WorldLoadRequest {
             filename: load.filename.clone(),
         });
-        if let Some(current_dialog) = save_model.current_dialog {
-            commands.insert_resource(current_dialog);
+        if let Some(dialog_event) = save_model.dialog_event {
+            dialog_event_writer.send(dialog_event);
         }
         commands.insert_resource(save_model.conditions);
 
@@ -111,10 +113,14 @@ fn handle_save_requests(
     };
     for save in save_events.iter() {
         for player in &player_query {
+            let dialog_event = dialog.clone().map(|dialog| DialogEvent {
+                dialog: dialog.id,
+                page: Some(dialog.current_page),
+            });
             let save_model = SaveModel {
                 scene: current_level.scene.clone(),
                 conditions: conditions.clone(),
-                current_dialog: dialog.clone(),
+                dialog_event,
                 player_transform: player.clone(),
             };
             let serialized = match ron::to_string(&save_model) {
@@ -137,4 +143,14 @@ fn handle_save_requests(
 
 fn get_save_path(filename: impl Into<Cow<'static, str>>) -> PathBuf {
     Path::new("saves").join(format!("{}.sav.ron", filename.into()))
+}
+
+fn save_after_new_condition(
+    incoming_conditions: EventReader<ConditionAddEvent>,
+    mut save_writer: EventWriter<GameSaveRequest>,
+) {
+    if incoming_conditions.is_empty() {
+        return;
+    }
+    save_writer.send(GameSaveRequest::default());
 }

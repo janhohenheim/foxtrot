@@ -39,24 +39,27 @@ fn set_current_dialog(
     active_conditions: Res<ActiveConditions>,
     mut dialog_events: EventReader<DialogEvent>,
 ) {
-    for DialogEvent(id) in dialog_events.iter() {
-        let dialog = load_dialog(id);
-        let starting_page = dialog
-            .initial_page
-            .iter()
-            .filter(|page| page.is_available(&active_conditions))
-            .next()
-            .unwrap_or_else(|| {
-                panic!(
-                    "No valid active page for dialog {:?}. Current conditions: {:?}",
-                    id, active_conditions
-                )
-            })
-            .id
-            .clone();
+    for dialog_event in dialog_events.iter() {
+        let dialog = load_dialog(&dialog_event.dialog);
+        let current_page = dialog_event.page.clone().unwrap_or_else(|| {
+            dialog
+                .initial_page
+                .iter()
+                .filter(|page| page.is_available(&active_conditions))
+                .next()
+                .unwrap_or_else(|| {
+                    panic!(
+                        "No valid active page for dialog {:?}. Current conditions: {:?}",
+                        dialog, active_conditions
+                    )
+                })
+                .id
+                .clone()
+        });
         commands.insert_resource(CurrentDialog {
+            id: dialog_event.dialog.clone(),
             dialog,
-            current_page: starting_page,
+            current_page,
             last_choice: None,
         });
         commands.init_resource::<ActionsFrozen>();

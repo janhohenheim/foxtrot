@@ -94,6 +94,9 @@ fn display_interaction_prompt(
             ui.label("Talk");
         });
     if actions.interact {
-        dialog_event_writer.send(DialogEvent(dialog_id.dialog_id.clone()));
+        dialog_event_writer.send(DialogEvent {
+            dialog: dialog_id.dialog_id.clone(),
+            page: None,
+        });
     }
 }

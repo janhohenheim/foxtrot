@@ -1,6 +1,7 @@
 use crate::actions::ActionsFrozen;
-pub use crate::dialog::resources::{ActiveConditions, DialogEvent, DialogId};
-use crate::dialog::resources::{CurrentDialog, Dialog, NextPage};
+pub use crate::dialog::resources::{
+    ActiveConditions, CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
+};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::Color32;
@@ -17,7 +18,7 @@ impl Plugin for DialogPlugin {
         app.add_plugin(EguiPlugin)
             .init_resource::<ActiveConditions>()
             .register_type::<DialogTarget>()
-            .register_type::<resources::DialogId>()
+            .register_type::<DialogId>()
             .add_event::<DialogEvent>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)

@@ -14,6 +14,7 @@ mod math;
 mod menu;
 mod physics;
 mod player;
+mod saving;
 mod scene_editor;
 mod spawning;
 mod world_serialization;
@@ -29,6 +30,7 @@ use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
+use crate::saving::SavingPlugin;
 use crate::scene_editor::SceneEditorPlugin;
 use crate::spawning::SpawningPlugin;
 use crate::world_serialization::WorldSerializationPlugin;
@@ -65,6 +67,7 @@ impl Plugin for GamePlugin {
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(SpawningPlugin)
+            .add_plugin(SavingPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }

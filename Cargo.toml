@@ -37,6 +37,7 @@ strum = "0.24.1"
 strum_macros = "0.24.3"
 ron = "0.8.0"
 regex = "1"
+chrono = "0.4.23"
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"

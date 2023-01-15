@@ -1,4 +1,5 @@
-use crate::spawning::{SpawnEvent, SpawnTracker};
+use crate::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::GameState;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -8,27 +9,32 @@ pub struct WorldSerializationPlugin;
 
 impl Plugin for WorldSerializationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SaveRequest>()
-            .add_event::<LoadRequest>()
+        app.add_event::<WorldSaveRequest>()
+            .add_event::<WorldLoadRequest>()
             .add_system(save_world.after("spawn_requested"))
             .add_system(load_world.after("spawn_requested"));
     }
 }
-
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct SaveRequest {
+pub struct WorldSaveRequest {
     pub filename: String,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct LoadRequest {
+pub struct WorldLoadRequest {
     pub filename: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Resource, Serialize, Deserialize)]
+pub struct CurrentLevel {
+    pub scene: String,
 }
 
 fn save_world(
-    mut save_requests: EventReader<SaveRequest>,
+    mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
 ) {
     for save in save_requests.iter() {
@@ -70,9 +76,13 @@ fn save_world(
     }
 }
 
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Protected;
+
 fn load_world(
     mut commands: Commands,
-    mut load_requests: EventReader<LoadRequest>,
+    mut load_requests: EventReader<WorldLoadRequest>,
     current_spawn_query: Query<Entity, With<SpawnTracker>>,
     mut spawn_requests: EventWriter<SpawnEvent>,
 ) {
@@ -84,14 +94,17 @@ fn load_world(
             Ok(serialized_world) => {
                 let spawn_events = deserialize_world(&serialized_world);
                 for entity in &current_spawn_query {
-                    commands
-                        .get_entity(entity)
-                        .unwrap_or_else(|| panic!("Failed to get entity while loading"))
-                        .despawn_recursive();
+                    /*commands
+                    .get_entity(entity)
+                    .unwrap_or_else(|| panic!("Failed to get entity while loading"))
+                    .despawn_recursive();*/
                 }
                 for event in spawn_events {
                     spawn_requests.send(event);
                 }
+                commands.insert_resource(CurrentLevel {
+                    scene: load.filename.clone(),
+                });
                 info!(
                     "Successfully loaded scene \"{}\" from {}",
                     load.filename,
@@ -108,6 +121,7 @@ fn serialize_world(
 ) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
+        .filter(|(spawn_tracker, _, _, _)| !matches!(spawn_tracker.object, GameObject::Player))
         .map(|(spawn_tracker, name, parent, transform)| {
             let parent = parent
                 .map(|parent| spawn_query.get(parent.get()).ok())

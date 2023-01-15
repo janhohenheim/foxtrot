@@ -11,6 +11,7 @@ use strum_macros::EnumIter;
 mod doorway;
 pub mod grass;
 mod npc;
+mod player;
 mod point_light;
 mod primitives;
 mod roof;
@@ -35,13 +36,15 @@ impl Plugin for SpawningPlugin {
             .register_type::<SpawnTracker>()
             .register_type::<SpawnContainerRegistry>()
             .register_type::<Counter>()
+            .register_type::<AnimationEntityLink>()
             .add_startup_system(load_assets_for_spawner)
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))
                     .with_system(sync_container_registry.before("spawn_requested"))
                     .with_system(change_parent.after("spawn_requested"))
-                    .with_system(duplicate.after("spawn_requested")),
+                    .with_system(duplicate.after("spawn_requested"))
+                    .with_system(link_animations.after("spawn_requested")),
             );
     }
 }
@@ -118,6 +121,7 @@ pub enum GameObject {
     Sunlight,
     PointLight,
     Npc,
+    Player,
 }
 
 impl Default for GameObject {
@@ -174,6 +178,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Capsule => self.spawn_capsule(),
             GameObject::Triangle => self.spawn_triangle(),
             GameObject::PointLight => self.spawn_point_light(),
+            GameObject::Player => self.spawn_player(),
         };
     }
 }
@@ -436,6 +441,49 @@ fn change_parent(
                 .get_entity(child)
                 .unwrap_or_else(|| panic!("Failed to fetch entity with name {}", change.name))
                 .remove_parent();
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct AnimationEntityLink(pub Entity);
+
+impl Default for AnimationEntityLink {
+    fn default() -> Self {
+        Self(Entity::from_raw(0))
+    }
+}
+
+/// Source: <https://github.com/bevyengine/bevy/discussions/5564>
+fn get_top_parent(curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
+    let mut last_two_entities = [curr_entity; 2];
+    loop {
+        if let Ok(parent) = parent_query.get(last_two_entities[0]) {
+            last_two_entities[1] = last_two_entities[0];
+            last_two_entities[0] = parent.get();
+        } else {
+            break;
+        }
+    }
+    // The top parent is an organizational node, so use the one below.
+    last_two_entities[1]
+}
+
+pub fn link_animations(
+    player_query: Query<Entity, Added<AnimationPlayer>>,
+    parent_query: Query<&Parent>,
+    animations_entity_link_query: Query<&AnimationEntityLink>,
+    mut commands: Commands,
+) {
+    for entity in player_query.iter() {
+        let top_entity = get_top_parent(entity, &parent_query);
+        if animations_entity_link_query.get(top_entity).is_ok() {
+            warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
+        } else {
+            commands
+                .entity(top_entity)
+                .insert(AnimationEntityLink(entity.clone()));
         }
     }
 }

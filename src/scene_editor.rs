@@ -2,7 +2,7 @@ use crate::actions::{Actions, ActionsFrozen};
 use crate::spawning::{
     DuplicationEvent, GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent,
 };
-use crate::world_serialization::{LoadRequest, SaveRequest};
+use crate::world_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::ScrollArea;
@@ -78,8 +78,8 @@ fn handle_toggle(
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
     mut spawn_events: EventWriter<SpawnEvent>,
-    mut save_events: EventWriter<SaveRequest>,
-    mut load_events: EventWriter<LoadRequest>,
+    mut save_events: EventWriter<WorldSaveRequest>,
+    mut load_events: EventWriter<WorldLoadRequest>,
     mut parenting_events: EventWriter<ParentChangeEvent>,
     mut duplication_events: EventWriter<DuplicationEvent>,
     mut state: ResMut<SceneEditorState>,
@@ -102,14 +102,14 @@ fn show_editor(
             ui.add_enabled_ui(!state.save_name.is_empty(), |ui| {
                 ui.horizontal(|ui| {
                     if ui.button("Save").clicked() {
-                        save_events.send(SaveRequest {
+                        save_events.send(WorldSaveRequest {
                             filename: state.save_name.clone(),
                         })
                     }
                     if ui.button("Load").clicked() {
-                        load_events.send(LoadRequest {
+                        load_events.send(WorldLoadRequest {
                             filename: state.save_name.clone(),
-                        })
+                        });
                     }
                 });
             });

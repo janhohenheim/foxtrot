@@ -6,10 +6,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct DialogEvent(pub DialogId);
+pub struct DialogEvent {
+    pub dialog: DialogId,
+    pub page: Option<PageId>,
+}
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct CurrentDialog {
+    pub id: DialogId,
     pub dialog: Dialog,
     pub current_page: PageId,
     pub last_choice: Option<ConditionId>,
@@ -103,6 +107,8 @@ impl DialogId {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, Reflect, FromReflect, Hash, Serialize, Deserialize,
+)]
 #[reflect(Serialize, Deserialize)]
 pub struct PageId(pub String);

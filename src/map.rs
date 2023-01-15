@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::spawning::{GameObject, SpawnEvent};
+use crate::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::world_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::GameState;
 
@@ -15,7 +15,7 @@ impl Plugin for MapPlugin {
 fn setup(
     mut commands: Commands,
     mut loader: EventWriter<WorldLoadRequest>,
-    mut spawner: EventWriter<SpawnEvent>,
+    mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
     current_level: Option<Res<CurrentLevel>>,
 ) {
     if current_level.is_some() {
@@ -30,10 +30,14 @@ fn setup(
         filename: "demo".to_string(),
     });
 
-    spawner.send(SpawnEvent {
-        object: GameObject::Player,
-        transform: Transform::from_translation((0., 10., 0.).into()),
-        parent: None,
-        name: Some("Player".into()),
-    })
+    // Make sure the player is spawned after the level
+    delayed_spawner.send(DelayedSpawnEvent {
+        tick_delay: 1,
+        event: SpawnEvent {
+            object: GameObject::Player,
+            transform: Transform::from_translation((0., 10., 0.).into()),
+            parent: None,
+            name: Some("Player".into()),
+        },
+    });
 }

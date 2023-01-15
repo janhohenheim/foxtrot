@@ -1,6 +1,7 @@
 use crate::actions::{Actions, ActionsFrozen};
 use crate::spawning::{
-    DuplicationEvent, GameObject, ParentChangeEvent, SpawnEvent as SpawnRequestEvent,
+    DelayedSpawnEvent, DuplicationEvent, GameObject, ParentChangeEvent,
+    SpawnEvent as SpawnRequestEvent,
 };
 use crate::world_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::GameState;
@@ -83,6 +84,7 @@ fn show_editor(
     mut parenting_events: EventWriter<ParentChangeEvent>,
     mut duplication_events: EventWriter<DuplicationEvent>,
     mut state: ResMut<SceneEditorState>,
+    mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
 ) {
     if !state.active {
         return;
@@ -109,6 +111,16 @@ fn show_editor(
                     if ui.button("Load").clicked() {
                         load_events.send(WorldLoadRequest {
                             filename: state.save_name.clone(),
+                        });
+                        // Make sure the player is spawned after the level
+                        delayed_spawner.send(DelayedSpawnEvent {
+                            tick_delay: 1,
+                            event: SpawnRequestEvent {
+                                object: GameObject::Player,
+                                transform: Transform::from_translation((0., 10., 0.).into()),
+                                parent: None,
+                                name: Some("Player".into()),
+                            },
                         });
                     }
                 });

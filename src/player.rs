@@ -1,15 +1,13 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
-use crate::loading::{AnimationAssets, SceneAssets};
+use crate::loading::AnimationAssets;
 use crate::math::look_at;
+use crate::spawning::AnimationEntityLink;
 use crate::GameState;
-use bevy::gltf::Gltf;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use components::*;
-pub use components::{Player, PlayerSensor};
-use serde::{Deserialize, Serialize};
+pub use components::*;
 
 mod components;
 
@@ -22,8 +20,7 @@ pub struct PlayerPlugin;
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<AnimationEntityLink>()
-            .register_type::<components::Timer>()
+        app.register_type::<components::Timer>()
             .register_type::<components::PlayerModel>()
             .register_type::<components::Player>()
             .register_type::<components::PlayerSensor>()
@@ -31,10 +28,8 @@ impl Plugin for PlayerPlugin {
             .register_type::<components::Grounded>()
             .register_type::<components::Jump>()
             .register_type::<components::CharacterVelocity>()
-            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_player))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(link_animations)
                     .with_system(update_grounded.label("update_grounded"))
                     .with_system(
                         apply_gravity
@@ -62,75 +57,6 @@ impl Plugin for PlayerPlugin {
                     ),
             );
     }
-}
-
-fn spawn_player(mut commands: Commands, scenes: Res<SceneAssets>, gltf: Res<Assets<Gltf>>) {
-    let model = gltf
-        .get(&scenes.character)
-        .expect("Failed to load player model");
-
-    let height = 1.0;
-    let radius = 0.4;
-    commands
-        .spawn((
-            PbrBundle {
-                transform: Transform {
-                    translation: Vec3::new(0., 10., 0.),
-                    scale: Vec3::splat(0.5),
-                    ..default()
-                },
-                ..default()
-            },
-            RigidBody::KinematicVelocityBased,
-            Collider::capsule_y(height / 2., radius),
-            KinematicCharacterController {
-                // Don’t allow climbing slopes larger than n degrees.
-                max_slope_climb_angle: 45.0_f32.to_radians() as Real,
-                // Automatically slide down on slopes smaller than n degrees.
-                min_slope_slide_angle: 30.0_f32.to_radians() as Real,
-                // The character offset is set to n multiplied by the collider’s height.
-                offset: CharacterLength::Relative(2e-2),
-                // Snap to the ground if the vertical distance to the ground is smaller than n.
-                snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
-                filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
-                ..default()
-            },
-            Player,
-            Name::new("Player"),
-            Grounded::default(),
-            CharacterVelocity::default(),
-            Jump::default(),
-        ))
-        .with_children(|parent| {
-            parent.spawn((
-                Collider::capsule_y(height / 2., radius),
-                Sensor,
-                PlayerSensor,
-                ActiveCollisionTypes::all(),
-                Name::new("Player Sensor"),
-            ));
-            parent.spawn((
-                PlayerCamera,
-                Camera3dBundle {
-                    transform: Transform::from_xyz(10., 2., 0.),
-                    ..default()
-                },
-                Name::new("Player Camera"),
-            ));
-            parent.spawn((
-                SceneBundle {
-                    scene: model.scenes[0].clone(),
-                    transform: Transform {
-                        translation: Vec3::new(0., -height, 0.),
-                        scale: Vec3::splat(0.02),
-                        ..default()
-                    },
-                    ..default()
-                },
-                PlayerModel,
-                Name::new("Player Model"),
-            ));
-        });
 }
 
 fn update_grounded(
@@ -297,47 +223,6 @@ fn play_animations(
     if has_horizontal_movement {
         for mut model in &mut model_query {
             model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
-        }
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct AnimationEntityLink(pub Entity);
-
-impl Default for AnimationEntityLink {
-    fn default() -> Self {
-        Self(Entity::from_raw(0))
-    }
-}
-
-/// Source: <https://github.com/bevyengine/bevy/discussions/5564>
-fn get_top_parent(mut curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
-    loop {
-        if let Ok(parent) = parent_query.get(curr_entity) {
-            curr_entity = parent.get();
-        } else {
-            break;
-        }
-    }
-    curr_entity
-}
-
-pub fn link_animations(
-    player_query: Query<Entity, Added<AnimationPlayer>>,
-    parent_query: Query<&Parent>,
-    animations_entity_link_query: Query<&AnimationEntityLink>,
-    mut commands: Commands,
-) {
-    for entity in player_query.iter() {
-        let top_entity = get_top_parent(entity, &parent_query);
-
-        if animations_entity_link_query.get(top_entity).is_ok() {
-            warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
-        } else {
-            commands
-                .entity(top_entity)
-                .insert(AnimationEntityLink(entity.clone()));
         }
     }
 }

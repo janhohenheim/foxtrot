@@ -40,7 +40,7 @@ fn save_world(
     for save in save_requests.iter() {
         let scene = save.filename.clone();
         let valid_candidates: Vec<_> = iter::once(scene.clone())
-            .chain((1..).into_iter().map(|n| format!("{0}-{n}", scene.clone())))
+            .chain((1..).map(|n| format!("{0}-{n}", scene.clone())))
             .map(|filename| {
                 Path::new("assets")
                     .join("scenes")

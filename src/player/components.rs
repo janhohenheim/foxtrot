@@ -18,17 +18,26 @@ pub struct PlayerModel;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct CharacterVelocity(pub Vect);
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Grounded {
     pub time_since_last_grounded: Timer,
 }
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Jump {
     pub time_since_start: Timer,
     pub state: JumpState,
+}
+
+impl Default for Jump {
+    fn default() -> Self {
+        Self {
+            time_since_start: Timer::with_max_time(),
+            state: default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
@@ -55,17 +64,10 @@ impl Jump {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Timer {
     elapsed_time: f32,
-}
-impl Default for Timer {
-    fn default() -> Self {
-        Self {
-            elapsed_time: f32::MAX,
-        }
-    }
 }
 
 impl From<Timer> for f32 {
@@ -75,6 +77,11 @@ impl From<Timer> for f32 {
 }
 
 impl Timer {
+    pub fn with_max_time() -> Self {
+        Self {
+            elapsed_time: f32::MAX,
+        }
+    }
     pub fn start(&mut self) {
         self.elapsed_time = 0.0
     }

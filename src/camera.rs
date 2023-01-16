@@ -94,7 +94,7 @@ fn face_target(mut camera_query: Query<&mut Transform, With<PlayerCamera>>) {
 
 fn keep_line_of_sight(
     mut camera_query: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>,
-    mut player_query: Query<&Transform, (With<Player>, Without<PlayerCamera>)>,
+    mut player_query: Query<&GlobalTransform, (With<Player>, Without<PlayerCamera>)>,
     rapier_context: Res<RapierContext>,
 ) {
     let mut camera = match camera_query.iter_mut().next() {
@@ -102,17 +102,13 @@ fn keep_line_of_sight(
         None => return,
     };
     let player = match player_query.iter_mut().next() {
-        Some(transform) => transform,
+        Some(transform) => transform.translation(),
         None => return,
     };
     // camera.translation is the direction because it is a child of the entity with `Player`.
     // Thus, its `Transform` is relative to the player's, which makes it a direction.
-    let location = get_raycast_location(
-        &player.translation,
-        &camera.translation,
-        &rapier_context,
-        MAX_DISTANCE,
-    );
+    let location =
+        get_raycast_location(&player, &camera.translation, &rapier_context, MAX_DISTANCE);
 
     camera.translation = location;
 }

@@ -5,6 +5,7 @@
 mod actions;
 mod audio;
 mod camera;
+mod condition;
 mod dev;
 mod dialog;
 mod interactions_ui;
@@ -14,6 +15,7 @@ mod math;
 mod menu;
 mod physics;
 mod player;
+mod saving;
 mod scene_editor;
 mod spawning;
 mod world_serialization;
@@ -21,6 +23,7 @@ mod world_serialization;
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
 use crate::camera::CameraPlugin;
+use crate::condition::ConditionPlugin;
 use crate::dev::DevPlugin;
 use crate::dialog::DialogPlugin;
 use crate::interactions_ui::InteractionsUi;
@@ -29,6 +32,7 @@ use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
+use crate::saving::SavingPlugin;
 use crate::scene_editor::SceneEditorPlugin;
 use crate::spawning::SpawningPlugin;
 use crate::world_serialization::WorldSerializationPlugin;
@@ -65,6 +69,8 @@ impl Plugin for GamePlugin {
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(SpawningPlugin)
+            .add_plugin(ConditionPlugin)
+            .add_plugin(SavingPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }

@@ -3,5 +3,6 @@ target/
 .DS_Store
 
 dist/
+saves/
 
 assets/scenes/*-[1-9].scn.ron

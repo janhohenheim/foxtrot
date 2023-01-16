@@ -28,11 +28,10 @@ impl SpawnContainerRegistry {
                 ))
                 .id()
         };
-        let parent = self
+        let parent = *self
             .0
             .entry(name.clone())
-            .or_insert_with(|| spawn_parent(commands))
-            .clone();
+            .or_insert_with(|| spawn_parent(commands));
 
         if commands.get_entity(parent).is_some() {
             parent

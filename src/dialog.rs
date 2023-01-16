@@ -45,12 +45,10 @@ fn set_current_dialog(
             dialog
                 .initial_page
                 .iter()
-                .filter(|page| page.is_available(&active_conditions))
-                .next()
+                .find(|page| page.is_available(&active_conditions))
                 .unwrap_or_else(|| {
                     panic!(
-                        "No valid active page for dialog {:?}. Current conditions: {:?}",
-                        dialog, active_conditions
+                        "No valid active page for dialog {dialog:?}. Current conditions: {active_conditions:?}"
                     )
                 })
                 .id
@@ -115,7 +113,7 @@ fn present_choices(
     match next_page {
         NextPage::Continue(next_page_id) => {
             if ui.button("Continue").clicked() {
-                current_dialog.current_page = next_page_id.clone();
+                current_dialog.current_page = next_page_id;
             }
         }
         NextPage::Choice(choices) => {
@@ -125,7 +123,7 @@ fn present_choices(
                     .as_ref()
                     .map(|id| id == choice_id)
                     .unwrap_or_default();
-                if choice.is_available(&active_conditions)
+                if choice.is_available(active_conditions)
                     && !was_just_picked
                     && ui.button(choice.text.clone()).clicked()
                 {
@@ -159,7 +157,7 @@ fn load_dialog(id: &DialogId) -> Dialog {
     let filename = format!("{}.json", id.0);
     let path = Path::new("assets").join("dialogs").join(filename);
     let json = fs::read_to_string(path.clone())
-        .unwrap_or_else(|e| panic!("Failed to open dialog file at {:?}: {}", path, e));
+        .unwrap_or_else(|e| panic!("Failed to open dialog file at {path:?}: {e}"));
     serde_json::from_str(&json)
-        .unwrap_or_else(|e| panic!("Failed to parse dialog file at {:?}: {}", path, e))
+        .unwrap_or_else(|e| panic!("Failed to parse dialog file at {path:?}: {e}"))
 }

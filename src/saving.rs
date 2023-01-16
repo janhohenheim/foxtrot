@@ -157,7 +157,7 @@ fn handle_save_requests(
             let filename = save
                 .filename
                 .clone()
-                .unwrap_or_else(|| Local::now().to_rfc2822().replace(":", "-"));
+                .unwrap_or_else(|| Local::now().to_rfc2822().replace(':', "-"));
             let path = get_save_path(filename.clone());
             fs::write(path, serialized)
                 .unwrap_or_else(|e| error!("Failed to write save {filename}: {e}"));

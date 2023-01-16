@@ -79,6 +79,7 @@ fn handle_toggle(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
     mut spawn_events: EventWriter<SpawnEvent>,

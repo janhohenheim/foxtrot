@@ -42,9 +42,9 @@ pub fn spawn_requested(
             let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
             if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
                 && matches!(spawn.object, GameObject::Empty) {
-                commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {}", name)).set_parent(parent_entity).insert(bundle);
+                commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {name}")).set_parent(parent_entity).insert(bundle);
             }  else {
-                commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {}", parent_name)).with_children(|parent| {
+                commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {parent_name}")).with_children(|parent| {
                     let entity = parent.spawn(bundle).with_children(spawn_children).id();
                     spawn_containers.0.insert(name.into(), entity);
                 });

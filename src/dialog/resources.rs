@@ -22,7 +22,7 @@ impl CurrentDialog {
     pub fn fetch_page(&self, page_id: &PageId) -> Page {
         self.dialog
             .pages
-            .get(&page_id)
+            .get(page_id)
             .unwrap_or_else(|| panic!("Failed to fetch page with id {}", page_id.0))
             .clone()
     }

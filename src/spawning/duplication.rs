@@ -28,8 +28,7 @@ pub fn duplicate(
         let parent = parent_query
             .get(entity)
             .ok()
-            .map(|parent| spawn_tracker_query.get(parent.get()).ok())
-            .flatten()
+            .and_then(|parent| spawn_tracker_query.get(parent.get()).ok())
             .map(|(_, name, _, _)| name.to_string().into());
         send_recursive_spawn_events(
             entity,
@@ -64,7 +63,7 @@ fn send_recursive_spawn_events(
         &name
     };
     let number = counter.next(name);
-    let name = Some(format!("{} {}", name, number).into());
+    let name = Some(format!("{name} {number}").into());
 
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,

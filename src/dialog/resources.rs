@@ -1,16 +1,19 @@
+use crate::condition::{ActiveConditions, ConditionId};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
-pub struct DialogEvent(pub DialogId);
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct DialogEvent {
+    pub dialog: DialogId,
+    pub page: Option<PageId>,
+}
 
-#[derive(Resource, Default, Debug)]
-pub struct ActiveConditions(pub HashSet<ConditionId>);
-
-#[derive(Resource, Debug)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct CurrentDialog {
+    pub id: DialogId,
     pub dialog: Dialog,
     pub current_page: PageId,
     pub last_choice: Option<ConditionId>,
@@ -28,13 +31,14 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct Dialog {
     pub initial_page: Vec<InitialPage>,
     pub pages: HashMap<PageId, Page>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
 pub struct InitialPage {
     pub id: PageId,
     #[serde(default)]
@@ -50,7 +54,7 @@ impl InitialPage {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct Page {
     pub text: String,
     pub next_page: NextPage,
@@ -67,8 +71,14 @@ pub enum NextPage {
     /// Exit dialog after this page
     Exit,
 }
+impl Default for NextPage {
+    fn default() -> Self {
+        Self::Exit
+    }
+}
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
 pub struct DialogChoice {
     /// The player's answer
     pub text: String,
@@ -86,10 +96,9 @@ impl DialogChoice {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub struct ConditionId(pub String);
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,
+)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct DialogId(pub String);
 impl DialogId {
@@ -98,5 +107,8 @@ impl DialogId {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, Reflect, FromReflect, Hash, Serialize, Deserialize,
+)]
+#[reflect(Serialize, Deserialize)]
 pub struct PageId(pub String);

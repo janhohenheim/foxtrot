@@ -122,7 +122,7 @@ fn show_editor(
                             tick_delay: 2,
                             event: SpawnRequestEvent {
                                 object: GameObject::Player,
-                                transform: Transform::from_translation((0., 3., 0.).into()),
+                                transform: Transform::from_translation((0., 0.5, 0.).into()),
                                 parent: None,
                                 name: Some("Player".into()),
                             },

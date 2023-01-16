@@ -61,13 +61,13 @@ fn handle_load_requests(
             .as_ref()
             .map(|filename| Some(get_save_path(filename.clone())))
             .unwrap_or_else(|| {
-                let mut saves: Vec<_> = glob(".saves/*.sav.ron")
+                let mut saves: Vec<_> = glob("./saves/*.sav.ron")
                     .expect("Failed to read glob pattern")
                     .filter_map(|entry| entry.ok())
                     .filter(|entry| entry.is_file())
                     .collect();
                 saves.sort_by_cached_key(|f| f.metadata().unwrap().modified().unwrap());
-                saves.get(0).map(|entry| entry.to_owned())
+                saves.last().map(|entry| entry.to_owned())
             }) {
             Some(path) => path,
             None => {
@@ -107,7 +107,10 @@ fn handle_load_requests(
             tick_delay: 2,
             event: SpawnEvent {
                 object: GameObject::Player,
-                transform: save_model.player_transform,
+                transform: Transform {
+                    scale: Vec3::splat(1.0),
+                    ..save_model.player_transform
+                },
                 parent: None,
                 name: Some("Player".into()),
             },

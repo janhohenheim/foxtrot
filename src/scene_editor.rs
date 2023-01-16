@@ -1,4 +1,5 @@
 use crate::actions::{Actions, ActionsFrozen};
+use crate::saving::{GameLoadRequest, GameSaveRequest};
 use crate::spawning::{
     DelayedSpawnEvent, DuplicationEvent, GameObject, ParentChangeEvent,
     SpawnEvent as SpawnRequestEvent,
@@ -18,6 +19,7 @@ pub struct SceneEditorPlugin;
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct SceneEditorState {
     active: bool,
+    level_name: String,
     save_name: String,
     parent_name: String,
     entity_name: String,
@@ -27,7 +29,8 @@ pub struct SceneEditorState {
 impl Default for SceneEditorState {
     fn default() -> Self {
         Self {
-            save_name: "demo".to_owned(),
+            level_name: "demo".to_owned(),
+            save_name: default(),
             active: default(),
             parent_name: default(),
             entity_name: default(),
@@ -79,8 +82,10 @@ fn handle_toggle(
 fn show_editor(
     mut egui_context: ResMut<EguiContext>,
     mut spawn_events: EventWriter<SpawnEvent>,
-    mut save_events: EventWriter<WorldSaveRequest>,
-    mut load_events: EventWriter<WorldLoadRequest>,
+    mut level_save_events: EventWriter<WorldSaveRequest>,
+    mut level_load_events: EventWriter<WorldLoadRequest>,
+    mut game_save_events: EventWriter<GameSaveRequest>,
+    mut game_load_events: EventWriter<GameLoadRequest>,
     mut parenting_events: EventWriter<ParentChangeEvent>,
     mut duplication_events: EventWriter<DuplicationEvent>,
     mut state: ResMut<SceneEditorState>,
@@ -97,27 +102,27 @@ fn show_editor(
         .show(egui_context.ctx_mut(), |ui| {
             ui.heading("Scene Control");
             ui.horizontal(|ui| {
-                ui.label("Save name: ");
-                ui.text_edit_singleline(&mut state.save_name);
+                ui.label("Level name: ");
+                ui.text_edit_singleline(&mut state.level_name);
             });
 
-            ui.add_enabled_ui(!state.save_name.is_empty(), |ui| {
+            ui.add_enabled_ui(!state.level_name.is_empty(), |ui| {
                 ui.horizontal(|ui| {
                     if ui.button("Save").clicked() {
-                        save_events.send(WorldSaveRequest {
-                            filename: state.save_name.clone(),
+                        level_save_events.send(WorldSaveRequest {
+                            filename: state.level_name.clone(),
                         })
                     }
                     if ui.button("Load").clicked() {
-                        load_events.send(WorldLoadRequest {
-                            filename: state.save_name.clone(),
+                        level_load_events.send(WorldLoadRequest {
+                            filename: state.level_name.clone(),
                         });
                         // Make sure the player is spawned after the level
                         delayed_spawner.send(DelayedSpawnEvent {
-                            tick_delay: 1,
+                            tick_delay: 2,
                             event: SpawnRequestEvent {
                                 object: GameObject::Player,
-                                transform: Transform::from_translation((0., 10., 0.).into()),
+                                transform: Transform::from_translation((0., 3., 0.).into()),
                                 parent: None,
                                 name: Some("Player".into()),
                             },
@@ -125,6 +130,23 @@ fn show_editor(
                     }
                 });
             });
+            ui.horizontal(|ui| {
+                ui.label("Save name: ");
+                ui.text_edit_singleline(&mut state.save_name);
+            });
+
+            ui.horizontal(|ui| {
+                let filename = (!state.save_name.is_empty()).then(|| state.save_name.clone());
+                if ui.button("Save").clicked() {
+                    game_save_events.send(GameSaveRequest {
+                        filename: filename.clone(),
+                    })
+                }
+                if ui.button("Load").clicked() {
+                    game_load_events.send(GameLoadRequest { filename });
+                }
+            });
+
             ui.separator();
             ui.heading("Entity Control");
             ui.horizontal(|ui| {

@@ -32,10 +32,10 @@ fn setup(
 
     // Make sure the player is spawned after the level
     delayed_spawner.send(DelayedSpawnEvent {
-        tick_delay: 1,
+        tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_translation((0., 10., 0.).into()),
+            transform: Transform::from_translation((0., 3., 0.).into()),
             parent: None,
             name: Some("Player".into()),
         },

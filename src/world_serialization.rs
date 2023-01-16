@@ -11,7 +11,8 @@ impl Plugin for WorldSerializationPlugin {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
             .add_system(save_world.after("spawn_requested"))
-            .add_system(load_world.after("spawn_requested"));
+            //.add_system(load_world.before("spawn_requested"))
+            .add_system_to_stage(CoreStage::PostUpdate, load_world);
     }
 }
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]

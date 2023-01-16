@@ -52,26 +52,24 @@ fn save_world(
             .collect();
         if valid_candidates.is_empty() {
             error!("Failed to save scene \"{}\": Invalid path", scene);
+        } else if let Some(path) = valid_candidates
+            .iter()
+            .filter_map(|(path, exists)| (!exists).then_some(path))
+            .next()
+        {
+            let serialized_world = serialize_world(&spawn_query);
+            fs::write(path, serialized_world)
+                .unwrap_or_else(|e| error!("Failed to save scene \"{}\": {}", scene, e));
+            info!(
+                "Successfully saved scene \"{}\" at {}",
+                scene,
+                path.to_string_lossy()
+            );
         } else {
-            if let Some(path) = valid_candidates
-                .iter()
-                .filter_map(|(path, exists)| (!exists).then(|| path))
-                .next()
-            {
-                let serialized_world = serialize_world(&spawn_query);
-                fs::write(path, serialized_world)
-                    .unwrap_or_else(|e| error!("Failed to save scene \"{}\": {}", scene, e));
-                info!(
-                    "Successfully saved scene \"{}\" at {}",
-                    scene,
-                    path.to_string_lossy()
-                );
-            } else {
-                error!(
-                    "Failed to save scene \"{}\": Already got too many saves with this name",
-                    scene
-                );
-            }
+            error!(
+                "Failed to save scene \"{}\": Already got too many saves with this name",
+                scene
+            );
         }
     }
 }
@@ -124,13 +122,11 @@ fn serialize_world(
         .filter(|(spawn_tracker, _, _, _)| !matches!(spawn_tracker.object, GameObject::Player))
         .map(|(spawn_tracker, name, parent, transform)| {
             let parent = parent
-                .map(|parent| spawn_query.get(parent.get()).ok())
-                .flatten()
-                .map(|(spawn_tracker, name, _, _)| {
+                .and_then(|parent| spawn_query.get(parent.get()).ok())
+                .and_then(|(spawn_tracker, name, _, _)| {
                     (spawn_tracker.get_default_name() != name.as_str())
                         .then(|| name.to_string().into())
-                })
-                .flatten();
+                });
             SpawnEvent {
                 object: spawn_tracker.object,
                 transform: transform.map(Clone::clone).unwrap_or_default(),

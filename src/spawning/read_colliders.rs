@@ -1,14 +1,19 @@
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct CustomCollider;
 
 pub fn read_colliders(
     mut commands: Commands,
-    added_name: Query<(Entity, &Name, &Children), Added<Name>>,
+    added_name: Query<(Entity, &Name, &Children), (Added<Name>, Without<CustomCollider>)>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
 ) {
     for (entity, name, children) in &added_name {
-        if name.to_lowercase() == "collider" {
+        if name.to_lowercase().contains("collider") {
             let colliders: Vec<_> = children
                 .iter()
                 .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))

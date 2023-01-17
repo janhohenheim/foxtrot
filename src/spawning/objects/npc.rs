@@ -1,4 +1,5 @@
 use crate::dialog::{DialogId, DialogTarget};
+use crate::spawning::read_colliders::CustomCollider;
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
@@ -36,6 +37,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
                     ActiveCollisionTypes::KINEMATIC_STATIC,
+                    CustomCollider,
                 ));
                 parent.spawn((
                     SceneBundle {

@@ -149,26 +149,9 @@ fn handle_horizontal_movement(
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
-    mut player_query: Query<
-        (
-            &mut CharacterVelocity,
-            &mut KinematicCharacterController,
-            Option<&KinematicCharacterControllerOutput>,
-        ),
-        With<Player>,
-    >,
+    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController), With<Player>>,
 ) {
-    for (mut velocity, mut controller, output) in &mut player_query {
-        if let Some(output) = output {
-            let epsilon = 0.0001;
-            if output.effective_translation.x.abs() < epsilon && velocity.0.x.abs() > epsilon {
-                if output.desired_translation.x < 0.0 {
-                    velocity.0.x = velocity.0.x.max(0.0)
-                } else if output.desired_translation.x > 0.0 {
-                    velocity.0.x = velocity.0.x.min(0.0)
-                }
-            }
-        }
+    for (velocity, mut controller) in &mut player_query {
         controller.translation = Some(velocity.0);
     }
 }

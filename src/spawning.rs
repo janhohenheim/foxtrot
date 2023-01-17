@@ -76,7 +76,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Triangle => self.spawn_triangle(),
             GameObject::PointLight => self.spawn_point_light(),
             GameObject::Player => self.spawn_player(),
-            GameObject::House => self.spawn_house(),
+            GameObject::Level => self.spawn_level(),
         };
     }
 }
@@ -103,7 +103,7 @@ fn load_assets_for_spawner(
     scenes.insert(GameObject::RoofRight, roof_right::load_scene(&asset_server));
     scenes.insert(GameObject::RoofLeft, roof_left::load_scene(&asset_server));
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
-    scenes.insert(GameObject::House, house::load_scene(&asset_server));
+    scenes.insert(GameObject::Level, level::load_scene(&asset_server));
 
     commands.insert_resource(GameObjectSpawner {
         meshes,
@@ -163,7 +163,7 @@ pub enum GameObject {
     PointLight,
     Npc,
     Player,
-    House,
+    Level,
 }
 
 impl Default for GameObject {

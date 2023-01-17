@@ -3,6 +3,7 @@ use crate::spawning::change_parent::change_parent;
 use crate::spawning::counter::Counter;
 use crate::spawning::duplication::duplicate;
 use crate::spawning::objects::*;
+use crate::spawning::read_colliders::read_colliders;
 use crate::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
 use crate::spawning::spawn_container::{sync_container_registry, SpawnContainerRegistry};
 use crate::GameState;
@@ -22,6 +23,7 @@ mod change_parent;
 mod counter;
 mod duplication;
 mod event;
+mod read_colliders;
 mod spawn;
 
 impl Plugin for SpawningPlugin {
@@ -50,7 +52,8 @@ impl Plugin for SpawningPlugin {
                     .with_system(sync_container_registry.before("spawn_requested"))
                     .with_system(change_parent.after("spawn_requested"))
                     .with_system(duplicate.after("spawn_requested"))
-                    .with_system(link_animations.after("spawn_requested")),
+                    .with_system(link_animations.after("spawn_requested"))
+                    .with_system(read_colliders),
             );
     }
 }
@@ -73,6 +76,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Triangle => self.spawn_triangle(),
             GameObject::PointLight => self.spawn_point_light(),
             GameObject::Player => self.spawn_player(),
+            GameObject::House => self.spawn_house(),
         };
     }
 }
@@ -99,6 +103,7 @@ fn load_assets_for_spawner(
     scenes.insert(GameObject::RoofRight, roof_right::load_scene(&asset_server));
     scenes.insert(GameObject::RoofLeft, roof_left::load_scene(&asset_server));
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
+    scenes.insert(GameObject::House, house::load_scene(&asset_server));
 
     commands.insert_resource(GameObjectSpawner {
         meshes,
@@ -158,6 +163,7 @@ pub enum GameObject {
     PointLight,
     Npc,
     Player,
+    House,
 }
 
 impl Default for GameObject {

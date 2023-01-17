@@ -10,3 +10,4 @@ pub mod roof_right;
 pub mod sunlight;
 pub mod util;
 pub mod wall;
+pub mod house;

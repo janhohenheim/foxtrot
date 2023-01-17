@@ -1,0 +1,32 @@
+use bevy::prelude::*;
+use bevy_rapier3d::prelude::*;
+
+pub fn read_colliders(
+    mut commands: Commands,
+    added_name: Query<(Entity, &Name, &Children), Added<Name>>,
+    meshes: Res<Assets<Mesh>>,
+    mesh_handles: Query<&Handle<Mesh>>,
+) {
+    for (entity, name, children) in &added_name {
+        if name.to_lowercase() == "collider" {
+            let colliders: Vec<_> = children
+                .iter()
+                .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
+                .collect();
+            assert_eq!(
+                colliders.len(),
+                1,
+                "Collider must contain exactly one mesh, but found {}",
+                colliders.len()
+            );
+            let (collider_entity, collider_mesh_handle) = colliders.first().unwrap();
+            let collider_mesh = meshes.get(collider_mesh_handle).unwrap();
+            commands.entity(*collider_entity).despawn_recursive();
+
+            let rapier_mesh =
+                Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
+
+            commands.entity(entity).insert(rapier_mesh);
+        }
+    }
+}

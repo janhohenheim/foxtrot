@@ -4,6 +4,7 @@ use crate::player::{CharacterVelocity, Grounded, Jump, Player, PlayerModel, Play
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use std::f32::consts::TAU;
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_player(&'a mut self) {

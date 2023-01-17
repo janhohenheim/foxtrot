@@ -28,10 +28,10 @@ pub fn read_colliders(
             let collider_mesh = meshes.get(collider_mesh_handle).unwrap();
             commands.entity(*collider_entity).despawn_recursive();
 
-            let rapier_mesh =
+            let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
 
-            commands.entity(entity).insert(rapier_mesh);
+            commands.entity(entity).insert((rapier_collider,));
         }
     }
 }

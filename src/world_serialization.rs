@@ -43,7 +43,7 @@ fn save_world(
             .chain((1..).map(|n| format!("{0}-{n}", scene.clone())))
             .map(|filename| {
                 Path::new("assets")
-                    .join("scenes")
+                    .join("levels")
                     .join(format!("{filename}.scn.ron"))
             })
             .map(|path| (path.clone(), fs::try_exists(path).ok()))
@@ -86,7 +86,7 @@ fn load_world(
 ) {
     for load in load_requests.iter() {
         let path = Path::new("assets")
-            .join("scenes")
+            .join("levels")
             .join(format!("{}.scn.ron", load.filename));
         match fs::read_to_string(&path) {
             Ok(serialized_world) => {

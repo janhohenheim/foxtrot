@@ -18,8 +18,8 @@ impl Plugin for NavigationPlugin {
             .insert_resource(NavMeshSettings {
                 cell_width: 0.4,
                 cell_height: 0.1,
-                tile_width: 100,
-                world_half_extents: 250.0,
+                tile_width: 200,
+                world_half_extents: 230.0,
                 world_bottom_bound: -10.0,
                 max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
                 walkable_height: 20,
@@ -31,9 +31,7 @@ impl Plugin for NavigationPlugin {
                 max_edge_length: 50,
             })
             .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(query_mesh)
-                    .with_system(_draw_nav_mesh),
+                SystemSet::on_update(GameState::Playing).with_system(query_mesh), //.with_system(_draw_nav_mesh),
             );
     }
 }

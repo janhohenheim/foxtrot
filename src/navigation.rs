@@ -108,7 +108,7 @@ fn query_mesh(
                             Err(error) => error!("Error with string path: {:?}", error),
                         };
                     }
-                    Err(error) => error!("Error with pathfinding: {:?}", error),
+                    Err(_error) => {} // error!("Error with pathfinding: {:?}", _error),
                 }
             }
         }

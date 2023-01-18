@@ -100,7 +100,7 @@ impl DialogChoice {
     Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,
 )]
 #[reflect(Component, Serialize, Deserialize)]
-#[serde(from = "String")]
+#[serde(from = "String", into = "String")]
 pub struct DialogId(pub String);
 impl DialogId {
     pub fn new(id: &str) -> Self {
@@ -114,15 +114,27 @@ impl From<String> for DialogId {
     }
 }
 
+impl Into<String> for DialogId {
+    fn into(self) -> String {
+        self.0
+    }
+}
+
 #[derive(
     Debug, Clone, Eq, PartialEq, Default, Reflect, FromReflect, Hash, Serialize, Deserialize,
 )]
 #[reflect(Serialize, Deserialize)]
-#[serde(from = "String")]
+#[serde(from = "String", into = "String")]
 pub struct PageId(pub String);
 
 impl From<String> for PageId {
     fn from(value: String) -> Self {
         Self(value)
+    }
+}
+
+impl Into<String> for PageId {
+    fn into(self) -> String {
+        self.0
     }
 }

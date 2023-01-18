@@ -19,12 +19,18 @@ pub struct ActiveConditions(pub HashSet<ConditionId>);
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-#[serde(from = "String")]
+#[serde(from = "String", into = "String")]
 pub struct ConditionId(pub String);
 
 impl From<String> for ConditionId {
     fn from(value: String) -> Self {
         Self(value)
+    }
+}
+
+impl Into<String> for ConditionId {
+    fn into(self) -> String {
+        self.0
     }
 }
 

@@ -1,6 +1,6 @@
 use super::npc::PATH;
 use crate::camera::PlayerCamera;
-use crate::player::{CharacterVelocity, Grounded, Jump, Player, PlayerModel, PlayerSensor};
+use crate::player::{CharacterVelocity, Grounded, Jump, Model, Player, PlayerSensor};
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -68,7 +68,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                         },
                         ..default()
                     },
-                    PlayerModel,
+                    Model,
                     Name::new("Player Model"),
                 ));
             });

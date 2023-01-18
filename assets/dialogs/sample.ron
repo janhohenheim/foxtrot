@@ -1,0 +1,73 @@
+(
+    initial_page: [
+        (
+            id: "page:again",
+            positive_requirements: [
+                "choice:bye",
+            ],
+        ),
+        (
+            id: "page:greet",
+        ),
+    ],
+    pages: {
+        "page:main-choice": (
+            text: "What is your will?",
+            next_page: Choice({
+                "choice:who": (
+                    text: "Who are you?",
+                    next_page_id: "page:me",
+                ),
+                "choice:nest": (
+                    text: "Give me a moment to think more on this",
+                    next_page_id: "page:nested",
+                ),
+                "choice:exhaust": (
+                    text: "Did we talk about everything?",
+                    next_page_id: "page:exhaust",
+                    positive_requirements: [
+                        "choice:who",
+                        "choice:nest",
+                    ],
+                ),
+                "choice:bye": (
+                    text: "You may go now.",
+                    next_page_id: "page:exit",
+                ),
+            }),
+        ),
+        "page:again": (
+            text: "Greetings, player. Do you wish some further testing?",
+            next_page: SameAs("page:greet"),
+        ),
+        "page:me": (
+            text: "I am a testing character, player.\nMy sole purpose is to fill the air with diverse, but ultimately meaningless conversation.",
+            next_page: SameAs("page:main-choice"),
+        ),
+        "page:exhaust": (
+            text: "I have exhausted my repertoire. We can only treat old ground now.",
+            next_page: SameAs("page:main-choice"),
+        ),
+        "page:greet": (
+            text: "Greetings, player.",
+            next_page: Continue("page:main-choice"),
+        ),
+        "page:exit": (
+            text: "Goodbye.\n*The creature\'s gaze shifts ever so slightly. It now looks just past you into the void.*",
+            next_page: Exit,
+        ),
+        "page:main-choice-unnest": (
+            text: "*The creature does not answer. It seems as if it did not even register your words.*",
+            next_page: SameAs("page:main-choice"),
+        ),
+        "page:nested": (
+            text: "*The creature looks right through you, its expression completely devoid of any trace of emotion.*",
+            next_page: Choice({
+                "choice:unnest": (
+                    text: "I have thought enough, yet I have nothing to say",
+                    next_page_id: "page:main-choice-unnest",
+                ),
+            }),
+        ),
+    },
+)

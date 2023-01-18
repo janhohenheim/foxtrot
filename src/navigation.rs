@@ -78,7 +78,6 @@ fn query_mesh(
                         // Convert polygon path to a path of Vec3s.
                         match perform_string_pulling_on_path(&nav_mesh, start_pos, end_pos, &path) {
                             Ok(string_path) => {
-                                info!("path: {:?}", string_path);
                                 let path = string_path.into_iter().chain(iter::once(end_pos));
                                 for (a, b) in path.clone().zip(path.clone().skip(1)) {
                                     lines.line_colored(a, b, 0., Color::RED);
@@ -104,7 +103,6 @@ fn query_mesh(
                                 };
                                 let speed = 5.0;
                                 let velocity = next_direction * speed * dt;
-                                info!("velocity: {:?}", velocity);
                                 character_velocity.0 += velocity;
                             }
                             Err(error) => error!("Error with string path: {:?}", error),

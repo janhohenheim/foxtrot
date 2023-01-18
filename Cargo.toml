@@ -39,6 +39,7 @@ ron = "0.8.0"
 regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
+oxidized_navigation = "0.1.0"
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"

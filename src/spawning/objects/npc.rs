@@ -1,4 +1,6 @@
 use crate::dialog::{DialogId, DialogTarget};
+use crate::navigation::Follower;
+use crate::player::{CharacterVelocity, Grounded};
 use crate::spawning::read_colliders::CustomCollider;
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::gltf::Gltf;
@@ -12,20 +14,41 @@ pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
     asset_server.load(PATH)
 }
 
+pub const HEIGHT: f32 = 1.;
+pub const RADIUS: f32 = 0.4;
+pub const SCALE: f32 = 0.6;
+
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_npc(&'a mut self) {
         let gltf = self
             .gltf
             .get(&self.handles.scenes[&GameObject::Npc])
             .unwrap_or_else(|| panic!("Failed to load scene from {PATH}"));
-        let height = 1.0;
-        let radius = 0.4;
+
         self.commands
             .spawn((
-                PbrBundle::default(),
+                PbrBundle {
+                    transform: Transform::from_scale(Vec3::splat(SCALE)),
+                    ..default()
+                },
                 Name::new("NPC"),
-                RigidBody::Fixed,
-                Collider::capsule_y(height / 2., radius),
+                RigidBody::KinematicVelocityBased,
+                KinematicCharacterController {
+                    // Don’t allow climbing slopes larger than n degrees.
+                    max_slope_climb_angle: 45.0_f32.to_radians() as Real,
+                    // Automatically slide down on slopes smaller than n degrees.
+                    min_slope_slide_angle: 30.0_f32.to_radians() as Real,
+                    // The character offset is set to n multiplied by the collider’s height.
+                    offset: CharacterLength::Relative(2e-2),
+                    // Snap to the ground if the vertical distance to the ground is smaller than n.
+                    snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
+                    filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
+                    ..default()
+                },
+                CharacterVelocity::default(),
+                Grounded::default(),
+                Follower,
+                Collider::capsule_y(HEIGHT / 2., RADIUS),
             ))
             .with_children(|parent| {
                 parent.spawn((
@@ -33,7 +56,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                         dialog_id: DialogId::new("sample"),
                     },
                     Name::new("NPC Dialog Collider"),
-                    Collider::cylinder(height / 2., radius * 5.),
+                    Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
                     ActiveCollisionTypes::KINEMATIC_STATIC,
@@ -43,7 +66,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
-                            translation: Vec3::new(0., -height, 0.),
+                            translation: Vec3::new(0., -HEIGHT, 0.),
                             scale: Vec3::splat(0.02),
                             ..default()
                         },

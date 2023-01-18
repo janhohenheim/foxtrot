@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -31,7 +32,9 @@ pub fn read_colliders(
             let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
 
-            commands.entity(entity).insert((rapier_collider,));
+            commands
+                .entity(entity)
+                .insert((rapier_collider, NavMeshAffector::default()));
         }
     }
 }

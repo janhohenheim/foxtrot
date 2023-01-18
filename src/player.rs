@@ -91,7 +91,7 @@ fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Ju
 fn handle_jump(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
+    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump)>,
 ) {
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
@@ -149,14 +149,14 @@ fn handle_horizontal_movement(
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
-    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController), With<Player>>,
+    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
 ) {
     for (velocity, mut controller) in &mut player_query {
         controller.translation = Some(velocity.0);
     }
 }
 
-fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>) {
+fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
     for mut velocity in &mut player_query {
         velocity.0 = default();
     }

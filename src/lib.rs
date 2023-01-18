@@ -13,6 +13,7 @@ mod loading;
 mod map;
 mod math;
 mod menu;
+mod navigation;
 mod physics;
 mod player;
 mod saving;
@@ -30,6 +31,7 @@ use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
+use crate::navigation::NavigationPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::saving::SavingPlugin;
@@ -71,6 +73,7 @@ impl Plugin for GamePlugin {
             .add_plugin(SpawningPlugin)
             .add_plugin(ConditionPlugin)
             .add_plugin(SavingPlugin)
+            .add_plugin(NavigationPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }

@@ -2,7 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use bevy::prelude::*;
-use bevy::render::render_resource::{AddressMode, SamplerDescriptor};
 use bevy::window::PresentMode;
 use bevy::DefaultPlugins;
 use bevy_game::GamePlugin;

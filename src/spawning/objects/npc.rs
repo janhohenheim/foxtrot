@@ -6,6 +6,7 @@ use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use std::f32::consts::TAU;
 
 /// Source: <https://opengameart.org/content/fox-and-shiba>
 pub const PATH: &str = "scenes/Fox.glb";
@@ -69,7 +70,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT, 0.),
                             scale: Vec3::splat(0.02),
-                            ..default()
+                            rotation: Quat::from_rotation_y(TAU / 2.),
                         },
                         ..default()
                     },

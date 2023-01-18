@@ -19,7 +19,7 @@ pub struct ActiveConditions(pub HashSet<ConditionId>);
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-#[serde(from = "String", into = "String")]
+#[serde(from = "String")]
 pub struct ConditionId(pub String);
 
 impl From<String> for ConditionId {

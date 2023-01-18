@@ -40,6 +40,7 @@ impl Plugin for NavigationPlugin {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Follower;
 
+#[allow(clippy::type_complexity)]
 fn query_mesh(
     time: Res<Time>,
     mut with_follower: Query<

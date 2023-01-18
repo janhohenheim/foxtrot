@@ -1,7 +1,6 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
 use crate::loading::AnimationAssets;
-use crate::math::look_at;
 use crate::spawning::AnimationEntityLink;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -91,7 +90,7 @@ fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Ju
 fn handle_jump(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump)>,
+    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
 ) {
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
@@ -195,10 +194,10 @@ fn play_animations(
         }
 
         if has_horizontal_movement {
-            let mut model = model_query
+            model_query
                 .get_mut(animation_entity_link.0)
-                .expect("animation_entity_link held entity without transform");
-            model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
+                .expect("animation_entity_link held entity without transform")
+                .look_at(horizontal_velocity, Vect::Y);
         }
     }
 }

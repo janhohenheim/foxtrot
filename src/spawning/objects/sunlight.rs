@@ -4,7 +4,7 @@ use bevy::prelude::*;
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_sunlight(&'a mut self) {
         // directional 'sun' light
-        const HALF_SIZE: f32 = 10.0;
+        const HALF_SIZE: f32 = 50.0;
         self.commands.spawn((
             DirectionalLightBundle {
                 directional_light: DirectionalLight {

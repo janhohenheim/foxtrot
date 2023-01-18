@@ -1,10 +1,7 @@
-use bevy::ecs::system::EntityCommands;
-use bevy::prelude::shape::UVSphere;
-use bevy::prelude::*;
-
 use crate::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::world_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::GameState;
+use bevy::prelude::*;
 
 pub struct MapPlugin;
 
@@ -19,7 +16,6 @@ fn setup(
     mut loader: EventWriter<WorldLoadRequest>,
     mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
     current_level: Option<Res<CurrentLevel>>,
-    mut meshes: ResMut<Assets<Mesh>>,
 ) {
     if current_level.is_some() {
         return;
@@ -43,12 +39,4 @@ fn setup(
             name: Some("Player".into()),
         },
     });
-    /*commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(UVSphere {
-            radius: 1.0,
-            ..default()
-        }),
-        material: material.clone(),
-        ..default()
-    });*/
 }

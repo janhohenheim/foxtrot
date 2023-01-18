@@ -1,4 +1,3 @@
-use bevy::prelude::*;
 use bevy_rapier3d::na::{Matrix3, Vector3};
 
 pub fn get_rotation_matrix_around_y_axis(angle: f32) -> Matrix3<f32> {

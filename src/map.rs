@@ -1,8 +1,7 @@
-use bevy::prelude::*;
-
 use crate::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::world_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::GameState;
+use bevy::prelude::*;
 
 pub struct MapPlugin;
 

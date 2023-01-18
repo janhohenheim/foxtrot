@@ -16,22 +16,25 @@ impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(OxidizedNavigationPlugin)
             .insert_resource(NavMeshSettings {
-                cell_width: npc::RADIUS * npc::SCALE * 0.5,
-                cell_height: npc::RADIUS * npc::SCALE * 0.5 * 0.5,
+                cell_width: 0.4,
+                cell_height: 0.1,
                 tile_width: 100,
                 world_half_extents: 250.0,
                 world_bottom_bound: -10.0,
                 max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
-                walkable_height: (npc::HEIGHT * npc::SCALE * npc::RADIUS * npc::SCALE * 0.5 * 0.5)
-                    .ceil() as u16,
+                walkable_height: 20,
                 walkable_radius: 2,
                 step_height: 3,
-                min_region_area: 10,
-                merge_region_area: 50,
-                max_contour_simplification_error: 1.1,
-                max_edge_length: 10,
+                min_region_area: 100,
+                merge_region_area: 500,
+                max_contour_simplification_error: 0.5,
+                max_edge_length: 50,
             })
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(query_mesh));
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(query_mesh)
+                    .with_system(_draw_nav_mesh),
+            );
     }
 }
 
@@ -77,20 +80,11 @@ fn query_mesh(
                         match perform_string_pulling_on_path(&nav_mesh, start_pos, end_pos, &path) {
                             Ok(string_path) => {
                                 info!("path: {:?}", string_path);
-                                for (a, b) in iter::once(&start_pos)
-                                    .chain(string_path.iter())
-                                    .chain(iter::once(&end_pos))
-                                    .zip(
-                                        iter::once(&start_pos)
-                                            .chain(string_path.iter())
-                                            .chain(iter::once(&end_pos))
-                                            .skip(1),
-                                    )
-                                {
-                                    lines.line(a.clone(), b.clone(), 0.);
+                                let path = string_path.into_iter().chain(iter::once(end_pos));
+                                for (a, b) in path.clone().zip(path.clone().skip(1)) {
+                                    lines.line_colored(a, b, 0., Color::RED);
                                 }
-                                let next_direction = string_path
-                                    .into_iter()
+                                let next_direction = path
                                     .map(|point| point - start_pos)
                                     .map(|dir| {
                                         if dir.y.abs() > 0.25 {

@@ -23,9 +23,9 @@ pub struct DuplicationEvent {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parent: Option<Cow<'static, str>>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<Cow<'static, str>>,
 }
 

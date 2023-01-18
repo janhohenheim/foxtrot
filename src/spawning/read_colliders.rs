@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 pub struct CustomCollider;
 
+#[allow(clippy::type_complexity)]
 pub fn read_colliders(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &Children), (Added<Name>, Without<CustomCollider>)>,

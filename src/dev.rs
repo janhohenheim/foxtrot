@@ -1,8 +1,10 @@
 use bevy::prelude::*;
+use bevy_prototype_debug_lines::DebugLinesPlugin;
 
 #[cfg(feature = "editor")]
 use bevy_editor_pls::prelude::*;
 
+use crate::scene_editor::SceneEditorPlugin;
 #[cfg(debug_assertions)]
 use bevy::diagnostic::LogDiagnosticsPlugin;
 
@@ -14,7 +16,9 @@ impl Plugin for DevPlugin {
     fn build(&self, app: &mut App) {
         #[cfg(feature = "editor")]
         {
-            app.add_plugin(EditorPlugin);
+            app.add_plugin(EditorPlugin)
+                .add_plugin(DebugLinesPlugin::default())
+                .add_plugin(SceneEditorPlugin);
         }
         #[cfg(debug_assertions)]
         {

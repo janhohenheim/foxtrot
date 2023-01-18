@@ -1,6 +1,6 @@
 use crate::dialog::{DialogId, DialogTarget};
 use crate::navigation::Follower;
-use crate::player::{CharacterVelocity, Grounded};
+use crate::player::{CharacterVelocity, Grounded, Jump, Model};
 use crate::spawning::read_colliders::CustomCollider;
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::gltf::Gltf;
@@ -47,6 +47,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 },
                 CharacterVelocity::default(),
                 Grounded::default(),
+                Jump::default(),
                 Follower,
                 Collider::capsule_y(HEIGHT / 2., RADIUS),
             ))
@@ -72,6 +73,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                         },
                         ..default()
                     },
+                    Model,
                     Name::new("NPC Model"),
                 ));
             });

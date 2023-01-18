@@ -13,6 +13,7 @@ mod loading;
 mod map;
 mod math;
 mod menu;
+mod navigation;
 mod physics;
 mod player;
 mod saving;
@@ -30,10 +31,10 @@ use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
+use crate::navigation::NavigationPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::saving::SavingPlugin;
-use crate::scene_editor::SceneEditorPlugin;
 use crate::spawning::SpawningPlugin;
 use crate::world_serialization::WorldSerializationPlugin;
 use bevy::app::App;
@@ -65,12 +66,12 @@ impl Plugin for GamePlugin {
             .add_plugin(CameraPlugin)
             .add_plugin(PhysicsPlugin)
             .add_plugin(InteractionsUi)
-            .add_plugin(SceneEditorPlugin)
             .add_plugin(DialogPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(SpawningPlugin)
             .add_plugin(ConditionPlugin)
             .add_plugin(SavingPlugin)
+            .add_plugin(NavigationPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }

@@ -12,7 +12,7 @@ pub struct PlayerSensor;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct PlayerModel;
+pub struct Model;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]

@@ -6,3 +6,5 @@ dist/
 saves/
 
 assets/scenes/*-[1-9].scn.ron
+blender_assets.cats.txt*
+*.blend1

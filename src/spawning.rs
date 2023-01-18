@@ -3,6 +3,7 @@ use crate::spawning::change_parent::change_parent;
 use crate::spawning::counter::Counter;
 use crate::spawning::duplication::duplicate;
 use crate::spawning::objects::*;
+use crate::spawning::read_colliders::read_colliders;
 use crate::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
 use crate::spawning::spawn_container::{sync_container_registry, SpawnContainerRegistry};
 use crate::GameState;
@@ -22,6 +23,7 @@ mod change_parent;
 mod counter;
 mod duplication;
 mod event;
+mod read_colliders;
 mod spawn;
 
 impl Plugin for SpawningPlugin {
@@ -50,7 +52,8 @@ impl Plugin for SpawningPlugin {
                     .with_system(sync_container_registry.before("spawn_requested"))
                     .with_system(change_parent.after("spawn_requested"))
                     .with_system(duplicate.after("spawn_requested"))
-                    .with_system(link_animations.after("spawn_requested")),
+                    .with_system(link_animations.after("spawn_requested"))
+                    .with_system(read_colliders),
             );
     }
 }
@@ -58,12 +61,6 @@ impl Plugin for SpawningPlugin {
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn(&'a mut self, object: &GameObject) {
         match *object {
-            GameObject::Grass => self.spawn_grass(),
-            GameObject::Doorway => self.spawn_doorway(),
-            GameObject::Wall => self.spawn_wall(),
-            GameObject::Roof => self.spawn_roof(),
-            GameObject::RoofRight => self.spawn_roof_right(),
-            GameObject::RoofLeft => self.spawn_roof_left(),
             GameObject::Sunlight => self.spawn_sunlight(),
             GameObject::Npc => self.spawn_npc(),
             GameObject::Empty => self.spawn_empty(),
@@ -73,38 +70,17 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             GameObject::Triangle => self.spawn_triangle(),
             GameObject::PointLight => self.spawn_point_light(),
             GameObject::Player => self.spawn_player(),
+            GameObject::Level => self.spawn_level(),
         };
     }
 }
 
-fn load_assets_for_spawner(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut mesh_assets: ResMut<Assets<Mesh>>,
-    mut material_assets: ResMut<Assets<StandardMaterial>>,
-) {
-    let mut meshes = HashMap::new();
-    meshes.insert(GameObject::Grass, grass::create_mesh(&mut mesh_assets));
-
-    let mut materials = HashMap::new();
-    materials.insert(
-        GameObject::Grass,
-        grass::load_material(&asset_server, &mut material_assets),
-    );
-
+fn load_assets_for_spawner(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut scenes = HashMap::new();
-    scenes.insert(GameObject::Doorway, doorway::load_scene(&asset_server));
-    scenes.insert(GameObject::Wall, wall::load_scene(&asset_server));
-    scenes.insert(GameObject::Roof, roof::load_scene(&asset_server));
-    scenes.insert(GameObject::RoofRight, roof_right::load_scene(&asset_server));
-    scenes.insert(GameObject::RoofLeft, roof_left::load_scene(&asset_server));
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
+    scenes.insert(GameObject::Level, level::load_scene(&asset_server));
 
-    commands.insert_resource(GameObjectSpawner {
-        meshes,
-        materials,
-        scenes,
-    });
+    commands.insert_resource(GameObjectSpawner { scenes });
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -148,16 +124,11 @@ pub enum GameObject {
     Triangle,
     Sphere,
     Capsule,
-    Grass,
-    Doorway,
-    Wall,
-    Roof,
-    RoofRight,
-    RoofLeft,
     Sunlight,
     PointLight,
     Npc,
     Player,
+    Level,
 }
 
 impl Default for GameObject {
@@ -168,8 +139,6 @@ impl Default for GameObject {
 
 #[derive(Resource)]
 pub struct GameObjectSpawner {
-    meshes: HashMap<GameObject, Handle<Mesh>>,
-    materials: HashMap<GameObject, Handle<StandardMaterial>>,
     scenes: HashMap<GameObject, Handle<Gltf>>,
 }
 

@@ -21,7 +21,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<components::Timer>()
-            .register_type::<components::PlayerModel>()
+            .register_type::<components::Model>()
             .register_type::<components::Player>()
             .register_type::<components::PlayerSensor>()
             .register_type::<components::JumpState>()
@@ -91,7 +91,7 @@ fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Ju
 fn handle_jump(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
+    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump)>,
 ) {
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
@@ -149,31 +149,14 @@ fn handle_horizontal_movement(
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
-    mut player_query: Query<
-        (
-            &mut CharacterVelocity,
-            &mut KinematicCharacterController,
-            Option<&KinematicCharacterControllerOutput>,
-        ),
-        With<Player>,
-    >,
+    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
 ) {
-    for (mut velocity, mut controller, output) in &mut player_query {
-        if let Some(output) = output {
-            let epsilon = 0.0001;
-            if output.effective_translation.x.abs() < epsilon && velocity.0.x.abs() > epsilon {
-                if output.desired_translation.x < 0.0 {
-                    velocity.0.x = velocity.0.x.max(0.0)
-                } else if output.desired_translation.x > 0.0 {
-                    velocity.0.x = velocity.0.x.min(0.0)
-                }
-            }
-        }
+    for (velocity, mut controller) in &mut player_query {
         controller.translation = Some(velocity.0);
     }
 }
 
-fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>) {
+fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
     for mut velocity in &mut player_query {
         velocity.0 = default();
     }
@@ -181,47 +164,40 @@ fn reset_velocity(mut player_query: Query<&mut CharacterVelocity, With<Player>>)
 
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink), With<Player>>,
-    mut model_query: Query<&mut Transform, With<PlayerModel>>,
+    player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink)>,
+    mut model_query: Query<&mut Transform>,
     animations: Res<AnimationAssets>,
 ) {
-    let (velocity, grounded, animation_entity_link) = match player_query.iter().next() {
-        Some(player) => player,
-        _ => {
-            return;
+    for (velocity, grounded, animation_entity_link) in player_query.iter() {
+        let mut animation_player = animation_player
+            .get_mut(animation_entity_link.0)
+            .expect("animation_entity_link held entity without animation player");
+
+        let horizontal_velocity = Vec3 {
+            y: 0.,
+            ..velocity.0
+        };
+        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
+        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+
+        if is_in_air {
+            animation_player
+                .play(animations.character_running.clone_weak())
+                .repeat();
+        } else if has_horizontal_movement {
+            animation_player
+                .play(animations.character_walking.clone_weak())
+                .repeat();
+        } else {
+            animation_player
+                .play(animations.character_idle.clone_weak())
+                .repeat();
         }
-    };
-    let mut animation_player = match animation_player.get_mut(animation_entity_link.0) {
-        Ok(player) => player,
-        _ => {
-            error!("No animation player found for player character");
-            return;
-        }
-    };
 
-    let horizontal_velocity = Vec3 {
-        y: 0.,
-        ..velocity.0
-    };
-    let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
-    let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
-
-    if is_in_air {
-        animation_player
-            .play(animations.character_running.clone_weak())
-            .repeat();
-    } else if has_horizontal_movement {
-        animation_player
-            .play(animations.character_walking.clone_weak())
-            .repeat();
-    } else {
-        animation_player
-            .play(animations.character_idle.clone_weak())
-            .repeat();
-    }
-
-    if has_horizontal_movement {
-        for mut model in &mut model_query {
+        if has_horizontal_movement {
+            let mut model = model_query
+                .get_mut(animation_entity_link.0)
+                .expect("animation_entity_link held entity without transform");
             model.rotation = look_at(horizontal_velocity.normalize(), Vect::Y);
         }
     }

@@ -2,6 +2,7 @@ use crate::GameState;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
+use std::path::Path;
 
 pub struct ShaderPlugin;
 
@@ -16,8 +17,13 @@ fn spawn_shader(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
-    let material = glow_materials.add(GlowyMaterial {});
+    let env_texture_path = Path::new("hdri").join("stone_alley_2.hdr");
+    let env_texture = asset_server.load(env_texture_path);
+    let material = glow_materials.add(GlowyMaterial {
+        env_texture: Some(env_texture),
+    });
     commands.spawn(MaterialMeshBundle {
         mesh: meshes.add(Mesh::from(shape::UVSphere {
             radius: 1.0,
@@ -30,7 +36,11 @@ fn spawn_shader(
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
-pub struct GlowyMaterial {}
+pub struct GlowyMaterial {
+    #[texture(0)]
+    #[sampler(1)]
+    pub env_texture: Option<Handle<Image>>,
+}
 
 impl Material for GlowyMaterial {
     fn fragment_shader() -> ShaderRef {

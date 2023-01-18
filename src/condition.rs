@@ -16,15 +16,26 @@ impl Plugin for ConditionPlugin {
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct ActiveConditions(pub HashSet<ConditionId>);
+impl ActiveConditions {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+}
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-#[serde(from = "String")]
+#[serde(from = "String", into = "String")]
 pub struct ConditionId(pub String);
 
 impl From<String> for ConditionId {
     fn from(value: String) -> Self {
         Self(value)
+    }
+}
+
+impl Into<String> for ConditionId {
+    fn into(self) -> String {
+        self.0
     }
 }
 

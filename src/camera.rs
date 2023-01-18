@@ -1,5 +1,5 @@
 use crate::actions::Actions;
-use crate::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis, look_at};
+use crate::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis};
 use crate::player::Player;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -88,7 +88,7 @@ fn handle_camera_controls(
 
 fn face_target(mut camera_query: Query<&mut Transform, With<PlayerCamera>>) {
     for mut camera in &mut camera_query {
-        camera.rotation = look_at(camera.translation.normalize(), Vect::Y);
+        camera.look_at(Vect::ZERO, Vect::Y);
     }
 }
 

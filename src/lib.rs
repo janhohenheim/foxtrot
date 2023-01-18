@@ -1,6 +1,7 @@
 #![feature(stmt_expr_attributes)]
 #![feature(let_chains)]
 #![feature(fs_try_exists)]
+#![feature(never_type)]
 
 mod actions;
 mod audio;

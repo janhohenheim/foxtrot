@@ -154,10 +154,10 @@ fn present_choices(
 }
 
 fn load_dialog(id: &DialogId) -> Dialog {
-    let filename = format!("{}.json", id.0);
+    let filename = format!("{}.ron", id.0);
     let path = Path::new("assets").join("dialogs").join(filename);
-    let json = fs::read_to_string(path.clone())
+    let serialized = fs::read_to_string(path.clone())
         .unwrap_or_else(|e| panic!("Failed to open dialog file at {path:?}: {e}"));
-    serde_json::from_str(&json)
+    ron::from_str(&serialized)
         .unwrap_or_else(|e| panic!("Failed to parse dialog file at {path:?}: {e}"))
 }

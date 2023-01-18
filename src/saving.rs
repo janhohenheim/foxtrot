@@ -43,8 +43,10 @@ pub struct GameLoadRequest {
 #[derive(Debug, Clone, PartialEq, Resource, Serialize, Deserialize, Default)]
 struct SaveModel {
     scene: String,
+    #[serde(default, skip_serializing_if = "ActiveConditions::is_empty")]
     conditions: ActiveConditions,
     player_transform: Transform,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     dialog_event: Option<DialogEvent>,
 }
 

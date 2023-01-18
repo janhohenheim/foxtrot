@@ -41,9 +41,9 @@ pub struct Dialog {
 #[reflect(Serialize, Deserialize)]
 pub struct InitialPage {
     pub id: PageId,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "HashSet::is_empty")]
     pub positive_requirements: HashSet<ConditionId>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "HashSet::is_empty")]
     pub negative_requirements: HashSet<ConditionId>,
 }
 
@@ -83,9 +83,9 @@ pub struct DialogChoice {
     /// The player's answer
     pub text: String,
     pub next_page_id: PageId,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "HashSet::is_empty")]
     pub positive_requirements: HashSet<ConditionId>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "HashSet::is_empty")]
     pub negative_requirements: HashSet<ConditionId>,
 }
 

@@ -16,6 +16,11 @@ impl Plugin for ConditionPlugin {
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct ActiveConditions(pub HashSet<ConditionId>);
+impl ActiveConditions {
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+}
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]

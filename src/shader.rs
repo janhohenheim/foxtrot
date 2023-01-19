@@ -123,19 +123,18 @@ fn set_texture_to_repeat(
     added_name: Query<(&Name, &Children), Added<Name>>,
     material_handles: Query<&Handle<StandardMaterial>>,
     materials: Res<Materials>,
-    mut standard_materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for (name, children) in &added_name {
         if name.to_lowercase().contains("ground") {
-            let (child, standard_mat_handle) = children
+            let child = children
                 .iter()
-                .filter_map(|entity| material_handles.get(*entity).ok().map(|mat| (*entity, mat)))
-                .next()
+                .find(|entity| material_handles.get(**entity).is_ok())
                 .unwrap();
-            let standard_material = standard_materials.get_mut(standard_mat_handle).unwrap();
-            standard_material.base_color_texture = None;
 
-            commands.entity(child).insert(materials.repeated.clone());
+            commands
+                .entity(*child)
+                .remove::<Handle<StandardMaterial>>()
+                .insert(materials.repeated.clone());
         }
     }
 }

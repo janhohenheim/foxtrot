@@ -9,13 +9,14 @@ pub struct ShaderPlugin;
 impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
-            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_shader));
+            .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_shader))
+            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_shader))
+            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(apply_shader));
     }
 }
 
-fn spawn_shader(
+fn setup_shader(
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
@@ -24,13 +25,25 @@ fn spawn_shader(
     let material = glow_materials.add(GlowyMaterial {
         env_texture: Some(env_texture),
     });
+    commands.insert_resource(Materials { glowy: material });
+}
+#[derive(Resource, Debug, Clone)]
+struct Materials {
+    pub glowy: Handle<GlowyMaterial>,
+}
+
+fn spawn_shader(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    materials: Res<Materials>,
+) {
     commands
         .spawn(MaterialMeshBundle {
             mesh: meshes.add(Mesh::from(shape::UVSphere {
                 radius: 1.0,
                 ..default()
             })),
-            material: material.clone(),
+            material: materials.glowy.clone(),
             transform: Transform::from_translation((0., 1.5, 0.).into()),
             ..default()
         })
@@ -58,5 +71,18 @@ pub struct GlowyMaterial {
 impl Material for GlowyMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/glowy.wgsl".into()
+    }
+}
+
+#[allow(clippy::type_complexity)]
+fn apply_shader(
+    mut commands: Commands,
+    added_name: Query<(Entity, &Name), Added<Name>>,
+    materials: Res<Materials>,
+) {
+    for (entity, name) in &added_name {
+        if name.to_lowercase().contains("plane") {
+            commands.entity(entity).insert(materials.glowy.clone());
+        }
     }
 }

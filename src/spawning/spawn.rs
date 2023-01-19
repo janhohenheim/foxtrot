@@ -1,3 +1,4 @@
+use crate::shader::Materials;
 use crate::spawning::counter::Counter;
 use crate::spawning::event::SpawnEvent;
 use crate::spawning::spawn_container::SpawnContainerRegistry;
@@ -12,6 +13,7 @@ use std::str::FromStr;
 pub fn spawn_requested(
     mut commands: Commands,
     gltf: Res<Assets<Gltf>>,
+    materials: Res<Materials>,
     mut spawn_requests: EventReader<SpawnEvent>,
     spawner: Res<GameObjectSpawner>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
@@ -35,7 +37,9 @@ pub fn spawn_requested(
             SpawnTracker::from(spawn.clone()),
         );
         let spawn_children = |parent: &mut ChildBuilder| {
-            spawner.attach(parent, &gltf).spawn(&spawn.object);
+            spawner
+                .attach(parent, &gltf, &materials)
+                .spawn(&spawn.object);
         };
 
         if let Some(ref parent_name) = spawn.parent {

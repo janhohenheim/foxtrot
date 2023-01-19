@@ -76,13 +76,13 @@ impl Material for GlowyMaterial {
 
 #[allow(clippy::type_complexity)]
 fn apply_shader(
-    mut commands: Commands,
-    added_name: Query<(Entity, &Name), Added<Name>>,
-    materials: Res<Materials>,
+    mut _commands: Commands,
+    _added_name: Query<(Entity, &Name), Added<Name>>,
+    _materials: Res<Materials>,
 ) {
-    for (entity, name) in &added_name {
-        if name.to_lowercase().contains("plane") {
+    /*for (entity, name) in &added_name {
+        if name.to_lowercase().contains("player") {
             commands.entity(entity).insert(materials.glowy.clone());
         }
-    }
+    }*/
 }

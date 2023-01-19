@@ -33,9 +33,9 @@ impl From<String> for ConditionId {
     }
 }
 
-impl Into<String> for ConditionId {
-    fn into(self) -> String {
-        self.0
+impl From<ConditionId> for String {
+    fn from(value: ConditionId) -> Self {
+        value.0
     }
 }
 

@@ -1,3 +1,4 @@
+use crate::shader::Materials;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
@@ -36,6 +37,27 @@ pub fn read_colliders(
             commands
                 .entity(entity)
                 .insert((rapier_collider, NavMeshAffector::default()));
+        }
+    }
+}
+
+pub fn set_texture_to_repeat(
+    mut commands: Commands,
+    added_name: Query<(&Name, &Children), Added<Name>>,
+    material_handles: Query<&Handle<StandardMaterial>>,
+    materials: Res<Materials>,
+) {
+    for (name, children) in &added_name {
+        if name.to_lowercase().contains("ground") {
+            let child = children
+                .iter()
+                .find(|entity| material_handles.get(**entity).is_ok())
+                .unwrap();
+
+            commands
+                .entity(*child)
+                .remove::<Handle<StandardMaterial>>()
+                .insert(materials.repeated.clone());
         }
     }
 }

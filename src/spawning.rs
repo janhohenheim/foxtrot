@@ -44,7 +44,9 @@ impl Plugin for SpawningPlugin {
             .register_type::<DelayedSpawnEvents>()
             .register_type::<Counter>()
             .register_type::<AnimationEntityLink>()
-            .add_startup_system(load_assets_for_spawner)
+            .add_system_set(
+                SystemSet::on_enter(GameState::Loading).with_system(load_assets_for_spawner),
+            )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))

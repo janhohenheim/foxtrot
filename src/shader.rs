@@ -1,7 +1,8 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef};
+use bevy::render::render_resource::{AddressMode, AsBindGroup, ShaderRef};
+use bevy::render::texture::ImageSampler;
 use std::path::Path;
 
 pub struct ShaderPlugin;
@@ -11,7 +12,12 @@ impl Plugin for ShaderPlugin {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_shader))
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_shader))
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(apply_shader));
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(apply_shader)
+                    .with_system(set_texture_to_repeat),
+            )
+            .add_system(set_texture_tiled);
     }
 }
 
@@ -27,6 +33,7 @@ fn setup_shader(
     });
     commands.insert_resource(Materials { glowy: material });
 }
+
 #[derive(Resource, Debug, Clone)]
 struct Materials {
     pub glowy: Handle<GlowyMaterial>,
@@ -85,4 +92,37 @@ fn apply_shader(
             commands.entity(entity).insert(materials.glowy.clone());
         }
     }*/
+}
+
+fn set_texture_to_repeat(
+    mut commands: Commands,
+    added_name: Query<(&Name, &Children), Added<Name>>,
+    material_handles: Query<&Handle<StandardMaterial>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut images: ResMut<Assets<Image>>,
+) {
+    for (name, children) in &added_name {
+        if name.to_lowercase().contains("ground") {
+            let (child, material_handle) = children
+                .iter()
+                .filter_map(|entity| material_handles.get(*entity).ok().map(|mat| (*entity, mat)))
+                .next()
+                .unwrap();
+
+            let mut material = materials.get(material_handle).unwrap().clone();
+            let image_handle = material.base_color_texture.as_ref().unwrap();
+            let mut image = images.get_mut(image_handle).unwrap().clone();
+            let mut sampler = match image.sampler_descriptor {
+                ImageSampler::Descriptor(ref mut descriptor) => descriptor,
+                _ => panic!(),
+            };
+
+            sampler.address_mode_u = AddressMode::Repeat;
+            sampler.address_mode_v = AddressMode::Repeat;
+            sampler.address_mode_w = AddressMode::Repeat;
+
+            material.base_color_texture = Some(images.add(image));
+            commands.entity(child).insert(materials.add(material));
+        }
+    }
 }

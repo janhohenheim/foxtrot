@@ -1,7 +1,7 @@
 #import bevy_pbr::mesh_view_bindings
 #import bevy_pbr::mesh_bindings
 #import bevy_pbr::utils
-
+#import bevy_pbr::shadows
 
 @group(1) @binding(0)
 var texture: texture_2d<f32>;
@@ -24,6 +24,7 @@ fn get_texture_sample(coords: vec2<f32>) -> vec3<f32> {
 @fragment
 fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let texture = get_texture_sample(in.uv);
-
-    return vec4(texture, 0.);
+    let shadow = fetch_directional_shadow(0u, in.world_position, in.world_normal);
+    let product = texture * (shadow * 0.8 + 0.2);
+    return vec4(product, 0.);
 }

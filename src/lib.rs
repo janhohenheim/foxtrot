@@ -19,6 +19,7 @@ mod physics;
 mod player;
 mod saving;
 mod scene_editor;
+mod shader;
 mod spawning;
 mod world_serialization;
 
@@ -36,6 +37,7 @@ use crate::navigation::NavigationPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::saving::SavingPlugin;
+use crate::shader::ShaderPlugin;
 use crate::spawning::SpawningPlugin;
 use crate::world_serialization::WorldSerializationPlugin;
 use bevy::app::App;
@@ -73,6 +75,7 @@ impl Plugin for GamePlugin {
             .add_plugin(ConditionPlugin)
             .add_plugin(SavingPlugin)
             .add_plugin(NavigationPlugin)
+            .add_plugin(ShaderPlugin)
             .add_plugin(WorldSerializationPlugin)
             .add_plugin(DevPlugin);
     }

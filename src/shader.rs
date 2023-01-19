@@ -24,14 +24,27 @@ fn spawn_shader(
     let material = glow_materials.add(GlowyMaterial {
         env_texture: Some(env_texture),
     });
-    commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(Mesh::from(shape::UVSphere {
-            radius: 1.0,
+    commands
+        .spawn(MaterialMeshBundle {
+            mesh: meshes.add(Mesh::from(shape::UVSphere {
+                radius: 1.0,
+                ..default()
+            })),
+            material: material.clone(),
+            transform: Transform::from_translation((0., 1.5, 0.).into()),
             ..default()
-        })),
-        material: material.clone(),
-        ..default()
-    });
+        })
+        .with_children(|parent| {
+            parent.spawn((PointLightBundle {
+                point_light: PointLight {
+                    intensity: 10_000.,
+                    radius: 1.,
+                    color: Color::rgb(0.5, 0.1, 0.),
+                    ..default()
+                },
+                ..default()
+            },));
+        });
 }
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]

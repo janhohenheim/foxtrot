@@ -1,3 +1,5 @@
+// Done following <https://www.youtube.com/watch?v=O6A_nVmpvhc>
+
 #import bevy_pbr::mesh_view_bindings
 #import bevy_pbr::mesh_bindings
 // Bring in consts like PI
@@ -70,13 +72,19 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     // The higher glow is, the more orange the face becomes
     let color = mix(black, orange, glow);
 
+    // Only the R channel of a shifted normal
+    // The shift is arbitrary in nature. Its function is to make it more interesting,
+    // otherwise we would just be using the R channel of the normal we are looking at anyways.
+    let bump = get_texture_sample(n * vec3(1., -0.5, 1.) - vec3(0., 0.5, 0.))[0];
 
     // reflect image like a mirror
     let reflection = get_texture_sample(reflect(-v, n));
 
 
+    // This n is shifted a bit stochastically so that refraction is heterogenous
+    let bumped_n = n + bump * 2.;
     // refract image like a glass ball would
-    let refraction = get_texture_sample(refract(-v, n, 1./1.52));
+    let refraction = get_texture_sample(refract(-v, bumped_n, 1./1.52));
 
     /// The RGB of the refraction is multiplied with a gradient from center (orange) to edge (black)
     /// The RGB of the reflection is multiplied with a fresnel on the edge, making it only appear as a "sheen"

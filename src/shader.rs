@@ -1,4 +1,5 @@
 use crate::GameState;
+use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef};
@@ -55,21 +56,26 @@ fn spawn_shader(
     materials: Res<Materials>,
 ) {
     commands
-        .spawn(MaterialMeshBundle {
-            mesh: meshes.add(Mesh::from(shape::UVSphere {
-                radius: 1.0,
+        .spawn((
+            MaterialMeshBundle {
+                mesh: meshes.add(Mesh::from(shape::UVSphere {
+                    radius: 1.0,
+                    ..default()
+                })),
+                material: materials.glowy.clone(),
+                transform: Transform::from_translation((0., 1.5, 0.).into()),
                 ..default()
-            })),
-            material: materials.glowy.clone(),
-            transform: Transform::from_translation((0., 1.5, 0.).into()),
-            ..default()
-        })
+            },
+            Name::new("Orb"),
+            NotShadowCaster,
+        ))
         .with_children(|parent| {
             parent.spawn((PointLightBundle {
                 point_light: PointLight {
                     intensity: 10_000.,
                     radius: 1.,
                     color: Color::rgb(0.5, 0.1, 0.),
+                    shadows_enabled: true,
                     ..default()
                 },
                 ..default()

@@ -114,9 +114,9 @@ impl From<String> for DialogId {
     }
 }
 
-impl Into<String> for DialogId {
-    fn into(self) -> String {
-        self.0
+impl From<DialogId> for String {
+    fn from(value: DialogId) -> Self {
+        value.0
     }
 }
 
@@ -133,8 +133,8 @@ impl From<String> for PageId {
     }
 }
 
-impl Into<String> for PageId {
-    fn into(self) -> String {
-        self.0
+impl From<PageId> for String {
+    fn from(value: PageId) -> Self {
+        value.0
     }
 }

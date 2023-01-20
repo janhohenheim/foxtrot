@@ -4,7 +4,6 @@ use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
-use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -26,9 +25,7 @@ pub fn read_colliders(
             let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
 
-            commands
-                .entity(entity)
-                .insert((rapier_collider, NavMeshAffector::default()));
+            commands.entity(entity).insert(rapier_collider);
         }
     }
 }
@@ -57,12 +54,17 @@ pub fn set_texture_to_repeat(
 pub fn read_navmesh(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,
+    parents: Query<&Parent>,
+    transforms: Query<&Transform>,
     mut meshes: ResMut<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
     for (parent, name, children) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
+            // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
+            let global_transform = get_global_transform(parent, &parents, &transforms);
+
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
                 VertexAttributeValues::Float32x3(values) => values,
@@ -84,7 +86,8 @@ pub fn read_navmesh(
             let vertices: Vec<_> = mesh_vertices
                 .into_iter()
                 .map(|coords| (*coords).into())
-                .map(|coords: Vec3| coords.xz())
+                .map(|coords| global_transform.transform_point(coords))
+                .map(|coords| coords.xz())
                 .enumerate()
                 .map(|(vertex_index, coords)| {
                     let neighbor_indices = triangles
@@ -111,18 +114,38 @@ pub fn read_navmesh(
                 })
                 .collect();
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
-            let debug_mesh = path_mesh.to_mesh();
-
+            let mut debug_mesh = path_mesh.to_mesh();
+            let debug_mesh_vertices =
+                match debug_mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap() {
+                    VertexAttributeValues::Float32x3(values) => values,
+                    _ => panic!(),
+                };
+            for vertex in debug_mesh_vertices.iter_mut() {
+                // flip z <-> y
+                vertex[2] = vertex[1];
+                vertex[1] = 0.;
+            }
             commands.entity(child).despawn_recursive();
-            commands
-                .entity(parent)
-                .insert(path_meshes.add(path_mesh))
-                .with_children(|parent| {
-                    parent.spawn(PbrBundle {
-                        mesh: meshes.add(debug_mesh),
-                        ..default()
-                    });
-                });
+            commands.entity(parent).insert(path_meshes.add(path_mesh));
+            commands.spawn(PbrBundle {
+                mesh: meshes.add(debug_mesh),
+                ..default()
+            });
+        }
+    }
+}
+
+fn get_global_transform(
+    current_entity: Entity,
+    parents: &Query<&Parent>,
+    transforms: &Query<&Transform>,
+) -> Transform {
+    let own_transform = *transforms.get(current_entity).unwrap();
+    match parents.get(current_entity).map(|parent| parent.get()) {
+        Err(_) => own_transform,
+        Ok(parent) => {
+            let parent_transform = get_global_transform(parent, parents, transforms);
+            parent_transform.mul_transform(own_transform)
         }
     }
 }

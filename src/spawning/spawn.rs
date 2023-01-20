@@ -80,7 +80,7 @@ pub fn spawn_delayed(
             events_to_delete.push(index)
         }
     }
-    for index in events_to_delete {
-        existing_delayed_events.0.remove(index);
+    for index in events_to_delete.iter().rev() {
+        existing_delayed_events.0.remove(*index);
     }
 }

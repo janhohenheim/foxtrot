@@ -1,5 +1,6 @@
 use crate::shader::Materials;
 use bevy::prelude::*;
+use bevy::render::mesh::PrimitiveTopology;
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
@@ -17,7 +18,7 @@ pub fn read_colliders(
     mesh_handles: Query<&Handle<Mesh>>,
 ) {
     for (entity, name, children) in &added_name {
-        if name.to_lowercase().contains("collider") {
+        if name.to_lowercase().contains("[collider]") {
             let (collider_entity, collider_mesh) = get_mesh(children, &meshes, &mesh_handles);
             commands.entity(collider_entity).despawn_recursive();
 
@@ -38,7 +39,7 @@ pub fn set_texture_to_repeat(
     materials: Res<Materials>,
 ) {
     for (name, children) in &added_name {
-        if name.to_lowercase().contains("ground") {
+        if name.to_lowercase().contains("[ground]") {
             let child = children
                 .iter()
                 .find(|entity| material_handles.get(**entity).is_ok())
@@ -62,6 +63,8 @@ pub fn read_navmesh(
     for (name, children) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let (entity, mesh) = get_mesh(children, &meshes, &mesh_handles);
+            info!("{:?}", mesh);
+            commands.entity(entity).despawn_recursive();
         }
     }
 }
@@ -83,5 +86,6 @@ fn get_mesh<'a>(
     );
     let (entity, mesh_handle) = entity_handles.first().unwrap();
     let mesh = meshes.get(mesh_handle).unwrap();
+    assert_eq!(mesh.primitive_topology(), PrimitiveTopology::TriangleList);
     (*entity, mesh)
 }

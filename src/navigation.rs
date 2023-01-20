@@ -2,6 +2,7 @@ use crate::player::{CharacterVelocity, Player};
 use crate::spawning::objects::{npc, player};
 use crate::GameState;
 use bevy::prelude::*;
+use bevy_pathmesh::PathmeshPlugin;
 use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{
     query::{find_path, perform_string_pulling_on_path},
@@ -15,6 +16,7 @@ pub struct NavigationPlugin;
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(OxidizedNavigationPlugin)
+            .add_plugin(PathmeshPlugin)
             .insert_resource(NavMeshSettings {
                 cell_width: 0.4,
                 cell_height: 0.1,

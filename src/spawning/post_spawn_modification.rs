@@ -117,7 +117,7 @@ pub fn read_navmesh(
                         .unique()
                         .take(3)
                         .count()
-                        // One way means at most 2 neighbors: itself and one other polygon
+                        // One way means all vertices have at most 2 neighbors: the original polygon and one other
                         < 3;
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })

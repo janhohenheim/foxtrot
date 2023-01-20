@@ -2,7 +2,6 @@ use super::npc::PATH;
 use crate::camera::PlayerCamera;
 use crate::player::{CharacterVelocity, Grounded, Jump, Model, Player, PlayerSensor};
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
-use bevy::core_pipeline::bloom::BloomSettings;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;

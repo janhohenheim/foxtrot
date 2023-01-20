@@ -70,7 +70,7 @@ pub fn read_navmesh(
             };
 
             let triangle_edge_indices = mesh.indices().unwrap();
-            let polygons: Vec<_> = triangle_edge_indices
+            let triangles: Vec<_> = triangle_edge_indices
                 .iter()
                 .zip(
                     triangle_edge_indices
@@ -78,11 +78,7 @@ pub fn read_navmesh(
                         .skip(1)
                         .zip(triangle_edge_indices.iter().skip(2)),
                 )
-                .map(|(a, (b, c))| {
-                    let vertices = [a, b, c].map(|index| index.try_into().unwrap()).to_vec();
-                    let is_one_way = false;
-                    polyanya::Polygon::new(vertices, is_one_way)
-                })
+                .map(|(a, (b, c))| [a, b, c].map(|index| index.try_into().unwrap()).to_vec())
                 .collect();
 
             let vertices: Vec<_> = mesh_vertices
@@ -91,18 +87,24 @@ pub fn read_navmesh(
                 .map(|coords| Vec2::new(coords[0], coords[2]))
                 .enumerate()
                 .map(|(vertex_index, coords)| {
-                    let neighbors = polygons
+                    let neighbor_indices = triangles
                         .iter()
                         .enumerate()
-                        .filter_map(|(polygon_index, polygon)| {
-                            polygon
-                                .vertices
+                        .filter_map(|(polygon_index, vertex_indices_in_polygon)| {
+                            vertex_indices_in_polygon
                                 .contains(&(vertex_index as u32))
-                                .then(|| polygon_index)
+                                .then_some(polygon_index)
                         })
                         .map(|index| isize::try_from(index).unwrap())
                         .collect();
-                    polyanya::Vertex::new(coords, neighbors)
+                    polyanya::Vertex::new(coords, neighbor_indices)
+                })
+                .collect();
+            let polygons: Vec<_> = triangles
+                .into_iter()
+                .map(|vertex_indices_in_polygon| {
+                    let is_one_way = false;
+                    polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
             info!("vertices: {:?}", vertices);

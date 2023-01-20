@@ -58,7 +58,7 @@ pub fn read_navmesh(
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,
     parents: Query<&Parent>,
     transforms: Query<&Transform>,
-    mut meshes: ResMut<Assets<Mesh>>,
+    meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
@@ -66,7 +66,6 @@ pub fn read_navmesh(
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-            info!("global transform: {:?}", global_transform);
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
                 VertexAttributeValues::Float32x3(values) => values,
@@ -74,9 +73,6 @@ pub fn read_navmesh(
             };
 
             let triangle_edge_indices = mesh.indices().unwrap();
-            info!("triangle_edge_indices: {:?}", triangle_edge_indices);
-            assert_eq!(triangle_edge_indices.len() % 3, 0);
-
             let triangles: Vec<_> = triangle_edge_indices
                 .iter()
                 .tuples()
@@ -120,33 +116,15 @@ pub fn read_navmesh(
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
-            info!("vertices: {:?}", vertices);
-            info!("polygons: {:?}", polygons);
-            let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
 
-            let debug_mesh = produce_debug_mesh(&path_mesh);
-            // commands.entity(child).despawn_recursive();
+            let mut polyanya_mesh = polyanya::Mesh::new(vertices, polygons);
+            polyanya_mesh.bake();
+            let path_mesh = PathMesh::from_polyanya_mesh(polyanya_mesh);
+
+            commands.entity(child).despawn_recursive();
             commands.entity(parent).insert(path_meshes.add(path_mesh));
-            commands.spawn(PbrBundle {
-                mesh: meshes.add(debug_mesh),
-                ..default()
-            });
         }
     }
-}
-
-fn produce_debug_mesh(path_mesh: &PathMesh) -> Mesh {
-    let mut debug_mesh = path_mesh.to_mesh();
-    let debug_mesh_vertices = match debug_mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap() {
-        VertexAttributeValues::Float32x3(values) => values,
-        _ => panic!(),
-    };
-    for vertex in debug_mesh_vertices.iter_mut() {
-        // flip z <-> y
-        vertex[2] = vertex[1];
-        vertex[1] = 0.;
-    }
-    debug_mesh
 }
 
 fn get_global_transform(

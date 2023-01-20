@@ -40,6 +40,8 @@ regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
 oxidized_navigation = "0.1.1"
+polyanya = "0.2.0"
+bevy_pathmesh = { git = "https://github.com/vleue/bevy_pathmesh.git", rev = "088172f8ad04ba59362785166a6228a69663d4f4"}
 
 [dependencies.bevy_prototype_debug_lines]
 version = "0.9.0"

@@ -37,11 +37,12 @@ fn query_mesh(
         for (follower_transform, mut character_velocity) in &mut with_follower {
             for player_transform in &with_player {
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
-                let path = path_mesh.path(
-                    follower_transform.translation().xz(),
-                    player_transform.translation().xz(),
-                );
-                info!("{:?}", path);
+                let from = follower_transform.translation().xz();
+                let to = player_transform.translation().xz();
+                let path = path_mesh.path(from, to);
+                if let Some(path) = path {
+                    info!("{:?}", path);
+                }
             }
         }
     }

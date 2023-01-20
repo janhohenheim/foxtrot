@@ -55,14 +55,14 @@ pub fn set_texture_to_repeat(
 
 pub fn read_navmesh(
     mut commands: Commands,
-    added_name: Query<(&Name, &Children), Added<Name>>,
+    added_name: Query<(Entity, &Name, &Children), Added<Name>>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
-    path_meshes: Res<Assets<PathMesh>>,
+    mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
-    for (name, children) in &added_name {
+    for (parent, name, children) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
-            let (entity, mesh) = get_mesh(children, &meshes, &mesh_handles);
+            let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
 
             let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
                 VertexAttributeValues::Float32x3(values) => values,
@@ -103,13 +103,17 @@ pub fn read_navmesh(
             let polygons: Vec<_> = triangles
                 .into_iter()
                 .map(|vertex_indices_in_polygon| {
-                    let is_one_way = false;
+                    let is_one_way = vertex_indices_in_polygon
+                        .iter()
+                        .map(|index| &vertices[*index as usize])
+                        .all(|vertex| vertex.polygons.len() <= 2);
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
-            info!("vertices: {:?}", vertices);
-            info!("polygons: {:?}", polygons);
-            commands.entity(entity).despawn_recursive();
+            let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
+
+            commands.entity(child).despawn_recursive();
+            commands.entity(parent).insert(path_meshes.add(path_mesh));
         }
     }
 }

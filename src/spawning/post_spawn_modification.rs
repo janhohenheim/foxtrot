@@ -1,6 +1,6 @@
 use crate::shader::Materials;
 use bevy::prelude::*;
-use bevy::render::mesh::PrimitiveTopology;
+use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
@@ -63,7 +63,50 @@ pub fn read_navmesh(
     for (name, children) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let (entity, mesh) = get_mesh(children, &meshes, &mesh_handles);
-            info!("{:?}", mesh);
+
+            let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
+                VertexAttributeValues::Float32x3(values) => values,
+                _ => panic!(),
+            };
+
+            let triangle_edge_indices = mesh.indices().unwrap();
+            let polygons: Vec<_> = triangle_edge_indices
+                .iter()
+                .zip(
+                    triangle_edge_indices
+                        .iter()
+                        .skip(1)
+                        .zip(triangle_edge_indices.iter().skip(2)),
+                )
+                .map(|(a, (b, c))| {
+                    let vertices = [a, b, c].map(|index| index.try_into().unwrap()).to_vec();
+                    let is_one_way = false;
+                    polyanya::Polygon::new(vertices, is_one_way)
+                })
+                .collect();
+
+            let vertices: Vec<_> = mesh_vertices
+                .iter()
+                // Drop the y coord
+                .map(|coords| Vec2::new(coords[0], coords[2]))
+                .enumerate()
+                .map(|(vertex_index, coords)| {
+                    let neighbors = polygons
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(polygon_index, polygon)| {
+                            polygon
+                                .vertices
+                                .contains(&(vertex_index as u32))
+                                .then(|| polygon_index)
+                        })
+                        .map(|index| isize::try_from(index).unwrap())
+                        .collect();
+                    polyanya::Vertex::new(coords, neighbors)
+                })
+                .collect();
+            info!("vertices: {:?}", vertices);
+            info!("polygons: {:?}", polygons);
             commands.entity(entity).despawn_recursive();
         }
     }

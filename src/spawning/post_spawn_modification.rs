@@ -1,5 +1,6 @@
 use crate::shader::Materials;
 use bevy::prelude::*;
+use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
@@ -17,19 +18,8 @@ pub fn read_colliders(
 ) {
     for (entity, name, children) in &added_name {
         if name.to_lowercase().contains("collider") {
-            let colliders: Vec<_> = children
-                .iter()
-                .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
-                .collect();
-            assert_eq!(
-                colliders.len(),
-                1,
-                "Collider must contain exactly one mesh, but found {}",
-                colliders.len()
-            );
-            let (collider_entity, collider_mesh_handle) = colliders.first().unwrap();
-            let collider_mesh = meshes.get(collider_mesh_handle).unwrap();
-            commands.entity(*collider_entity).despawn_recursive();
+            let (collider_entity, collider_mesh) = get_mesh(children, &meshes, &mesh_handles);
+            commands.entity(collider_entity).despawn_recursive();
 
             let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
@@ -60,4 +50,38 @@ pub fn set_texture_to_repeat(
                 .insert(materials.repeated.clone());
         }
     }
+}
+
+pub fn read_navmesh(
+    mut commands: Commands,
+    added_name: Query<(&Name, &Children), Added<Name>>,
+    meshes: Res<Assets<Mesh>>,
+    mesh_handles: Query<&Handle<Mesh>>,
+    path_meshes: Res<Assets<PathMesh>>,
+) {
+    for (name, children) in &added_name {
+        if name.to_lowercase().contains("[navmesh]") {
+            let (entity, mesh) = get_mesh(children, &meshes, &mesh_handles);
+        }
+    }
+}
+
+fn get_mesh<'a>(
+    children: &'a Children,
+    meshes: &'a Res<'a, Assets<Mesh>>,
+    mesh_handles: &'a Query<&Handle<Mesh>>,
+) -> (Entity, &'a Mesh) {
+    let entity_handles: Vec<_> = children
+        .iter()
+        .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
+        .collect();
+    assert_eq!(
+        entity_handles.len(),
+        1,
+        "Collider must contain exactly one mesh, but found {}",
+        entity_handles.len()
+    );
+    let (entity, mesh_handle) = entity_handles.first().unwrap();
+    let mesh = meshes.get(mesh_handle).unwrap();
+    (*entity, mesh)
 }

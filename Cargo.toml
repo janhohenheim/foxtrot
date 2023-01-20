@@ -9,7 +9,9 @@ version = "0.1.0"
 default = [   
     "bevy/bevy_winit",
     "bevy/render",
+    "bevy/hdr",
     "bevy/png",
+    "bevy/jpeg",
     "bevy/x11",
     "bevy/animation",
     "bevy/serialize",
@@ -27,7 +29,7 @@ dynamic = [
 ]
 
 [dependencies]
-bevy = { version = "0.9", default-features = false }
+bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
 bevy_asset_loader = { version = "0.14", features = ["3d"] }
 bevy_egui = "0.18"

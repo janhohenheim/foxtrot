@@ -1,4 +1,5 @@
 use crate::shader::Materials;
+use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy_pathmesh::PathMesh;
@@ -56,14 +57,13 @@ pub fn set_texture_to_repeat(
 pub fn read_navmesh(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,
-    meshes: Res<Assets<Mesh>>,
+    mut meshes: ResMut<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
     for (parent, name, children) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
-
             let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
                 VertexAttributeValues::Float32x3(values) => values,
                 _ => panic!(),
@@ -82,9 +82,9 @@ pub fn read_navmesh(
                 .collect();
 
             let vertices: Vec<_> = mesh_vertices
-                .iter()
-                // Drop the y coord
-                .map(|coords| Vec2::new(coords[0], coords[2]))
+                .into_iter()
+                .map(|coords| (*coords).into())
+                .map(|coords: Vec3| coords.xz())
                 .enumerate()
                 .map(|(vertex_index, coords)| {
                     let neighbor_indices = triangles
@@ -111,16 +111,25 @@ pub fn read_navmesh(
                 })
                 .collect();
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
+            let debug_mesh = path_mesh.to_mesh();
 
             commands.entity(child).despawn_recursive();
-            commands.entity(parent).insert(path_meshes.add(path_mesh));
+            commands
+                .entity(parent)
+                .insert(path_meshes.add(path_mesh))
+                .with_children(|parent| {
+                    parent.spawn(PbrBundle {
+                        mesh: meshes.add(debug_mesh),
+                        ..default()
+                    });
+                });
         }
     }
 }
 
 fn get_mesh<'a>(
     children: &'a Children,
-    meshes: &'a Res<'a, Assets<Mesh>>,
+    meshes: &'a Assets<Mesh>,
     mesh_handles: &'a Query<&Handle<Mesh>>,
 ) -> (Entity, &'a Mesh) {
     let entity_handles: Vec<_> = children

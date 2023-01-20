@@ -6,6 +6,7 @@ use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+use std::iter;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -65,7 +66,7 @@ pub fn read_navmesh(
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-
+            info!("global transform: {:?}", global_transform);
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh_vertices = match mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap() {
                 VertexAttributeValues::Float32x3(values) => values,
@@ -73,17 +74,13 @@ pub fn read_navmesh(
             };
 
             let triangle_edge_indices = mesh.indices().unwrap();
+            info!("triangle_edge_indices: {:?}", triangle_edge_indices);
             assert_eq!(triangle_edge_indices.len() % 3, 0);
 
             let triangles: Vec<_> = triangle_edge_indices
                 .iter()
-                .zip(
-                    triangle_edge_indices
-                        .iter()
-                        .skip(1)
-                        .zip(triangle_edge_indices.iter().skip(2)),
-                )
-                .map(|(a, (b, c))| [a, b, c].map(|index| index.try_into().unwrap()).to_vec())
+                .tuples()
+                .map(|(a, b, c)| [a, b, c].map(|index| index.try_into().unwrap()).to_vec())
                 .collect();
 
             let vertices: Vec<_> = mesh_vertices
@@ -102,6 +99,7 @@ pub fn read_navmesh(
                                 .then_some(polygon_index)
                         })
                         .map(|index| isize::try_from(index).unwrap())
+                        .chain(iter::once(-1))
                         .collect();
                     polyanya::Vertex::new(coords, neighbor_indices)
                 })
@@ -122,10 +120,12 @@ pub fn read_navmesh(
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
+            info!("vertices: {:?}", vertices);
+            info!("polygons: {:?}", polygons);
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
 
             let debug_mesh = produce_debug_mesh(&path_mesh);
-            commands.entity(child).despawn_recursive();
+            // commands.entity(child).despawn_recursive();
             commands.entity(parent).insert(path_meshes.add(path_mesh));
             commands.spawn(PbrBundle {
                 mesh: meshes.add(debug_mesh),
@@ -144,6 +144,7 @@ fn produce_debug_mesh(path_mesh: &PathMesh) -> Mesh {
     for vertex in debug_mesh_vertices.iter_mut() {
         // flip z <-> y
         vertex[2] = vertex[1];
+        vertex[1] = 0.;
     }
     debug_mesh
 }

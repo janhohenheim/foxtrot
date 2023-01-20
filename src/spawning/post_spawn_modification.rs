@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -72,6 +73,8 @@ pub fn read_navmesh(
             };
 
             let triangle_edge_indices = mesh.indices().unwrap();
+            assert_eq!(triangle_edge_indices.len() % 3, 0);
+
             let triangles: Vec<_> = triangle_edge_indices
                 .iter()
                 .zip(
@@ -109,22 +112,18 @@ pub fn read_navmesh(
                     let is_one_way = vertex_indices_in_polygon
                         .iter()
                         .map(|index| &vertices[*index as usize])
-                        .all(|vertex| vertex.polygons.len() <= 2);
+                        .map(|vertex| &vertex.polygons)
+                        .flatten()
+                        .unique()
+                        .take(3)
+                        .count()
+                        < 3;
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya::Mesh::new(vertices, polygons));
-            let mut debug_mesh = path_mesh.to_mesh();
-            let debug_mesh_vertices =
-                match debug_mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap() {
-                    VertexAttributeValues::Float32x3(values) => values,
-                    _ => panic!(),
-                };
-            for vertex in debug_mesh_vertices.iter_mut() {
-                // flip z <-> y
-                vertex[2] = vertex[1];
-                vertex[1] = 0.;
-            }
+
+            let debug_mesh = produce_debug_mesh(&path_mesh);
             commands.entity(child).despawn_recursive();
             commands.entity(parent).insert(path_meshes.add(path_mesh));
             commands.spawn(PbrBundle {
@@ -133,6 +132,19 @@ pub fn read_navmesh(
             });
         }
     }
+}
+
+fn produce_debug_mesh(path_mesh: &PathMesh) -> Mesh {
+    let mut debug_mesh = path_mesh.to_mesh();
+    let debug_mesh_vertices = match debug_mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap() {
+        VertexAttributeValues::Float32x3(values) => values,
+        _ => panic!(),
+    };
+    for vertex in debug_mesh_vertices.iter_mut() {
+        // flip z <-> y
+        vertex[2] = vertex[1];
+    }
+    debug_mesh
 }
 
 fn get_global_transform(

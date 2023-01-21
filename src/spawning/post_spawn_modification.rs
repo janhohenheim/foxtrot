@@ -6,6 +6,7 @@ use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
+use polyanya::Vertex;
 use serde::{Deserialize, Serialize};
 use std::iter;
 
@@ -40,7 +41,7 @@ pub fn set_texture_to_repeat(
     materials: Res<Materials>,
 ) {
     for (name, children) in &added_name {
-        if name.to_lowercase().contains("[ground]") {
+        if name.to_lowercase().contains("[ground]") && false {
             let child = children
                 .iter()
                 .find(|entity| material_handles.get(**entity).is_ok())
@@ -118,18 +119,21 @@ pub fn read_navmesh(
                 .collect();
             let unordered_vertices = vertices.clone();
             for (vertex_index, vertex) in vertices.iter_mut().enumerate() {
-                // Start is arbitrary
                 vertex.polygons.sort_by_key(|index| {
                     // No -1 present yet, so the unwrap is safe
                     let index = usize::try_from(*index).unwrap();
                     let polygon = &polygons[index];
-                    let counterclockwise_edge = polygon
-                        .get_counterclockwise_edge_containing_vertex(vertex_index)
-                        // All neighbor polygons will have exactly one counterclockwise and one clockwise edge connected to this vertex
-                        .unwrap();
-                    let other_vertex = &unordered_vertices[counterclockwise_edge.1];
-                    let vector = other_vertex.coords - vertex.coords;
-                    OrderedFloat(vector.y.atan2(vector.x))
+                    let unrolled_indices = polygon.unroll_at(vertex_index).unwrap();
+                    let triangle_center_direction: Vec2 =
+                        [unrolled_indices.0, unrolled_indices.1, unrolled_indices.2]
+                            .into_iter()
+                            .map(|index| &unordered_vertices[index])
+                            .map(|vertex| vertex.coords)
+                            .sum();
+                    let angle_to_positive_x_axis = triangle_center_direction
+                        .y
+                        .atan2(triangle_center_direction.x);
+                    OrderedFloat(angle_to_positive_x_axis)
                 });
                 let mut polygons_including_obstacles = vec![vertex.polygons[0]];
                 for polygon_index in vertex
@@ -145,17 +149,17 @@ pub fn read_navmesh(
                         continue;
                     }
                     let last_polygon = &polygons[usize::try_from(last_index).unwrap()];
-                    let last_counterclockwise_edge = last_polygon
-                        .get_counterclockwise_edge_containing_vertex(vertex_index)
-                        .unwrap();
+                    let last_counterclockwise_neighbor = last_polygon
+                        .unroll_at(vertex_index)
+                        .unwrap()
+                        .get_counterclockwise_neighbor(&unordered_vertices);
 
                     let next_polygon = &polygons[usize::try_from(polygon_index).unwrap()];
-                    let next_clockwise_edge = next_polygon
-                        .get_clockwise_edge_containing_vertex(vertex_index)
-                        .unwrap();
-                    if last_counterclockwise_edge.0 != next_clockwise_edge.1
-                        || last_counterclockwise_edge.1 != next_clockwise_edge.0
-                    {
+                    let next_clockwise_neighbor = next_polygon
+                        .unroll_at(vertex_index)
+                        .unwrap()
+                        .get_clockwise_neighbor(&unordered_vertices);
+                    if last_counterclockwise_neighbor != next_clockwise_neighbor {
                         // The edges don't align; there's an obstacle here
                         polygons_including_obstacles.push(-1);
                     }
@@ -165,7 +169,15 @@ pub fn read_navmesh(
                 polygons_including_obstacles.remove(0);
                 vertex.polygons = polygons_including_obstacles;
             }
+            // Recreate vertices because we now include obstacles, so vertices can now be properly identified as edges
+            let vertices: Vec<_> = vertices
+                .into_iter()
+                .map(|vertex| polyanya::Vertex::new(vertex.coords, vertex.polygons))
+                .collect();
+            info!("vertices: {:?}", vertices);
+            info!("polygons: {:?}", polygons);
             let mut polyanya_mesh = polyanya::Mesh::new(vertices, polygons);
+            info!("polyanya_mesh: {:?}", polyanya_mesh);
             polyanya_mesh.bake();
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya_mesh);
 
@@ -176,32 +188,52 @@ pub fn read_navmesh(
 }
 
 trait PolygonExtension {
-    fn get_counterclockwise_edge_containing_vertex(&self, vertex: usize) -> Option<(usize, usize)>;
-    fn get_clockwise_edge_containing_vertex(&self, vertex: usize) -> Option<(usize, usize)>;
+    fn do_edges_on_corner_align(&self, other: &Self, vertex: usize) -> Option<bool>;
+    fn unroll_at(&self, vertex_index: usize) -> Option<(usize, usize, usize)>;
 }
 impl PolygonExtension for polyanya::Polygon {
-    fn get_counterclockwise_edge_containing_vertex(
-        &self,
-        vertex_index: usize,
-    ) -> Option<(usize, usize)> {
-        get_edges(self)
-            // Our vertex will be the second of the line because the triangles are counterclockwise
-            .find(|(_a, b)| *b == vertex_index)
+    fn do_edges_on_corner_align(&self, other: &Self, vertex: usize) -> Option<bool> {
+        let unrolled_self = self.unroll_at(vertex)?;
+        let unrolled_other = other.unroll_at(vertex)?;
+        Some(unrolled_self.0 == unrolled_other.2 || unrolled_self.2 == unrolled_other.0)
     }
-    fn get_clockwise_edge_containing_vertex(&self, vertex_index: usize) -> Option<(usize, usize)> {
-        get_edges(self)
-            // Our vertex will be the first of the line because the triangles are counterclockwise
-            .find(|(a, _b)| *a == vertex_index)
+
+    fn unroll_at(&self, vertex_index: usize) -> Option<(usize, usize, usize)> {
+        unroll(self).find(|(_a, b, _c)| *b == vertex_index)
     }
 }
 
-fn get_edges(polygon: &polyanya::Polygon) -> impl Iterator<Item = (usize, usize)> + '_ {
+trait UnrolledExtension {
+    fn get_sorted_counterclockwise(&self, vertices: &[Vertex]) -> (usize, usize);
+    fn get_counterclockwise_neighbor(&self, vertices: &[Vertex]) -> usize;
+    fn get_clockwise_neighbor(&self, vertices: &[Vertex]) -> usize;
+}
+impl UnrolledExtension for (usize, usize, usize) {
+    fn get_sorted_counterclockwise(&self, vertices: &[Vertex]) -> (usize, usize) {
+        let mut other_indices = [self.0, self.2];
+        let own_coords = vertices[self.1].coords;
+        other_indices.sort_by_key(|index| {
+            let dir = vertices[*index].coords - own_coords;
+            OrderedFloat(dir.y.atan2(dir.x))
+        });
+        (other_indices[0], other_indices[1])
+    }
+    fn get_counterclockwise_neighbor(&self, vertices: &[Vertex]) -> usize {
+        self.get_sorted_counterclockwise(vertices).0
+    }
+
+    fn get_clockwise_neighbor(&self, vertices: &[Vertex]) -> usize {
+        self.get_sorted_counterclockwise(vertices).1
+    }
+}
+
+fn unroll(polygon: &polyanya::Polygon) -> impl Iterator<Item = (usize, usize, usize)> + '_ {
     polygon
         .vertices
         .iter()
-        .chain(iter::once(&polygon.vertices[0]))
+        .chain(polygon.vertices.iter().take(2))
         .tuple_windows()
-        .map(|(a, b)| (*a as usize, *b as usize))
+        .map(|(a, b, c)| (*a as usize, *b as usize, *c as usize))
 }
 
 fn get_global_transform(

@@ -7,6 +7,7 @@ use bevy_rapier3d::prelude::*;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::iter;
+use std::ops::Deref;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -79,7 +80,7 @@ pub fn read_navmesh(
                 .map(|(a, b, c)| [a, b, c].map(|index| index.try_into().unwrap()).to_vec())
                 .collect();
 
-            let vertices: Vec<_> = mesh_vertices
+            let mut vertices: Vec<_> = mesh_vertices
                 .into_iter()
                 .map(|coords| (*coords).into())
                 .map(|coords| global_transform.transform_point(coords))
@@ -95,7 +96,6 @@ pub fn read_navmesh(
                                 .then_some(polygon_index)
                         })
                         .map(|index| isize::try_from(index).unwrap())
-                        .chain(iter::once(-1))
                         .collect();
                     polyanya::Vertex::new(coords, neighbor_indices)
                 })
@@ -117,6 +117,36 @@ pub fn read_navmesh(
                 })
                 .collect();
 
+            for (vertex_index, vertex) in vertices.iter_mut().enumerate() {
+                // Start is arbitrary
+                let mut counterclockwise_polygons = vec![vertex.polygons[0]];
+                loop {
+                    let last_polygon = &polygons
+                        [usize::try_from(*counterclockwise_polygons.last().unwrap()).unwrap()];
+                    let counterclockwise_edge = get_edges(last_polygon)
+                        // Our vertex will be the second of the line because the triangles are counterclockwise
+                        .find(|(_a, b)| *b == vertex_index)
+                        .unwrap();
+                    let next_polygon = vertex
+                        .polygons
+                        .iter()
+                        .map(|index| usize::try_from(*index).unwrap())
+                        .find(|index| {
+                            get_edges(&polygons[*index]).any(|(a, b)| {
+                                // Find polygon that has the last counterclockwise edge as a clockwise edge
+                                b == counterclockwise_edge.0 && a == counterclockwise_edge.1
+                            })
+                        })
+                        .map(|index| index as isize)
+                        .unwrap_or(-1);
+                    if next_polygon == *counterclockwise_polygons.first().unwrap() {
+                        break;
+                    } else {
+                        counterclockwise_polygons.push(next_polygon);
+                    }
+                }
+                vertex.polygons = counterclockwise_polygons;
+            }
             let mut polyanya_mesh = polyanya::Mesh::new(vertices, polygons);
             polyanya_mesh.bake();
             let path_mesh = PathMesh::from_polyanya_mesh(polyanya_mesh);
@@ -125,6 +155,15 @@ pub fn read_navmesh(
             commands.entity(parent).insert(path_meshes.add(path_mesh));
         }
     }
+}
+
+fn get_edges(polygon: &polyanya::Polygon) -> impl Iterator<Item = (usize, usize)> + '_ {
+    polygon
+        .vertices
+        .iter()
+        .chain(iter::once(&polygon.vertices[0]))
+        .tuple_windows()
+        .map(|(a, b)| (*a as usize, *b as usize))
 }
 
 fn get_global_transform(

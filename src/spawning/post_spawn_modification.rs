@@ -131,33 +131,39 @@ pub fn read_navmesh(
                     let vector = other_vertex.coords - vertex.coords;
                     OrderedFloat(vector.y.atan2(vector.x))
                 });
-                let mut counterclockwise_polygons = vec![vertex.polygons[0]];
-                loop {
-                    let last_polygon = &polygons
-                        [usize::try_from(*counterclockwise_polygons.last().unwrap()).unwrap()];
-                    let counterclockwise_edge = get_edges(last_polygon)
-                        // Our vertex will be the second of the line because the triangles are counterclockwise
-                        .find(|(_a, b)| *b == vertex_index)
-                        .unwrap();
-                    let next_polygon = vertex
-                        .polygons
-                        .iter()
-                        .map(|index| usize::try_from(*index).unwrap())
-                        .find(|index| {
-                            get_edges(&polygons[*index]).any(|(a, b)| {
-                                // Find polygon that has the last counterclockwise edge as a clockwise edge
-                                b == counterclockwise_edge.0 && a == counterclockwise_edge.1
-                            })
-                        })
-                        .map(|index| index as isize)
-                        .unwrap_or(-1);
-                    if next_polygon == *counterclockwise_polygons.first().unwrap() {
-                        break;
-                    } else {
-                        counterclockwise_polygons.push(next_polygon);
+                let mut polygons_including_obstacles = vec![vertex.polygons[0]];
+                for polygon_index in vertex
+                    .polygons
+                    .iter()
+                    .cloned()
+                    .skip(1)
+                    .chain(iter::once(polygons_including_obstacles[0]))
+                {
+                    let last_index = *polygons_including_obstacles.last().unwrap();
+                    if last_index == -1 {
+                        polygons_including_obstacles.push(polygon_index);
+                        continue;
                     }
+                    let last_polygon = &polygons[usize::try_from(last_index).unwrap()];
+                    let last_counterclockwise_edge = last_polygon
+                        .get_counterclockwise_edge_containing_vertex(vertex_index)
+                        .unwrap();
+
+                    let next_polygon = &polygons[usize::try_from(polygon_index).unwrap()];
+                    let next_clockwise_edge = next_polygon
+                        .get_clockwise_edge_containing_vertex(vertex_index)
+                        .unwrap();
+                    if last_counterclockwise_edge.0 != next_clockwise_edge.1
+                        || last_counterclockwise_edge.1 != next_clockwise_edge.0
+                    {
+                        // The edges don't align; there's an obstacle here
+                        polygons_including_obstacles.push(-1);
+                    }
+                    polygons_including_obstacles.push(polygon_index);
                 }
-                vertex.polygons = counterclockwise_polygons;
+                // The first element is included in the end again
+                polygons_including_obstacles.remove(0);
+                vertex.polygons = polygons_including_obstacles;
             }
             let mut polyanya_mesh = polyanya::Mesh::new(vertices, polygons);
             polyanya_mesh.bake();
@@ -171,6 +177,7 @@ pub fn read_navmesh(
 
 trait PolygonExtension {
     fn get_counterclockwise_edge_containing_vertex(&self, vertex: usize) -> Option<(usize, usize)>;
+    fn get_clockwise_edge_containing_vertex(&self, vertex: usize) -> Option<(usize, usize)>;
 }
 impl PolygonExtension for polyanya::Polygon {
     fn get_counterclockwise_edge_containing_vertex(
@@ -180,6 +187,11 @@ impl PolygonExtension for polyanya::Polygon {
         get_edges(self)
             // Our vertex will be the second of the line because the triangles are counterclockwise
             .find(|(_a, b)| *b == vertex_index)
+    }
+    fn get_clockwise_edge_containing_vertex(&self, vertex_index: usize) -> Option<(usize, usize)> {
+        get_edges(self)
+            // Our vertex will be the first of the line because the triangles are counterclockwise
+            .find(|(a, _b)| *a == vertex_index)
     }
 }
 

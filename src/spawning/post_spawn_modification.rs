@@ -5,9 +5,9 @@ use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
 use itertools::Itertools;
+use ordered_float::OrderedFloat;
 use serde::{Deserialize, Serialize};
 use std::iter;
-use std::ops::Deref;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -116,9 +116,21 @@ pub fn read_navmesh(
                     polyanya::Polygon::new(vertex_indices_in_polygon, is_one_way)
                 })
                 .collect();
-
+            let unordered_vertices = vertices.clone();
             for (vertex_index, vertex) in vertices.iter_mut().enumerate() {
                 // Start is arbitrary
+                vertex.polygons.sort_by_key(|index| {
+                    // No -1 present yet, so the unwrap is safe
+                    let index = usize::try_from(*index).unwrap();
+                    let polygon = &polygons[index];
+                    let counterclockwise_edge = polygon
+                        .get_counterclockwise_edge_containing_vertex(vertex_index)
+                        // All neighbor polygons will have exactly one counterclockwise and one clockwise edge connected to this vertex
+                        .unwrap();
+                    let other_vertex = &unordered_vertices[counterclockwise_edge.1];
+                    let vector = other_vertex.coords - vertex.coords;
+                    OrderedFloat(vector.y.atan2(vector.x))
+                });
                 let mut counterclockwise_polygons = vec![vertex.polygons[0]];
                 loop {
                     let last_polygon = &polygons
@@ -154,6 +166,20 @@ pub fn read_navmesh(
             commands.entity(child).despawn_recursive();
             commands.entity(parent).insert(path_meshes.add(path_mesh));
         }
+    }
+}
+
+trait PolygonExtension {
+    fn get_counterclockwise_edge_containing_vertex(&self, vertex: usize) -> Option<(usize, usize)>;
+}
+impl PolygonExtension for polyanya::Polygon {
+    fn get_counterclockwise_edge_containing_vertex(
+        &self,
+        vertex_index: usize,
+    ) -> Option<(usize, usize)> {
+        get_edges(self)
+            // Our vertex will be the second of the line because the triangles are counterclockwise
+            .find(|(_a, b)| *b == vertex_index)
     }
 }
 

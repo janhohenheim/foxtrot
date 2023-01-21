@@ -87,7 +87,7 @@ fn move_along_path(
 fn get_closest_vertex(transform: &GlobalTransform, path_mesh: &PathMesh) -> Option<Vec2> {
     let coords = transform.translation().xz();
     let distance_per_try = 0.09;
-    let tries = 1_000;
+    let tries = 10;
     for x in 0..tries {
         for y in 0..tries {
             let offset = Vec2::new(x as f32, y as f32) * distance_per_try;

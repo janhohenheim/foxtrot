@@ -102,16 +102,20 @@ fn poke_faces(mesh: &Mesh, max_distance_to_centers: f32) -> Mesh {
         .tuples()
         .map(|(a, b, c)| [a, b, c])
         .enumerate()
-        .map(|(index, vertex_indices)| Triangle(vertex_indices.map(|index| vertices[index])))
+        .map(|(index, vertex_indices)| {
+            Triangle(vertex_indices.map(|index| Vertex {
+                index,
+                coords: vertices[index],
+            }))
+        })
         .collect();
     let mut triangles_to_remove = Vec::new();
-    let mut new_vertices = Vec::new();
     let mut new_triangles = Vec::new();
     for (index, triangle) in triangles.iter().enumerate() {
         let poked = poke_triangle(
             *triangle,
             max_distance_squared,
-            &mut new_vertices,
+            &mut vertices,
             &mut new_triangles,
         );
         if poked {
@@ -132,42 +136,52 @@ fn poke_faces(mesh: &Mesh, max_distance_to_centers: f32) -> Mesh {
 fn poke_triangle(
     triangle: Triangle,
     max_distance_squared: f32,
-    new_vertices: &mut Vec<Vec3>,
+    vertices: &mut Vec<Vec3>,
     new_triangles: &mut Vec<Triangle>,
 ) -> bool {
-    let new_vertex = triangle.center();
-    if triangle.max_distance_squared(new_vertex) < max_distance_squared {
+    let center = triangle.center();
+    if triangle.max_distance_squared(center) < max_distance_squared {
         new_triangles.push(triangle);
         return false;
     }
-    new_vertices.push(new_vertex);
+    vertices.push(center);
+    let new_vertex = Vertex {
+        index: vertices.len() - 1,
+        coords: center,
+    };
 
     [
         Triangle([triangle.0[0], triangle.0[1], new_vertex]),
         Triangle([triangle.0[1], triangle.0[2], new_vertex]),
         Triangle([triangle.0[2], triangle.0[0], new_vertex]),
     ]
-    .map(|triangle| poke_triangle(triangle, max_distance_squared, new_vertices, new_triangles))
+    .map(|triangle| poke_triangle(triangle, max_distance_squared, vertices, new_triangles))
     .contains(&true)
 }
 
 #[derive(Debug, Clone, Copy)]
-struct Triangle([Vec3; 3]);
+struct Triangle([Vertex; 3]);
 
 impl Triangle {
     fn center(self) -> Vec3 {
-        self.0.into_iter().sum::<Vec3>() / 3.
+        self.0.into_iter().map(|vertex| vertex.coords).sum::<Vec3>() / 3.
     }
 
     fn max_distance_squared(self, center: Vec3) -> f32 {
         *self
             .0
-            .map(|coords| (coords - center).length_squared())
+            .map(|vertex| (vertex.coords - center).length_squared())
             .map(OrderedFloat)
             .into_iter()
             .max()
             .unwrap()
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Vertex {
+    index: usize,
+    coords: Vec3,
 }
 
 fn get_vectors(

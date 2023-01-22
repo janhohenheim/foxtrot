@@ -15,13 +15,13 @@ pub fn read_navmesh(
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
     for (parent, name, children) in &added_name {
-        if name.to_lowercase().contains("[ground]") {
+        if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh = transform_mesh(mesh, global_transform);
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
-                mesh.set_delta(0.1);
+                mesh.set_delta(10.);
             });
 
             commands.entity(parent).insert(path_meshes.add(path_mesh));

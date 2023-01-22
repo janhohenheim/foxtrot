@@ -21,7 +21,7 @@ pub fn read_navmesh(
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh = transform_mesh(mesh, global_transform);
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
-                mesh.set_delta(10.);
+                mesh.set_delta(1.);
             });
 
             commands.entity(parent).insert(path_meshes.add(path_mesh));

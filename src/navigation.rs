@@ -1,3 +1,4 @@
+use crate::navigation::navmesh::read_navmesh;
 use crate::player::{CharacterVelocity, Player};
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -8,12 +9,17 @@ use bevy_prototype_debug_lines::DebugLines;
 use serde::{Deserialize, Serialize};
 use std::iter;
 
+mod navmesh;
+
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(PathMeshPlugin)
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(query_mesh));
+        app.add_plugin(PathMeshPlugin).add_system_set(
+            SystemSet::on_update(GameState::Playing)
+                .with_system(query_mesh)
+                .with_system(read_navmesh),
+        );
     }
 }
 

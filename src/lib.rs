@@ -14,6 +14,7 @@ mod loading;
 mod map;
 mod math;
 mod menu;
+pub mod mesh_util;
 mod navigation;
 mod physics;
 mod player;

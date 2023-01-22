@@ -1,17 +1,11 @@
 use crate::shader::Materials;
-use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::render::mesh::{
     MeshVertexAttribute, MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues,
 };
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
-use itertools::Itertools;
-use ordered_float::OrderedFloat;
-use polyanya::Vertex;
 use serde::{Deserialize, Serialize};
-use std::borrow::BorrowMut;
-use std::iter;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]

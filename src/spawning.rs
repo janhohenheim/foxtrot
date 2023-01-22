@@ -4,9 +4,7 @@ use crate::spawning::change_parent::change_parent;
 use crate::spawning::counter::Counter;
 use crate::spawning::duplication::duplicate;
 use crate::spawning::objects::*;
-use crate::spawning::post_spawn_modification::{
-    read_colliders, read_navmesh, set_texture_to_repeat,
-};
+use crate::spawning::post_spawn_modification::{read_colliders, set_texture_to_repeat};
 use crate::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
 use crate::spawning::spawn_container::{sync_container_registry, SpawnContainerRegistry};
 use crate::GameState;
@@ -62,8 +60,7 @@ impl Plugin for SpawningPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders)
-                    .with_system(set_texture_to_repeat)
-                    .with_system(read_navmesh),
+                    .with_system(set_texture_to_repeat),
             );
     }
 }

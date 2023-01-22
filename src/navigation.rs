@@ -87,7 +87,7 @@ fn move_along_path(
         .unwrap();
     let speed = 5.0;
     let velocity = next_direction * speed * dt;
-    character_velocity.0 += velocity;
+    character_velocity.0 = velocity;
 }
 
 fn get_closest_vertex(transform: &GlobalTransform, path_mesh: &PathMesh) -> Option<Vec2> {

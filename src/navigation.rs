@@ -3,7 +3,7 @@ use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
-use bevy_pathmesh::PathmeshPlugin;
+use bevy_pathmesh::PathMeshPlugin;
 use bevy_prototype_debug_lines::DebugLines;
 use serde::{Deserialize, Serialize};
 use std::iter;
@@ -12,7 +12,7 @@ pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(PathmeshPlugin)
+        app.add_plugin(PathMeshPlugin)
             .add_system_set(SystemSet::on_update(GameState::Playing).with_system(query_mesh));
     }
 }

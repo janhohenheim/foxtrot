@@ -3,8 +3,11 @@ use bevy::prelude::*;
 use bevy::render::mesh::{
     MeshVertexAttribute, MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues,
 };
+use bevy::utils::HashSet;
 use bevy_pathmesh::PathMesh;
 use bevy_rapier3d::prelude::*;
+use itertools::Itertools;
+use ordered_float::OrderedFloat;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -85,7 +88,86 @@ fn transform_mesh(mesh: &Mesh, transform: Transform) -> Mesh {
         transformed_mesh.insert_attribute(attribute, values);
     };
     [Mesh::ATTRIBUTE_POSITION, Mesh::ATTRIBUTE_NORMAL].map(transform_attribute);
+    transformed_mesh.set_indices(mesh.indices().cloned());
     transformed_mesh
+}
+
+fn poke_faces(mesh: &Mesh, max_distance_to_centers: f32) -> Mesh {
+    let max_distance_squared = max_distance_to_centers.powf(2.);
+    let mut vertices: Vec<_> = get_vectors(mesh, Mesh::ATTRIBUTE_POSITION).collect();
+    let mut triangles: Vec<Triangle> = mesh
+        .indices()
+        .unwrap()
+        .iter()
+        .tuples()
+        .map(|(a, b, c)| [a, b, c])
+        .enumerate()
+        .map(|(index, vertex_indices)| Triangle(vertex_indices.map(|index| vertices[index])))
+        .collect();
+    let mut triangles_to_remove = Vec::new();
+    let mut new_vertices = Vec::new();
+    let mut new_triangles = Vec::new();
+    for (index, triangle) in triangles.iter().enumerate() {
+        let poked = poke_triangle(
+            *triangle,
+            max_distance_squared,
+            &mut new_vertices,
+            &mut new_triangles,
+        );
+        if poked {
+            triangles_to_remove.push(index);
+        }
+    }
+    for index in triangles_to_remove {
+        triangles.remove(index);
+    }
+    let mut poked_mesh = Mesh::new(PrimitiveTopology::TriangleList);
+
+    for triangle in new_triangles {
+        triangles.push(triangle);
+    }
+    poked_mesh
+}
+
+fn poke_triangle(
+    triangle: Triangle,
+    max_distance_squared: f32,
+    new_vertices: &mut Vec<Vec3>,
+    new_triangles: &mut Vec<Triangle>,
+) -> bool {
+    let new_vertex = triangle.center();
+    if triangle.max_distance_squared(new_vertex) < max_distance_squared {
+        new_triangles.push(triangle);
+        return false;
+    }
+    new_vertices.push(new_vertex);
+
+    [
+        Triangle([triangle.0[0], triangle.0[1], new_vertex]),
+        Triangle([triangle.0[1], triangle.0[2], new_vertex]),
+        Triangle([triangle.0[2], triangle.0[0], new_vertex]),
+    ]
+    .map(|triangle| poke_triangle(triangle, max_distance_squared, new_vertices, new_triangles))
+    .contains(&true)
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Triangle([Vec3; 3]);
+
+impl Triangle {
+    fn center(self) -> Vec3 {
+        self.0.into_iter().sum::<Vec3>() / 3.
+    }
+
+    fn max_distance_squared(self, center: Vec3) -> f32 {
+        *self
+            .0
+            .map(|coords| (coords - center).length_squared())
+            .map(OrderedFloat)
+            .into_iter()
+            .max()
+            .unwrap()
+    }
 }
 
 fn get_vectors(

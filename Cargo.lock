@@ -536,8 +536,6 @@ dependencies = [
  "embed-resource",
  "glob",
  "indexmap",
- "itertools",
- "ordered-float",
  "polyanya 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex",
  "ron",
@@ -3124,15 +3122,6 @@ name = "optional"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "978aa494585d3ca4ad74929863093e87cac9790d81fe7aba2b3dc2890643a0fc"
-
-[[package]]
-name = "ordered-float"
-version = "3.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d84eb1409416d254e4a9c8fa56cc24701755025b458f0fcd8e59e1f5f40c23bf"
-dependencies = [
- "num-traits",
-]
 
 [[package]]
 name = "overload"

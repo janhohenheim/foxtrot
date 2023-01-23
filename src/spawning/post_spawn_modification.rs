@@ -1,7 +1,7 @@
+use crate::mesh_util::get_mesh;
 use crate::shader::Materials;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -16,27 +16,14 @@ pub fn read_colliders(
     mesh_handles: Query<&Handle<Mesh>>,
 ) {
     for (entity, name, children) in &added_name {
-        if name.to_lowercase().contains("collider") {
-            let colliders: Vec<_> = children
-                .iter()
-                .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
-                .collect();
-            assert_eq!(
-                colliders.len(),
-                1,
-                "Collider must contain exactly one mesh, but found {}",
-                colliders.len()
-            );
-            let (collider_entity, collider_mesh_handle) = colliders.first().unwrap();
-            let collider_mesh = meshes.get(collider_mesh_handle).unwrap();
-            commands.entity(*collider_entity).despawn_recursive();
+        if name.to_lowercase().contains("[collider]") {
+            let (collider_entity, collider_mesh) = get_mesh(children, &meshes, &mesh_handles);
+            commands.entity(collider_entity).despawn_recursive();
 
             let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();
 
-            commands
-                .entity(entity)
-                .insert((rapier_collider, NavMeshAffector::default()));
+            commands.entity(entity).insert(rapier_collider);
         }
     }
 }
@@ -48,7 +35,7 @@ pub fn set_texture_to_repeat(
     materials: Res<Materials>,
 ) {
     for (name, children) in &added_name {
-        if name.to_lowercase().contains("ground") {
+        if name.to_lowercase().contains("[ground]") {
             let child = children
                 .iter()
                 .find(|entity| material_handles.get(**entity).is_ok())

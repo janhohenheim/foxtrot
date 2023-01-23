@@ -1,5 +1,37 @@
 use bevy::prelude::*;
-use bevy::render::mesh::PrimitiveTopology;
+use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues};
+
+pub trait Meshtools {
+    fn transform(&mut self, transform: Transform);
+    fn transformed(&self, transform: Transform) -> Mesh;
+    fn read_coords_mut(&mut self, id: impl Into<MeshVertexAttributeId>) -> &mut Vec<[f32; 3]>;
+}
+
+impl Meshtools for Mesh {
+    fn transform(&mut self, transform: Transform) {
+        for attribute in [Mesh::ATTRIBUTE_POSITION, Mesh::ATTRIBUTE_NORMAL] {
+            for coords in self.read_coords_mut(attribute.clone()) {
+                let vec3 = (*coords).into();
+                let transformed = transform.transform_point(vec3);
+                *coords = transformed.into();
+            }
+        }
+    }
+
+    fn transformed(&self, transform: Transform) -> Mesh {
+        let mut mesh = self.clone();
+        mesh.transform(transform);
+        mesh
+    }
+
+    fn read_coords_mut(&mut self, id: impl Into<MeshVertexAttributeId>) -> &mut Vec<[f32; 3]> {
+        match self.attribute_mut(id).unwrap() {
+            VertexAttributeValues::Float32x3(values) => values,
+            // Guaranteed by Bevy
+            _ => unreachable!(),
+        }
+    }
+}
 
 pub fn get_mesh<'a>(
     children: &'a Children,

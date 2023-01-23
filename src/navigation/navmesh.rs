@@ -2,6 +2,7 @@ use crate::mesh_util::{get_mesh, Meshtools};
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
 
+#[allow(clippy::too_many_arguments)]
 pub fn read_navmesh(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,

@@ -19,6 +19,7 @@ mod navigation;
 mod physics;
 mod player;
 mod saving;
+#[cfg(feature = "editor")]
 mod scene_editor;
 mod shader;
 mod spawning;

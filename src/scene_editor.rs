@@ -48,7 +48,6 @@ struct SpawnEvent {
 
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(feature = "editor")]
         app.add_event::<SpawnEvent>()
             .init_resource::<SceneEditorState>()
             .add_system_set(

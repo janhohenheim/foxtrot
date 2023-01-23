@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+#[cfg(debug_assertions)]
 use bevy_prototype_debug_lines::DebugLinesPlugin;
 
 #[cfg(feature = "editor")]

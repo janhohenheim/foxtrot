@@ -76,7 +76,7 @@ fn query_mesh(
 fn move_along_path(from: Vec3, path: &[Vec3]) -> Option<Vec3> {
     path.into_iter()
         .map(|point| *point - from)
-        .filter(|dir| dir.length_squared() > 1.0)
+        .filter(|dir| dir.length_squared() > 0.05)
         .filter_map(|dir| dir.try_normalize())
         .next()
 }

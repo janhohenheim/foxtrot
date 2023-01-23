@@ -1,7 +1,6 @@
 use crate::navigation::navmesh::read_navmesh;
 use crate::player::{CharacterVelocity, Player};
 use crate::GameState;
-use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
 use bevy_pathmesh::PathMeshPlugin;
@@ -57,14 +56,15 @@ fn query_mesh(
                     Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
                     && entity == player_entity
                 {
-                    Some(vec![to.xz()])
-                } else if let Some(path) = path_mesh.path(from.xz(), to.xz()) {
+                    info!("direct");
+                    Some(vec![to])
+                } else if let Some(path) = path_mesh.transformed_path(from, to) {
+                    info!("path");
                     Some(path.path)
                 } else {
                     None
                 };
-                if let Some(path) = path {
-                    let dir = move_along_path(from.xz(), &path);
+                if let Some(path) = path && let Some(dir) = move_along_path(from, &path) {
                     let speed = 3.;
                     character_velocity.0 += dir * dt * speed;
                 }
@@ -73,16 +73,10 @@ fn query_mesh(
     }
 }
 
-fn move_along_path(from: Vec2, path: &[Vec2]) -> Vec3 {
-    let from = Vec3::new(from.x, 0., from.y);
-    let path: Vec<_> = path
-        .iter()
-        .map(|vec2| Vec3::new(vec2.x, 0., vec2.y))
-        .collect();
-
+fn move_along_path(from: Vec3, path: &[Vec3]) -> Option<Vec3> {
     path.into_iter()
-        .map(|point| point - from)
+        .map(|point| *point - from)
+        .filter(|dir| dir.length_squared() > 1.0)
         .filter_map(|dir| dir.try_normalize())
         .next()
-        .unwrap()
 }

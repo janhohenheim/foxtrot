@@ -14,10 +14,12 @@ mod loading;
 mod map;
 mod math;
 mod menu;
+pub mod mesh_util;
 mod navigation;
 mod physics;
 mod player;
 mod saving;
+#[cfg(feature = "editor")]
 mod scene_editor;
 mod shader;
 mod spawning;

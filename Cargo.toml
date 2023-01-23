@@ -9,7 +9,9 @@ version = "0.1.0"
 default = [   
     "bevy/bevy_winit",
     "bevy/render",
+    "bevy/hdr",
     "bevy/png",
+    "bevy/jpeg",
     "bevy/x11",
     "bevy/animation",
     "bevy/serialize",
@@ -27,7 +29,7 @@ dynamic = [
 ]
 
 [dependencies]
-bevy = { version = "0.9", default-features = false }
+bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
 bevy_asset_loader = { version = "0.14", features = ["3d"] }
 bevy_egui = "0.18"
@@ -39,7 +41,8 @@ ron = "0.8.0"
 regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
-oxidized_navigation = "0.1.1"
+polyanya = "0.2.0"
+bevy_pathmesh = { git = "https://github.com/janhohenheim/bevy_pathmesh.git", branch = "import-mesh"}
 
 [dependencies.bevy_prototype_debug_lines]
 version = "0.9.0"

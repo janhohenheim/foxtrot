@@ -1,11 +1,13 @@
 use bevy::prelude::*;
+#[cfg(feature = "editor")]
 use bevy_prototype_debug_lines::DebugLinesPlugin;
 
 #[cfg(feature = "editor")]
 use bevy_editor_pls::prelude::*;
 
+#[cfg(feature = "editor")]
 use crate::scene_editor::SceneEditorPlugin;
-#[cfg(debug_assertions)]
+#[cfg(feature = "editor")]
 use bevy::diagnostic::LogDiagnosticsPlugin;
 
 /// Plugin with debugging utility intended for use during development only.
@@ -18,14 +20,11 @@ impl Plugin for DevPlugin {
         {
             app.add_plugin(EditorPlugin)
                 .add_plugin(DebugLinesPlugin::default())
-                .add_plugin(SceneEditorPlugin);
-        }
-        #[cfg(debug_assertions)]
-        {
-            app.add_plugin(LogDiagnosticsPlugin::default());
+                .add_plugin(SceneEditorPlugin)
+                .add_plugin(LogDiagnosticsPlugin::default());
         }
 
-        #[cfg(not(any(feature = "editor", debug_assertions)))]
+        #[cfg(not(feature = "editor"))]
         {
             // Suppress warning of unused app in release builds.
             let _ = app;

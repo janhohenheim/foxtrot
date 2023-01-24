@@ -536,7 +536,7 @@ dependencies = [
  "embed-resource",
  "glob",
  "indexmap",
- "polyanya 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "polyanya",
  "regex",
  "ron",
  "serde",
@@ -723,11 +723,11 @@ dependencies = [
 [[package]]
 name = "bevy_pathmesh"
 version = "0.3.0"
-source = "git+https://github.com/janhohenheim/bevy_pathmesh.git?branch=import-mesh#236058ab92aa324aa9a3fc52c89adbf5fa4ecf8f"
+source = "git+https://github.com/vleue/bevy_pathmesh.git?rev=242b6066fbf852117a4073a3062e9f8820868f04#242b6066fbf852117a4073a3062e9f8820868f04"
 dependencies = [
  "bevy",
  "itertools",
- "polyanya 0.2.0 (git+https://github.com/janhohenheim/polyanya.git?branch=import-trimesh)",
+ "polyanya",
 ]
 
 [[package]]
@@ -3265,20 +3265,9 @@ dependencies = [
 
 [[package]]
 name = "polyanya"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31be87b09de2dc75319eb2c29790104c997cab37ab64cc303cb13b1de45ce1f3"
-dependencies = [
- "bvh2d",
- "glam",
- "hashbrown 0.13.2",
- "smallvec",
-]
-
-[[package]]
-name = "polyanya"
-version = "0.2.0"
-source = "git+https://github.com/janhohenheim/polyanya.git?branch=import-trimesh#b09b9140b970e6c0ad3c7fe476ad29f541daf46a"
+checksum = "733927a8ed2abf73a92a30605d50eb3dc0aebd9120949c1f8a3094e7cfd9c1c5"
 dependencies = [
  "bvh2d",
  "glam",

@@ -56,10 +56,8 @@ fn query_mesh(
                     Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
                     && entity == player_entity
                 {
-                    info!("direct");
                     Some(vec![to])
                 } else if let Some(path) = path_mesh.transformed_path(from, to) {
-                    info!("path");
                     Some(path.path)
                 } else {
                     None

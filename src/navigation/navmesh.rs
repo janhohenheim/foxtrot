@@ -18,18 +18,15 @@ pub fn read_navmesh(
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-            info!("global_transform: {:?}", global_transform);
             let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
             let mesh = mesh.transformed(global_transform);
 
-            info!("mesh: {:?}", mesh);
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
                 mesh.set_delta(1.);
             });
             #[cfg(debug_assertions)]
             {
                 let debug_mesh = path_mesh.to_mesh();
-                info!("debug_mesh: {:?}", debug_mesh);
                 commands.spawn((
                     PbrBundle {
                         mesh: meshes.add(debug_mesh),

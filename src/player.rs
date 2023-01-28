@@ -3,10 +3,10 @@ use crate::camera::PlayerCamera;
 use crate::loading::AnimationAssets;
 use crate::movement::{CharacterVelocity, Grounded, Jump, JumpState};
 use crate::spawning::AnimationEntityLink;
+use crate::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
 pub struct PlayerPlugin;
@@ -106,7 +106,6 @@ fn handle_horizontal_movement(
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink)>,
-    mut model_query: Query<&mut Transform>,
     animations: Res<AnimationAssets>,
 ) {
     for (velocity, grounded, animation_entity_link) in player_query.iter() {
@@ -114,10 +113,7 @@ fn play_animations(
             .get_mut(animation_entity_link.0)
             .expect("animation_entity_link held entity without animation player");
 
-        let horizontal_velocity = Vec3 {
-            y: 0.,
-            ..velocity.0
-        };
+        let horizontal_velocity = velocity.0.x0z();
         let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
         let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
 
@@ -133,13 +129,6 @@ fn play_animations(
             animation_player
                 .play(animations.character_idle.clone_weak())
                 .repeat();
-        }
-
-        if has_horizontal_movement {
-            model_query
-                .get_mut(animation_entity_link.0)
-                .expect("animation_entity_link held entity without transform")
-                .look_at(horizontal_velocity, Vect::Y);
         }
     }
 }

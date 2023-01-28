@@ -30,6 +30,9 @@ jobs:
           toolchain: nightly
           target: aarch64-apple-darwin
           override: true
+      - name: Install zld
+        run: |
+          brew install michaeleisel/zld/zld
       - name: Build release for Apple Silicon
         run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version) cargo build --release --no-default-features --features core --target=aarch64-apple-darwin

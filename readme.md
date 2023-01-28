@@ -18,6 +18,9 @@ The all-in-one Bevy 3D game template
 
 ## Usage
 
+Building with the default `dynamic` feature requires setting up LLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
+Don't worry, it's super easy.
+
 ### Running the game
 
 ```bash

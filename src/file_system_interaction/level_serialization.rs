@@ -1,4 +1,7 @@
 use crate::level_instanciation::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::world_interaction::condition::ActiveConditions;
+use crate::world_interaction::dialog::CurrentDialog;
+use crate::world_interaction::interactions_ui::InteractionUi;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -11,7 +14,6 @@ impl Plugin for WorldSerializationPlugin {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
             .add_system(save_world.after("spawn_requested"))
-            //.add_system(load_world.before("spawn_requested"))
             .add_system_to_stage(CoreStage::PostUpdate, load_world);
     }
 }
@@ -104,6 +106,10 @@ fn load_world(
                 commands.insert_resource(CurrentLevel {
                     scene: load.filename.clone(),
                 });
+                commands.init_resource::<InteractionUi>();
+                commands.init_resource::<ActiveConditions>();
+                commands.remove_resource::<CurrentDialog>();
+
                 info!(
                     "Successfully loaded scene \"{}\" from {}",
                     load.filename,

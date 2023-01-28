@@ -1,6 +1,8 @@
 use super::npc::PATH;
 use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
-use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, Model};
+use crate::movement::general_movement::{
+    CharacterAnimations, CharacterVelocity, Grounded, Jump, Model,
+};
 use crate::player_control::camera::PlayerCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
 use bevy::prelude::*;
@@ -31,6 +33,11 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 Name::new("Player"),
                 Grounded::default(),
                 CharacterVelocity::default(),
+                CharacterAnimations {
+                    idle: self.animations.character_idle.clone(),
+                    walk: self.animations.character_walking.clone(),
+                    aerial: self.animations.character_running.clone(),
+                },
                 Jump::default(),
             ))
             .with_children(|parent| {

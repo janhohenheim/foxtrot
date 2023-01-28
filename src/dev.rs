@@ -6,7 +6,7 @@ use bevy_prototype_debug_lines::DebugLinesPlugin;
 use bevy_editor_pls::prelude::*;
 
 #[cfg(feature = "editor")]
-use crate::scene_editor::SceneEditorPlugin;
+use crate::level_design::scene_editor::SceneEditorPlugin;
 #[cfg(feature = "editor")]
 use bevy::diagnostic::LogDiagnosticsPlugin;
 

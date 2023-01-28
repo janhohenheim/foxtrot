@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues};
 
 pub trait Vec3Ext {
+    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn is_approx_zero(self) -> bool;
     fn x0z(self) -> Vec3;
 }

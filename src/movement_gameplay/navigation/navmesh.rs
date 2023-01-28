@@ -1,4 +1,4 @@
-use crate::trait_extension::MeshExt;
+use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
 

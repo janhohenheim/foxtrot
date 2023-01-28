@@ -1,4 +1,4 @@
-use crate::actions::{Actions, ActionsFrozen};
+use crate::movement_gameplay::actions::{Actions, ActionsFrozen};
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};

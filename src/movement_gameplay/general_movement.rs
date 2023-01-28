@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_design::spawning::AnimationEntityLink;
-use crate::trait_extension::Vec3Ext;
+use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
 

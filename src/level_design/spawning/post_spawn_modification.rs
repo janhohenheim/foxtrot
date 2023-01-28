@@ -1,5 +1,5 @@
 use crate::shader::Materials;
-use crate::trait_extension::MeshExt;
+use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};

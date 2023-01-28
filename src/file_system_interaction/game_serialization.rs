@@ -78,7 +78,10 @@ fn handle_load_requests(
             }
         };
         let serialized = match fs::read_to_string(&path) {
-            Ok(serialized) => serialized,
+            Ok(serialized) => {
+                info!("Successfully read save at {}", path.to_string_lossy());
+                serialized
+            }
             Err(e) => {
                 error!(
                     "Failed to read save {:?} at {:?}: {}",
@@ -161,8 +164,11 @@ fn handle_save_requests(
                 .clone()
                 .unwrap_or_else(|| Local::now().to_rfc2822().replace(':', "-"));
             let path = get_save_path(filename.clone());
-            fs::write(path, serialized)
+            fs::create_dir_all(path.parent().unwrap()).expect("Failed to create save directory");
+            fs::write(&path, serialized)
                 .unwrap_or_else(|e| error!("Failed to write save {filename}: {e}"));
+
+            info!("Successfully saved game at {}", path.to_string_lossy());
         }
     }
 }

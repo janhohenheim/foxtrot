@@ -58,6 +58,7 @@ fn save_world(
             .next()
         {
             let serialized_world = serialize_world(&spawn_query);
+            fs::create_dir_all(path.parent().unwrap()).expect("Failed to create scene directory");
             fs::write(path, serialized_world)
                 .unwrap_or_else(|e| error!("Failed to save scene \"{}\": {}", scene, e));
             info!(

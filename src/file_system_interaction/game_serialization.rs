@@ -1,6 +1,6 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
+use crate::level_design::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::movement_gameplay::player::Player;
-use crate::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;

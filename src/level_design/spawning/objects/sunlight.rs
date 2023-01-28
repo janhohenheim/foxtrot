@@ -1,4 +1,4 @@
-use crate::spawning::PrimedGameObjectSpawner;
+use crate::level_design::spawning::PrimedGameObjectSpawner;
 use bevy::prelude::*;
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {

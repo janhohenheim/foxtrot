@@ -1,12 +1,16 @@
+use crate::level_design::spawning::animation_link::link_animations;
+use crate::level_design::spawning::change_parent::change_parent;
+use crate::level_design::spawning::counter::Counter;
+use crate::level_design::spawning::duplication::duplicate;
+use crate::level_design::spawning::objects::*;
+use crate::level_design::spawning::post_spawn_modification::{
+    read_colliders, set_texture_to_repeat,
+};
+use crate::level_design::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
+use crate::level_design::spawning::spawn_container::{
+    sync_container_registry, SpawnContainerRegistry,
+};
 use crate::shader::Materials;
-use crate::spawning::animation_link::link_animations;
-use crate::spawning::change_parent::change_parent;
-use crate::spawning::counter::Counter;
-use crate::spawning::duplication::duplicate;
-use crate::spawning::objects::*;
-use crate::spawning::post_spawn_modification::{read_colliders, set_texture_to_repeat};
-use crate::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
-use crate::spawning::spawn_container::{sync_container_registry, SpawnContainerRegistry};
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
 use bevy::gltf::Gltf;

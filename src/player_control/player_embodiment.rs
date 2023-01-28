@@ -7,6 +7,7 @@ use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
+use bevy_rapier3d::control::KinematicCharacterControllerOutput;
 use serde::{Deserialize, Serialize};
 
 pub struct PlayerEmbodimentPlugin;
@@ -105,17 +106,20 @@ fn handle_horizontal_movement(
 
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<(&CharacterVelocity, &Grounded, &AnimationEntityLink)>,
+    player_query: Query<(
+        &KinematicCharacterControllerOutput,
+        &Grounded,
+        &AnimationEntityLink,
+    )>,
     animations: Res<AnimationAssets>,
 ) {
-    for (velocity, grounded, animation_entity_link) in player_query.iter() {
+    for (output, grounded, animation_entity_link) in player_query.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
             .expect("animation_entity_link held entity without animation player");
 
-        let horizontal_velocity = velocity.0.x0z();
-        let is_in_air = f32::from(grounded.time_since_last_grounded) > 1e-4;
-        let has_horizontal_movement = horizontal_velocity.length() > 1e-4;
+        let is_in_air = grounded.time_since_last_grounded.is_active();
+        let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
 
         if is_in_air {
             animation_player

@@ -1,7 +1,7 @@
 [package]
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
-name = "bevy_game"
+name = "foxtrott"
 publish = false
 version = "0.1.0"
 

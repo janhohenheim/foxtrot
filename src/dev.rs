@@ -1,14 +1,11 @@
-use bevy::prelude::*;
-#[cfg(feature = "editor")]
-use bevy_prototype_debug_lines::DebugLinesPlugin;
-
-#[cfg(feature = "editor")]
-use bevy_editor_pls::prelude::*;
-
-#[cfg(feature = "editor")]
-use crate::scene_editor::SceneEditorPlugin;
-#[cfg(feature = "editor")]
+use crate::dev::scene_editor::SceneEditorPlugin;
 use bevy::diagnostic::LogDiagnosticsPlugin;
+use bevy::prelude::*;
+use bevy_editor_pls::prelude::*;
+use bevy_prototype_debug_lines::DebugLinesPlugin;
+use bevy_rapier3d::prelude::*;
+
+mod scene_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Will not do anything when used in a release build.
@@ -16,18 +13,12 @@ pub struct DevPlugin;
 
 impl Plugin for DevPlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(feature = "editor")]
         {
             app.add_plugin(EditorPlugin)
                 .add_plugin(DebugLinesPlugin::default())
                 .add_plugin(SceneEditorPlugin)
-                .add_plugin(LogDiagnosticsPlugin::default());
-        }
-
-        #[cfg(not(feature = "editor"))]
-        {
-            // Suppress warning of unused app in release builds.
-            let _ = app;
+                .add_plugin(LogDiagnosticsPlugin::default())
+                .add_plugin(RapierDebugRenderPlugin::default());
         }
     }
 }

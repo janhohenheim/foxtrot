@@ -3,46 +3,28 @@
 #![feature(fs_try_exists)]
 #![feature(never_type)]
 
-mod actions;
-mod audio;
-mod camera;
-mod condition;
+mod bevy_config;
+#[cfg(feature = "dev")]
 mod dev;
-mod dialog;
-mod interactions_ui;
-mod loading;
-mod map;
-mod math;
+mod file_system_interaction;
+mod level_instanciation;
 mod menu;
-pub mod mesh_util;
-mod navigation;
-mod physics;
-mod player;
-mod saving;
-#[cfg(feature = "editor")]
-mod scene_editor;
+mod movement;
+mod player_control;
 mod shader;
-mod spawning;
-mod world_serialization;
+mod util;
+mod world_interaction;
 
-use crate::actions::ActionsPlugin;
-use crate::audio::InternalAudioPlugin;
-use crate::camera::CameraPlugin;
-use crate::condition::ConditionPlugin;
+use crate::bevy_config::BevyConfigPlugin;
+#[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
-use crate::dialog::DialogPlugin;
-use crate::interactions_ui::InteractionsUi;
-use crate::loading::LoadingPlugin;
-use crate::map::MapPlugin;
+use crate::file_system_interaction::FileSystemInteractionPlugin;
+use crate::level_instanciation::LevelInstanciationPlugin;
 use crate::menu::MenuPlugin;
-use crate::navigation::NavigationPlugin;
-use crate::physics::PhysicsPlugin;
-use crate::player::PlayerPlugin;
-use crate::saving::SavingPlugin;
+use crate::movement::MovementPlugin;
+use crate::player_control::PlayerControlPlugin;
 use crate::shader::ShaderPlugin;
-use crate::spawning::SpawningPlugin;
-use crate::world_serialization::WorldSerializationPlugin;
-use bevy::app::App;
+use crate::world_interaction::WorldInteractionPlugin;
 use bevy::prelude::*;
 
 // This example game uses States to separate logic
@@ -63,22 +45,15 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_state(GameState::Loading)
-            .add_plugin(LoadingPlugin)
+            .add_plugin(BevyConfigPlugin)
             .add_plugin(MenuPlugin)
-            .add_plugin(ActionsPlugin)
-            .add_plugin(InternalAudioPlugin)
-            .add_plugin(PlayerPlugin)
-            .add_plugin(CameraPlugin)
-            .add_plugin(PhysicsPlugin)
-            .add_plugin(InteractionsUi)
-            .add_plugin(DialogPlugin)
-            .add_plugin(MapPlugin)
-            .add_plugin(SpawningPlugin)
-            .add_plugin(ConditionPlugin)
-            .add_plugin(SavingPlugin)
-            .add_plugin(NavigationPlugin)
-            .add_plugin(ShaderPlugin)
-            .add_plugin(WorldSerializationPlugin)
-            .add_plugin(DevPlugin);
+            .add_plugin(MovementPlugin)
+            .add_plugin(PlayerControlPlugin)
+            .add_plugin(WorldInteractionPlugin)
+            .add_plugin(LevelInstanciationPlugin)
+            .add_plugin(FileSystemInteractionPlugin)
+            .add_plugin(ShaderPlugin);
+        #[cfg(feature = "dev")]
+        app.add_plugin(DevPlugin);
     }
 }

@@ -33,7 +33,6 @@ pub fn read_navmesh(
                     PbrBundle {
                         mesh: meshes.add(debug_mesh),
                         material: materials.add(default()),
-                        transform: Transform::from_translation(Vec3::new(0., 0.1, 0.)),
                         visibility: Visibility { is_visible: false },
                         ..default()
                     },

@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::str::FromStr;
 
+#[allow(clippy::too_many_arguments)]
 pub fn spawn_requested(
     mut commands: Commands,
     gltf: Res<Assets<Gltf>>,

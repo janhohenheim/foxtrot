@@ -8,9 +8,9 @@ use bevy_rapier3d::rapier::prelude::CollisionEventFlags;
 use crate::movement_gameplay::player::PlayerSensor;
 use crate::GameState;
 
-pub struct InteractionsUi;
+pub struct InteractionsUiPlugin;
 
-impl Plugin for InteractionsUi {
+impl Plugin for InteractionsUiPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<InteractionUi>().add_system_set(
             SystemSet::on_update(GameState::Playing)

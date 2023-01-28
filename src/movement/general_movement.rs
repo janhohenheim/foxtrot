@@ -31,7 +31,8 @@ impl Plugin for GeneralMovementPlugin {
                             .label("reset_velocity")
                             .after("apply_velocity"),
                     )
-                    .with_system(rotate_model.label("rotate_model")),
+                    .with_system(rotate_model)
+                    .with_system(play_animations),
             );
     }
 }
@@ -93,5 +94,34 @@ fn rotate_model(
             .get_mut(link.0)
             .unwrap()
             .look_at(horizontal_movement, Vec3::Y);
+    }
+}
+
+fn play_animations(
+    mut animation_player: Query<&mut AnimationPlayer>,
+    characters: Query<(
+        &KinematicCharacterControllerOutput,
+        &Grounded,
+        &AnimationEntityLink,
+        &CharacterAnimations,
+    )>,
+) {
+    for (output, grounded, animation_entity_link, animations) in characters.iter() {
+        let mut animation_player = animation_player
+            .get_mut(animation_entity_link.0)
+            .expect("animation_entity_link held entity without animation player");
+
+        let is_in_air = grounded.time_since_last_grounded.is_active();
+        let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
+
+        if is_in_air {
+            animation_player
+                .play(animations.aerial.clone_weak())
+                .repeat();
+        } else if has_horizontal_movement {
+            animation_player.play(animations.walk.clone_weak()).repeat();
+        } else {
+            animation_player.play(animations.idle.clone_weak()).repeat();
+        }
     }
 }

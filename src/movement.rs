@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use bevy_rapier3d::prelude::*;
 mod components;
+use crate::spawning::AnimationEntityLink;
+use crate::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
 
@@ -28,7 +30,8 @@ impl Plugin for MovementPlugin {
                         reset_velocity
                             .label("reset_velocity")
                             .after("apply_velocity"),
-                    ),
+                    )
+                    .with_system(rotate_model.label("rotate_model")),
             );
     }
 }
@@ -74,5 +77,21 @@ fn apply_velocity(
 fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
     for mut velocity in &mut player_query {
         velocity.0 = default();
+    }
+}
+
+fn rotate_model(
+    player_query: Query<(&KinematicCharacterControllerOutput, &AnimationEntityLink)>,
+    mut transforms: Query<&mut Transform>,
+) {
+    for (output, link) in player_query.iter() {
+        let horizontal_movement = output.effective_translation.x0z();
+        if horizontal_movement.is_approx_zero() {
+            continue;
+        }
+        transforms
+            .get_mut(link.0)
+            .unwrap()
+            .look_at(horizontal_movement, Vec3::Y);
     }
 }

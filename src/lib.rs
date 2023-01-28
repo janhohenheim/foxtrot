@@ -24,6 +24,7 @@ mod saving;
 mod scene_editor;
 mod shader;
 mod spawning;
+mod trait_extension;
 mod world_serialization;
 
 use crate::actions::ActionsPlugin;

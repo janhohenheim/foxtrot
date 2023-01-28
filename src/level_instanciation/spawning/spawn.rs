@@ -1,3 +1,4 @@
+use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::event::SpawnEvent;
 use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
@@ -20,6 +21,7 @@ pub fn spawn_requested(
     spawner: Res<GameObjectSpawner>,
     mut spawn_containers: ResMut<SpawnContainerRegistry>,
     mut counter: ResMut<Counter>,
+    animations: Res<AnimationAssets>,
 ) {
     for spawn in spawn_requests.iter() {
         let name = spawn.get_name_or_default();
@@ -40,7 +42,7 @@ pub fn spawn_requested(
         );
         let spawn_children = |parent: &mut ChildBuilder| {
             spawner
-                .attach(parent, &gltf, &materials)
+                .attach(parent, &gltf, &materials, &animations)
                 .spawn(&spawn.object);
         };
 

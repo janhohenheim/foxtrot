@@ -1,13 +1,9 @@
-use crate::file_system_interaction::asset_loading::AnimationAssets;
-use crate::level_instanciation::spawning::AnimationEntityLink;
 use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::PlayerCamera;
-use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
-use bevy_rapier3d::control::KinematicCharacterControllerOutput;
 use serde::{Deserialize, Serialize};
 
 pub struct PlayerEmbodimentPlugin;
@@ -26,12 +22,6 @@ impl Plugin for PlayerEmbodimentPlugin {
                         handle_horizontal_movement
                             .after("update_grounded")
                             .before("apply_velocity"),
-                    )
-                    .with_system(
-                        play_animations
-                            .label("play_animations")
-                            .after("apply_velocity")
-                            .before("reset_velocity"),
                     ),
             );
     }
@@ -101,38 +91,5 @@ fn handle_horizontal_movement(
     for (mut velocity,) in &mut player_query {
         velocity.0.x += movement.x;
         velocity.0.z += movement.y;
-    }
-}
-
-fn play_animations(
-    mut animation_player: Query<&mut AnimationPlayer>,
-    player_query: Query<(
-        &KinematicCharacterControllerOutput,
-        &Grounded,
-        &AnimationEntityLink,
-    )>,
-    animations: Res<AnimationAssets>,
-) {
-    for (output, grounded, animation_entity_link) in player_query.iter() {
-        let mut animation_player = animation_player
-            .get_mut(animation_entity_link.0)
-            .expect("animation_entity_link held entity without animation player");
-
-        let is_in_air = grounded.time_since_last_grounded.is_active();
-        let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
-
-        if is_in_air {
-            animation_player
-                .play(animations.character_running.clone_weak())
-                .repeat();
-        } else if has_horizontal_movement {
-            animation_player
-                .play(animations.character_walking.clone_weak())
-                .repeat();
-        } else {
-            animation_player
-                .play(animations.character_idle.clone_weak())
-                .repeat();
-        }
     }
 }

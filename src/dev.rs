@@ -18,7 +18,10 @@ impl Plugin for DevPlugin {
                 .add_plugin(DebugLinesPlugin::default())
                 .add_plugin(SceneEditorPlugin)
                 .add_plugin(LogDiagnosticsPlugin::default())
-                .add_plugin(RapierDebugRenderPlugin::default());
+                .add_plugin(RapierDebugRenderPlugin {
+                    enabled: false,
+                    ..default()
+                });
         }
     }
 }

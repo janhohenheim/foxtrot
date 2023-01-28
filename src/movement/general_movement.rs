@@ -90,10 +90,8 @@ fn rotate_model(
         if horizontal_movement.is_approx_zero() {
             continue;
         }
-        transforms
-            .get_mut(link.0)
-            .unwrap()
-            .look_at(horizontal_movement, Vec3::Y);
+        let mut transform = transforms.get_mut(link.0).unwrap();
+        *transform = transform.looking_at(transform.translation + horizontal_movement, Vec3::Y);
     }
 }
 

@@ -49,7 +49,7 @@ fn query_mesh(
                     continue;
                 }
                 let max_toi = 50.;
-                let solid = true;
+                let solid = false;
                 let filter = QueryFilter::new()
                     .exclude_sensors()
                     .exclude_collider(follower_entity);
@@ -76,6 +76,6 @@ fn move_along_path(from: Vec3, path: &[Vec3]) -> Option<Vec3> {
     path.iter()
         .map(|point| *point - from)
         .filter(|dir| dir.length_squared() > 0.05)
-        .filter_map(|dir| dir.try_normalize())
+        .map(|dir| dir.try_normalize().unwrap_or_default())
         .next()
 }

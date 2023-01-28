@@ -1,5 +1,5 @@
 use crate::actions::{Actions, ActionsFrozen};
-use crate::dialog::{DialogEvent, DialogTarget};
+use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;

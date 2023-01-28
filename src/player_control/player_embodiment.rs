@@ -1,19 +1,19 @@
 use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_design::spawning::AnimationEntityLink;
-use crate::movement_gameplay::actions::Actions;
-use crate::movement_gameplay::camera::PlayerCamera;
-use crate::movement_gameplay::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
+use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
+use crate::player_control::actions::Actions;
+use crate::player_control::camera::PlayerCamera;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-pub struct PlayerPlugin;
+pub struct PlayerEmbodimentPlugin;
 
 /// This plugin handles player related stuff like general_movement
 /// Player logic is only active during the State `GameState::Playing`
-impl Plugin for PlayerPlugin {
+impl Plugin for PlayerEmbodimentPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Timer>()
             .register_type::<Player>()

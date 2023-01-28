@@ -1,5 +1,5 @@
-use crate::movement_gameplay::actions::Actions;
-use crate::movement_gameplay::player::Player;
+use crate::player_control::actions::Actions;
+use crate::player_control::player_embodiment::Player;
 use crate::util::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis};
 use crate::GameState;
 use bevy::math::Vec3Swizzles;

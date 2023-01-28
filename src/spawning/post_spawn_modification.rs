@@ -1,5 +1,5 @@
-use crate::mesh_util::get_mesh;
 use crate::shader::Materials;
+use crate::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -17,7 +17,8 @@ pub fn read_colliders(
 ) {
     for (entity, name, children) in &added_name {
         if name.to_lowercase().contains("[collider]") {
-            let (collider_entity, collider_mesh) = get_mesh(children, &meshes, &mesh_handles);
+            let (collider_entity, collider_mesh) =
+                Mesh::search_in_children(children, &meshes, &mesh_handles);
             commands.entity(collider_entity).despawn_recursive();
 
             let rapier_collider =

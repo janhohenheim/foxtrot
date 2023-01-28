@@ -1,4 +1,4 @@
-use crate::mesh_util::{get_mesh, Meshtools};
+use crate::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
 
@@ -18,7 +18,7 @@ pub fn read_navmesh(
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-            let (child, mesh) = get_mesh(children, &meshes, &mesh_handles);
+            let (child, mesh) = Mesh::search_in_children(children, &meshes, &mesh_handles);
             let mesh = mesh.transformed(global_transform);
 
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {

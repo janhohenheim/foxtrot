@@ -1,9 +1,10 @@
 [package]
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
-name = "bevy_game"
+name = "foxtrott"
 publish = false
 version = "0.1.0"
+license = "MIT or Apache-2.0"
 
 [features]
 default = [
@@ -72,10 +73,6 @@ features = [
 
 [target."cfg(target_os = \"linux\")".dependencies]
 winit = { version = "0.27", features = [ "x11" ]}
-
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-
 
 [build-dependencies]
 embed-resource = "1.4"

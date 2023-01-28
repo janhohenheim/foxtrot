@@ -7,9 +7,9 @@ use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
 
-pub struct MovementPlugin;
+pub struct GeneralMovementPlugin;
 
-impl Plugin for MovementPlugin {
+impl Plugin for GeneralMovementPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Model>()
             .register_type::<JumpState>()

@@ -1,7 +1,7 @@
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
-use crate::movement_gameplay::actions::game_control::{get_movement, GameControl};
+use crate::player_control::actions::game_control::{get_movement, GameControl};
 use crate::GameState;
 
 mod game_control;

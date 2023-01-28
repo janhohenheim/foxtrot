@@ -8,7 +8,8 @@ pub mod dev;
 mod file_system_interaction;
 mod level_design;
 mod menu;
-mod movement_gameplay;
+mod movement;
+mod player_control;
 mod shader;
 mod util;
 mod world_interaction;
@@ -18,7 +19,8 @@ use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
 use crate::level_design::LevelDesignPlugin;
 use crate::menu::MenuPlugin;
-use crate::movement_gameplay::MovementGameplayPlugin;
+use crate::movement::MovementPlugin;
+use crate::player_control::PlayerControlPlugin;
 use crate::shader::ShaderPlugin;
 use crate::world_interaction::WorldInteractionPlugin;
 use bevy::prelude::*;
@@ -43,7 +45,8 @@ impl Plugin for GamePlugin {
         app.add_state(GameState::Loading)
             .add_plugin(BevyConfigPlugin)
             .add_plugin(MenuPlugin)
-            .add_plugin(MovementGameplayPlugin)
+            .add_plugin(MovementPlugin)
+            .add_plugin(PlayerControlPlugin)
             .add_plugin(WorldInteractionPlugin)
             .add_plugin(LevelDesignPlugin)
             .add_plugin(FileSystemInteractionPlugin)

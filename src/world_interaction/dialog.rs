@@ -1,4 +1,4 @@
-use crate::movement_gameplay::actions::ActionsFrozen;
+use crate::player_control::actions::ActionsFrozen;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,

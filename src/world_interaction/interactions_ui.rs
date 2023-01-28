@@ -1,11 +1,11 @@
-use crate::movement_gameplay::actions::{Actions, ActionsFrozen};
+use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use bevy_rapier3d::rapier::prelude::CollisionEventFlags;
 
-use crate::movement_gameplay::player::PlayerSensor;
+use crate::player_control::player_embodiment::PlayerSensor;
 use crate::GameState;
 
 pub struct InteractionsUiPlugin;

@@ -1,8 +1,8 @@
-use crate::dialog::{DialogId, DialogTarget};
 use crate::movement_gameplay::general_movement::{CharacterVelocity, Grounded, Jump, Model};
 use crate::movement_gameplay::navigation::Follower;
 use crate::spawning::post_spawn_modification::CustomCollider;
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;

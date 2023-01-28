@@ -1,6 +1,6 @@
 use crate::actions::ActionsFrozen;
-use crate::condition::{ActiveConditions, ConditionAddEvent};
-pub use crate::dialog::resources::{
+use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
+pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
 use crate::GameState;

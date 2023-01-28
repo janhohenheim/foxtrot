@@ -1,4 +1,4 @@
-use crate::condition::{ActiveConditions, ConditionId};
+use crate::world_interaction::condition::{ActiveConditions, ConditionId};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;

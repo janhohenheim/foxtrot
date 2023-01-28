@@ -5,11 +5,8 @@
 
 mod actions;
 mod audio;
-mod condition;
 mod dev;
-mod dialog;
 mod file_system_interaction;
-mod interactions_ui;
 mod map;
 mod math;
 mod menu;
@@ -20,16 +17,14 @@ mod scene_editor;
 mod shader;
 mod spawning;
 mod trait_extension;
+mod world_interaction;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
-use crate::condition::ConditionPlugin;
 use crate::dev::DevPlugin;
-use crate::dialog::DialogPlugin;
 use crate::file_system_interaction::asset_loading::LoadingPlugin;
 use crate::file_system_interaction::game_serialization::SavingPlugin;
 use crate::file_system_interaction::level_serialization::WorldSerializationPlugin;
-use crate::interactions_ui::InteractionsUi;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
 use crate::movement_gameplay::camera::CameraPlugin;
@@ -39,6 +34,9 @@ use crate::movement_gameplay::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::shader::ShaderPlugin;
 use crate::spawning::SpawningPlugin;
+use crate::world_interaction::condition::ConditionPlugin;
+use crate::world_interaction::dialog::DialogPlugin;
+use crate::world_interaction::interactions_ui::InteractionsUi;
 use bevy::app::App;
 use bevy::prelude::*;
 

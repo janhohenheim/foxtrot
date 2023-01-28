@@ -1,17 +1,13 @@
 use crate::actions::Actions;
 use crate::camera::PlayerCamera;
 use crate::loading::AnimationAssets;
+use crate::movement::{CharacterVelocity, Grounded, Jump, JumpState};
 use crate::spawning::AnimationEntityLink;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-pub use components::*;
-
-mod components;
-
-const G: f32 = -0.5;
-const JUMP_DURATION: f32 = 0.23;
+use serde::{Deserialize, Serialize};
 
 pub struct PlayerPlugin;
 
@@ -19,34 +15,16 @@ pub struct PlayerPlugin;
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<components::Timer>()
-            .register_type::<components::Model>()
-            .register_type::<components::Player>()
-            .register_type::<components::PlayerSensor>()
-            .register_type::<components::JumpState>()
-            .register_type::<components::Grounded>()
-            .register_type::<components::Jump>()
-            .register_type::<components::CharacterVelocity>()
+        app.register_type::<Timer>()
+            .register_type::<Player>()
+            .register_type::<PlayerSensor>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(update_grounded.label("update_grounded"))
-                    .with_system(
-                        apply_gravity
-                            .label("apply_gravity")
-                            .after("update_grounded")
-                            .before("apply_velocity"),
-                    )
                     .with_system(handle_jump.after("apply_gravity").before("apply_velocity"))
                     .with_system(
                         handle_horizontal_movement
                             .after("update_grounded")
                             .before("apply_velocity"),
-                    )
-                    .with_system(apply_velocity.label("apply_velocity"))
-                    .with_system(
-                        reset_velocity
-                            .label("reset_velocity")
-                            .after("apply_velocity"),
                     )
                     .with_system(
                         play_animations
@@ -58,34 +36,13 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn update_grounded(
-    time: Res<Time>,
-    mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>,
-) {
-    let dt = time.delta_seconds();
-    for (mut grounded, output) in &mut query {
-        if output.grounded {
-            grounded.time_since_last_grounded.start()
-        } else {
-            grounded.time_since_last_grounded.update(dt)
-        }
-    }
-}
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Player;
 
-fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
-    for (mut velocity, grounded, jump) in &mut player_query {
-        if matches!(jump.state, JumpState::InProgress) {
-            continue;
-        }
-        let dt = f32::from(grounded.time_since_last_grounded)
-            - f32::from(jump.time_since_start).min(JUMP_DURATION);
-        let max_gravity = G * 5.;
-        let min_gravity = G * 0.1;
-        // min and max look swapped because gravity is negative
-        let gravity = (G * dt).clamp(max_gravity, min_gravity);
-        velocity.0.y += gravity;
-    }
-}
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct PlayerSensor;
 
 fn handle_jump(
     time: Res<Time>,
@@ -102,7 +59,7 @@ fn handle_jump(
         } else {
             jump.time_since_start.update(dt);
 
-            let jump_ended = f32::from(jump.time_since_start) >= JUMP_DURATION;
+            let jump_ended = f32::from(jump.time_since_start) >= jump.duration;
             if jump_ended {
                 jump.state = JumpState::Done;
             }
@@ -143,21 +100,6 @@ fn handle_horizontal_movement(
     for (mut velocity,) in &mut player_query {
         velocity.0.x += movement.x;
         velocity.0.z += movement.y;
-    }
-}
-
-/// Treat `CharacterVelocity` as readonly after this system.
-fn apply_velocity(
-    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
-) {
-    for (velocity, mut controller) in &mut player_query {
-        controller.translation = Some(velocity.0);
-    }
-}
-
-fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
-    for mut velocity in &mut player_query {
-        velocity.0 = default();
     }
 }
 

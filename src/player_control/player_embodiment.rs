@@ -1,5 +1,5 @@
 use crate::file_system_interaction::asset_loading::AnimationAssets;
-use crate::level_design::spawning::AnimationEntityLink;
+use crate::level_instanciation::spawning::AnimationEntityLink;
 use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::PlayerCamera;

@@ -1,4 +1,4 @@
-use crate::level_design::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 

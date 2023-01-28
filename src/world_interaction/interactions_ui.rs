@@ -91,7 +91,7 @@ fn display_interaction_prompt(
         .auto_sized()
         .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
         .show(egui_context.ctx_mut(), |ui| {
-            ui.label("Talk");
+            ui.label("E: Talk");
         });
     if actions.interact {
         dialog_event_writer.send(DialogEvent {

@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-
 use bevy_rapier3d::prelude::*;
 
 pub struct PhysicsPlugin;
@@ -11,7 +10,5 @@ impl Plugin for PhysicsPlugin {
                 gravity: Vect::new(0.0, -9.81, 0.0),
                 ..default()
             });
-        #[cfg(debug_assertions)]
-        app.add_plugin(RapierDebugRenderPlugin::default());
     }
 }

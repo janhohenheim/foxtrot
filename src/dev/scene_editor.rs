@@ -1,14 +1,16 @@
 use crate::file_system_interaction::game_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
-use crate::level_design::spawning::{
+use crate::level_instanciation::spawning::{
     DelayedSpawnEvent, DuplicationEvent, GameObject, ParentChangeEvent,
     SpawnEvent as SpawnRequestEvent,
 };
+use crate::movement::navigation::navmesh::NavMesh;
 use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
+use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use strum::IntoEnumIterator;
@@ -24,6 +26,8 @@ pub struct SceneEditorState {
     parent_name: String,
     entity_name: String,
     spawn_item: GameObject,
+    collider_render_enabled: bool,
+    navmesh_render_enabled: bool,
 }
 
 impl Default for SceneEditorState {
@@ -35,6 +39,8 @@ impl Default for SceneEditorState {
             parent_name: default(),
             entity_name: default(),
             spawn_item: default(),
+            collider_render_enabled: default(),
+            navmesh_render_enabled: default(),
         }
     }
 }
@@ -54,10 +60,10 @@ impl Plugin for SceneEditorPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_toggle)
                     .with_system(show_editor)
-                    .with_system(relay_spawn_requests),
+                    .with_system(relay_spawn_requests)
+                    .with_system(handle_debug_render)
+                    .with_system(handle_navmesh_render),
             );
-
-        let _ = app;
     }
 }
 
@@ -75,6 +81,22 @@ fn handle_toggle(
         commands.init_resource::<ActionsFrozen>();
     } else {
         commands.remove_resource::<ActionsFrozen>();
+    }
+}
+
+fn handle_debug_render(
+    state: Res<SceneEditorState>,
+    mut debug_render_context: ResMut<DebugRenderContext>,
+) {
+    debug_render_context.enabled = state.collider_render_enabled;
+}
+
+fn handle_navmesh_render(
+    state: Res<SceneEditorState>,
+    mut with_navmesh: Query<&mut Visibility, With<NavMesh>>,
+) {
+    for mut visibility in with_navmesh.iter_mut() {
+        visibility.is_visible = state.navmesh_render_enabled;
     }
 }
 
@@ -100,6 +122,11 @@ fn show_editor(
     egui::Window::new("Scene Editor")
         .default_size(egui::Vec2::new(HEIGHT, WIDTH))
         .show(egui_context.ctx_mut(), |ui| {
+            ui.heading("Debug Rendering");
+            ui.checkbox(&mut state.collider_render_enabled, "Colliders");
+            ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");
+            ui.separator();
+
             ui.heading("Scene Control");
             ui.horizontal(|ui| {
                 ui.label("Level name: ");

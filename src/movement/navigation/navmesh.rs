@@ -1,6 +1,8 @@
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
+#[cfg(feature = "dev")]
+use serde::{Deserialize, Serialize};
 
 #[allow(clippy::too_many_arguments)]
 pub fn read_navmesh(
@@ -8,9 +10,9 @@ pub fn read_navmesh(
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,
     parents: Query<&Parent>,
     transforms: Query<&Transform>,
-    #[cfg(debug_assertions)] mut meshes: ResMut<Assets<Mesh>>,
-    #[cfg(debug_assertions)] mut materials: ResMut<Assets<StandardMaterial>>,
-    #[cfg(not(debug_assertions))] meshes: Res<Assets<Mesh>>,
+    #[cfg(feature = "dev")] mut meshes: ResMut<Assets<Mesh>>,
+    #[cfg(feature = "dev")] mut materials: ResMut<Assets<StandardMaterial>>,
+    #[cfg(not(feature = "dev"))] meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
@@ -24,15 +26,18 @@ pub fn read_navmesh(
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
                 mesh.set_delta(1.);
             });
-            #[cfg(debug_assertions)]
+            #[cfg(feature = "dev")]
             {
                 let debug_mesh = path_mesh.to_mesh();
                 commands.spawn((
                     PbrBundle {
                         mesh: meshes.add(debug_mesh),
                         material: materials.add(default()),
+                        transform: Transform::from_translation(Vec3::new(0., 0.1, 0.)),
+                        visibility: Visibility { is_visible: false },
                         ..default()
                     },
+                    NavMesh,
                     Name::new("navmesh"),
                 ));
             }
@@ -41,6 +46,11 @@ pub fn read_navmesh(
         }
     }
 }
+
+#[cfg(feature = "dev")]
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct NavMesh;
 
 fn get_global_transform(
     current_entity: Entity,

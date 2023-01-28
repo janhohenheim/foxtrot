@@ -5,7 +5,6 @@
 
 mod actions;
 mod audio;
-mod camera;
 mod condition;
 mod dev;
 mod dialog;
@@ -15,10 +14,8 @@ mod map;
 mod math;
 mod menu;
 pub mod mesh_util;
-mod movement;
-mod navigation;
+mod movement_gameplay;
 mod physics;
-mod player;
 mod saving;
 #[cfg(feature = "editor")]
 mod scene_editor;
@@ -29,7 +26,6 @@ mod world_serialization;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
-use crate::camera::CameraPlugin;
 use crate::condition::ConditionPlugin;
 use crate::dev::DevPlugin;
 use crate::dialog::DialogPlugin;
@@ -37,10 +33,11 @@ use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
-use crate::movement::MovementPlugin;
-use crate::navigation::NavigationPlugin;
+use crate::movement_gameplay::camera::CameraPlugin;
+use crate::movement_gameplay::general_movement::MovementPlugin;
+use crate::movement_gameplay::navigation::NavigationPlugin;
+use crate::movement_gameplay::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
-use crate::player::PlayerPlugin;
 use crate::saving::SavingPlugin;
 use crate::shader::ShaderPlugin;
 use crate::spawning::SpawningPlugin;

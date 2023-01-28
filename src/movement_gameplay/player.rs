@@ -1,7 +1,7 @@
 use crate::actions::Actions;
-use crate::camera::PlayerCamera;
 use crate::loading::AnimationAssets;
-use crate::movement::{CharacterVelocity, Grounded, Jump, JumpState};
+use crate::movement_gameplay::camera::PlayerCamera;
+use crate::movement_gameplay::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
 use crate::spawning::AnimationEntityLink;
 use crate::trait_extension::Vec3Ext;
 use crate::GameState;
@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 pub struct PlayerPlugin;
 
-/// This plugin handles player related stuff like movement
+/// This plugin handles player related stuff like general_movement
 /// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {

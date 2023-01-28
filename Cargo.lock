@@ -1952,7 +1952,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "foxtrott"
+name = "foxtrot"
 version = "0.1.0"
 dependencies = [
  "bevy",

@@ -15,6 +15,7 @@ mod map;
 mod math;
 mod menu;
 pub mod mesh_util;
+mod movement;
 mod navigation;
 mod physics;
 mod player;
@@ -35,6 +36,7 @@ use crate::interactions_ui::InteractionsUi;
 use crate::loading::LoadingPlugin;
 use crate::map::MapPlugin;
 use crate::menu::MenuPlugin;
+use crate::movement::MovementPlugin;
 use crate::navigation::NavigationPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
@@ -79,6 +81,7 @@ impl Plugin for GamePlugin {
             .add_plugin(NavigationPlugin)
             .add_plugin(ShaderPlugin)
             .add_plugin(WorldSerializationPlugin)
+            .add_plugin(MovementPlugin)
             .add_plugin(DevPlugin);
     }
 }

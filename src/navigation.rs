@@ -1,5 +1,6 @@
+use crate::movement::CharacterVelocity;
 use crate::navigation::navmesh::read_navmesh;
-use crate::player::{CharacterVelocity, Player};
+use crate::player::Player;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;

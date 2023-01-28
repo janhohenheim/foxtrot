@@ -1,7 +1,7 @@
 use super::npc::PATH;
-use crate::camera::PlayerCamera;
-use crate::movement::{CharacterVelocity, Grounded, Jump, Model};
-use crate::player::{Player, PlayerSensor};
+use crate::movement_gameplay::camera::PlayerCamera;
+use crate::movement_gameplay::general_movement::{CharacterVelocity, Grounded, Jump, Model};
+use crate::movement_gameplay::player::{Player, PlayerSensor};
 use crate::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;

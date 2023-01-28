@@ -3,22 +3,14 @@
 #![feature(fs_try_exists)]
 #![feature(never_type)]
 
-mod actions;
-mod audio;
-mod dev;
 mod file_system_interaction;
 mod level_design;
-mod math;
 mod menu;
 mod movement_gameplay;
-mod physics;
 mod shader;
-mod trait_extension;
+mod util;
 mod world_interaction;
 
-use crate::actions::ActionsPlugin;
-use crate::audio::InternalAudioPlugin;
-use crate::dev::DevPlugin;
 use crate::file_system_interaction::asset_loading::LoadingPlugin;
 use crate::file_system_interaction::game_serialization::SavingPlugin;
 use crate::file_system_interaction::level_serialization::WorldSerializationPlugin;
@@ -29,13 +21,16 @@ use crate::movement_gameplay::camera::CameraPlugin;
 use crate::movement_gameplay::general_movement::MovementPlugin;
 use crate::movement_gameplay::navigation::NavigationPlugin;
 use crate::movement_gameplay::player::PlayerPlugin;
-use crate::physics::PhysicsPlugin;
 use crate::shader::ShaderPlugin;
+use crate::util::dev::DevPlugin;
 use crate::world_interaction::condition::ConditionPlugin;
 use crate::world_interaction::dialog::DialogPlugin;
 use crate::world_interaction::interactions_ui::InteractionsUi;
 use bevy::app::App;
 use bevy::prelude::*;
+use movement_gameplay::actions::ActionsPlugin;
+use movement_gameplay::audio::InternalAudioPlugin;
+use movement_gameplay::physics::PhysicsPlugin;
 
 // This example game uses States to separate logic
 // See https://bevy-cheatbook.github.io/programming/states.html

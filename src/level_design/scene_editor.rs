@@ -4,7 +4,7 @@ use crate::level_design::spawning::{
     DelayedSpawnEvent, DuplicationEvent, GameObject, ParentChangeEvent,
     SpawnEvent as SpawnRequestEvent,
 };
-use crate::movement_gameplay::actions::{Actions, ActionsFrozen};
+use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::ScrollArea;

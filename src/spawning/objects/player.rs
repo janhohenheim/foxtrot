@@ -25,18 +25,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 },
                 RigidBody::KinematicVelocityBased,
                 Collider::capsule_y(HEIGHT / 2., RADIUS),
-                KinematicCharacterController {
-                    // Don’t allow climbing slopes larger than n degrees.
-                    max_slope_climb_angle: 45.0_f32.to_radians() as Real,
-                    // Automatically slide down on slopes smaller than n degrees.
-                    min_slope_slide_angle: 30.0_f32.to_radians() as Real,
-                    // The character offset is set to n multiplied by the collider’s height.
-                    offset: CharacterLength::Relative(2e-2),
-                    // Snap to the ground if the vertical distance to the ground is smaller than n.
-                    snap_to_ground: Some(CharacterLength::Absolute(1e-3)),
-                    filter_flags: QueryFilterFlags::EXCLUDE_SENSORS,
-                    ..default()
-                },
+                KinematicCharacterController::default(),
                 Player,
                 Name::new("Player"),
                 Grounded::default(),

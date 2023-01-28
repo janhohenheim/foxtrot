@@ -6,7 +6,13 @@ publish = false
 version = "0.1.0"
 
 [features]
-default = [   
+default = [
+    "necessary",
+    "dynamic",
+    "editor",
+]
+
+necessary = [
     "bevy/bevy_winit",
     "bevy/render",
     "bevy/hdr",
@@ -55,7 +61,9 @@ rev = "50ea82bf08289bfe9fcf8a4f024d67d575f15548"
 optional = true
 
 [dependencies.bevy_rapier3d]
-version = "0.20.0"
+git = "https://github.com/janhohenheim/bevy_rapier"
+branch = "own-fork"
+
 features = [
     "debug-render-3d",
     "simd-nightly",

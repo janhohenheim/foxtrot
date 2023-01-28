@@ -16,7 +16,7 @@ impl Plugin for BevyConfigPlugin {
             },
             ..default()
         });
-        #[cfg(feature = "editor")]
+        #[cfg(feature = "dev")]
         let default_plugins = default_plugins.set(AssetPlugin {
             watch_for_changes: true,
             ..default()

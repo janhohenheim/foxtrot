@@ -1,9 +1,13 @@
 # Foxtrot
 The all-in-one Bevy 3D game template.  
+
+![Foxtrot in action](https://media.giphy.com/media/W8HrtPMGP7C0uCQuQh/giphy.gif)
+
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
 that I want to use in my games. Since the target audience is me, the code is not super well documented, but it should 
 be good enough for others to find inspiration, copy parts they like or troubleshoot their own implementations :)
  
+
 ## What does this template give you?
 - A 3D character controller
 - Physics via `bevy_rapier`

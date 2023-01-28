@@ -82,22 +82,16 @@ fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
 }
 
 fn rotate_model(
-    player_query: Query<(
-        &Transform,
-        &KinematicCharacterControllerOutput,
-        &AnimationEntityLink,
-    )>,
+    player_query: Query<(&KinematicCharacterControllerOutput, &AnimationEntityLink)>,
     mut transforms: Query<&mut Transform>,
 ) {
-    for (transform, output, link) in player_query.iter() {
+    for (output, link) in player_query.iter() {
         let horizontal_movement = output.effective_translation.x0z();
         if horizontal_movement.is_approx_zero() {
             continue;
         }
-        transforms
-            .get_mut(link.0)
-            .unwrap()
-            .look_at(transform.translation + horizontal_movement, Vec3::Y);
+        let mut transform = transforms.get_mut(link.0).unwrap();
+        *transform = transform.looking_at(transform.translation + horizontal_movement, Vec3::Y);
     }
 }
 

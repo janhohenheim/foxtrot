@@ -13,7 +13,6 @@ mod interactions_ui;
 mod map;
 mod math;
 mod menu;
-pub mod mesh_util;
 mod movement_gameplay;
 mod physics;
 #[cfg(feature = "editor")]

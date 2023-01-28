@@ -1,8 +1,10 @@
+use crate::level_design::spawning::counter::Counter;
+use crate::level_design::spawning::event::SpawnEvent;
+use crate::level_design::spawning::spawn_container::SpawnContainerRegistry;
+use crate::level_design::spawning::{
+    DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker,
+};
 use crate::shader::Materials;
-use crate::spawning::counter::Counter;
-use crate::spawning::event::SpawnEvent;
-use crate::spawning::spawn_container::SpawnContainerRegistry;
-use crate::spawning::{DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker};
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use regex::Regex;

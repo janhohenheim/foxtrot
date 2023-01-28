@@ -1,8 +1,8 @@
 use crate::actions::Actions;
 use crate::file_system_interaction::asset_loading::AnimationAssets;
+use crate::level_design::spawning::AnimationEntityLink;
 use crate::movement_gameplay::camera::PlayerCamera;
 use crate::movement_gameplay::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
-use crate::spawning::AnimationEntityLink;
 use crate::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;

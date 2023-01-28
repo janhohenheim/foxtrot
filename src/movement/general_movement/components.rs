@@ -60,6 +60,14 @@ impl Jump {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Default)]
+#[reflect(Component)]
+pub struct CharacterAnimations {
+    pub idle: Handle<AnimationClip>,
+    pub walk: Handle<AnimationClip>,
+    pub aerial: Handle<AnimationClip>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Timer {

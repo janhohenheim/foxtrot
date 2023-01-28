@@ -1,3 +1,4 @@
+use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_instanciation::spawning::animation_link::link_animations;
 use crate::level_instanciation::spawning::change_parent::change_parent;
 use crate::level_instanciation::spawning::counter::Counter;
@@ -92,14 +93,14 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
 fn load_assets_for_spawner(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut meshe_assets: ResMut<Assets<Mesh>>,
+    mut mesh_assets: ResMut<Assets<Mesh>>,
 ) {
     let mut scenes = HashMap::new();
     scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
     scenes.insert(GameObject::Level, level::load_scene(&asset_server));
 
     let mut meshes = HashMap::new();
-    meshes.insert(GameObject::Orb, orb::load_mesh(&mut meshe_assets));
+    meshes.insert(GameObject::Orb, orb::load_mesh(&mut mesh_assets));
 
     commands.insert_resource(GameObjectSpawner { meshes, scenes });
 }
@@ -171,6 +172,7 @@ pub struct PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     gltf: &'a Res<'a, Assets<Gltf>>,
     materials: &'a Res<'a, Materials>,
     commands: &'a mut ChildBuilder<'w, 's, 'b>,
+    animations: &'a Res<'a, AnimationAssets>,
 }
 
 impl<'a, 'b, 'c, 'w, 's> GameObjectSpawner
@@ -182,12 +184,14 @@ where
         commands: &'a mut ChildBuilder<'w, 's, 'b>,
         gltf: &'a Res<'a, Assets<Gltf>>,
         materials: &'a Res<'a, Materials>,
+        animations: &'a Res<'a, AnimationAssets>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         PrimedGameObjectSpawner {
             handles: self,
             commands,
             gltf,
             materials,
+            animations,
         }
     }
 }

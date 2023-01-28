@@ -1,5 +1,5 @@
-use crate::level_design::spawning::post_spawn_modification::CustomCollider;
-use crate::level_design::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instanciation::spawning::post_spawn_modification::CustomCollider;
+use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
 use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};

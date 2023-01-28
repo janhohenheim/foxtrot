@@ -1,4 +1,4 @@
-use crate::level_design::spawning::GameObject;
+use crate::level_instanciation::spawning::GameObject;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;

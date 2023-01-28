@@ -1,5 +1,7 @@
-use crate::level_design::spawning::event::{DuplicationEvent, ParentChangeEvent, SpawnEvent};
-use crate::level_design::spawning::SpawnTracker;
+use crate::level_instanciation::spawning::event::{
+    DuplicationEvent, ParentChangeEvent, SpawnEvent,
+};
+use crate::level_instanciation::spawning::SpawnTracker;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use serde::{Deserialize, Serialize};

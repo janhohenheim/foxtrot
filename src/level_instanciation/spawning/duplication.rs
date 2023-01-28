@@ -1,7 +1,7 @@
-use crate::level_design::spawning::counter::Counter;
-use crate::level_design::spawning::event::{DuplicationEvent, SpawnEvent};
-use crate::level_design::spawning::spawn_container::SpawnContainerRegistry;
-use crate::level_design::spawning::SpawnTracker;
+use crate::level_instanciation::spawning::counter::Counter;
+use crate::level_instanciation::spawning::event::{DuplicationEvent, SpawnEvent};
+use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
+use crate::level_instanciation::spawning::SpawnTracker;
 use bevy::prelude::*;
 use regex::Regex;
 use std::borrow::Cow;

@@ -1,4 +1,4 @@
-use crate::level_design::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
 

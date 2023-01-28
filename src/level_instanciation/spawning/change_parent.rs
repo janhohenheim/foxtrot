@@ -1,5 +1,5 @@
-use crate::level_design::spawning::event::ParentChangeEvent;
-use crate::level_design::spawning::spawn_container::SpawnContainerRegistry;
+use crate::level_instanciation::spawning::event::ParentChangeEvent;
+use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
 use bevy::prelude::*;
 
 pub fn change_parent(

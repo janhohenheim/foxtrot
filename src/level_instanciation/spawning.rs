@@ -1,13 +1,15 @@
-use crate::level_design::spawning::animation_link::link_animations;
-use crate::level_design::spawning::change_parent::change_parent;
-use crate::level_design::spawning::counter::Counter;
-use crate::level_design::spawning::duplication::duplicate;
-use crate::level_design::spawning::objects::*;
-use crate::level_design::spawning::post_spawn_modification::{
+use crate::level_instanciation::spawning::animation_link::link_animations;
+use crate::level_instanciation::spawning::change_parent::change_parent;
+use crate::level_instanciation::spawning::counter::Counter;
+use crate::level_instanciation::spawning::duplication::duplicate;
+use crate::level_instanciation::spawning::objects::*;
+use crate::level_instanciation::spawning::post_spawn_modification::{
     read_colliders, set_texture_to_repeat,
 };
-use crate::level_design::spawning::spawn::{spawn_delayed, spawn_requested, DelayedSpawnEvents};
-use crate::level_design::spawning::spawn_container::{
+use crate::level_instanciation::spawning::spawn::{
+    spawn_delayed, spawn_requested, DelayedSpawnEvents,
+};
+use crate::level_instanciation::spawning::spawn_container::{
     sync_container_registry, SpawnContainerRegistry,
 };
 use crate::shader::Materials;

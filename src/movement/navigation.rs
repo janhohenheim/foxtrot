@@ -8,7 +8,7 @@ use bevy_pathmesh::PathMeshPlugin;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
-mod navmesh;
+pub mod navmesh;
 
 pub struct NavigationPlugin;
 

@@ -5,7 +5,7 @@ use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use bevy_rapier3d::rapier::prelude::CollisionEventFlags;
 
-use crate::player::PlayerSensor;
+use crate::movement_gameplay::player::PlayerSensor;
 use crate::GameState;
 
 pub struct InteractionsUi;

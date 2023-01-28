@@ -4,14 +4,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Player;
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct PlayerSensor;
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -29,6 +21,8 @@ pub struct Grounded {
 pub struct Jump {
     pub time_since_start: Timer,
     pub state: JumpState,
+    pub g: f32,
+    pub duration: f32,
 }
 
 impl Default for Jump {
@@ -36,6 +30,8 @@ impl Default for Jump {
         Self {
             time_since_start: Timer::with_max_time(),
             state: default(),
+            g: -0.5,
+            duration: 0.23,
         }
     }
 }

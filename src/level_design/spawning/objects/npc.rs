@@ -8,7 +8,6 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
 
-/// Source: <https://opengameart.org/content/fox-and-shiba>
 pub const PATH: &str = "scenes/Fox.glb";
 
 pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {

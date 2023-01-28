@@ -88,4 +88,7 @@ impl Timer {
             f32::MAX
         }
     }
+    pub fn is_active(&self) -> bool {
+        self.elapsed_time > 1e-5
+    }
 }

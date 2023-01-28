@@ -1,4 +1,4 @@
-use crate::loading::FontAssets;
+use crate::file_system_interaction::asset_loading::FontAssets;
 use crate::GameState;
 use bevy::prelude::*;
 

@@ -7,12 +7,11 @@ version = "0.1.0"
 
 [features]
 default = [
-    "necessary",
+    "core",
     "dynamic",
-    "editor",
 ]
 
-necessary = [
+core = [
     "bevy/bevy_winit",
     "bevy/render",
     "bevy/hdr",
@@ -24,7 +23,7 @@ necessary = [
     "bevy_kira_audio/ogg",
 ]
 
-editor = [
+dev = [
     "dep:bevy_editor_pls",
     "dep:bevy_prototype_debug_lines",
     "bevy/filesystem_watcher",

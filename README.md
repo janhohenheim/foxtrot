@@ -1,16 +1,16 @@
 # My personal Bevy game template
  
 ## What does this template give you?
-- 3D character controller
+- A 3D character controller
 - Physics via bevy_rapier
 - Audio via bevy_kira_audio
 - Pathfinding via bevy_pathmesh
-- bevy_editor_pls from the `editor` feature
-- Custom editor that can be opened with 'Q' from the `editor` feature
+- bevy_editor_pls from the `dev` feature
+- Custom editor that can be opened with 'Q' from the `dev` feature
 - Saving / loading scenes
 - Saving / loading the game state
 - Animations
-- A cumstom dialog system
+- A custom dialog system
 - Shaders
 - GLTF imports
 - dynamic builds via the `dynamic` feature

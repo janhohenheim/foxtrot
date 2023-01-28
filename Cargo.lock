@@ -521,31 +521,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_game"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "bevy_asset_loader",
- "bevy_editor_pls",
- "bevy_egui",
- "bevy_kira_audio",
- "bevy_pathmesh",
- "bevy_prototype_debug_lines",
- "bevy_rapier3d",
- "chrono",
- "embed-resource",
- "glob",
- "indexmap",
- "polyanya",
- "regex",
- "ron",
- "serde",
- "strum",
- "strum_macros",
- "winit",
-]
-
-[[package]]
 name = "bevy_gltf"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1974,6 +1949,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9c384f161156f5260c24a097c56119f9be8c798586aecc13afbcbe7b7e26bf8"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "foxtrott"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_asset_loader",
+ "bevy_editor_pls",
+ "bevy_egui",
+ "bevy_kira_audio",
+ "bevy_pathmesh",
+ "bevy_prototype_debug_lines",
+ "bevy_rapier3d",
+ "chrono",
+ "embed-resource",
+ "glob",
+ "indexmap",
+ "polyanya",
+ "regex",
+ "ron",
+ "serde",
+ "strum",
+ "strum_macros",
+ "winit",
 ]
 
 [[package]]

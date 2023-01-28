@@ -4,9 +4,10 @@
 #![feature(never_type)]
 
 mod bevy_config;
-pub mod dev;
+#[cfg(feature = "dev")]
+mod dev;
 mod file_system_interaction;
-mod level_design;
+mod level_instanciation;
 mod menu;
 mod movement;
 mod player_control;
@@ -15,9 +16,10 @@ mod util;
 mod world_interaction;
 
 use crate::bevy_config::BevyConfigPlugin;
+#[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
-use crate::level_design::LevelDesignPlugin;
+use crate::level_instanciation::LevelInstanciationPlugin;
 use crate::menu::MenuPlugin;
 use crate::movement::MovementPlugin;
 use crate::player_control::PlayerControlPlugin;
@@ -48,9 +50,10 @@ impl Plugin for GamePlugin {
             .add_plugin(MovementPlugin)
             .add_plugin(PlayerControlPlugin)
             .add_plugin(WorldInteractionPlugin)
-            .add_plugin(LevelDesignPlugin)
+            .add_plugin(LevelInstanciationPlugin)
             .add_plugin(FileSystemInteractionPlugin)
-            .add_plugin(ShaderPlugin)
-            .add_plugin(DevPlugin);
+            .add_plugin(ShaderPlugin);
+        #[cfg(feature = "dev")]
+        app.add_plugin(DevPlugin);
     }
 }

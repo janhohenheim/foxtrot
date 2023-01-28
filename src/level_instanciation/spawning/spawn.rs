@@ -1,7 +1,7 @@
-use crate::level_design::spawning::counter::Counter;
-use crate::level_design::spawning::event::SpawnEvent;
-use crate::level_design::spawning::spawn_container::SpawnContainerRegistry;
-use crate::level_design::spawning::{
+use crate::level_instanciation::spawning::counter::Counter;
+use crate::level_instanciation::spawning::event::SpawnEvent;
+use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
+use crate::level_instanciation::spawning::{
     DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker,
 };
 use crate::shader::Materials;

@@ -1,5 +1,5 @@
 use super::npc::PATH;
-use crate::level_design::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
 use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, Model};
 use crate::player_control::camera::PlayerCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};

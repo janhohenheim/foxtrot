@@ -1,4 +1,4 @@
-use crate::level_design::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::level_instanciation::spawning::{GameObject, SpawnEvent, SpawnTracker};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::path::Path;

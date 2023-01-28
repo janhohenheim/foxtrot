@@ -25,14 +25,24 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 
 ## Usage
 
-Building with the default `dynamic` feature requires setting up LLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
-Don't worry, it's super easy.
-
 ### Running the game
 
 ```bash
 cargo run --features dev
 ```
+
+Building requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
+Don't worry, it's super easy:
+- **Ubuntu**: `sudo apt-get install lld`
+- **Arch**: `sudo pacman -S lld`
+- **Windows**: Ensure you have the latest [cargo-binutils](https://github.com/rust-embedded/cargo-binutils)
+
+    ```sh
+    cargo install -f cargo-binutils
+    rustup component add llvm-tools-preview
+    ```
+
+- **MacOS**: Modern LLD does not yet support MacOS, but we can use zld instead: `brew install michaeleisel/zld/zld`
 
 ### Updating assets
 

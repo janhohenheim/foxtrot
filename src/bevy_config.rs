@@ -16,7 +16,7 @@ impl Plugin for BevyConfigPlugin {
             },
             ..default()
         });
-        #[cfg(feature = "dev")]
+        #[cfg(feature = "native-dev")]
         let default_plugins = default_plugins.set(AssetPlugin {
             watch_for_changes: true,
             ..default()

@@ -3172,6 +3172,7 @@ dependencies = [
  "bitflags",
  "crossbeam",
  "downcast-rs",
+ "instant",
  "nalgebra",
  "num-derive",
  "num-traits",

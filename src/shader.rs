@@ -32,7 +32,7 @@ fn setup_shader(
         env_texture: Some(env_texture),
     });
 
-    let texture_path = Path::new("textures").join("ground_forest.png");
+    let texture_path = Path::new("textures").join("ground_forest.jpg");
     let texture = asset_server.load(texture_path);
     let repeated_material = repeated_materials.add(RepeatedMaterial {
         texture: Some(texture),

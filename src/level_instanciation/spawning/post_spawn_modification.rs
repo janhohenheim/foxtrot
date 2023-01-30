@@ -19,7 +19,9 @@ pub fn read_colliders(
         if name.to_lowercase().contains("[collider]") {
             let (collider_entity, collider_mesh) =
                 Mesh::search_in_children(children, &meshes, &mesh_handles);
-            commands.entity(collider_entity).despawn_recursive();
+            commands
+                .entity(collider_entity)
+                .insert(Visibility { is_visible: false });
 
             let rapier_collider =
                 Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh).unwrap();

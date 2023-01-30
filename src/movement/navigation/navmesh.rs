@@ -10,9 +10,7 @@ pub fn read_navmesh(
     added_name: Query<(Entity, &Name, &Children), Added<Name>>,
     parents: Query<&Parent>,
     transforms: Query<&Transform>,
-    #[cfg(feature = "dev")] mut meshes: ResMut<Assets<Mesh>>,
-    #[cfg(feature = "dev")] mut materials: ResMut<Assets<StandardMaterial>>,
-    #[cfg(not(feature = "dev"))] meshes: Res<Assets<Mesh>>,
+    meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
@@ -26,22 +24,12 @@ pub fn read_navmesh(
             let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
                 mesh.set_delta(1.);
             });
-            #[cfg(feature = "dev")]
-            {
-                let debug_mesh = path_mesh.to_mesh();
-                commands.spawn((
-                    PbrBundle {
-                        mesh: meshes.add(debug_mesh),
-                        material: materials.add(default()),
-                        visibility: Visibility { is_visible: false },
-                        ..default()
-                    },
-                    NavMesh,
-                    Name::new("navmesh"),
-                ));
-            }
             commands.entity(parent).insert(path_meshes.add(path_mesh));
-            commands.entity(child).despawn_recursive();
+            commands.entity(child).insert((
+                NavMesh,
+                Name::new("navmesh"),
+                Visibility { is_visible: false },
+            ));
         }
     }
 }

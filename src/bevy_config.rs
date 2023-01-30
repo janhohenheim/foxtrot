@@ -31,7 +31,7 @@ impl Plugin for BevyConfigPlugin {
     }
 }
 
-// Sets the icon on windows and X11
+// Sets the icon on Windows and X11
 fn set_window_icon(windows: NonSend<WinitWindows>) {
     let primary = windows.get_window(WindowId::primary()).unwrap();
     let icon_buf = Cursor::new(include_bytes!(

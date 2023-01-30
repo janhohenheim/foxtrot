@@ -21,6 +21,7 @@ core = [
     "bevy/hdr",
     "bevy/png",
     "bevy/jpeg",
+    "bevy/bevy_asset",
     "bevy/x11",
     "bevy/animation",
     "bevy/serialize",

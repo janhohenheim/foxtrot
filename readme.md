@@ -33,7 +33,7 @@ cargo run
 ```
 WASM:
 ```bash
-trunk serve --no-
+trunk serve --no-default-features --features core,wasm,dev
 ```
 
 Building in general requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).

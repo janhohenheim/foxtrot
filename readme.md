@@ -27,12 +27,16 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 ## Usage
 
 ### Running the game
-
+Native:
 ```bash
-cargo run --features dev
+cargo run
+```
+WASM:
+```bash
+trunk serve --no-
 ```
 
-Building requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
+Building in general requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
 Don't worry, it's super easy:
 - **Ubuntu**: `sudo apt-get install lld`
 - **Arch**: `sudo pacman -S lld`
@@ -44,6 +48,13 @@ Don't worry, it's super easy:
     ```
 
 - **MacOS**: Modern LLD does not yet support MacOS, but we can use zld instead: `brew install michaeleisel/zld/zld`
+
+
+Building WASM requires the right target and `trunk`:
+
+```bash
+cargo install --locked trunk && rustup target add wasm32-unknown-unknown
+```
 
 ### Updating assets
 

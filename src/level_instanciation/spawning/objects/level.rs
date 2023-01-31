@@ -10,6 +10,6 @@ pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_level(&'a mut self) {
-        self.spawn_gltf(GameObject::Level, Transform::from_scale(Vec3::splat(3.)));
+        self.spawn_gltf(GameObject::Level, Transform::default());
     }
 }

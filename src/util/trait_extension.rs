@@ -60,7 +60,10 @@ impl MeshExt for Mesh {
             .iter()
             .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
             .map(|(entity, mesh_handle)| (entity, meshes.get(mesh_handle).unwrap()))
-            .filter(|(_, mesh)| mesh.primitive_topology() == PrimitiveTopology::TriangleList)
+            .map(|(entity, mesh)| {
+                assert_eq!(mesh.primitive_topology(), PrimitiveTopology::TriangleList);
+                (entity, mesh)
+            })
             .collect()
     }
 }

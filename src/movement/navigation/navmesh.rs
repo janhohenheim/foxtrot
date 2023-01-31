@@ -18,18 +18,19 @@ pub fn read_navmesh(
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-            let (child, mesh) = Mesh::search_in_children(children, &meshes, &mesh_handles);
-            let mesh = mesh.transformed(global_transform);
+            for (child, mesh) in Mesh::search_in_children(children, &meshes, &mesh_handles) {
+                let mesh = mesh.transformed(global_transform);
 
-            let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
-                mesh.set_delta(1.);
-            });
-            commands.entity(parent).insert(path_meshes.add(path_mesh));
-            commands.entity(child).insert((
-                NavMesh,
-                Name::new("navmesh"),
-                Visibility { is_visible: false },
-            ));
+                let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
+                    mesh.set_delta(1.);
+                });
+                commands.entity(parent).insert(path_meshes.add(path_mesh));
+                commands.entity(child).insert((
+                    NavMesh,
+                    Name::new("navmesh"),
+                    Visibility { is_visible: false },
+                ));
+            }
         }
     }
 }

@@ -40,27 +40,26 @@ pub fn set_texture_to_repeat(
 ) {
     for (name, children) in &added_name {
         if name.to_lowercase().contains("[repeat]") {
-            let child = children
-                .iter()
-                .find(|entity| material_handles.get(**entity).is_ok())
-                .unwrap();
-            let standard_material_handle = material_handles.get(*child).unwrap();
-            let standard_material = standard_materials.get(standard_material_handle).unwrap();
-            let texture = standard_material.base_color_texture.as_ref().unwrap();
-            let repeated_material =
-                materials
-                    .repeated
-                    .entry(texture.clone())
-                    .or_insert_with(|| {
-                        repeated_materials.add(RepeatedMaterial {
-                            texture: Some(texture.clone()),
-                        })
-                    });
+            for child in children.iter() {
+                if let Ok(standard_material_handle) = material_handles.get(*child) {
+                    let standard_material =
+                        standard_materials.get(standard_material_handle).unwrap();
+                    let texture = standard_material.base_color_texture.as_ref().unwrap();
+                    let repeated_material = materials
+                        .repeated
+                        .entry(texture.clone())
+                        .or_insert_with(|| {
+                            repeated_materials.add(RepeatedMaterial {
+                                texture: Some(texture.clone()),
+                            })
+                        });
 
-            commands
-                .entity(*child)
-                .remove::<Handle<StandardMaterial>>()
-                .insert(repeated_material.clone());
+                    commands
+                        .entity(*child)
+                        .remove::<Handle<StandardMaterial>>()
+                        .insert(repeated_material.clone());
+                }
+            }
         }
     }
 }

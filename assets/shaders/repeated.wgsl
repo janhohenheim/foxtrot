@@ -22,8 +22,12 @@ struct FragmentInput {
 
 
 fn get_texture_sample(coords: vec2<f32>) -> vec3<f32> {
-    let num_repeats = 10.;
-    let repeated_coords = (coords % (1./num_repeats)) * num_repeats;
+    let horizontal_repeats = 200.;
+    let vertical_repeats = 200.;
+    let repeated_coords = vec2<f32>(
+        (coords.x % (1./horizontal_repeats)) * horizontal_repeats,
+        (coords.y % (1./vertical_repeats)) * vertical_repeats,
+    );
     return textureSample(texture, texture_sampler, repeated_coords).rgb;
 }
 

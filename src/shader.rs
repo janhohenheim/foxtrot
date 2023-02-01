@@ -1,7 +1,7 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef};
+use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
 use std::path::Path;
 
@@ -52,6 +52,12 @@ impl Material for GlowyMaterial {
     }
 }
 
+#[derive(Clone, Copy, ShaderType, Debug)]
+pub struct Repeats {
+    pub horizontal: f32,
+    pub vertical: f32,
+}
+
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
 pub struct RepeatedMaterial {
@@ -59,9 +65,7 @@ pub struct RepeatedMaterial {
     #[sampler(1)]
     pub texture: Option<Handle<Image>>,
     #[uniform(2)]
-    pub horizontal_repeats: f32,
-    #[uniform(3)]
-    pub vertical_repeats: f32,
+    pub repeats: Repeats,
 }
 
 impl Material for RepeatedMaterial {

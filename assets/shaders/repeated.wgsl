@@ -9,15 +9,17 @@
 #import bevy_pbr::shadows
 #import bevy_pbr::pbr_functions
 
+struct Repeats {
+    horizontal: f32,
+    vertical: f32,
+}
+
 @group(1) @binding(0)
 var texture: texture_2d<f32>;
 @group(1) @binding(1)
 var texture_sampler: sampler;
 @group(1) @binding(2)
-var<uniform> horizontal_repeats: f32;
-@group(1) @binding(3)
-var<uniform> vertical_repeats: f32;
-
+var<uniform> repeats: Repeats;
 
 struct FragmentInput {
     @builtin(front_facing) is_front: bool,
@@ -28,8 +30,8 @@ struct FragmentInput {
 
 fn get_texture_sample(coords: vec2<f32>) -> vec3<f32> {
     let repeated_coords = vec2<f32>(
-        (coords.x % (1./horizontal_repeats)) * horizontal_repeats,
-        (coords.y % (1./vertical_repeats)) * vertical_repeats,
+        (coords.x % (1./repeats.horizontal)) * repeats.horizontal,
+        (coords.y % (1./repeats.vertical)) * repeats.vertical
     );
     return textureSample(texture, texture_sampler, repeated_coords).rgb;
 }

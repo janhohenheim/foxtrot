@@ -51,6 +51,8 @@ pub fn set_texture_to_repeat(
                         .or_insert_with(|| {
                             repeated_materials.add(RepeatedMaterial {
                                 texture: Some(texture.clone()),
+                                horizontal_repeats: 100.0,
+                                vertical_repeats: 100.0,
                             })
                         });
 

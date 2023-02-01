@@ -1,4 +1,4 @@
-use crate::shader::{Materials, RepeatedMaterial};
+use crate::shader::{Materials, RepeatedMaterial, Repeats};
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -51,8 +51,10 @@ pub fn set_texture_to_repeat(
                         .or_insert_with(|| {
                             repeated_materials.add(RepeatedMaterial {
                                 texture: Some(texture.clone()),
-                                horizontal_repeats: 100.0,
-                                vertical_repeats: 100.0,
+                                repeats: Repeats {
+                                    horizontal: 100.0,
+                                    vertical: 100.0,
+                                },
                             })
                         });
 

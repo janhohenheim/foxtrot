@@ -61,8 +61,8 @@ optional = true
 features = ["3d"]
 
 [dependencies.bevy_editor_pls]
-git = "https://github.com/Aceeri/bevy_editor_pls"
-rev = "6e1b2a936e2e32dc060dc33d9e8970e78cece8c5"
+git = "https://github.com/jakobhellermann/bevy_editor_pls"
+rev = "6062b860aea87034081399369fd7ef5715f13256"
 optional = true
 
 [dependencies.bevy_rapier3d]

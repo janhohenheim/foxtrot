@@ -40,7 +40,7 @@ impl Default for SceneEditorState {
             entity_name: default(),
             spawn_item: default(),
             collider_render_enabled: default(),
-            navmesh_render_enabled: default(),
+            navmesh_render_enabled: true,
         }
     }
 }

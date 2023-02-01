@@ -58,6 +58,10 @@ pub struct RepeatedMaterial {
     #[texture(0)]
     #[sampler(1)]
     pub texture: Option<Handle<Image>>,
+    #[uniform(2)]
+    pub horizontal_repeats: f32,
+    #[uniform(3)]
+    pub vertical_repeats: f32,
 }
 
 impl Material for RepeatedMaterial {

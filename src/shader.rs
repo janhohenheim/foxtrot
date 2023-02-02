@@ -18,7 +18,7 @@ impl Plugin for ShaderPlugin {
 #[derive(Resource, Debug, Clone)]
 pub struct Materials {
     pub glowy: Handle<GlowyMaterial>,
-    pub repeated: HashMap<Handle<Image>, Handle<RepeatedMaterial>>,
+    pub repeated: HashMap<Name, Handle<RepeatedMaterial>>,
 }
 
 fn setup_shader(
@@ -52,10 +52,10 @@ impl Material for GlowyMaterial {
     }
 }
 
-#[derive(Clone, Copy, ShaderType, Debug)]
+#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
 pub struct Repeats {
-    pub horizontal: f32,
-    pub vertical: f32,
+    pub horizontal: u32,
+    pub vertical: u32,
 }
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]

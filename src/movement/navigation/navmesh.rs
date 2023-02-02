@@ -19,6 +19,8 @@ pub fn read_navmesh(
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
             for (child, mesh) in Mesh::search_in_children(children, &meshes, &mesh_handles) {
+                info!("mesh: {:?}", mesh);
+                info!("global_transform: {:?}", global_transform);
                 let mesh = mesh.transformed(global_transform);
 
                 let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {

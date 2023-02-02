@@ -28,12 +28,15 @@ pub trait MeshExt {
 
 impl MeshExt for Mesh {
     fn transform(&mut self, transform: Transform) {
-        for attribute in [Mesh::ATTRIBUTE_POSITION, Mesh::ATTRIBUTE_NORMAL] {
-            for coords in self.read_coords_mut(attribute.clone()) {
-                let vec3 = (*coords).into();
-                let transformed = transform.transform_point(vec3);
-                *coords = transformed.into();
-            }
+        for coords in self.read_coords_mut(Mesh::ATTRIBUTE_POSITION.clone()) {
+            let vec3 = (*coords).into();
+            let transformed = transform.transform_point(vec3);
+            *coords = transformed.into();
+        }
+        for normal in self.read_coords_mut(Mesh::ATTRIBUTE_NORMAL.clone()) {
+            let vec3 = (*normal).into();
+            let transformed = transform.rotation.mul_vec3(vec3);
+            *normal = transformed.into();
         }
     }
 

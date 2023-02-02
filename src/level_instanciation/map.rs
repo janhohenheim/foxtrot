@@ -34,7 +34,7 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_translation((0., 0.5, 0.).into()),
+            transform: Transform::from_translation((0., 1., 0.).into()),
             parent: None,
             name: Some("Player".into()),
         },

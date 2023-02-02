@@ -51,14 +51,14 @@ pub fn set_texture_to_repeat(
                     let standard_material =
                         standard_materials.get(standard_material_handle).unwrap();
                     let texture = standard_material.base_color_texture.as_ref().unwrap();
+                    let key = (texture.id(), repeats.clone());
 
-                    let repeated_material =
-                        materials.repeated.entry(name.clone()).or_insert_with(|| {
-                            repeated_materials.add(RepeatedMaterial {
-                                texture: Some(texture.clone()),
-                                repeats: repeats.clone(),
-                            })
-                        });
+                    let repeated_material = materials.repeated.entry(key).or_insert_with(|| {
+                        repeated_materials.add(RepeatedMaterial {
+                            texture: Some(texture.clone()),
+                            repeats: repeats.clone(),
+                        })
+                    });
 
                     commands
                         .entity(*child)

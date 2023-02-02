@@ -1,4 +1,5 @@
 use crate::GameState;
+use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
@@ -18,7 +19,8 @@ impl Plugin for ShaderPlugin {
 #[derive(Resource, Debug, Clone)]
 pub struct Materials {
     pub glowy: Handle<GlowyMaterial>,
-    pub repeated: HashMap<Name, Handle<RepeatedMaterial>>,
+    /// (Texture asset ID, Repeats) -> RepeatedMaterial
+    pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
 }
 
 fn setup_shader(

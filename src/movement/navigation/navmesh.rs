@@ -26,9 +26,11 @@ pub fn read_navmesh(
                 let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
                     mesh.set_delta(1.);
                 });
-                commands
-                    .entity(child)
-                    .insert((NavMesh, path_meshes.add(path_mesh)));
+                commands.entity(child).insert((
+                    path_meshes.add(path_mesh),
+                    #[cfg(feature = "dev")]
+                    NavMesh,
+                ));
             }
         }
     }

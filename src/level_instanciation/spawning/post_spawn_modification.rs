@@ -2,6 +2,7 @@ use crate::shader::{Materials, RepeatedMaterial, Repeats};
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -38,23 +39,24 @@ pub fn set_texture_to_repeat(
     standard_materials: Res<Assets<StandardMaterial>>,
     mut repeated_materials: ResMut<Assets<RepeatedMaterial>>,
 ) {
+    let re = Regex::new(r"\[repeat:(\d+),(\d+)\]").unwrap();
     for (name, children) in &added_name {
-        if name.to_lowercase().contains("[repeat]") {
+        if let Some(captures) = re.captures(&name.to_lowercase()) {
+            let repeats = Repeats {
+                horizontal: captures[1].parse().unwrap(),
+                vertical: captures[2].parse().unwrap(),
+            };
             for child in children.iter() {
                 if let Ok(standard_material_handle) = material_handles.get(*child) {
                     let standard_material =
                         standard_materials.get(standard_material_handle).unwrap();
                     let texture = standard_material.base_color_texture.as_ref().unwrap();
-                    let repeated_material = materials
-                        .repeated
-                        .entry(texture.clone())
-                        .or_insert_with(|| {
+
+                    let repeated_material =
+                        materials.repeated.entry(name.clone()).or_insert_with(|| {
                             repeated_materials.add(RepeatedMaterial {
                                 texture: Some(texture.clone()),
-                                repeats: Repeats {
-                                    horizontal: 100.0,
-                                    vertical: 100.0,
-                                },
+                                repeats: repeats.clone(),
                             })
                         });
 

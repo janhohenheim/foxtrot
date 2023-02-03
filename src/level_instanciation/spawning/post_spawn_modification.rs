@@ -1,6 +1,7 @@
-use crate::shader::{Materials, RepeatedMaterial, Repeats};
+use crate::shader::Repeats;
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
+use bevy::render::mesh::VertexAttributeValues;
 use bevy_rapier3d::prelude::*;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -32,12 +33,9 @@ pub fn read_colliders(
 }
 
 pub fn set_texture_to_repeat(
-    mut commands: Commands,
     added_name: Query<(&Name, &Children), Added<Name>>,
-    material_handles: Query<&Handle<StandardMaterial>>,
-    mut materials: ResMut<Materials>,
-    standard_materials: Res<Assets<StandardMaterial>>,
-    mut repeated_materials: ResMut<Assets<RepeatedMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mesh_handles: Query<&Handle<Mesh>>,
 ) {
     let re = Regex::new(r"\[repeat:(\d+),(\d+)\]").unwrap();
     for (name, children) in &added_name {
@@ -46,24 +44,18 @@ pub fn set_texture_to_repeat(
                 horizontal: captures[1].parse().unwrap(),
                 vertical: captures[2].parse().unwrap(),
             };
-            for child in children.iter() {
-                if let Ok(standard_material_handle) = material_handles.get(*child) {
-                    let standard_material =
-                        standard_materials.get(standard_material_handle).unwrap();
-                    let texture = standard_material.base_color_texture.as_ref().unwrap();
-                    let key = (texture.id(), repeats.clone());
-
-                    let repeated_material = materials.repeated.entry(key).or_insert_with(|| {
-                        repeated_materials.add(RepeatedMaterial {
-                            texture: Some(texture.clone()),
-                            repeats: repeats.clone(),
-                        })
-                    });
-
-                    commands
-                        .entity(*child)
-                        .remove::<Handle<StandardMaterial>>()
-                        .insert(repeated_material.clone());
+            for mesh_handle in children
+                .iter()
+                .filter_map(|entity| mesh_handles.get(*entity).ok())
+            {
+                let collider_mesh = meshes.get_mut(mesh_handle).unwrap();
+                let uvs = match collider_mesh.attribute_mut(Mesh::ATTRIBUTE_UV_0).unwrap() {
+                    VertexAttributeValues::Float32x2(values) => values,
+                    _ => panic!("Unexpected vertex attribute type"),
+                };
+                for uv in uvs.iter_mut() {
+                    uv[0] *= repeats.horizontal as f32;
+                    uv[1] *= repeats.vertical as f32;
                 }
             }
         }

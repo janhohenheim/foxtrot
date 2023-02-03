@@ -1,4 +1,3 @@
-use crate::shader::Repeats;
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;
 use bevy::render::mesh::VertexAttributeValues;
@@ -60,4 +59,10 @@ pub fn set_texture_to_repeat(
             }
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
+pub struct Repeats {
+    pub horizontal: u32,
+    pub vertical: u32,
 }

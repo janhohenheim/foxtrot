@@ -1,9 +1,7 @@
 use crate::GameState;
-use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
-use bevy::utils::HashMap;
+use bevy::render::render_resource::{AsBindGroup, ShaderRef};
 use std::path::Path;
 
 pub struct ShaderPlugin;
@@ -11,7 +9,6 @@ pub struct ShaderPlugin;
 impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
-            .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_shader));
     }
 }
@@ -19,8 +16,6 @@ impl Plugin for ShaderPlugin {
 #[derive(Resource, Debug, Clone)]
 pub struct Materials {
     pub glowy: Handle<GlowyMaterial>,
-    /// (Texture asset ID, Repeats) -> RepeatedMaterial
-    pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
 }
 
 fn setup_shader(
@@ -36,7 +31,6 @@ fn setup_shader(
 
     commands.insert_resource(Materials {
         glowy: glowy_material,
-        repeated: HashMap::new(),
     });
 }
 
@@ -51,27 +45,5 @@ pub struct GlowyMaterial {
 impl Material for GlowyMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/glowy.wgsl".into()
-    }
-}
-
-#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
-pub struct Repeats {
-    pub horizontal: u32,
-    pub vertical: u32,
-}
-
-#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
-#[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
-pub struct RepeatedMaterial {
-    #[texture(0)]
-    #[sampler(1)]
-    pub texture: Option<Handle<Image>>,
-    #[uniform(2)]
-    pub repeats: Repeats,
-}
-
-impl Material for RepeatedMaterial {
-    fn fragment_shader() -> ShaderRef {
-        "shaders/repeated.wgsl".into()
     }
 }

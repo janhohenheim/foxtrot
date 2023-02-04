@@ -5,7 +5,7 @@ use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::duplication::duplicate;
 use crate::level_instanciation::spawning::objects::*;
 use crate::level_instanciation::spawning::post_spawn_modification::{
-    read_colliders, set_texture_to_repeat,
+    read_colliders, set_hidden, set_texture_to_repeat,
 };
 use crate::level_instanciation::spawning::spawn::{
     spawn_delayed, spawn_requested, DelayedSpawnEvents,
@@ -67,7 +67,8 @@ impl Plugin for SpawningPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders)
-                    .with_system(set_texture_to_repeat),
+                    .with_system(set_texture_to_repeat)
+                    .with_system(set_hidden),
             );
     }
 }

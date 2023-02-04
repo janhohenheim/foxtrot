@@ -31,6 +31,15 @@ pub fn read_colliders(
     }
 }
 
+#[allow(clippy::type_complexity)]
+pub fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) {
+    for (name, mut visibility) in added_name.iter_mut() {
+        if name.to_lowercase().contains("[hidden]") {
+            visibility.is_visible = false;
+        }
+    }
+}
+
 pub fn set_texture_to_repeat(
     added_name: Query<(&Name, &Children), Added<Name>>,
     mut meshes: ResMut<Assets<Mesh>>,

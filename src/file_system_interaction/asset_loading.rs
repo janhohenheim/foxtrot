@@ -15,7 +15,6 @@ impl Plugin for LoadingPlugin {
             LoadingState::new(GameState::Loading)
                 .with_collection::<FontAssets>()
                 .with_collection::<AudioAssets>()
-                .with_collection::<TextureAssets>()
                 .with_collection::<SceneAssets>()
                 .with_collection::<AnimationAssets>()
                 .continue_to_state(GameState::Menu),
@@ -36,12 +35,6 @@ pub struct FontAssets {
 pub struct AudioAssets {
     #[asset(path = "audio/walking.ogg")]
     pub walking: Handle<AudioSource>,
-}
-
-#[derive(AssetCollection, Resource)]
-pub struct TextureAssets {
-    #[asset(path = "textures/bevy.png")]
-    pub bevy: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]

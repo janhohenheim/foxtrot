@@ -51,8 +51,8 @@ fn update_grounded(
     }
 }
 
-fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
-    for (mut velocity, grounded, jump) in &mut player_query {
+fn apply_gravity(mut character: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
+    for (mut velocity, grounded, jump) in &mut character {
         let dt = f32::from(grounded.time_since_last_grounded)
             - f32::from(jump.time_since_start).min(jump.duration);
         let max_gravity = jump.g * 5.;

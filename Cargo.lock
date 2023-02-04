@@ -760,7 +760,8 @@ dependencies = [
 [[package]]
 name = "bevy_pathmesh"
 version = "0.3.0"
-source = "git+https://github.com/vleue/bevy_pathmesh.git?rev=242b6066fbf852117a4073a3062e9f8820868f04#242b6066fbf852117a4073a3062e9f8820868f04"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ec81407de780554a715fc55c87080b07616818393468bfde7928c673a60dc09"
 dependencies = [
  "bevy",
  "itertools",

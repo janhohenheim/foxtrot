@@ -1,5 +1,4 @@
-use super::npc::PATH;
-use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
 use crate::movement::general_movement::{
     CharacterAnimations, CharacterVelocity, Grounded, Jump, Model,
 };
@@ -17,8 +16,8 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     pub fn spawn_player(&'a mut self) {
         let gltf = self
             .gltf
-            .get(&self.handles.scenes[&GameObject::Npc])
-            .unwrap_or_else(|| panic!("Failed to load scene from {PATH}"));
+            .get(&self.scenes.character)
+            .unwrap_or_else(|| panic!("Failed to load scene for player"));
 
         self.commands
             .spawn((

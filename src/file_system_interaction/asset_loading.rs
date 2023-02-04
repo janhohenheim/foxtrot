@@ -48,6 +48,8 @@ pub struct TextureAssets {
 pub struct SceneAssets {
     #[asset(path = "scenes/Fox.glb")]
     pub character: Handle<Gltf>,
+    #[asset(path = "scenes/half_timbered_house.glb")]
+    pub level: Handle<Gltf>,
 }
 
 #[derive(AssetCollection, Resource)]

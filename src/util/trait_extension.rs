@@ -20,20 +20,24 @@ pub trait MeshExt {
     fn transformed(&self, transform: Transform) -> Mesh;
     fn read_coords_mut(&mut self, id: impl Into<MeshVertexAttributeId>) -> &mut Vec<[f32; 3]>;
     fn search_in_children<'a>(
-        children: &'a Children,
+        parent: Entity,
+        children: &'a Query<&Children>,
         meshes: &'a Assets<Mesh>,
         mesh_handles: &'a Query<&Handle<Mesh>>,
-    ) -> (Entity, &'a Mesh);
+    ) -> Vec<(Entity, &'a Mesh)>;
 }
 
 impl MeshExt for Mesh {
     fn transform(&mut self, transform: Transform) {
-        for attribute in [Mesh::ATTRIBUTE_POSITION, Mesh::ATTRIBUTE_NORMAL] {
-            for coords in self.read_coords_mut(attribute.clone()) {
-                let vec3 = (*coords).into();
-                let transformed = transform.transform_point(vec3);
-                *coords = transformed.into();
-            }
+        for coords in self.read_coords_mut(Mesh::ATTRIBUTE_POSITION.clone()) {
+            let vec3 = (*coords).into();
+            let transformed = transform.transform_point(vec3);
+            *coords = transformed.into();
+        }
+        for normal in self.read_coords_mut(Mesh::ATTRIBUTE_NORMAL.clone()) {
+            let vec3 = (*normal).into();
+            let transformed = transform.rotation.mul_vec3(vec3);
+            *normal = transformed.into();
         }
     }
 
@@ -52,23 +56,31 @@ impl MeshExt for Mesh {
     }
 
     fn search_in_children<'a>(
-        children: &'a Children,
+        parent: Entity,
+        children_query: &'a Query<&Children>,
         meshes: &'a Assets<Mesh>,
         mesh_handles: &'a Query<&Handle<Mesh>>,
-    ) -> (Entity, &'a Mesh) {
-        let entity_handles: Vec<_> = children
-            .iter()
-            .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
-            .collect();
-        assert_eq!(
-            entity_handles.len(),
-            1,
-            "Collider must contain exactly one mesh, but found {}",
-            entity_handles.len()
-        );
-        let (entity, mesh_handle) = entity_handles.first().unwrap();
-        let mesh = meshes.get(mesh_handle).unwrap();
-        assert_eq!(mesh.primitive_topology(), PrimitiveTopology::TriangleList);
-        (*entity, mesh)
+    ) -> Vec<(Entity, &'a Mesh)> {
+        if let Ok(children) = children_query.get(parent) {
+            let mut result: Vec<_> = children
+                .iter()
+                .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
+                .map(|(entity, mesh_handle)| (entity, meshes.get(mesh_handle).unwrap()))
+                .map(|(entity, mesh)| {
+                    assert_eq!(mesh.primitive_topology(), PrimitiveTopology::TriangleList);
+                    (entity, mesh)
+                })
+                .collect();
+            let mut inner_result = children
+                .iter()
+                .flat_map(|entity| {
+                    Self::search_in_children(*entity, children_query, meshes, mesh_handles)
+                })
+                .collect();
+            result.append(&mut inner_result);
+            result
+        } else {
+            Vec::new()
+        }
     }
 }

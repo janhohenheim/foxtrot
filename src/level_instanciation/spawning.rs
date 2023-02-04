@@ -1,11 +1,11 @@
-use crate::file_system_interaction::asset_loading::AnimationAssets;
+use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instanciation::spawning::animation_link::link_animations;
 use crate::level_instanciation::spawning::change_parent::change_parent;
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::duplication::duplicate;
 use crate::level_instanciation::spawning::objects::*;
 use crate::level_instanciation::spawning::post_spawn_modification::{
-    read_colliders, set_texture_to_repeat,
+    read_colliders, set_hidden, set_texture_to_repeat,
 };
 use crate::level_instanciation::spawning::spawn::{
     spawn_delayed, spawn_requested, DelayedSpawnEvents,
@@ -67,7 +67,8 @@ impl Plugin for SpawningPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders)
-                    .with_system(set_texture_to_repeat),
+                    .with_system(set_texture_to_repeat)
+                    .with_system(set_hidden),
             );
     }
 }
@@ -90,19 +91,11 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     }
 }
 
-fn load_assets_for_spawner(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut mesh_assets: ResMut<Assets<Mesh>>,
-) {
-    let mut scenes = HashMap::new();
-    scenes.insert(GameObject::Npc, npc::load_scene(&asset_server));
-    scenes.insert(GameObject::Level, level::load_scene(&asset_server));
-
+fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Assets<Mesh>>) {
     let mut meshes = HashMap::new();
     meshes.insert(GameObject::Orb, orb::load_mesh(&mut mesh_assets));
 
-    commands.insert_resource(GameObjectSpawner { meshes, scenes });
+    commands.insert_resource(GameObjectSpawner { meshes });
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -162,7 +155,6 @@ impl Default for GameObject {
 
 #[derive(Resource)]
 pub struct GameObjectSpawner {
-    scenes: HashMap<GameObject, Handle<Gltf>>,
     meshes: HashMap<GameObject, Handle<Mesh>>,
 }
 
@@ -173,6 +165,7 @@ pub struct PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
     materials: &'a Res<'a, Materials>,
     commands: &'a mut ChildBuilder<'w, 's, 'b>,
     animations: &'a Res<'a, AnimationAssets>,
+    scenes: &'a Res<'a, SceneAssets>,
 }
 
 impl<'a, 'b, 'c, 'w, 's> GameObjectSpawner
@@ -185,6 +178,7 @@ where
         gltf: &'a Res<'a, Assets<Gltf>>,
         materials: &'a Res<'a, Materials>,
         animations: &'a Res<'a, AnimationAssets>,
+        scenes: &'a Res<'a, SceneAssets>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         PrimedGameObjectSpawner {
             handles: self,
@@ -192,6 +186,7 @@ where
             gltf,
             materials,
             animations,
+            scenes,
         }
     }
 }

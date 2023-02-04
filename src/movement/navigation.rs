@@ -1,6 +1,7 @@
 use crate::movement::general_movement::CharacterVelocity;
 use crate::movement::navigation::navmesh::read_navmesh;
 use crate::player_control::player_embodiment::Player;
+use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_pathmesh::PathMesh;
@@ -57,25 +58,18 @@ fn query_mesh(
                     Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
                     && entity == player_entity
                 {
-                    Some(vec![to])
+                    Some(to.x0z())
                 } else if let Some(path) = path_mesh.transformed_path(from, to) {
-                    Some(path.path)
+                    Some(path.path[0])
                 } else {
                     None
                 };
-                if let Some(path) = path && let Some(dir) = move_along_path(from, &path) {
+                if let Some(path) = path {
+                    let dir = (path - from).try_normalize().unwrap();
                     let speed = 3.;
                     character_velocity.0 += dir * dt * speed;
                 }
             }
         }
     }
-}
-
-fn move_along_path(from: Vec3, path: &[Vec3]) -> Option<Vec3> {
-    path.iter()
-        .map(|point| *point - from)
-        .filter(|dir| dir.length_squared() > 0.05)
-        .map(|dir| dir.try_normalize().unwrap_or_default())
-        .next()
 }

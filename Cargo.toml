@@ -49,7 +49,7 @@ regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
 polyanya = "0.2.0"
-bevy_pathmesh = { git = "https://github.com/vleue/bevy_pathmesh.git", rev = "242b6066fbf852117a4073a3062e9f8820868f04"}
+bevy_pathmesh = "0.3.0"
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
@@ -61,8 +61,8 @@ optional = true
 features = ["3d"]
 
 [dependencies.bevy_editor_pls]
-git = "https://github.com/Aceeri/bevy_editor_pls"
-rev = "6e1b2a936e2e32dc060dc33d9e8970e78cece8c5"
+git = "https://github.com/jakobhellermann/bevy_editor_pls"
+rev = "6062b860aea87034081399369fd7ef5715f13256"
 optional = true
 
 [dependencies.bevy_rapier3d]

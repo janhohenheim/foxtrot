@@ -51,15 +51,12 @@ fn update_grounded(
     }
 }
 
-fn apply_gravity(mut player_query: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
-    for (mut velocity, grounded, jump) in &mut player_query {
-        if matches!(jump.state, JumpState::InProgress) {
-            continue;
-        }
+fn apply_gravity(mut character: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
+    for (mut velocity, grounded, jump) in &mut character {
         let dt = f32::from(grounded.time_since_last_grounded)
             - f32::from(jump.time_since_start).min(jump.duration);
         let max_gravity = jump.g * 5.;
-        let min_gravity = jump.g * 0.1;
+        let min_gravity = jump.g * 0.01;
         // min and max look swapped because gravity is negative
         let gravity = (jump.g * dt).clamp(max_gravity, min_gravity);
         velocity.0.y += gravity;

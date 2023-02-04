@@ -12,14 +12,15 @@ pub struct CustomCollider;
 #[allow(clippy::type_complexity)]
 pub fn read_colliders(
     mut commands: Commands,
-    added_name: Query<(&Name, &Children), (Added<Name>, Without<CustomCollider>)>,
+    added_name: Query<(Entity, &Name), (Added<Name>, Without<CustomCollider>)>,
+    children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
 ) {
-    for (name, children) in &added_name {
+    for (entity, name) in &added_name {
         if name.to_lowercase().contains("[collider]") {
             for (collider_entity, collider_mesh) in
-                Mesh::search_in_children(children, &meshes, &mesh_handles)
+                Mesh::search_in_children(entity, &children, &meshes, &mesh_handles)
             {
                 let rapier_collider =
                     Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh)

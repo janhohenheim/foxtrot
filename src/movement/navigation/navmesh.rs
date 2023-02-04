@@ -7,18 +7,20 @@ use serde::{Deserialize, Serialize};
 #[allow(clippy::too_many_arguments)]
 pub fn read_navmesh(
     mut commands: Commands,
-    added_name: Query<(Entity, &Name, &Children), Added<Name>>,
+    added_name: Query<(Entity, &Name), Added<Name>>,
     parents: Query<&Parent>,
+    children: Query<&Children>,
     transforms: Query<&Transform>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
-    for (parent, name, children) in &added_name {
+    for (parent, name) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             // Necessary because at this stage the `GlobalTransform` is still at `default()` for some reason
             let global_transform = get_global_transform(parent, &parents, &transforms);
-            for (child, mesh) in Mesh::search_in_children(children, &meshes, &mesh_handles) {
+            for (child, mesh) in Mesh::search_in_children(parent, &children, &meshes, &mesh_handles)
+            {
                 info!("mesh: {:?}", mesh);
                 info!("global_transform: {:?}", global_transform);
                 let mesh = mesh.transformed(global_transform);

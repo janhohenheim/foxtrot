@@ -16,6 +16,12 @@ pub struct Grounded {
     pub time_since_last_grounded: Timer,
 }
 
+impl Grounded {
+    pub fn is_grounded(&self) -> bool {
+        !self.time_since_last_grounded.is_active()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Jump {
@@ -30,7 +36,7 @@ impl Default for Jump {
         Self {
             time_since_start: Timer::with_max_time(),
             state: default(),
-            g: -0.5,
+            g: -0.3,
             duration: 0.23,
         }
     }

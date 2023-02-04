@@ -21,8 +21,8 @@ fn setup(
         return;
     }
     commands.insert_resource(AmbientLight {
-        color: Color::ORANGE_RED,
-        brightness: 0.1,
+        color: Color::WHITE,
+        brightness: 0.3,
     });
 
     loader.send(WorldLoadRequest {

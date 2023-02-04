@@ -69,6 +69,10 @@ fn handle_camera_controls(
         None => return,
     };
 
+    if camera_movement.length() < 1e-5 {
+        return;
+    }
+
     let direction = -camera.translation.try_normalize().unwrap_or(Vect::Z);
     let horizontal_rotation_axis = direction.xz().perp();
     let horizontal_rotation_axis =

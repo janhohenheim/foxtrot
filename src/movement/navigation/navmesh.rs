@@ -21,12 +21,10 @@ pub fn read_navmesh(
             let global_transform = get_global_transform(parent, &parents, &transforms);
             for (child, mesh) in Mesh::search_in_children(parent, &children, &meshes, &mesh_handles)
             {
-                info!("mesh: {:?}", mesh);
-                info!("global_transform: {:?}", global_transform);
                 let mesh = mesh.transformed(global_transform);
 
                 let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
-                    mesh.set_delta(1.);
+                    mesh.set_delta(10.);
                 });
                 commands.entity(child).insert((
                     path_meshes.add(path_mesh),

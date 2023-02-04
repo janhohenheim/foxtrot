@@ -61,7 +61,7 @@ impl MeshExt for Mesh {
         meshes: &'a Assets<Mesh>,
         mesh_handles: &'a Query<&Handle<Mesh>>,
     ) -> Vec<(Entity, &'a Mesh)> {
-        if let Some(children) = children_query.get(parent).ok() {
+        if let Ok(children) = children_query.get(parent) {
             let mut result: Vec<_> = children
                 .iter()
                 .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))

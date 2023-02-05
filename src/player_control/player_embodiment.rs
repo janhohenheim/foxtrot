@@ -43,7 +43,7 @@ fn handle_jump(
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;
     for (grounded, mut velocity, mut jump) in &mut player_query {
-        let y_speed = 1.;
+        let y_speed = 0.95;
         if jump_requested && grounded.is_grounded() {
             jump.time_since_start.start();
             jump.state = JumpState::InProgress;

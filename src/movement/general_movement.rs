@@ -66,7 +66,7 @@ fn reset_velocity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) 
         velocity.0.x = default();
         velocity.0.z = default();
         if grounded.is_grounded() {
-            velocity.0.y = 0.0;
+            velocity.0.y = velocity.0.y.max(-0.1);
         }
     }
 }

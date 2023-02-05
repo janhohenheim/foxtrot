@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instanciation::spawning::AnimationEntityLink;
+use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
@@ -73,10 +74,17 @@ fn apply_gravity(time: Res<Time>, mut character: Query<(&mut CharacterVelocity, 
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
-    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
+    mut player_query: Query<(
+        &CharacterVelocity,
+        &mut KinematicCharacterController,
+        Option<&Player>,
+    )>,
 ) {
-    for (velocity, mut controller) in &mut player_query {
+    for (velocity, mut controller, player) in &mut player_query {
         let velocity = velocity.0;
+        if player.is_some() {
+            info!("velocity: {}", velocity);
+        }
         controller.translation = Some(velocity);
     }
 }
@@ -138,21 +146,30 @@ fn play_animations(
     }
 }
 
-fn apply_drag(time: Res<Time>, mut character_query: Query<(&mut CharacterVelocity, &Drag)>) {
+fn apply_drag(
+    time: Res<Time>,
+    mut character_query: Query<(&mut CharacterVelocity, &Drag, Option<&Player>)>,
+) {
     let dt = time.delta_seconds();
-    for (mut velocity, drag) in &mut character_query {
+    for (mut velocity, drag, player) in &mut character_query {
         let force = drag.calculate_force(velocity.0);
+        if player.is_some() {
+            info!("drag force: {}", force);
+        }
         velocity.0 -= force * dt;
     }
 }
 
 fn apply_walking(
     time: Res<Time>,
-    mut character_query: Query<(&mut CharacterVelocity, &Walker, &Grounded)>,
+    mut character_query: Query<(&mut CharacterVelocity, &Walker, &Grounded, Option<&Player>)>,
 ) {
     let dt = time.delta_seconds();
-    for (mut velocity, walker, grounded) in &mut character_query {
+    for (mut velocity, walker, grounded, player) in &mut character_query {
         if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
+            if player.is_some() {
+                info!("acceleration: {}", acceleration);
+            }
             velocity.0 += acceleration * dt;
         }
     }

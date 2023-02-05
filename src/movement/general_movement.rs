@@ -37,9 +37,7 @@ impl Plugin for GeneralMovementPlugin {
     }
 }
 
-fn update_grounded(
-    mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>,
-) {
+fn update_grounded(mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>) {
     for (mut grounded, output) in &mut query {
         grounded.try_set(output.grounded);
     }

@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instanciation::spawning::AnimationEntityLink;
-use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::{Velocity, *};
@@ -26,31 +25,27 @@ impl Plugin for GeneralMovementPlugin {
                         apply_gravity
                             .label("apply_gravity")
                             .after("update_grounded")
-                            .before("apply_velocity"),
+                            .before("apply_force"),
                     )
                     .with_system(
                         apply_walking
                             .label("apply_walking")
                             .after("update_grounded")
-                            .before("apply_velocity"),
+                            .before("apply_force"),
                     )
                     .with_system(
                         apply_drag
                             .label("apply_drag")
                             .after("apply_walking")
                             .after("apply_gravity")
-                            .before("apply_velocity"),
+                            .before("apply_force"),
                     )
-                    .with_system(apply_velocity.label("apply_velocity"))
-                    .with_system(
-                        reset_physics_components
-                            .label("reset_physics_components")
-                            .after("apply_velocity"),
-                    )
+                    .with_system(apply_force.label("apply_force"))
+                    .with_system(reset_force.label("reset_force").after("apply_force"))
                     .with_system(
                         reset_walking_direction
                             .label("reset_walking_direction")
-                            .after("apply_velocity"),
+                            .after("apply_force"),
                     )
                     .with_system(rotate_model)
                     .with_system(play_animations),
@@ -71,34 +66,27 @@ fn apply_gravity(mut character: Query<(&mut Force, &KinematicCharacterController
     }
 }
 
-/// Treat `CharacterVelocity` as readonly after this system.
-fn apply_velocity(
+/// Treat `Force` as readonly after this system.
+fn apply_force(
     time: Res<Time>,
     mut player_query: Query<(
         &Force,
         &mut Velocity,
         &mut KinematicCharacterController,
         &Mass,
-        Option<&Player>,
     )>,
 ) {
     let dt = time.delta_seconds();
-    for (force, mut velocity, mut controller, mass, player) in &mut player_query {
+    for (force, mut velocity, mut controller, mass) in &mut player_query {
         let acceleration = force.0 / mass.0;
-        velocity.0 += (acceleration * dt).collapse_approx_zero();
-        if player.is_some() {
-            info!("end acceleration: {}", acceleration);
-        }
-        controller.translation = Some(velocity.0);
+        let desired_translation = velocity.0 * dt + 0.5 * acceleration * dt * dt;
+        velocity.0 += acceleration * dt;
+        controller.translation = Some(desired_translation);
     }
 }
 
-fn reset_physics_components(mut player_query: Query<(&mut Velocity, &mut Force, &Grounded)>) {
-    for (mut velocity, mut force, grounded) in &mut player_query {
-        if grounded.is_grounded() {
-            velocity.0.y = velocity.0.y.max(-0.1);
-        }
-        velocity.0 = velocity.0.collapse_approx_zero();
+fn reset_force(mut player_query: Query<&mut Force>) {
+    for mut force in &mut player_query {
         force.0 = Vec3::ZERO;
     }
 }
@@ -151,25 +139,17 @@ fn play_animations(
     }
 }
 
-fn apply_drag(mut character_query: Query<(&mut Force, &Velocity, &Drag, Option<&Player>)>) {
-    for (mut force, velocity, drag, player) in &mut character_query {
+fn apply_drag(mut character_query: Query<(&mut Force, &Velocity, &Drag)>) {
+    for (mut force, velocity, drag) in &mut character_query {
         let drag_force = drag.calculate_force(velocity.0);
-        if player.is_some() {
-            info!("drag force: {}", drag_force);
-        }
         force.0 += drag_force;
     }
 }
 
-fn apply_walking(
-    mut character_query: Query<(&mut Force, &Walker, &Grounded, &Mass, Option<&Player>)>,
-) {
-    for (mut force, walker, grounded, mass, player) in &mut character_query {
+fn apply_walking(mut character_query: Query<(&mut Force, &Walker, &Grounded, &Mass)>) {
+    for (mut force, walker, grounded, mass) in &mut character_query {
         if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass.0;
-            if player.is_some() {
-                info!("walking force: {}", walking_force);
-            }
             force.0 += walking_force;
         }
     }

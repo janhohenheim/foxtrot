@@ -18,11 +18,11 @@ impl Plugin for PlayerEmbodimentPlugin {
             .register_type::<PlayerSensor>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_jump.after("apply_gravity").before("apply_velocity"))
+                    .with_system(handle_jump.after("apply_gravity").before("apply_force"))
                     .with_system(
                         handle_horizontal_movement
-                            .after("update_grounded")
-                            .before("apply_velocity"),
+                            .after("set_actions")
+                            .before("apply_walking"),
                     ),
             );
     }

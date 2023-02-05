@@ -65,7 +65,7 @@ pub struct Mass(pub f32);
 
 impl Default for Mass {
     fn default() -> Self {
-        Self(1.0)
+        Self(3.0)
     }
 }
 
@@ -91,8 +91,8 @@ impl Walker {
 impl Default for Walker {
     fn default() -> Self {
         Self {
-            ground_acceleration: 0.1,
-            aerial_acceleration: 0.01,
+            ground_acceleration: 13.,
+            aerial_acceleration: 13.,
             direction: None,
         }
     }
@@ -114,6 +114,7 @@ impl Drag {
             ..default()
         }
     }
+
     pub fn calculate_force(&self, velocity: Vec3) -> Vec3 {
         let speed_squared = velocity.length_squared();
         if speed_squared < 1e-5 {
@@ -181,7 +182,7 @@ impl Default for Jump {
         Self {
             time_since_start: Timer::with_max_time(),
             state: default(),
-            g: 0.3,
+            g: 10.,
             duration: 0.23,
             speed: 0.95,
         }

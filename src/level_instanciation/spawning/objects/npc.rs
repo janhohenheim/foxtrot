@@ -28,7 +28,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 },
                 Name::new("NPC"),
                 RigidBody::KinematicVelocityBased,
-                KinematicCharacterController{
+                KinematicCharacterController {
                     offset: CharacterLength::Relative(0.05),
                     ..default()
                 },

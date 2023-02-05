@@ -27,7 +27,10 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 },
                 RigidBody::KinematicVelocityBased,
                 Collider::capsule_y(HEIGHT / 2., RADIUS),
-                KinematicCharacterController::default(),
+                KinematicCharacterController {
+                    offset: CharacterLength::Relative(0.05),
+                    ..default()
+                },
                 Player,
                 Name::new("Player"),
                 Grounded::default(),

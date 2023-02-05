@@ -12,7 +12,6 @@ pub struct GeneralMovementPlugin;
 impl Plugin for GeneralMovementPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Model>()
-            .register_type::<JumpState>()
             .register_type::<Grounded>()
             .register_type::<Jump>()
             .register_type::<Velocity>()
@@ -34,6 +33,12 @@ impl Plugin for GeneralMovementPlugin {
                             .before("apply_force"),
                     )
                     .with_system(
+                        apply_jumping
+                            .label("apply_jumping")
+                            .after("update_grounded")
+                            .before("apply_force"),
+                    )
+                    .with_system(
                         apply_drag
                             .label("apply_drag")
                             .after("apply_walking")
@@ -41,10 +46,9 @@ impl Plugin for GeneralMovementPlugin {
                             .before("apply_force"),
                     )
                     .with_system(apply_force.label("apply_force"))
-                    .with_system(reset_force.label("reset_force").after("apply_force"))
                     .with_system(
-                        reset_walking_direction
-                            .label("reset_walking_direction")
+                        reset_movement_components
+                            .label("reset_movement_components")
                             .after("apply_force"),
                     )
                     .with_system(rotate_model)
@@ -85,15 +89,31 @@ fn apply_force(
     }
 }
 
-fn reset_force(mut player_query: Query<&mut Force>) {
-    for mut force in &mut player_query {
+fn reset_movement_components(
+    mut forces: Query<&mut Force>,
+    mut walkers: Query<&mut Walker>,
+    mut jumpers: Query<&mut Jump>,
+) {
+    for mut force in &mut forces {
         force.0 = Vec3::ZERO;
+    }
+    for mut walker in &mut walkers {
+        walker.direction = None;
+    }
+    for mut jumper in &mut jumpers {
+        jumper.requested = false;
     }
 }
 
-fn reset_walking_direction(mut character_query: Query<&mut Walker>) {
-    for mut walker in &mut character_query {
-        walker.direction = None;
+fn apply_jumping(
+    time: Res<Time>,
+    mut character_query: Query<(&Grounded, &mut Force, &KinematicCharacterController, &Jump)>,
+) {
+    let dt = time.delta_seconds();
+    for (grounded, mut force, controller, jump) in &mut character_query {
+        if jump.requested && grounded.is_grounded() {
+            force.0 += controller.up * jump.impulse / dt;
+        }
     }
 }
 

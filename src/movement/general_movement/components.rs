@@ -170,45 +170,20 @@ impl Grounded {
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Jump {
-    pub time_since_start: Timer,
-    pub state: JumpState,
+    /// Gravity constant in m/s²
     pub g: f32,
-    pub duration: f32,
-    pub speed: f32,
+    /// Impulse in N s
+    pub impulse: f32,
+    /// Was jump requested?
+    pub requested: bool,
 }
 
 impl Default for Jump {
     fn default() -> Self {
         Self {
-            time_since_start: Timer::with_max_time(),
-            state: default(),
             g: 10.,
-            duration: 0.23,
-            speed: 0.95,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub enum JumpState {
-    InProgress,
-    Done,
-}
-impl Default for JumpState {
-    fn default() -> Self {
-        Self::Done
-    }
-}
-impl Jump {
-    pub fn speed_fraction(&self) -> f32 {
-        let t: f32 = self.time_since_start.into();
-        // shifted and scaled sigmoid
-        let suggestion = 1. / (1. + (40. * (t - 0.1)).exp());
-        if suggestion > 0.001 {
-            suggestion
-        } else {
-            0.0
+            impulse: 10.,
+            requested: false,
         }
     }
 }
@@ -219,37 +194,4 @@ pub struct CharacterAnimations {
     pub idle: Handle<AnimationClip>,
     pub walk: Handle<AnimationClip>,
     pub aerial: Handle<AnimationClip>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Timer {
-    elapsed_time: f32,
-}
-
-impl From<Timer> for f32 {
-    fn from(timer: Timer) -> Self {
-        timer.elapsed_time
-    }
-}
-
-impl Timer {
-    pub fn with_max_time() -> Self {
-        Self {
-            elapsed_time: f32::MAX,
-        }
-    }
-    pub fn start(&mut self) {
-        self.elapsed_time = 0.0
-    }
-    pub fn update(&mut self, dt: f32) {
-        self.elapsed_time = if self.elapsed_time < f32::MAX - dt - 0.1 {
-            self.elapsed_time + dt
-        } else {
-            f32::MAX
-        }
-    }
-    pub fn is_active(&self) -> bool {
-        self.elapsed_time > 1e-5
-    }
 }

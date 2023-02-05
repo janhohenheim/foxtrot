@@ -26,7 +26,7 @@ fn setup(
     });
 
     loader.send(WorldLoadRequest {
-        filename: "demo".to_string(),
+        filename: "old_town".to_string(),
     });
 
     // Make sure the player is spawned after the level

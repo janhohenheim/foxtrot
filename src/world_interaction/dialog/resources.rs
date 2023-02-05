@@ -1,5 +1,6 @@
 use crate::world_interaction::condition::{ActiveConditions, ConditionId};
 use bevy::prelude::*;
+use bevy::reflect::TypeUuid;
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
@@ -31,7 +32,8 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
+#[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
 pub struct Dialog {
     pub initial_page: Vec<InitialPage>,
     pub pages: HashMap<PageId, Page>,

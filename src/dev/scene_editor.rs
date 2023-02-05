@@ -33,7 +33,7 @@ pub struct SceneEditorState {
 impl Default for SceneEditorState {
     fn default() -> Self {
         Self {
-            level_name: "demo".to_owned(),
+            level_name: "old_town".to_owned(),
             save_name: default(),
             active: default(),
             parent_name: default(),

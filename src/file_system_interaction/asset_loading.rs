@@ -1,8 +1,12 @@
+use crate::file_system_interaction::level_serialization::SerializedLevel;
+use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy_asset_loader::prelude::*;
+use bevy_common_assets::ron::RonAssetPlugin;
 use bevy_kira_audio::AudioSource;
+use bevy::utils::HashMap;
 
 pub struct LoadingPlugin;
 
@@ -11,14 +15,19 @@ pub struct LoadingPlugin;
 /// If interested, take a look at <https://bevy-cheatbook.github.io/features/assets.html>
 impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_loading_state(
-            LoadingState::new(GameState::Loading)
-                .with_collection::<FontAssets>()
-                .with_collection::<AudioAssets>()
-                .with_collection::<SceneAssets>()
-                .with_collection::<AnimationAssets>()
-                .continue_to_state(GameState::Menu),
-        );
+        app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
+            .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
+            .add_loading_state(
+                LoadingState::new(GameState::Loading)
+                    .with_collection::<FontAssets>()
+                    .with_collection::<AudioAssets>()
+                    .with_collection::<SceneAssets>()
+                    .with_collection::<AnimationAssets>()
+                    .with_collection::<ShaderAssets>()
+                    .with_collection::<LevelAssets>()
+                    .with_collection::<DialogAssets>()
+                    .continue_to_state(GameState::Menu),
+            );
     }
 }
 
@@ -53,4 +62,23 @@ pub struct AnimationAssets {
     pub character_walking: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation2")]
     pub character_running: Handle<AnimationClip>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct ShaderAssets {
+    #[asset(path = "shaders/glowy.wgsl")]
+    pub glowy: Handle<Shader>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct LevelAssets {
+    // Not simply linking to "levels/" because of <https://github.com/NiklasEi/bevy_asset_loader/issues/104>
+    #[asset(paths("levels/old_town.lvl.ron"), collection(typed, mapped))]
+    pub levels: HashMap<String, Handle<SerializedLevel>>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct DialogAssets {
+    #[asset(path = "dialogs/follower.dlg.ron")]
+    pub follower: Handle<Dialog>,
 }

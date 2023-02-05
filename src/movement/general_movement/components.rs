@@ -2,13 +2,72 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
+
+#[derive(Debug, Clone, Bundle)]
+pub struct KinematicCharacterBundle {
+    pub velocity: Velocity,
+    pub force: Force,
+    pub mass: Mass,
+    pub walker: Walker,
+    pub jump: Jump,
+    pub grounded: Grounded,
+    pub drag: Drag,
+    pub rigid_body: RigidBody,
+    pub collider: Collider,
+    pub character_controller: KinematicCharacterController,
+}
+
+impl Default for KinematicCharacterBundle {
+    fn default() -> Self {
+        Self {
+            velocity: default(),
+            force: default(),
+            mass: default(),
+            walker: default(),
+            jump: default(),
+            grounded: default(),
+            drag: default(),
+            collider: default(),
+            rigid_body: RigidBody::KinematicVelocityBased,
+            character_controller: KinematicCharacterController {
+                offset: CharacterLength::Relative(0.05),
+                ..default()
+            },
+        }
+    }
+}
+
+impl KinematicCharacterBundle {
+    pub fn capsule(height: f32, radius: f32) -> Self {
+        Self {
+            collider: Collider::capsule_y(height / 2., radius),
+            drag: Drag::for_capsule(height, radius),
+            ..default()
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
 
 #[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct CharacterVelocity(pub Vect);
+pub struct Velocity(pub Vect);
+
+#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Force(pub Vect);
+
+#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Mass(pub f32);
+
+impl Default for Mass {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -52,7 +111,7 @@ impl Drag {
         let cross_sectional_area = (height - radius) * height + TAU * radius * radius;
         Self {
             area: cross_sectional_area,
-            ..Default::default()
+            ..default()
         }
     }
     pub fn calculate_force(&self, velocity: Vec3) -> Vec3 {
@@ -122,7 +181,7 @@ impl Default for Jump {
         Self {
             time_since_start: Timer::with_max_time(),
             state: default(),
-            g: -0.3,
+            g: 0.3,
             duration: 0.23,
             speed: 0.95,
         }

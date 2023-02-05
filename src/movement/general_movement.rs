@@ -6,7 +6,7 @@ use crate::level_instanciation::spawning::AnimationEntityLink;
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
-pub use components::*;
+pub use components::{Velocity, *};
 
 pub struct GeneralMovementPlugin;
 
@@ -16,7 +16,7 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<JumpState>()
             .register_type::<Grounded>()
             .register_type::<Jump>()
-            .register_type::<CharacterVelocity>()
+            .register_type::<Velocity>()
             .register_type::<Drag>()
             .register_type::<Walker>()
             .add_system_set(
@@ -43,13 +43,13 @@ impl Plugin for GeneralMovementPlugin {
                     )
                     .with_system(apply_velocity.label("apply_velocity"))
                     .with_system(
-                        reset_velocity
-                            .label("reset_velocity")
+                        reset_physics_components
+                            .label("reset_physics_components")
                             .after("apply_velocity"),
                     )
                     .with_system(
-                        reset_acceleration
-                            .label("reset_acceleration")
+                        reset_walking_direction
+                            .label("reset_walking_direction")
                             .after("apply_velocity"),
                     )
                     .with_system(rotate_model)
@@ -64,41 +64,46 @@ fn update_grounded(mut query: Query<(&mut Grounded, &KinematicCharacterControlle
     }
 }
 
-fn apply_gravity(time: Res<Time>, mut character: Query<(&mut CharacterVelocity, &Jump)>) {
-    let dt = time.delta_seconds();
-    for (mut velocity, jump) in &mut character {
-        let gravity = jump.g * dt;
-        velocity.0.y += gravity;
+fn apply_gravity(mut character: Query<(&mut Force, &KinematicCharacterController, &Mass, &Jump)>) {
+    for (mut force, controller, mass, jump) in &mut character {
+        let gravitational_force = -controller.up * jump.g * mass.0;
+        force.0 += gravitational_force;
     }
 }
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
+    time: Res<Time>,
     mut player_query: Query<(
-        &CharacterVelocity,
+        &Force,
+        &mut Velocity,
         &mut KinematicCharacterController,
+        &Mass,
         Option<&Player>,
     )>,
 ) {
-    for (velocity, mut controller, player) in &mut player_query {
-        let velocity = velocity.0;
+    let dt = time.delta_seconds();
+    for (force, mut velocity, mut controller, mass, player) in &mut player_query {
+        let acceleration = force.0 / mass.0;
+        velocity.0 += (acceleration * dt).collapse_approx_zero();
         if player.is_some() {
-            info!("velocity: {}", velocity);
+            info!("end acceleration: {}", acceleration);
         }
-        controller.translation = Some(velocity);
+        controller.translation = Some(velocity.0);
     }
 }
 
-fn reset_velocity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
-    for (mut velocity, grounded) in &mut player_query {
+fn reset_physics_components(mut player_query: Query<(&mut Velocity, &mut Force, &Grounded)>) {
+    for (mut velocity, mut force, grounded) in &mut player_query {
         if grounded.is_grounded() {
             velocity.0.y = velocity.0.y.max(-0.1);
         }
         velocity.0 = velocity.0.collapse_approx_zero();
+        force.0 = Vec3::ZERO;
     }
 }
 
-fn reset_acceleration(mut character_query: Query<&mut Walker>) {
+fn reset_walking_direction(mut character_query: Query<&mut Walker>) {
     for mut walker in &mut character_query {
         walker.direction = None;
     }
@@ -146,31 +151,26 @@ fn play_animations(
     }
 }
 
-fn apply_drag(
-    time: Res<Time>,
-    mut character_query: Query<(&mut CharacterVelocity, &Drag, Option<&Player>)>,
-) {
-    let dt = time.delta_seconds();
-    for (mut velocity, drag, player) in &mut character_query {
-        let force = drag.calculate_force(velocity.0);
+fn apply_drag(mut character_query: Query<(&mut Force, &Velocity, &Drag, Option<&Player>)>) {
+    for (mut force, velocity, drag, player) in &mut character_query {
+        let drag_force = drag.calculate_force(velocity.0);
         if player.is_some() {
-            info!("drag force: {}", force);
+            info!("drag force: {}", drag_force);
         }
-        velocity.0 -= force * dt;
+        force.0 += drag_force;
     }
 }
 
 fn apply_walking(
-    time: Res<Time>,
-    mut character_query: Query<(&mut CharacterVelocity, &Walker, &Grounded, Option<&Player>)>,
+    mut character_query: Query<(&mut Force, &Walker, &Grounded, &Mass, Option<&Player>)>,
 ) {
-    let dt = time.delta_seconds();
-    for (mut velocity, walker, grounded, player) in &mut character_query {
+    for (mut force, walker, grounded, mass, player) in &mut character_query {
         if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
+            let walking_force = acceleration * mass.0;
             if player.is_some() {
-                info!("acceleration: {}", acceleration);
+                info!("walking force: {}", walking_force);
             }
-            velocity.0 += acceleration * dt;
+            force.0 += walking_force;
         }
     }
 }

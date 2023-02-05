@@ -1,4 +1,4 @@
-use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState, Walker};
+use crate::movement::general_movement::{Grounded, Jump, JumpState, Velocity, Walker};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::PlayerCamera;
 use crate::util::trait_extension::Vec2Ext;
@@ -39,7 +39,7 @@ pub struct PlayerSensor;
 fn handle_jump(
     time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&Grounded, &mut CharacterVelocity, &mut Jump), With<Player>>,
+    mut player_query: Query<(&Grounded, &mut Velocity, &mut Jump), With<Player>>,
 ) {
     let dt = time.delta_seconds();
     let jump_requested = actions.jump;

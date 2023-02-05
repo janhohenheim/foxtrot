@@ -42,9 +42,8 @@ fn control_flying_sound(
 ) {
     for (output, grounded) in character_query.iter() {
         if let Some(instance) = audio_instances.get_mut(&audio.0) {
-            let is_in_air = grounded.time_since_last_grounded.is_active();
             let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
-            let is_moving_on_ground = has_horizontal_movement && !is_in_air;
+            let is_moving_on_ground = has_horizontal_movement && grounded.is_grounded();
             if is_moving_on_ground {
                 instance.resume(AudioTween::default());
             } else {

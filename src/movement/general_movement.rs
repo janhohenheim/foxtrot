@@ -37,28 +37,16 @@ impl Plugin for GeneralMovementPlugin {
     }
 }
 
-fn update_grounded(
-    time: Res<Time>,
-    mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>,
-) {
-    let dt = time.delta_seconds();
+fn update_grounded(mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>) {
     for (mut grounded, output) in &mut query {
-        if output.grounded {
-            grounded.time_since_last_grounded.start()
-        } else {
-            grounded.time_since_last_grounded.update(dt)
-        }
+        grounded.try_set(output.grounded);
     }
 }
 
-fn apply_gravity(mut character: Query<(&mut CharacterVelocity, &Grounded, &Jump)>) {
-    for (mut velocity, grounded, jump) in &mut character {
-        let dt = f32::from(grounded.time_since_last_grounded)
-            - f32::from(jump.time_since_start).min(jump.duration);
-        let max_gravity = jump.g * 5.;
-        let min_gravity = jump.g * 0.01;
-        // min and max look swapped because gravity is negative
-        let gravity = (jump.g * dt).clamp(max_gravity, min_gravity);
+fn apply_gravity(time: Res<Time>, mut character: Query<(&mut CharacterVelocity, &Jump)>) {
+    let dt = time.delta_seconds();
+    for (mut velocity, jump) in &mut character {
+        let gravity = jump.g * dt;
         velocity.0.y += gravity;
     }
 }
@@ -68,13 +56,18 @@ fn apply_velocity(
     mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
 ) {
     for (velocity, mut controller) in &mut player_query {
-        controller.translation = Some(velocity.0);
+        let velocity = velocity.0;
+        controller.translation = Some(velocity);
     }
 }
 
-fn reset_velocity(mut player_query: Query<&mut CharacterVelocity>) {
-    for mut velocity in &mut player_query {
-        velocity.0 = default();
+fn reset_velocity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
+    for (mut velocity, grounded) in &mut player_query {
+        velocity.0.x = default();
+        velocity.0.z = default();
+        if grounded.is_grounded() {
+            velocity.0.y = 0.0;
+        }
     }
 }
 
@@ -106,10 +99,9 @@ fn play_animations(
             .get_mut(animation_entity_link.0)
             .expect("animation_entity_link held entity without animation player");
 
-        let is_in_air = grounded.time_since_last_grounded.is_active();
         let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
 
-        if is_in_air {
+        if !grounded.is_grounded() {
             animation_player
                 .play(animations.aerial.clone_weak())
                 .repeat();

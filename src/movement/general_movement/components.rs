@@ -1,14 +1,64 @@
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-
+use std::f32::consts::TAU;
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct CharacterVelocity(pub Vect);
+
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Walker {
+    pub acceleration: f32,
+    /// Only apply acceleration if the velocity is below this value.
+    pub max_speed: f32,
+}
+
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Drag {
+    pub fluid_density: f32,
+    pub area: f32,
+    pub drag_coefficient: f32,
+}
+
+impl Drag {
+    pub fn for_capsule(height: f32, radius: f32) -> Self {
+        let cross_sectional_area = (height - radius) * height + TAU * radius * radius;
+        Self {
+            area: cross_sectional_area,
+            ..Default::default()
+        }
+    }
+    pub fn calculate_force(&self, velocity: Vec3) -> Vec3 {
+        let speed_squared = velocity.length_squared();
+        if speed_squared < 1e-5 {
+            return Vec3::ZERO;
+        }
+        0.5 * self.fluid_density
+            * self.area
+            * self.drag_coefficient
+            * speed_squared
+            * -velocity.normalize()
+    }
+}
+
+impl Default for Drag {
+    fn default() -> Self {
+        Self {
+            // dry air at 20°C, see <https://en.wikipedia.org/wiki/Density_of_air#Dry_air>
+            fluid_density: 1.2041,
+            // Empty
+            area: 0.0,
+            // Person, see <https://www.engineeringtoolbox.com/drag-coefficient-d_627.html>
+            drag_coefficient: 1.2,
+        }
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]

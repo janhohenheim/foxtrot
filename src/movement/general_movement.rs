@@ -16,6 +16,8 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<Grounded>()
             .register_type::<Jump>()
             .register_type::<CharacterVelocity>()
+            .register_type::<Drag>()
+            .register_type::<Walker>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(update_grounded.label("update_grounded"))
@@ -25,6 +27,7 @@ impl Plugin for GeneralMovementPlugin {
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
+                    .with_system(apply_drag.label("apply_drag").before("apply_velocity"))
                     .with_system(apply_velocity.label("apply_velocity"))
                     .with_system(
                         reset_velocity
@@ -110,5 +113,13 @@ fn play_animations(
         } else {
             animation_player.play(animations.idle.clone_weak()).repeat();
         }
+    }
+}
+
+fn apply_drag(time: Res<Time>, mut character_query: Query<(&mut CharacterVelocity, &Drag)>) {
+    let dt = time.delta_seconds();
+    for (mut velocity, drag) in &mut character_query {
+        let force = drag.calculate_force(velocity.0);
+        velocity.0 -= force * dt;
     }
 }

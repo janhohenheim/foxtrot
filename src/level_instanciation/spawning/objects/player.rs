@@ -1,6 +1,6 @@
 use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
 use crate::movement::general_movement::{
-    CharacterAnimations, CharacterVelocity, Grounded, Jump, Model,
+    CharacterAnimations, CharacterVelocity, Drag, Grounded, Jump, Model,
 };
 use crate::player_control::camera::PlayerCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
@@ -33,6 +33,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 },
                 Player,
                 Name::new("Player"),
+                Drag::for_capsule(HEIGHT, RADIUS),
                 Grounded::default(),
                 CharacterVelocity::default(),
                 CharacterAnimations {

@@ -43,7 +43,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             .with_children(|parent| {
                 parent.spawn((
                     DialogTarget {
-                        dialog_id: DialogId::new("sample"),
+                        dialog_id: DialogId::new("follower"),
                     },
                     Name::new("NPC Dialog Collider"),
                     Collider::cylinder(HEIGHT / 2., RADIUS * 5.),

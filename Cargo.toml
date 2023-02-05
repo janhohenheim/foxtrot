@@ -38,7 +38,8 @@ dynamic = [
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = { version = "0.14", features = ["3d"] }
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7", features = ["3d", "standard_dynamic_assets"] }
+bevy_common_assets = { version = "0.4.0", features = ["ron"] }
 bevy_egui = "0.19"
 serde = { version = "1", features = ["derive"] }
 indexmap = { version = "1", features = ["serde-1"] }

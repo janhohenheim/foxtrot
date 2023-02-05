@@ -1,3 +1,4 @@
+use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instanciation::spawning::{GameObject, SpawnEvent, SpawnTracker};
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
@@ -7,7 +8,6 @@ use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::{fs, iter};
-use crate::file_system_interaction::asset_loading::LevelAssets;
 
 pub struct WorldSerializationPlugin;
 
@@ -104,7 +104,7 @@ fn load_world(
             None => {
                 error!(
                     "Failed to load scene \"{}\": No such level. Available levels: {:?}",
-                path,
+                    path,
                     level_handles.levels.keys()
                 );
                 continue;

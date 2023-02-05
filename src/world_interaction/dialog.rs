@@ -1,3 +1,4 @@
+use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::ActionsFrozen;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::world_interaction::dialog::resources::{
@@ -8,7 +9,6 @@ use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use serde::{Deserialize, Serialize};
-use crate::file_system_interaction::asset_loading::DialogAssets;
 
 mod resources;
 
@@ -47,7 +47,7 @@ fn set_current_dialog(
             None => {
                 error!(
                     "Failed to load dialog \"{}\": No such dialog. Available dialog: {:?}",
-                path,
+                    path,
                     dialog_handles.dialogs.keys()
                 );
                 continue;
@@ -165,4 +165,3 @@ fn present_choices(
         }
     }
 }
-

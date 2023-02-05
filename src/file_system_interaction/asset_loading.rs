@@ -3,10 +3,10 @@ use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
+use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
 use bevy_kira_audio::AudioSource;
-use bevy::utils::HashMap;
 
 pub struct LoadingPlugin;
 

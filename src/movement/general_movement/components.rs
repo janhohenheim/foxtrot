@@ -13,12 +13,28 @@ pub struct CharacterVelocity(pub Vect);
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Grounded {
-    pub time_since_last_grounded: Timer,
+    state: bool,
+    wants_change: bool,
 }
 
 impl Grounded {
     pub fn is_grounded(&self) -> bool {
-        !self.time_since_last_grounded.is_active()
+        self.state
+    }
+
+    /// Sets the grounded state to the given value after being requested to do so twice.
+    /// This is to combat both false negatives when walking on the ground and false positives when jumping up a wall.
+    pub fn try_set(&mut self, new_state: bool) {
+        if self.state == new_state {
+            self.wants_change = false
+        } else {
+            if self.wants_change {
+                self.state = new_state;
+                self.wants_change = false;
+            } else {
+                self.wants_change = true;
+            }
+        }
     }
 }
 

@@ -5,22 +5,22 @@
         <key>CFBundleDevelopmentRegion</key>
         <string>en</string>
         <key>CFBundleDisplayName</key>
-        <string>BevyGame</string> <!-- ToDo: this should be the same as your OSX app name in the release flow -->
+        <string>Foxtrot</string>
         <key>CFBundleExecutable</key>
-        <string>bevy_game</string> <!-- ToDo: this should be the same as your executable name in the release flow -->
+        <string>foxtrot</string>
         <key>CFBundleIconFile</key>
         <string>AppIcon.icns</string>
         <key>CFBundleIdentifier</key>
-        <string>your.domain.bevy-game</string> <!-- ToDo -->
+        <string>ch.janhohenheim.foxtrot</string>
         <key>CFBundleInfoDictionaryVersion</key>
         <string>6.0</string>
         <key>CFBundleName</key>
-        <string>Bevy Game</string> <!-- ToDo -->
+        <string>Foxtrot</string>
         <key>CFBundlePackageType</key>
         <string>APPL</string>
         <key>CFBundleShortVersionString</key>
         <!-- Version -->
-        <string>0.1.0</string>
+        <string>0.1.4</string>
         <key>CFBundleSupportedPlatforms</key>
         <array>
             <string>MacOSX</string>

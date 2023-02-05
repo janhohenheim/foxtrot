@@ -27,13 +27,11 @@ impl Grounded {
     pub fn try_set(&mut self, new_state: bool) {
         if self.state == new_state {
             self.wants_change = false
+        } else if self.wants_change {
+            self.state = new_state;
+            self.wants_change = false;
         } else {
-            if self.wants_change {
-                self.state = new_state;
-                self.wants_change = false;
-            } else {
-                self.wants_change = true;
-            }
+            self.wants_change = true;
         }
     }
 }

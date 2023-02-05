@@ -6,7 +6,6 @@ use crate::level_instanciation::spawning::AnimationEntityLink;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
-use crate::player_control::player_embodiment::Player;
 
 pub struct GeneralMovementPlugin;
 
@@ -39,11 +38,10 @@ impl Plugin for GeneralMovementPlugin {
 }
 
 fn update_grounded(
-    mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput), With<Player>>,
+    mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>,
 ) {
     for (mut grounded, output) in &mut query {
         grounded.try_set(output.grounded);
-        info!("Grounded: {:?}, set as: {:?}", output.grounded, grounded.is_grounded());
     }
 }
 
@@ -57,7 +55,7 @@ fn apply_gravity(time: Res<Time>, mut character: Query<(&mut CharacterVelocity, 
 
 /// Treat `CharacterVelocity` as readonly after this system.
 fn apply_velocity(
-    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController), With<Player>>,
+    mut player_query: Query<(&CharacterVelocity, &mut KinematicCharacterController)>,
 ) {
     for (velocity, mut controller) in &mut player_query {
         let velocity = velocity.0;

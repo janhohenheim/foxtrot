@@ -3280,9 +3280,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.50"
+version = "1.0.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ef7d57beacfaf2d8aee5937dab7b7f28de3cb8b1828479bb5de2a7106f2bae2"
+checksum = "5d727cae5b39d21da60fa540906919ad737832fe0b1c165da3a34d6548c849d6"
 dependencies = [
  "unicode-ident",
 ]
@@ -3317,7 +3317,7 @@ checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
 [[package]]
 name = "rapier3d"
 version = "0.17.1"
-source = "git+https://github.com/janhohenheim/rapier?branch=fix-kcc#4ed3adda6ef243ccdba1752bb59f6ff40bd1881f"
+source = "git+https://github.com/janhohenheim/rapier?branch=fix-kcc#fac561c902ec3d004d3f95df137beb3450231bc6"
 dependencies = [
  "approx",
  "arrayvec",

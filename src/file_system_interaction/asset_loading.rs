@@ -79,6 +79,7 @@ pub struct LevelAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct DialogAssets {
-    #[asset(path = "dialogs/follower.dlg.ron")]
-    pub follower: Handle<Dialog>,
+    // Not simply linking to "levels/" because of <https://github.com/NiklasEi/bevy_asset_loader/issues/104>
+    #[asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))]
+    pub dialogs: HashMap<String, Handle<Dialog>>,
 }

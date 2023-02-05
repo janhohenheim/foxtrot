@@ -8,8 +8,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::path::Path;
+use crate::file_system_interaction::asset_loading::DialogAssets;
 
 mod resources;
 
@@ -38,9 +37,23 @@ fn set_current_dialog(
     mut commands: Commands,
     active_conditions: Res<ActiveConditions>,
     mut dialog_events: EventReader<DialogEvent>,
+    dialogs: Res<Assets<Dialog>>,
+    dialog_handles: Res<DialogAssets>,
 ) {
     for dialog_event in dialog_events.iter() {
-        let dialog = load_dialog(&dialog_event.dialog);
+        let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0);
+        let dialog_handle = match dialog_handles.dialogs.get(&path) {
+            Some(handle) => handle,
+            None => {
+                error!(
+                    "Failed to load dialog \"{}\": No such dialog. Available dialog: {:?}",
+                path,
+                    dialog_handles.dialogs.keys()
+                );
+                continue;
+            }
+        };
+        let dialog = dialogs.get(dialog_handle).unwrap();
         let current_page = dialog_event.page.clone().unwrap_or_else(|| {
             dialog
                 .initial_page
@@ -56,7 +69,7 @@ fn set_current_dialog(
         });
         commands.insert_resource(CurrentDialog {
             id: dialog_event.dialog.clone(),
-            dialog,
+            dialog: dialog.clone(),
             current_page,
             last_choice: None,
         });
@@ -153,11 +166,3 @@ fn present_choices(
     }
 }
 
-fn load_dialog(id: &DialogId) -> Dialog {
-    let filename = format!("{}.ron", id.0);
-    let path = Path::new("assets").join("dialogs").join(filename);
-    let serialized = fs::read_to_string(path.clone())
-        .unwrap_or_else(|e| panic!("Failed to open dialog file at {path:?}: {e}"));
-    ron::from_str(&serialized)
-        .unwrap_or_else(|e| panic!("Failed to parse dialog file at {path:?}: {e}"))
-}

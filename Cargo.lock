@@ -112,9 +112,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.68"
+version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cb2f989d18dd141ab8ae82f64d1a8cdd37e0840f73a406896cf5e99502fab61"
+checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
 
 [[package]]
 name = "approx"
@@ -875,7 +875,7 @@ checksum = "8ec44f7655039546bc5d34d98de877083473f3e9b2b81d560c528d6d74d3eff4"
 [[package]]
 name = "bevy_rapier3d"
 version = "0.20.0"
-source = "git+https://github.com/janhohenheim/bevy_rapier?branch=own-fork#dac6eb952cd3e34ad89123a9e768d91b532d0a04"
+source = "git+https://github.com/janhohenheim/bevy_rapier?branch=own-fork#5a49c28384e5512cf9128acdd4e0e3254e50e967"
 dependencies = [
  "bevy",
  "bitflags",
@@ -3330,7 +3330,7 @@ checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
 [[package]]
 name = "rapier3d"
 version = "0.17.1"
-source = "git+https://github.com/janhohenheim/rapier?branch=fix-kcc#93d0e625c758a8429f1a1e56ea3b6f8f4982a017"
+source = "git+https://github.com/janhohenheim/rapier?branch=experiment#d013f02095644cd2f76aa06fb6c3f5539ebda0c0"
 dependencies = [
  "approx",
  "arrayvec",
@@ -3605,9 +3605,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.91"
+version = "1.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "877c235533714907a8c2464236f5c4b2a17262ef1bd71f38f35ea592c8da6883"
+checksum = "7434af0dc1cbd59268aa98b4c22c131c0584d2232f6fb166efb993e2832e896a"
 dependencies = [
  "itoa",
  "ryu",

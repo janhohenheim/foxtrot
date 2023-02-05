@@ -43,6 +43,7 @@ pub struct Jump {
     pub state: JumpState,
     pub g: f32,
     pub duration: f32,
+    pub speed: f32,
 }
 
 impl Default for Jump {
@@ -52,6 +53,7 @@ impl Default for Jump {
             state: default(),
             g: -0.3,
             duration: 0.23,
+            speed: 0.95,
         }
     }
 }

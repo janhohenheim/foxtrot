@@ -5,13 +5,32 @@ pub trait Vec3Ext {
     #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn is_approx_zero(self) -> bool;
     fn x0z(self) -> Vec3;
+    fn collapse_approx_zero(self) -> Vec3;
 }
 impl Vec3Ext for Vec3 {
     fn is_approx_zero(self) -> bool {
-        [self.x, self.y, self.z].iter().all(|&x| x.abs() < 1e-5)
+        self.to_array().iter().all(|&x| x.abs() < 1e-5)
     }
     fn x0z(self) -> Vec3 {
         Vec3::new(self.x, 0., self.z)
+    }
+    fn collapse_approx_zero(self) -> Vec3 {
+        let collapse = |x: f32| if x.abs() < 1e-5 { 0. } else { x };
+        Vec3::new(collapse(self.x), collapse(self.y), collapse(self.z))
+    }
+}
+
+pub trait Vec2Ext {
+    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
+    fn is_approx_zero(self) -> bool;
+    fn x0y(self) -> Vec3;
+}
+impl Vec2Ext for Vec2 {
+    fn is_approx_zero(self) -> bool {
+        self.to_array().iter().all(|&x| x.abs() < 1e-5)
+    }
+    fn x0y(self) -> Vec3 {
+        Vec3::new(self.x, 0., self.y)
     }
 }
 

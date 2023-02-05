@@ -27,11 +27,28 @@ impl Plugin for GeneralMovementPlugin {
                             .after("update_grounded")
                             .before("apply_velocity"),
                     )
-                    .with_system(apply_drag.label("apply_drag").before("apply_velocity"))
+                    .with_system(
+                        apply_walking
+                            .label("apply_walking")
+                            .after("update_grounded")
+                            .before("apply_velocity"),
+                    )
+                    .with_system(
+                        apply_drag
+                            .label("apply_drag")
+                            .after("apply_walking")
+                            .after("apply_gravity")
+                            .before("apply_velocity"),
+                    )
                     .with_system(apply_velocity.label("apply_velocity"))
                     .with_system(
                         reset_velocity
                             .label("reset_velocity")
+                            .after("apply_velocity"),
+                    )
+                    .with_system(
+                        reset_acceleration
+                            .label("reset_acceleration")
                             .after("apply_velocity"),
                     )
                     .with_system(rotate_model)
@@ -66,11 +83,16 @@ fn apply_velocity(
 
 fn reset_velocity(mut player_query: Query<(&mut CharacterVelocity, &Grounded)>) {
     for (mut velocity, grounded) in &mut player_query {
-        velocity.0.x = default();
-        velocity.0.z = default();
         if grounded.is_grounded() {
             velocity.0.y = velocity.0.y.max(-0.1);
         }
+        velocity.0 = velocity.0.collapse_approx_zero();
+    }
+}
+
+fn reset_acceleration(mut character_query: Query<&mut Walker>) {
+    for mut walker in &mut character_query {
+        walker.direction = None;
     }
 }
 
@@ -121,5 +143,17 @@ fn apply_drag(time: Res<Time>, mut character_query: Query<(&mut CharacterVelocit
     for (mut velocity, drag) in &mut character_query {
         let force = drag.calculate_force(velocity.0);
         velocity.0 -= force * dt;
+    }
+}
+
+fn apply_walking(
+    time: Res<Time>,
+    mut character_query: Query<(&mut CharacterVelocity, &Walker, &Grounded)>,
+) {
+    let dt = time.delta_seconds();
+    for (mut velocity, walker, grounded) in &mut character_query {
+        if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
+            velocity.0 += acceleration * dt;
+        }
     }
 }

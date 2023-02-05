@@ -1,7 +1,7 @@
 use crate::level_instanciation::spawning::post_spawn_modification::CustomCollider;
 use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
 use crate::movement::general_movement::{
-    CharacterAnimations, CharacterVelocity, Drag, Grounded, Jump, Model,
+    CharacterAnimations, CharacterVelocity, Drag, Grounded, Jump, Model, Walker,
 };
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
@@ -35,6 +35,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 CharacterVelocity::default(),
                 Grounded::default(),
                 Drag::for_capsule(HEIGHT, RADIUS),
+                Walker::default(),
                 Jump::default(),
                 Follower,
                 CharacterAnimations {

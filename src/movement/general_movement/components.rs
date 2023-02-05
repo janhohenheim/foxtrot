@@ -10,12 +10,33 @@ pub struct Model;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct CharacterVelocity(pub Vect);
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Walker {
-    pub acceleration: f32,
-    /// Only apply acceleration if the velocity is below this value.
-    pub max_speed: f32,
+    pub ground_acceleration: f32,
+    pub aerial_acceleration: f32,
+    pub direction: Option<Vec3>,
+}
+
+impl Walker {
+    pub fn calculate_acceleration(&self, grounded: bool) -> Option<Vec3> {
+        let acceleration = if grounded {
+            self.ground_acceleration
+        } else {
+            self.aerial_acceleration
+        };
+        self.direction.map(|dir| dir * acceleration)
+    }
+}
+
+impl Default for Walker {
+    fn default() -> Self {
+        Self {
+            ground_acceleration: 0.1,
+            aerial_acceleration: 0.01,
+            direction: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]

@@ -1,6 +1,7 @@
-use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState};
+use crate::movement::general_movement::{CharacterVelocity, Grounded, Jump, JumpState, Walker};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::PlayerCamera;
+use crate::util::trait_extension::Vec2Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -61,14 +62,10 @@ fn handle_jump(
 }
 
 fn handle_horizontal_movement(
-    time: Res<Time>,
     actions: Res<Actions>,
-    mut player_query: Query<(&mut CharacterVelocity,), With<Player>>,
+    mut player_query: Query<&mut Walker, With<Player>>,
     camera_query: Query<&Transform, With<PlayerCamera>>,
 ) {
-    let dt = time.delta_seconds();
-    let speed = 6.0;
-
     let camera = match camera_query.iter().next() {
         Some(transform) => transform,
         None => return,
@@ -85,10 +82,9 @@ fn handle_horizontal_movement(
     let sideward = forward.perp();
     let forward_action = forward * actions.y;
     let sideward_action = sideward * actions.x;
-    let movement = (forward_action + sideward_action).normalize() * speed * dt;
+    let movement = (forward_action + sideward_action).x0y().normalize();
 
-    for (mut velocity,) in &mut player_query {
-        velocity.0.x += movement.x;
-        velocity.0.z += movement.y;
+    for mut walker in &mut player_query {
+        walker.direction = Some(movement);
     }
 }

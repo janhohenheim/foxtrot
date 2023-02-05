@@ -1,4 +1,4 @@
-use crate::movement::general_movement::CharacterVelocity;
+use crate::movement::general_movement::Walker;
 use crate::movement::navigation::navmesh::read_navmesh;
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::Vec3Ext;
@@ -29,9 +29,8 @@ pub struct Follower;
 
 #[allow(clippy::type_complexity)]
 fn query_mesh(
-    time: Res<Time>,
     mut with_follower: Query<
-        (Entity, &GlobalTransform, &mut CharacterVelocity),
+        (Entity, &GlobalTransform, &mut Walker),
         (With<Follower>, Without<Player>),
     >,
     with_player: Query<(Entity, &GlobalTransform), (With<Player>, Without<Follower>)>,
@@ -39,9 +38,8 @@ fn query_mesh(
     nav_meshes: Query<&Handle<PathMesh>>,
     rapier_context: Res<RapierContext>,
 ) {
-    let dt = time.delta_seconds();
     for path_mesh_handle in nav_meshes.iter() {
-        for (follower_entity, follower_transform, mut character_velocity) in &mut with_follower {
+        for (follower_entity, follower_transform, mut walker) in &mut with_follower {
             for (player_entity, player_transform) in &with_player {
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
                 let from = follower_transform.translation();
@@ -58,16 +56,15 @@ fn query_mesh(
                     Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
                     && entity == player_entity
                 {
-                    Some(to.x0z())
+                    Some(to)
                 } else if let Some(path) = path_mesh.transformed_path(from, to) {
                     Some(path.path[0])
                 } else {
                     None
                 };
                 if let Some(path) = path {
-                    let dir = (path - from).try_normalize().unwrap();
-                    let speed = 3.;
-                    character_velocity.0 += dir * dt * speed;
+                    let dir = (path - from).x0z().try_normalize().unwrap();
+                    walker.direction = Some(dir);
                 }
             }
         }

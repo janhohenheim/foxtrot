@@ -1,11 +1,8 @@
 use crate::player_control::actions::{Actions, ActionsFrozen};
-use crate::util::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis};
 use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use crate::GameState;
-use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
-use bevy_rapier3d::na::Vector3;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
@@ -101,21 +98,18 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
         return;
     }
     for mut camera in camera_query.iter_mut() {
-        let direction = camera.new.direction().unwrap_or(Vec3::Z);
-        let horizontal_rotation_axis = direction.xz().perp().x0y();
-        let horizontal_angle = camera_movement.x * PI;
-        let vertical_angle = -camera_movement.y * PI;
+        let direction = camera.new.eye.forward();
+        let mut transform = camera.new.eye.with_rotation(default());
+
+        let horizontal_angle = -camera_movement.x.clamp(-PI + 1e-5, PI - 1e-5);
+        transform.rotate_axis(Vec3::Y, horizontal_angle);
+        let vertical_angle = -camera_movement.y;
         let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
+        transform.rotate_local_x(vertical_angle);
 
-        let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);
-        let vertical_rotation_matrix =
-            get_rotation_matrix_around_vector(vertical_angle, horizontal_rotation_axis.into());
-
-        let rotated_direction: Vec3 =
-            (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction))
-                .into();
-
-        camera.new.eye.translation = -camera.new.target - rotated_direction * MAX_DISTANCE;
+        let pivot = camera.new.target;
+        let rotation = transform.rotation;
+        camera.new.eye.rotate_around(pivot, rotation);
     }
 }
 

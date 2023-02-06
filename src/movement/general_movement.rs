@@ -71,11 +71,11 @@ fn update_grounded(
 ) {
     for (mut grounded, velocity, controller, output) in &mut query {
         let falling = velocity.0.dot(controller.up) < -1e-5;
-        let new_grounded = output
-            .map(|output| output.grounded)
-            .unwrap_or_else(|| grounded.is_grounded())
-            && falling;
-        grounded.try_set(new_grounded);
+        if !falling {
+            grounded.force_set(false)
+        } else if let Some(output) = output {
+            grounded.try_set(output.grounded);
+        }
     }
 }
 
@@ -130,6 +130,7 @@ fn apply_jumping(
     let dt = time.delta_seconds();
     for (grounded, mut force, controller, jump) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
+            info!("jumping");
             force.0 += controller.up * jump.impulse / dt;
         }
     }

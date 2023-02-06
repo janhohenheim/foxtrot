@@ -167,6 +167,11 @@ impl Grounded {
             self.wants_change = true;
         }
     }
+
+    pub fn force_set(&mut self, new_state: bool) {
+        self.state = new_state;
+        self.wants_change = false;
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]

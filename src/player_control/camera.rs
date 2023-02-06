@@ -78,7 +78,7 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
 
 fn init_camera_eye(mut camera_query: Query<(&Transform, &mut MainCamera), Added<MainCamera>>) {
     for (transform, mut camera) in &mut camera_query {
-        camera.current.eye = transform.clone();
+        camera.current.eye = *transform;
     }
 }
 

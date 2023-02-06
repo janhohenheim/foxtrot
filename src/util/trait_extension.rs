@@ -4,14 +4,50 @@ use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttribu
 pub trait Vec3Ext {
     #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn is_approx_zero(self) -> bool;
-    fn x0z(self) -> Vec3;
+    fn collapse_approx_zero(self) -> Vec3;
+    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
+    fn split(self, up: Vec3) -> SplitVec3;
 }
 impl Vec3Ext for Vec3 {
+    #[inline]
     fn is_approx_zero(self) -> bool {
-        [self.x, self.y, self.z].iter().all(|&x| x.abs() < 1e-5)
+        self.x.abs() < 1e-5 && self.y.abs() < 1e-5 && self.z.abs() < 1e-5
     }
-    fn x0z(self) -> Vec3 {
-        Vec3::new(self.x, 0., self.z)
+
+    fn collapse_approx_zero(self) -> Vec3 {
+        let collapse = |x: f32| if x.abs() < 1e-5 { 0. } else { x };
+        Vec3::new(collapse(self.x), collapse(self.y), collapse(self.z))
+    }
+
+    fn split(self, up: Vec3) -> SplitVec3 {
+        let vertical = up * self.dot(up);
+        let horizontal = self - vertical;
+        SplitVec3 {
+            vertical,
+            horizontal,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct SplitVec3 {
+    pub vertical: Vec3,
+    pub horizontal: Vec3,
+}
+
+impl SplitVec3 {
+    pub fn as_array(self) -> [Vec3; 2] {
+        [self.vertical, self.horizontal]
+    }
+}
+
+pub trait Vec2Ext {
+    fn x0y(self) -> Vec3;
+}
+impl Vec2Ext for Vec2 {
+    #[inline]
+    fn x0y(self) -> Vec3 {
+        Vec3::new(self.x, 0., self.y)
     }
 }
 

@@ -1,8 +1,6 @@
 use crate::level_instanciation::spawning::post_spawn_modification::CustomCollider;
 use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
-use crate::movement::general_movement::{
-    CharacterAnimations, CharacterVelocity, Grounded, Jump, Model,
-};
+use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use bevy::prelude::*;
@@ -27,21 +25,13 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     ..default()
                 },
                 Name::new("NPC"),
-                RigidBody::KinematicVelocityBased,
-                KinematicCharacterController {
-                    offset: CharacterLength::Relative(0.05),
-                    ..default()
-                },
-                CharacterVelocity::default(),
-                Grounded::default(),
-                Jump::default(),
+                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
                 Follower,
                 CharacterAnimations {
                     idle: self.animations.character_idle.clone(),
                     walk: self.animations.character_walking.clone(),
                     aerial: self.animations.character_running.clone(),
                 },
-                Collider::capsule_y(HEIGHT / 2., RADIUS),
             ))
             .with_children(|parent| {
                 parent.spawn((

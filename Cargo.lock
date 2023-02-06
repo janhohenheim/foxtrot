@@ -3330,7 +3330,7 @@ checksum = "63e935c45e09cc6dcf00d2f0b2d630a58f4095320223d47fc68918722f0538b6"
 [[package]]
 name = "rapier3d"
 version = "0.17.1"
-source = "git+https://github.com/janhohenheim/rapier?branch=experiment#d013f02095644cd2f76aa06fb6c3f5539ebda0c0"
+source = "git+https://github.com/janhohenheim/rapier?branch=experiment#ae9d6b9c9e536997b9c2ee314e55eb3afec70ceb"
 dependencies = [
  "approx",
  "arrayvec",

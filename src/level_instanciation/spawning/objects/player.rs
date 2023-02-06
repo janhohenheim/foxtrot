@@ -1,7 +1,5 @@
 use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
-use crate::movement::general_movement::{
-    CharacterAnimations, CharacterVelocity, Grounded, Jump, Model,
-};
+use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::player_control::camera::PlayerCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
 use bevy::prelude::*;
@@ -25,22 +23,14 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     transform: Transform::from_scale(Vec3::splat(SCALE)),
                     ..default()
                 },
-                RigidBody::KinematicVelocityBased,
-                Collider::capsule_y(HEIGHT / 2., RADIUS),
-                KinematicCharacterController {
-                    offset: CharacterLength::Relative(0.05),
-                    ..default()
-                },
                 Player,
                 Name::new("Player"),
-                Grounded::default(),
-                CharacterVelocity::default(),
+                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
                     idle: self.animations.character_idle.clone(),
                     walk: self.animations.character_walking.clone(),
                     aerial: self.animations.character_running.clone(),
                 },
-                Jump::default(),
             ))
             .with_children(|parent| {
                 parent.spawn((

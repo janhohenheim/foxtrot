@@ -171,7 +171,8 @@ fn rotate_model(
         let target_transform =
             transform.looking_at(transform.translation + horizontal_movement, controller.up);
         // Asymptotic averaging
-        let scale = 1.0 - (0.05f32).powf(dt);
+        const SMOOTHNESS: f32 = 3.;
+        let scale = (SMOOTHNESS * dt).min(1.);
         let rotation = transform.rotation.slerp(target_transform.rotation, scale);
         transform.rotation = rotation;
     }

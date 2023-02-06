@@ -166,7 +166,11 @@ fn rotate_model(
             continue;
         }
         let mut transform = transforms.get_mut(link.0).unwrap();
-        *transform = transform.looking_at(transform.translation + horizontal_movement, Vec3::Y);
+        let target_transform =
+            transform.looking_at(transform.translation + horizontal_movement, controller.up);
+        // Asymptotic averaging
+        let rotation = transform.rotation.slerp(target_transform.rotation, 0.1);
+        transform.rotation = rotation;
     }
 }
 
@@ -223,7 +227,7 @@ fn apply_walking(
     )>,
 ) {
     for (mut force, walker, mut velocity, controller, grounded, mass) in &mut character_query {
-        if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
+        if let Some(acceleration) = walker.get_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass.0;
             force.0 += walking_force;
         } else if grounded.is_grounded() {

@@ -4,11 +4,11 @@ use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::prelude::*;
+use bevy::transform::TransformSystem;
 use bevy_pathmesh::PathMesh;
 use bevy_pathmesh::PathMeshPlugin;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-
 pub mod navmesh;
 
 pub struct NavigationPlugin;

@@ -23,29 +23,10 @@ pub struct DuplicationEvent {
 pub struct SpawnEvent {
     pub object: GameObject,
     pub transform: Transform,
-    #[serde(default, skip_serializing_if = "SpawnEventParent::is_generated")]
-    pub parent: SpawnEventParent,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parent: Option<Cow<'static, str>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<Cow<'static, str>>,
-}
-
-#[derive(Debug, Component, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub enum SpawnEventParent {
-    Generated,
-    Named(Cow<'static, str>),
-    None,
-}
-impl Default for SpawnEventParent {
-    fn default() -> Self {
-        Self::Generated
-    }
-}
-
-impl SpawnEventParent {
-    pub fn is_generated(&self) -> bool {
-        matches!(self, SpawnEventParent::Generated)
-    }
 }
 
 #[derive(

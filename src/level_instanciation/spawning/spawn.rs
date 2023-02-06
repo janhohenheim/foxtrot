@@ -48,11 +48,9 @@ pub fn spawn_requested(
                 .spawn(spawn.object);
         };
 
-        match spawn.parent {
-            SpawnEventParent::Named(ref parent_name) => {
-                let parent_entity =
-                    spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
-                if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
+        if let Some(ref parent_name) = spawn.parent {
+            let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
+            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
                     && matches!(spawn.object, GameObject::Empty) {
                     commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {name}")).set_parent(parent_entity).insert(bundle);
                 }  else {
@@ -61,15 +59,9 @@ pub fn spawn_requested(
                         spawn_containers.0.insert(name.into(), entity);
                     });
                 }
-            }
-            SpawnEventParent::Generated => {
-                let entity = commands.spawn(bundle).with_children(spawn_children).id();
-                spawn_containers.0.insert(name.into(), entity);
-            }
-            SpawnEventParent::None => {
-                let entity = commands.spawn(bundle).with_children(spawn_children).id();
-                commands.entity(entity).insert(Despawn { recursive: false });
-            }
+        } else {
+            let entity = commands.spawn(bundle).with_children(spawn_children).id();
+            spawn_containers.0.insert(name.into(), entity);
         }
     }
 }

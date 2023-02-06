@@ -1,5 +1,6 @@
 use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::util::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis};
+use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -130,6 +131,9 @@ fn follow_target(mut camera_query: Query<&mut MainCamera>) {
 fn face_target(mut camera_query: Query<&mut MainCamera>) {
     for mut camera in &mut camera_query {
         let target = camera.new.target;
+        if (target - camera.new.eye.translation).is_approx_zero() {
+            continue;
+        }
         camera.new.eye.look_at(target, Vect::Y);
     }
 }
@@ -163,7 +167,7 @@ pub fn get_raycast_direction(
     rapier_context: &Res<RapierContext>,
     max_distance: f32,
 ) -> Vec3 {
-    let direction = direction.normalize_or_zero();
+    let direction = direction.try_normalize().unwrap_or(Vect::Z);
     let max_toi = max_distance;
     let solid = true;
     let mut filter = QueryFilter::only_fixed();

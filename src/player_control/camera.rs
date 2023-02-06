@@ -95,7 +95,7 @@ fn follow_target(mut camera_query: Query<&mut MainCamera>) {
 }
 
 fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res<Actions>) {
-    let mouse_sensitivity = 5e-3;
+    let mouse_sensitivity = 1e-2;
     let camera_movement = match actions.camera_movement {
         Some(vector) => vector * mouse_sensitivity,
         None => return,
@@ -146,14 +146,18 @@ fn update_camera_transform(
     let dt = time.delta_seconds();
     for (mut transform, mut camera) in camera_query.iter_mut() {
         let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
-        if line_of_sight_result.correction == LineOfSightCorrection::Closer {
-            transform.translation = line_of_sight_result.location;
-        } else {
-            let direction = line_of_sight_result.location - transform.translation;
-            let scale = (10. * dt).min(1.);
-            transform.translation += direction * scale;
-        }
-        let scale = (10. * dt).min(1.);
+        let translation_smoothing =
+            if line_of_sight_result.correction == LineOfSightCorrection::Closer {
+                25.
+            } else {
+                10.
+            };
+        let direction = line_of_sight_result.location - transform.translation;
+        let scale = (translation_smoothing * dt).max(1.);
+        transform.translation += direction * scale;
+
+        let rotation_smoothing = 15.;
+        let scale = (rotation_smoothing * dt).max(1.);
         transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
 
         camera.current = camera.new.clone();
@@ -201,7 +205,7 @@ pub fn get_raycast_distance(
     let mut filter = QueryFilter::only_fixed();
     filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
 
-    let min_distance_to_objects = 0.001;
+    let min_distance_to_objects = 0.01;
     rapier_context
         .cast_ray(origin, direction, max_toi, solid, filter)
         .map(|(_entity, toi)| toi - min_distance_to_objects)

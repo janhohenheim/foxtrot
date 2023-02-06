@@ -137,7 +137,7 @@ fn apply_jumping(
     let dt = time.delta_seconds();
     for (grounded, mut force, mut velocity, controller, mass, jump) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
-            force.0 + =controller.up * mass.0 * jump.speed / dt;
+            force.0 += controller.up * mass.0 * jump.speed / dt;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
             // Otherwards, the falling velocity from the last tick dampens the jump velocity.

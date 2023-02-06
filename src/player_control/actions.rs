@@ -28,6 +28,7 @@ pub struct Actions {
     pub toggle_editor: bool,
     pub interact: bool,
     pub jump: bool,
+    pub sprint: bool,
 }
 
 pub fn set_actions(
@@ -58,6 +59,7 @@ pub fn set_actions(
         actions.player_movement = None;
     }
     actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+    actions.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
     actions.camera_movement = None;

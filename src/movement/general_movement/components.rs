@@ -77,20 +77,28 @@ impl Default for Mass {
 pub struct Walker {
     /// Acceleration on the ground
     pub ground_acceleration: f32,
+    /// Acceleration on the ground when[`Walker::sprinting`] is `true`
+    pub sprinting_acceleration: f32,
     /// Acceleration in the air
     pub aerial_acceleration: f32,
     /// Acceleration in opposide direction of velocity when not explicitely walking, i.e. [`Walker::direction`] is [`Option::None`]
     pub braking_acceleration: f32,
     /// Speed at which we stop braking and just set the horizontal velocity to 0
     pub stopping_speed: f32,
-    /// Direction in which we want to walk. When not normalized, the acceleration will be scaled accordingly.
+    /// Direction in which we want to walk this tick. When not normalized, the acceleration will be scaled accordingly.
     pub direction: Option<Vec3>,
+    /// Whether we are sprinting this tick
+    pub sprinting: bool,
 }
 
 impl Walker {
-    pub fn calculate_acceleration(&self, grounded: bool) -> Option<Vec3> {
+    pub fn get_acceleration(&self, grounded: bool) -> Option<Vec3> {
         let acceleration = if grounded {
-            self.ground_acceleration
+            if self.sprinting {
+                self.sprinting_acceleration
+            } else {
+                self.ground_acceleration
+            }
         } else {
             self.aerial_acceleration
         };
@@ -101,11 +109,13 @@ impl Walker {
 impl Default for Walker {
     fn default() -> Self {
         Self {
-            ground_acceleration: 13.,
-            aerial_acceleration: 8.,
-            direction: None,
+            ground_acceleration: 10.,
+            sprinting_acceleration: 20.,
+            aerial_acceleration: 7.,
             braking_acceleration: 5.,
             stopping_speed: 0.1,
+            direction: None,
+            sprinting: false,
         }
     }
 }

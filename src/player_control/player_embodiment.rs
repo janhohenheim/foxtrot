@@ -53,8 +53,8 @@ fn handle_horizontal_movement(
         Some(transform) => transform,
         None => return,
     };
-    let actions = match actions.player_movement {
-        Some(actions) => actions,
+    let movement = match actions.player_movement {
+        Some(movement) => movement,
         None => return,
     };
 
@@ -63,11 +63,12 @@ fn handle_horizontal_movement(
         .try_normalize()
         .unwrap_or(Vec2::Y);
     let sideward = forward.perp();
-    let forward_action = forward * actions.y;
-    let sideward_action = sideward * actions.x;
-    let movement = (forward_action + sideward_action).x0y().normalize();
+    let forward_action = forward * movement.y;
+    let sideward_action = sideward * movement.x;
+    let direction = (forward_action + sideward_action).x0y().normalize();
 
     for mut walker in &mut player_query {
-        walker.direction = Some(movement);
+        walker.direction = Some(direction);
+        walker.sprinting = actions.sprint;
     }
 }

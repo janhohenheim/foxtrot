@@ -153,6 +153,7 @@ fn apply_jumping(
 }
 
 fn rotate_model(
+    time: Res<Time>,
     player_query: Query<(
         &KinematicCharacterControllerOutput,
         &KinematicCharacterController,
@@ -160,13 +161,19 @@ fn rotate_model(
     )>,
     mut transforms: Query<&mut Transform>,
 ) {
+    let dt = time.delta_seconds();
     for (output, controller, link) in player_query.iter() {
         let horizontal_movement = output.effective_translation.split(controller.up).horizontal;
         if horizontal_movement.is_approx_zero() {
             continue;
         }
         let mut transform = transforms.get_mut(link.0).unwrap();
-        *transform = transform.looking_at(transform.translation + horizontal_movement, Vec3::Y);
+        let target_transform =
+            transform.looking_at(transform.translation + horizontal_movement, controller.up);
+        // Asymptotic averaging
+        let scale = 1.0 - (0.05f32).powf(dt);
+        let rotation = transform.rotation.slerp(target_transform.rotation, scale);
+        transform.rotation = rotation;
     }
 }
 
@@ -223,7 +230,7 @@ fn apply_walking(
     )>,
 ) {
     for (mut force, walker, mut velocity, controller, grounded, mass) in &mut character_query {
-        if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
+        if let Some(acceleration) = walker.get_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass.0;
             force.0 += walking_force;
         } else if grounded.is_grounded() {

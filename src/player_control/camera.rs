@@ -29,12 +29,7 @@ impl Plugin for CameraPlugin {
                             .label("follow_target")
                             .after("handle_camera_controls"),
                     )
-                    .with_system(
-                        keep_line_of_sight
-                            .label("keep_line_of_sight")
-                            .after("follow_target"),
-                    )
-                    .with_system(face_target.label("face_target").after("keep_line_of_sight"))
+                    .with_system(face_target.label("face_target").after("follow_target"))
                     .with_system(
                         update_camera_transform
                             .label("update_camera_transform")
@@ -138,33 +133,61 @@ fn face_target(mut camera_query: Query<&mut MainCamera>) {
     }
 }
 
-fn keep_line_of_sight(
+fn update_camera_transform(
     time: Res<Time>,
-    mut camera_query: Query<&mut MainCamera>,
+    mut camera_query: Query<(&mut Transform, &mut MainCamera)>,
     rapier_context: Res<RapierContext>,
 ) {
     let dt = time.delta_seconds();
-    for mut camera in camera_query.iter_mut() {
-        let origin = camera.new.target;
-        let desired_direction = camera.new.eye.translation - camera.new.target;
-        let max_direction =
-            get_raycast_direction(&origin, &desired_direction, &rapier_context, MAX_DISTANCE);
-
-        if max_direction.length_squared() < desired_direction.length_squared() {
-            camera.new.eye.translation = camera.new.target + max_direction;
+    for (mut transform, mut camera) in camera_query.iter_mut() {
+        let scale = dt.min(1.);
+        let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
+        if line_of_sight_result.correction == LineOfSightCorrection::Closer {
+            transform.translation = camera.new.eye.translation;
         } else {
-            let scale = dt.min(1.);
-            let asymptotic_new_eye = camera.new.target + max_direction;
-            let direction = asymptotic_new_eye - camera.new.eye.translation;
-            camera.new.eye.translation += direction * scale;
+            let direction = camera.new.eye.translation - transform.translation;
+            transform.translation += direction * scale;
         }
+        transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
+
+        camera.current = camera.new.clone();
     }
+}
+
+fn keep_line_of_sight(camera: &MainCamera, rapier_context: &RapierContext) -> LineOfSightResult {
+    let origin = camera.new.target;
+    let desired_direction = camera.new.eye.translation - camera.new.target;
+
+    let max_direction =
+        get_raycast_direction(&origin, &desired_direction, rapier_context, MAX_DISTANCE);
+    let location = origin + max_direction;
+    let correction = if max_direction.length_squared() < desired_direction.length_squared() {
+        LineOfSightCorrection::Closer
+    } else {
+        LineOfSightCorrection::Further
+    };
+    LineOfSightResult {
+        location,
+        correction,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct LineOfSightResult {
+    pub location: Vec3,
+    pub correction: LineOfSightCorrection,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum LineOfSightCorrection {
+    Closer,
+    Further,
 }
 
 pub fn get_raycast_direction(
     origin: &Vec3,
     direction: &Vec3,
-    rapier_context: &Res<RapierContext>,
+    rapier_context: &RapierContext,
     max_distance: f32,
 ) -> Vec3 {
     let direction = direction.try_normalize().unwrap_or(Vect::Z);
@@ -203,21 +226,6 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
         0.
     } else {
         clamped_angle
-    }
-}
-
-fn update_camera_transform(
-    time: Res<Time>,
-    mut camera_query: Query<(&mut Transform, &mut MainCamera)>,
-) {
-    let dt = time.delta_seconds();
-    for (mut transform, mut camera) in camera_query.iter_mut() {
-        let scale = dt.min(1.);
-        let direction = camera.new.eye.translation - transform.translation;
-        transform.translation += direction * scale;
-        transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
-
-        camera.current = camera.new.clone();
     }
 }
 

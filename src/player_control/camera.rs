@@ -93,27 +93,19 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
     }
     for mut camera in camera_query.iter_mut() {
         let direction = camera.new.direction().unwrap_or(Vec3::Z);
-        let horizontal_rotation_axis = direction.xz().perp();
-        let horizontal_rotation_axis =
-            Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
+        let horizontal_rotation_axis = direction.xz().perp().x0y();
         let horizontal_angle = camera_movement.x;
         let vertical_angle = -camera_movement.y;
         let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
 
         let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);
         let vertical_rotation_matrix =
-            get_rotation_matrix_around_vector(vertical_angle, horizontal_rotation_axis);
+            get_rotation_matrix_around_vector(vertical_angle, horizontal_rotation_axis.into());
 
         let rotated_direction: Vec3 =
             (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction))
                 .into();
-        info!("rotated_direction: {:?}", rotated_direction);
-        info!("vertical_rotation_matrix: {:?}", vertical_rotation_matrix);
-        info!(
-            "horizontal_rotation_matrix: {:?}",
-            horizontal_rotation_matrix
-        );
-        info!("direction: {:?}", direction);
+
         camera.new.eye.translation = camera.new.target - rotated_direction * MAX_DISTANCE;
     }
 }
@@ -166,12 +158,12 @@ fn update_camera_transform(
 ) {
     let dt = time.delta_seconds();
     for (mut transform, mut camera) in camera_query.iter_mut() {
-        let scale = dt.min(1.);
+        let scale = (2. * dt).max(1.);
         let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
         if line_of_sight_result.correction == LineOfSightCorrection::Closer {
-            transform.translation = camera.new.eye.translation;
+            transform.translation = line_of_sight_result.location;
         } else {
-            let direction = camera.new.eye.translation - transform.translation;
+            let direction = line_of_sight_result.location - transform.translation;
             transform.translation += direction * scale;
         }
         transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
@@ -183,11 +175,11 @@ fn update_camera_transform(
 fn keep_line_of_sight(camera: &MainCamera, rapier_context: &RapierContext) -> LineOfSightResult {
     let origin = camera.new.target;
     let desired_direction = camera.new.eye.translation - camera.new.target;
+    let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
-    let max_direction =
-        get_raycast_direction(&origin, &desired_direction, rapier_context, MAX_DISTANCE);
-    let location = origin + max_direction;
-    let correction = if max_direction.length_squared() < desired_direction.length_squared() {
+    let distance = get_raycast_distance(origin, norm_direction, rapier_context, MAX_DISTANCE);
+    let location = origin + norm_direction * distance;
+    let correction = if distance * distance < desired_direction.length_squared() {
         LineOfSightCorrection::Closer
     } else {
         LineOfSightCorrection::Further
@@ -210,25 +202,22 @@ enum LineOfSightCorrection {
     Further,
 }
 
-pub fn get_raycast_direction(
-    origin: &Vec3,
-    direction: &Vec3,
+pub fn get_raycast_distance(
+    origin: Vec3,
+    direction: Vec3,
     rapier_context: &RapierContext,
     max_distance: f32,
-) -> Vec3 {
-    let direction = direction.try_normalize().unwrap_or(Vect::Z);
+) -> f32 {
     let max_toi = max_distance;
     let solid = true;
     let mut filter = QueryFilter::only_fixed();
     filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
 
     let min_distance_to_objects = 0.001;
-    let distance = rapier_context
-        .cast_ray(*origin, direction, max_toi, solid, filter)
+    rapier_context
+        .cast_ray(origin, direction, max_toi, solid, filter)
         .map(|(_entity, toi)| toi - min_distance_to_objects)
-        .unwrap_or(max_distance);
-
-    direction * distance
+        .unwrap_or(max_distance)
 }
 
 fn cursor_grab_system(

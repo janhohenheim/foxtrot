@@ -77,6 +77,8 @@ impl Default for Mass {
 pub struct Walker {
     pub ground_acceleration: f32,
     pub aerial_acceleration: f32,
+    /// Stop at the given velocity if we fall below it while [`Walker::direction`] is [`Option::None`].
+    pub stopping_velocity: f32,
     pub direction: Option<Vec3>,
 }
 
@@ -97,6 +99,7 @@ impl Default for Walker {
             ground_acceleration: 13.,
             aerial_acceleration: 13.,
             direction: None,
+            stopping_velocity: 0.6,
         }
     }
 }

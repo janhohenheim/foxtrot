@@ -1,6 +1,5 @@
 use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
-use crate::player_control::camera::MainCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -17,14 +16,6 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
             .get(&self.scenes.character)
             .unwrap_or_else(|| panic!("Failed to load scene for player"));
 
-        self.commands.spawn((
-            MainCamera::default(),
-            Camera3dBundle {
-                transform: Transform::from_xyz(10., 2., 0.),
-                ..default()
-            },
-            Name::new("Player Camera"),
-        ));
         self.commands
             .spawn((
                 PbrBundle {

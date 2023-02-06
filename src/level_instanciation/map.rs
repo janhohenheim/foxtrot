@@ -1,5 +1,6 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::player_control::camera::MainCamera;
 use crate::GameState;
 use bevy::prelude::*;
 
@@ -20,6 +21,16 @@ fn setup(
     if current_level.is_some() {
         return;
     }
+
+    commands.spawn((
+        MainCamera::default(),
+        Camera3dBundle {
+            transform: Transform::from_xyz(10., 2., 0.),
+            ..default()
+        },
+        Name::new("Player Camera"),
+    ));
+
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.3,

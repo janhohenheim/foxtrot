@@ -48,7 +48,7 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Pl
 fn handle_horizontal_movement(
     actions: Res<Actions>,
     mut player_query: Query<&mut Walker, With<Player>>,
-    camera_query: Query<&Transform, With<MainCamera>>,
+    camera_query: Query<&MainCamera>,
 ) {
     let camera = match camera_query.iter().next() {
         Some(transform) => transform,
@@ -59,7 +59,9 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = (-camera.translation)
+    let forward = camera
+        .current
+        .direction()
         .xz()
         .try_normalize()
         .unwrap_or(Vec2::Y);

@@ -52,6 +52,10 @@ pub struct MainCamera {
 }
 
 impl MainCamera {
+    pub fn direction(&self) -> Vec3 {
+        self.new.direction()
+    }
+
     pub fn look_at(&mut self, target: Vec3) -> &mut Self {
         self.new.target = target;
         self

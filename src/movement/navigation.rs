@@ -30,7 +30,12 @@ pub struct Follower;
 #[allow(clippy::type_complexity)]
 fn query_mesh(
     mut with_follower: Query<
-        (Entity, &GlobalTransform, &mut Walker),
+        (
+            Entity,
+            &GlobalTransform,
+            &KinematicCharacterController,
+            &mut Walker,
+        ),
         (With<Follower>, Without<Player>),
     >,
     with_player: Query<(Entity, &GlobalTransform), (With<Player>, Without<Follower>)>,
@@ -39,7 +44,7 @@ fn query_mesh(
     rapier_context: Res<RapierContext>,
 ) {
     for path_mesh_handle in nav_meshes.iter() {
-        for (follower_entity, follower_transform, mut walker) in &mut with_follower {
+        for (follower_entity, follower_transform, controller, mut walker) in &mut with_follower {
             for (player_entity, player_transform) in &with_player {
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
                 let from = follower_transform.translation();
@@ -63,7 +68,11 @@ fn query_mesh(
                     None
                 };
                 if let Some(path) = path {
-                    let dir = (path - from).x0z().try_normalize().unwrap();
+                    let dir = (path - from)
+                        .split(controller.up)
+                        .horizontal
+                        .try_normalize()
+                        .unwrap();
                     walker.direction = Some(dir);
                 }
             }

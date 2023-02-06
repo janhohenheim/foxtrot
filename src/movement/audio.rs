@@ -6,7 +6,7 @@ use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_kira_audio::prelude::{Audio, *};
-use bevy_rapier3d::control::KinematicCharacterControllerOutput;
+use bevy_rapier3d::prelude::*;
 
 pub struct InternalAudioPlugin;
 
@@ -36,13 +36,24 @@ fn start_audio(mut commands: Commands, audio_assets: Res<AudioAssets>, audio: Re
 }
 
 fn control_flying_sound(
-    character_query: Query<(&KinematicCharacterControllerOutput, &Grounded), With<Player>>,
+    character_query: Query<
+        (
+            &KinematicCharacterControllerOutput,
+            &KinematicCharacterController,
+            &Grounded,
+        ),
+        With<Player>,
+    >,
     audio: Res<WalkingAudio>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) {
-    for (output, grounded) in character_query.iter() {
+    for (output, controller, grounded) in character_query.iter() {
         if let Some(instance) = audio_instances.get_mut(&audio.0) {
-            let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
+            let has_horizontal_movement = !output
+                .effective_translation
+                .split(controller.up)
+                .horizontal
+                .is_approx_zero();
             let is_moving_on_ground = has_horizontal_movement && grounded.is_grounded();
             if is_moving_on_ground {
                 instance.resume(AudioTween::default());

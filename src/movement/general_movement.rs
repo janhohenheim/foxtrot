@@ -153,11 +153,15 @@ fn apply_jumping(
 }
 
 fn rotate_model(
-    player_query: Query<(&KinematicCharacterControllerOutput, &AnimationEntityLink)>,
+    player_query: Query<(
+        &KinematicCharacterControllerOutput,
+        &KinematicCharacterController,
+        &AnimationEntityLink,
+    )>,
     mut transforms: Query<&mut Transform>,
 ) {
-    for (output, link) in player_query.iter() {
-        let horizontal_movement = output.effective_translation.x0z();
+    for (output, controller, link) in player_query.iter() {
+        let horizontal_movement = output.effective_translation.split(controller.up).horizontal;
         if horizontal_movement.is_approx_zero() {
             continue;
         }
@@ -170,17 +174,22 @@ fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
         &KinematicCharacterControllerOutput,
+        &KinematicCharacterController,
         &Grounded,
         &AnimationEntityLink,
         &CharacterAnimations,
     )>,
 ) {
-    for (output, grounded, animation_entity_link, animations) in characters.iter() {
+    for (output, controller, grounded, animation_entity_link, animations) in characters.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
             .expect("animation_entity_link held entity without animation player");
 
-        let has_horizontal_movement = !output.effective_translation.x0z().is_approx_zero();
+        let has_horizontal_movement = !output
+            .effective_translation
+            .split(controller.up)
+            .horizontal
+            .is_approx_zero();
 
         if !grounded.is_grounded() {
             animation_player

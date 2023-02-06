@@ -22,6 +22,7 @@ fn setup(
         return;
     }
 
+    // Todo: move this into proper spawn object and then into level .ron (pretty print it while you're on it)
     commands.spawn((
         MainCamera::default(),
         Camera3dBundle {

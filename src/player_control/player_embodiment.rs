@@ -59,9 +59,11 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = camera
-        .current
+    // Todo: Why does this only work when it's negative?
+    let forward = -camera
+        .new
         .direction()
+        .unwrap_or(Vec3::Z)
         .xz()
         .try_normalize()
         .unwrap_or(Vec2::Y);
@@ -76,6 +78,7 @@ fn handle_horizontal_movement(
     }
 }
 
+// Todo: Move this into own system -> can focus dialog target
 fn set_camera_target(
     mut camera_query: Query<&mut MainCamera>,
     player_query: Query<&GlobalTransform, With<Player>>,

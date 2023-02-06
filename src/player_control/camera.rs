@@ -1,6 +1,6 @@
 use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::util::math::{get_rotation_matrix_around_vector, get_rotation_matrix_around_y_axis};
-use crate::util::trait_extension::Vec3Ext;
+use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -52,10 +52,6 @@ pub struct MainCamera {
 }
 
 impl MainCamera {
-    pub fn direction(&self) -> Vec3 {
-        self.new.direction()
-    }
-
     pub fn look_at(&mut self, target: Vec3) -> &mut Self {
         self.new.target = target;
         self
@@ -70,8 +66,8 @@ pub struct CameraPosition {
 }
 
 impl CameraPosition {
-    pub fn direction(&self) -> Vec3 {
-        (self.target - self.eye.translation).normalize_or_zero()
+    pub fn direction(&self) -> Option<Vec3> {
+        (self.target - self.eye.translation).try_normalize()
     }
 }
 
@@ -85,23 +81,18 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
     }
 }
 
-fn handle_camera_controls(
-    time: Res<Time>,
-    mut camera_query: Query<&mut MainCamera>,
-    actions: Res<Actions>,
-) {
-    let dt = time.delta_seconds();
+fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res<Actions>) {
     let mouse_sensitivity = 0.5;
     let camera_movement = match actions.camera_movement {
-        Some(vector) => vector * mouse_sensitivity * dt,
+        Some(vector) => vector * mouse_sensitivity,
         None => return,
     };
 
-    if camera_movement.length() < 1e-5 {
+    if camera_movement.is_approx_zero() {
         return;
     }
     for mut camera in camera_query.iter_mut() {
-        let direction = camera.new.direction();
+        let direction = camera.new.direction().unwrap_or(Vec3::Z);
         let horizontal_rotation_axis = direction.xz().perp();
         let horizontal_rotation_axis =
             Vector3::new(horizontal_rotation_axis.x, 0., horizontal_rotation_axis.y);
@@ -116,7 +107,38 @@ fn handle_camera_controls(
         let rotated_direction: Vec3 =
             (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction))
                 .into();
-        camera.new.eye.translation = -rotated_direction * MAX_DISTANCE;
+        info!("rotated_direction: {:?}", rotated_direction);
+        info!("vertical_rotation_matrix: {:?}", vertical_rotation_matrix);
+        info!(
+            "horizontal_rotation_matrix: {:?}",
+            horizontal_rotation_matrix
+        );
+        info!("direction: {:?}", direction);
+        camera.new.eye.translation = camera.new.target - rotated_direction * MAX_DISTANCE;
+    }
+}
+
+fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
+    let current_angle = current_direction.angle_between(Vect::Y);
+    let new_angle = current_angle - angle;
+
+    let angle_from_extremes = TAU / 32.;
+    let max_angle = TAU / 2.0 - angle_from_extremes;
+    let min_angle = 0.0 + angle_from_extremes;
+
+    let clamped_angle = if new_angle > max_angle {
+        max_angle - current_angle
+    } else if new_angle < min_angle {
+        min_angle - current_angle
+    } else {
+        angle
+    };
+
+    if clamped_angle.abs() < 0.01 {
+        // This smooths user experience
+        0.
+    } else {
+        clamped_angle
     }
 }
 
@@ -207,30 +229,6 @@ pub fn get_raycast_direction(
         .unwrap_or(max_distance);
 
     direction * distance
-}
-
-fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
-    let current_angle = current_direction.angle_between(Vect::Y);
-    let new_angle = current_angle - angle;
-
-    let angle_from_extremes = TAU / 32.;
-    let max_angle = TAU / 2.0 - angle_from_extremes;
-    let min_angle = 0.0 + angle_from_extremes;
-
-    let clamped_angle = if new_angle > max_angle {
-        max_angle - current_angle
-    } else if new_angle < min_angle {
-        min_angle - current_angle
-    } else {
-        angle
-    };
-
-    if clamped_angle.abs() < 0.01 {
-        // This smooths user experience
-        0.
-    } else {
-        clamped_angle
-    }
 }
 
 fn cursor_grab_system(

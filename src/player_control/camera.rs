@@ -30,14 +30,9 @@ impl Plugin for CameraPlugin {
                             .after("follow_target"),
                     )
                     .with_system(
-                        face_target
-                            .label("face_target")
-                            .after("handle_camera_controls"),
-                    )
-                    .with_system(
                         update_camera_transform
                             .label("update_camera_transform")
-                            .after("face_target"),
+                            .after("handle_camera_controls"),
                     )
                     .with_system(cursor_grab_system),
             );
@@ -56,8 +51,16 @@ pub struct MainCamera {
 }
 
 impl MainCamera {
-    pub fn look_at(&mut self, target: Vec3) -> &mut Self {
+    pub fn set_target(&mut self, target: Vec3) -> &mut Self {
         self.new.target = target;
+        self
+    }
+
+    pub fn look_at_new_target(&mut self) -> &mut Self {
+        let target = self.new.target;
+        if !(target - self.new.eye.translation).is_approx_zero() {
+            self.new.eye.look_at(target, Vect::Y);
+        }
         self
     }
 }
@@ -67,12 +70,6 @@ impl MainCamera {
 pub struct CameraPosition {
     pub eye: Transform,
     pub target: Vec3,
-}
-
-impl CameraPosition {
-    pub fn direction(&self) -> Option<Vec3> {
-        (self.target - self.eye.translation).try_normalize()
-    }
 }
 
 fn spawn_ui_camera(mut commands: Commands) {
@@ -85,8 +82,16 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
     }
 }
 
+fn follow_target(mut camera_query: Query<&mut MainCamera>) {
+    for mut camera in &mut camera_query {
+        let target_movement = camera.new.target - camera.current.target;
+        camera.new.eye.translation = camera.current.eye.translation + target_movement;
+        camera.look_at_new_target();
+    }
+}
+
 fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res<Actions>) {
-    let mouse_sensitivity = 1e-2;
+    let mouse_sensitivity = 5e-3;
     let camera_movement = match actions.camera_movement {
         Some(vector) => vector * mouse_sensitivity,
         None => return,
@@ -118,14 +123,14 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
     let current_angle = current_direction.angle_between(Vect::Y);
     let new_angle = current_angle - angle;
 
-    let angle_from_extremes = TAU / 32.;
-    let max_angle = TAU / 2.0 - angle_from_extremes;
-    let min_angle = 0.0 + angle_from_extremes;
+    const ANGLE_FROM_EXTREMES: f32 = TAU / 32.;
+    const MAX_ANGLE: f32 = TAU / 2.0 - ANGLE_FROM_EXTREMES;
+    const MIN_ANGLE: f32 = 0.0 + ANGLE_FROM_EXTREMES;
 
-    let clamped_angle = if new_angle > max_angle {
-        max_angle - current_angle
-    } else if new_angle < min_angle {
-        min_angle - current_angle
+    let clamped_angle = if new_angle > MAX_ANGLE {
+        MAX_ANGLE - current_angle
+    } else if new_angle < MIN_ANGLE {
+        MIN_ANGLE - current_angle
     } else {
         angle
     };
@@ -138,23 +143,6 @@ fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
     }
 }
 
-fn follow_target(mut camera_query: Query<&mut MainCamera>) {
-    for mut camera in &mut camera_query {
-        let target_movement = camera.new.target - camera.current.target;
-        camera.new.eye.translation = camera.current.eye.translation + target_movement;
-    }
-}
-
-fn face_target(mut camera_query: Query<&mut MainCamera>) {
-    for mut camera in &mut camera_query {
-        let target = camera.new.target;
-        if (target - camera.new.eye.translation).is_approx_zero() {
-            continue;
-        }
-        camera.new.eye.look_at(target, Vect::Y);
-    }
-}
-
 fn update_camera_transform(
     time: Res<Time>,
     mut camera_query: Query<(&mut Transform, &mut MainCamera)>,
@@ -162,7 +150,7 @@ fn update_camera_transform(
 ) {
     let dt = time.delta_seconds();
     for (mut transform, mut camera) in camera_query.iter_mut() {
-        let scale = (2. * dt).min(1.);
+        let scale = (5. * dt).min(1.);
         let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
         if line_of_sight_result.correction == LineOfSightCorrection::Closer {
             transform.translation = line_of_sight_result.location;

@@ -59,13 +59,7 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = camera
-        .new
-        .direction()
-        .unwrap_or(Vec3::Z)
-        .xz()
-        .try_normalize()
-        .unwrap_or(Vec2::Y);
+    let forward = camera.new.eye.forward().xz().normalize();
     let sideward = forward.perp();
     let forward_action = forward * movement.y;
     let sideward_action = sideward * movement.x;
@@ -85,7 +79,7 @@ fn set_camera_target(
     for player_transform in player_query.iter() {
         let translation = player_transform.translation();
         for mut camera in &mut camera_query {
-            camera.look_at(translation);
+            camera.set_target(translation);
         }
     }
 }

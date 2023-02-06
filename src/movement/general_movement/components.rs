@@ -33,7 +33,7 @@ impl Default for KinematicCharacterBundle {
             gravity: default(),
             rigid_body: RigidBody::KinematicVelocityBased,
             character_controller: KinematicCharacterController {
-                offset: CharacterLength::Relative(0.05),
+                offset: CharacterLength::Relative(0.03),
                 ..default()
             },
         }

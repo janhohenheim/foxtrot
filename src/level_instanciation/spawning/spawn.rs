@@ -45,7 +45,7 @@ pub fn spawn_requested(
         let spawn_children = |parent: &mut ChildBuilder| {
             spawner
                 .attach(parent, &gltf, &materials, &animations, &scenes)
-                .spawn(&spawn.object);
+                .spawn(spawn.object);
         };
 
         if let Some(ref parent_name) = spawn.parent {

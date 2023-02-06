@@ -1,4 +1,6 @@
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
 use bevy::prelude::*;
@@ -9,14 +11,17 @@ pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
 pub const SCALE: f32 = 0.5;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_player(&'a mut self) {
-        let gltf = self
+pub struct PlayerSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
+    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+        let gltf = spawner
             .gltf
-            .get(&self.scenes.character)
+            .get(&spawner.scenes.character)
             .unwrap_or_else(|| panic!("Failed to load scene for player"));
 
-        self.commands
+        spawner
+            .commands
             .spawn((
                 PbrBundle {
                     transform: Transform::from_scale(Vec3::splat(SCALE)),
@@ -26,9 +31,9 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 Name::new("Player"),
                 KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
-                    idle: self.animations.character_idle.clone(),
-                    walk: self.animations.character_walking.clone(),
-                    aerial: self.animations.character_running.clone(),
+                    idle: spawner.animations.character_idle.clone(),
+                    walk: spawner.animations.character_walking.clone(),
+                    aerial: spawner.animations.character_running.clone(),
                 },
             ))
             .with_children(|parent| {

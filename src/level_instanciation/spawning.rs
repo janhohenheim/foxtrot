@@ -3,7 +3,15 @@ use crate::level_instanciation::spawning::animation_link::link_animations;
 use crate::level_instanciation::spawning::change_parent::change_parent;
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::duplication::duplicate;
-use crate::level_instanciation::spawning::objects::*;
+use crate::level_instanciation::spawning::objects::level::LevelSpawner;
+use crate::level_instanciation::spawning::objects::npc::NpcSpawner;
+use crate::level_instanciation::spawning::objects::orb::OrbSpawner;
+use crate::level_instanciation::spawning::objects::player::PlayerSpawner;
+use crate::level_instanciation::spawning::objects::point_light::PointLightSpawner;
+use crate::level_instanciation::spawning::objects::primitives::{
+    BoxSpawner, CapsuleSpawner, EmptySpawner, SphereSpawner, TriangleSpawner,
+};
+use crate::level_instanciation::spawning::objects::sunlight::SunlightSpawner;
 use crate::level_instanciation::spawning::post_spawn_modification::{
     read_colliders, set_hidden, set_texture_to_repeat,
 };
@@ -74,28 +82,58 @@ impl Plugin for SpawningPlugin {
 }
 
 impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn(&'a mut self, object: &GameObject) {
-        match *object {
-            GameObject::Sunlight => self.spawn_sunlight(),
-            GameObject::Npc => self.spawn_npc(),
-            GameObject::Empty => self.spawn_empty(),
-            GameObject::Box => self.spawn_box(),
-            GameObject::Sphere => self.spawn_sphere(),
-            GameObject::Capsule => self.spawn_capsule(),
-            GameObject::Triangle => self.spawn_triangle(),
-            GameObject::PointLight => self.spawn_point_light(),
-            GameObject::Player => self.spawn_player(),
-            GameObject::Level => self.spawn_level(),
-            GameObject::Orb => self.spawn_orb(),
-        };
+    pub fn new(
+        outer_spawner: &'a GameObjectSpawner,
+        commands: &'a mut ChildBuilder<'w, 's, 'b>,
+        gltf: &'a Res<'a, Assets<Gltf>>,
+        materials: &'a Res<'a, Materials>,
+        animations: &'a Res<'a, AnimationAssets>,
+        scenes: &'a Res<'a, SceneAssets>,
+    ) -> Self {
+        Self {
+            outer_spawner,
+            commands,
+            gltf,
+            materials,
+            animations,
+            scenes,
+        }
+    }
+
+    pub fn spawn(&mut self, object: GameObject) {
+        self.outer_spawner.implementors[&object].spawn(self, object);
     }
 }
 
 fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Assets<Mesh>>) {
-    let mut meshes = HashMap::new();
-    meshes.insert(GameObject::Orb, orb::load_mesh(&mut mesh_assets));
+    let mut implementors = HashMap::new();
 
-    commands.insert_resource(GameObjectSpawner { meshes });
+    implementors.insert(
+        GameObject::Box,
+        Box::new(BoxSpawner) as Box<dyn PrimedGameObjectSpawnerImplementor + Send + Sync>,
+    );
+    implementors.insert(GameObject::Orb, Box::new(OrbSpawner));
+    implementors.insert(GameObject::Player, Box::new(PlayerSpawner));
+    implementors.insert(GameObject::Sphere, Box::new(SphereSpawner));
+    implementors.insert(GameObject::Capsule, Box::new(CapsuleSpawner));
+    implementors.insert(GameObject::Npc, Box::new(NpcSpawner));
+    implementors.insert(GameObject::Sunlight, Box::new(SunlightSpawner));
+    implementors.insert(GameObject::PointLight, Box::new(PointLightSpawner));
+    implementors.insert(GameObject::Triangle, Box::new(TriangleSpawner));
+    implementors.insert(GameObject::Empty, Box::new(EmptySpawner));
+    implementors.insert(GameObject::Level, Box::new(LevelSpawner));
+
+    let mut meshes = HashMap::new();
+    for (game_object, implementor) in implementors.iter() {
+        if let Some(handle) = implementor.create_mesh(&mut mesh_assets) {
+            meshes.insert(*game_object, handle);
+        }
+    }
+
+    commands.insert_resource(GameObjectSpawner {
+        meshes,
+        implementors,
+    });
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -153,19 +191,27 @@ impl Default for GameObject {
     }
 }
 
+pub trait PrimedGameObjectSpawnerImplementor {
+    fn create_mesh(&self, _mesh_assets: &mut ResMut<Assets<Mesh>>) -> Option<Handle<Mesh>> {
+        None
+    }
+    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, object: GameObject);
+}
+
 #[derive(Resource)]
 pub struct GameObjectSpawner {
     meshes: HashMap<GameObject, Handle<Mesh>>,
+    implementors: HashMap<GameObject, Box<dyn PrimedGameObjectSpawnerImplementor + Send + Sync>>,
 }
 
 #[derive(Resource)]
 pub struct PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    handles: &'a GameObjectSpawner,
-    gltf: &'a Res<'a, Assets<Gltf>>,
-    materials: &'a Res<'a, Materials>,
-    commands: &'a mut ChildBuilder<'w, 's, 'b>,
-    animations: &'a Res<'a, AnimationAssets>,
-    scenes: &'a Res<'a, SceneAssets>,
+    pub outer_spawner: &'a GameObjectSpawner,
+    pub gltf: &'a Res<'a, Assets<Gltf>>,
+    pub materials: &'a Res<'a, Materials>,
+    pub commands: &'a mut ChildBuilder<'w, 's, 'b>,
+    pub animations: &'a Res<'a, AnimationAssets>,
+    pub scenes: &'a Res<'a, SceneAssets>,
 }
 
 impl<'a, 'b, 'c, 'w, 's> GameObjectSpawner
@@ -180,13 +226,6 @@ where
         animations: &'a Res<'a, AnimationAssets>,
         scenes: &'a Res<'a, SceneAssets>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-        PrimedGameObjectSpawner {
-            handles: self,
-            commands,
-            gltf,
-            materials,
-            animations,
-            scenes,
-        }
+        PrimedGameObjectSpawner::new(self, commands, gltf, materials, animations, scenes)
     }
 }

@@ -1,5 +1,7 @@
 use crate::level_instanciation::spawning::post_spawn_modification::CustomCollider;
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
@@ -11,14 +13,17 @@ pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
 pub const SCALE: f32 = 0.6;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_npc(&'a mut self) {
-        let gltf = self
+pub struct NpcSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
+    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+        let gltf = spawner
             .gltf
-            .get(&self.scenes.character)
+            .get(&spawner.scenes.character)
             .unwrap_or_else(|| panic!("Failed to load scene for NPC"));
 
-        self.commands
+        spawner
+            .commands
             .spawn((
                 PbrBundle {
                     transform: Transform::from_scale(Vec3::splat(SCALE)),
@@ -28,9 +33,9 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                 KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
                 Follower,
                 CharacterAnimations {
-                    idle: self.animations.character_idle.clone(),
-                    walk: self.animations.character_walking.clone(),
-                    aerial: self.animations.character_running.clone(),
+                    idle: spawner.animations.character_idle.clone(),
+                    walk: spawner.animations.character_walking.clone(),
+                    aerial: spawner.animations.character_running.clone(),
                 },
             ))
             .with_children(|parent| {

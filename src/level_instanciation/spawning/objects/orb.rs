@@ -1,21 +1,25 @@
-use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
 
-pub fn load_mesh(meshes: &mut ResMut<Assets<Mesh>>) -> Handle<Mesh> {
-    meshes.add(Mesh::from(shape::UVSphere {
-        radius: 1.0,
-        ..default()
-    }))
-}
+pub struct OrbSpawner;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_orb(&'a mut self) {
-        self.commands
+impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
+    fn create_mesh(&self, mesh_assets: &mut ResMut<Assets<Mesh>>) -> Option<Handle<Mesh>> {
+        Some(mesh_assets.add(Mesh::from(shape::UVSphere {
+            radius: 1.0,
+            ..default()
+        })))
+    }
+    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, object: GameObject) {
+        spawner
+            .commands
             .spawn((
                 MaterialMeshBundle {
-                    mesh: self.handles.meshes[&GameObject::Orb].clone(),
-                    material: self.materials.glowy.clone(),
+                    mesh: spawner.outer_spawner.meshes[&object].clone(),
+                    material: spawner.materials.glowy.clone(),
                     transform: Transform::from_translation((0., 1.5, 0.).into()),
                     ..default()
                 },

@@ -1,11 +1,15 @@
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use bevy::prelude::*;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_sunlight(&'a mut self) {
+pub struct SunlightSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for SunlightSpawner {
+    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
         // directional 'sun' light
         const HALF_SIZE: f32 = 50.0;
-        self.commands.spawn((
+        spawner.commands.spawn((
             DirectionalLightBundle {
                 directional_light: DirectionalLight {
                     // Configure the projection to better fit the scene

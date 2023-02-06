@@ -15,6 +15,7 @@ pub struct KinematicCharacterBundle {
     pub rigid_body: RigidBody,
     pub collider: Collider,
     pub character_controller: KinematicCharacterController,
+    pub gravity: Gravity,
 }
 
 impl Default for KinematicCharacterBundle {
@@ -28,6 +29,7 @@ impl Default for KinematicCharacterBundle {
             grounded: default(),
             drag: default(),
             collider: default(),
+            gravity: default(),
             rigid_body: RigidBody::KinematicVelocityBased,
             character_controller: KinematicCharacterController {
                 offset: CharacterLength::Relative(0.05),
@@ -169,9 +171,18 @@ impl Grounded {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
+/// Gravity constant in m/s²
+pub struct Gravity(pub f32);
+
+impl Default for Gravity {
+    fn default() -> Self {
+        Self(9.81)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
 pub struct Jump {
-    /// Gravity constant in m/s²
-    pub g: f32,
     /// Impulse in N s
     pub impulse: f32,
     /// Was jump requested?
@@ -181,7 +192,6 @@ pub struct Jump {
 impl Default for Jump {
     fn default() -> Self {
         Self {
-            g: 10.,
             impulse: 10.,
             requested: false,
         }

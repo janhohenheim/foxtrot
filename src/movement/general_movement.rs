@@ -17,6 +17,10 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<Velocity>()
             .register_type::<Drag>()
             .register_type::<Walker>()
+            .register_type::<Force>()
+            .register_type::<Mass>()
+            .register_type::<Gravity>()
+            .register_type::<CharacterAnimations>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(update_grounded.label("update_grounded"))
@@ -57,15 +61,29 @@ impl Plugin for GeneralMovementPlugin {
     }
 }
 
-fn update_grounded(mut query: Query<(&mut Grounded, &KinematicCharacterControllerOutput)>) {
-    for (mut grounded, output) in &mut query {
-        grounded.try_set(output.grounded);
+fn update_grounded(
+    mut query: Query<(
+        &mut Grounded,
+        &Velocity,
+        &KinematicCharacterController,
+        Option<&KinematicCharacterControllerOutput>,
+    )>,
+) {
+    for (mut grounded, velocity, controller, output) in &mut query {
+        let falling = velocity.0.dot(controller.up) < -1e-5;
+        let new_grounded = output
+            .map(|output| output.grounded)
+            .unwrap_or_else(|| grounded.is_grounded())
+            && falling;
+        grounded.try_set(new_grounded);
     }
 }
 
-fn apply_gravity(mut character: Query<(&mut Force, &KinematicCharacterController, &Mass, &Jump)>) {
-    for (mut force, controller, mass, jump) in &mut character {
-        let gravitational_force = -controller.up * jump.g * mass.0;
+fn apply_gravity(
+    mut character: Query<(&mut Force, &KinematicCharacterController, &Mass, &Gravity)>,
+) {
+    for (mut force, controller, mass, gravity) in &mut character {
+        let gravitational_force = -controller.up * gravity.0 * mass.0;
         force.0 += gravitational_force;
     }
 }

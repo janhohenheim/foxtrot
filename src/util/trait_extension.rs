@@ -6,6 +6,8 @@ pub trait Vec3Ext {
     fn is_approx_zero(self) -> bool;
     fn x0z(self) -> Vec3;
     fn collapse_approx_zero(self) -> Vec3;
+    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
+    fn split(self, up: Vec3) -> SplitVec3;
 }
 impl Vec3Ext for Vec3 {
     fn is_approx_zero(self) -> bool {
@@ -17,6 +19,26 @@ impl Vec3Ext for Vec3 {
     fn collapse_approx_zero(self) -> Vec3 {
         let collapse = |x: f32| if x.abs() < 1e-5 { 0. } else { x };
         Vec3::new(collapse(self.x), collapse(self.y), collapse(self.z))
+    }
+    fn split(self, up: Vec3) -> SplitVec3 {
+        let vertical = up * self.dot(up);
+        let horizontal = self - vertical;
+        SplitVec3 {
+            vertical,
+            horizontal,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct SplitVec3 {
+    pub vertical: Vec3,
+    pub horizontal: Vec3,
+}
+
+impl SplitVec3 {
+    pub fn as_array(self) -> [Vec3; 2] {
+        [self.vertical, self.horizontal]
     }
 }
 

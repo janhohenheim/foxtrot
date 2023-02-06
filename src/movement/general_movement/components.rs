@@ -1,3 +1,4 @@
+use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -117,7 +118,16 @@ impl Drag {
         }
     }
 
-    pub fn calculate_force(&self, velocity: Vec3) -> Vec3 {
+    pub fn calculate_force(&self, velocity: Vec3, up: Vec3) -> Vec3 {
+        velocity
+            .split(up)
+            .as_array()
+            .iter()
+            .map(|&v| self.calculate_force_for_component(v))
+            .sum()
+    }
+
+    fn calculate_force_for_component(&self, velocity: Vec3) -> Vec3 {
         let speed_squared = velocity.length_squared();
         if speed_squared < 1e-5 {
             return Vec3::ZERO;
@@ -135,8 +145,8 @@ impl Default for Drag {
         Self {
             // dry air at 20°C, see <https://en.wikipedia.org/wiki/Density_of_air#Dry_air>
             fluid_density: 1.2041,
-            // Empty
-            area: 0.0,
+            // Arbitrary
+            area: 1.0,
             // Person, see <https://www.engineeringtoolbox.com/drag-coefficient-d_627.html>
             drag_coefficient: 1.2,
         }
@@ -188,8 +198,8 @@ impl Default for Gravity {
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Jump {
-    /// Impulse in N s
-    pub impulse: f32,
+    /// Speed of the jump in m/s
+    pub speed: f32,
     /// Was jump requested?
     pub requested: bool,
 }
@@ -197,7 +207,7 @@ pub struct Jump {
 impl Default for Jump {
     fn default() -> Self {
         Self {
-            impulse: 10.,
+            speed: 5.,
             requested: false,
         }
     }

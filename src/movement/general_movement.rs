@@ -39,14 +39,14 @@ impl Plugin for GeneralMovementPlugin {
                     .with_system(
                         apply_jumping
                             .label("apply_jumping")
-                            .after("update_grounded")
+                            .after("apply_gravity")
                             .before("apply_force"),
                     )
                     .with_system(
                         apply_drag
                             .label("apply_drag")
                             .after("apply_walking")
-                            .after("apply_gravity")
+                            .after("apply_jumping")
                             .before("apply_force"),
                     )
                     .with_system(apply_force.label("apply_force"))
@@ -125,13 +125,24 @@ fn reset_movement_components(
 
 fn apply_jumping(
     time: Res<Time>,
-    mut character_query: Query<(&Grounded, &mut Force, &KinematicCharacterController, &Jump)>,
+    mut character_query: Query<(
+        &Grounded,
+        &mut Force,
+        &mut Velocity,
+        &KinematicCharacterController,
+        &Mass,
+        &Jump,
+    )>,
 ) {
     let dt = time.delta_seconds();
-    for (grounded, mut force, controller, jump) in &mut character_query {
+    for (grounded, mut force, mut velocity, controller, mass, jump) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
-            info!("jumping");
-            force.0 += controller.up * jump.impulse / dt;
+            force.0 + =controller.up * mass.0 * jump.speed / dt;
+
+            // Kill any downward velocity. This ensures that repeated jumps are always the same height.
+            // Otherwards, the falling velocity from the last tick dampens the jump velocity.
+            let velocity_components = velocity.0.split(controller.up);
+            velocity.0 = velocity_components.horizontal;
         }
     }
 }
@@ -178,9 +189,11 @@ fn play_animations(
     }
 }
 
-fn apply_drag(mut character_query: Query<(&mut Force, &Velocity, &Drag)>) {
-    for (mut force, velocity, drag) in &mut character_query {
-        let drag_force = drag.calculate_force(velocity.0);
+fn apply_drag(
+    mut character_query: Query<(&mut Force, &Velocity, &KinematicCharacterController, &Drag)>,
+) {
+    for (mut force, velocity, controller, drag) in &mut character_query {
+        let drag_force = drag.calculate_force(velocity.0, controller.up);
         force.0 += drag_force;
     }
 }

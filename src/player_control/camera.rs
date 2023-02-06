@@ -106,41 +106,36 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
     }
     for mut camera in camera_query.iter_mut() {
         let direction = camera.new.eye.forward();
-        let mut transform = camera.new.eye.with_rotation(default());
 
         let horizontal_angle = -camera_movement.x.clamp(-PI, PI);
-        transform.rotate_axis(Vec3::Y, horizontal_angle);
-        let vertical_angle = camera_movement.y;
+        let horizontal_rotation = Quat::from_axis_angle(Vec3::Y, horizontal_angle);
+        let vertical_angle = -camera_movement.y;
         let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
-        transform.rotate_local_x(vertical_angle);
+        let vertical_rotation = Quat::from_axis_angle(camera.new.eye.local_x(), vertical_angle);
 
         let pivot = camera.new.target;
-        let rotation = transform.rotation;
+        let rotation = horizontal_rotation * vertical_rotation;
         camera.new.eye.rotate_around(pivot, rotation);
     }
 }
 
 fn clamp_vertical_rotation(current_direction: Vec3, angle: f32) -> f32 {
-    let current_angle = current_direction.angle_between(Vect::Y);
-    let new_angle = current_angle - angle;
-
-    const ANGLE_FROM_EXTREMES: f32 = TAU / 32.;
-    const MAX_ANGLE: f32 = TAU / 2.0 - ANGLE_FROM_EXTREMES;
-    const MIN_ANGLE: f32 = 0.0 + ANGLE_FROM_EXTREMES;
-
-    let clamped_angle = if new_angle > MAX_ANGLE {
-        MAX_ANGLE - current_angle
-    } else if new_angle < MIN_ANGLE {
-        MIN_ANGLE - current_angle
+    let angle_to_axis = current_direction.angle_between(Vect::Y);
+    let acute_angle_to_axis = if angle_to_axis > PI / 2. {
+        PI - angle_to_axis
+    } else {
+        angle_to_axis
+    };
+    let most_acute_allowed = TAU / 10.;
+    let new_angle = if acute_angle_to_axis < most_acute_allowed {
+        angle - angle.signum() * (most_acute_allowed - acute_angle_to_axis)
     } else {
         angle
     };
-
-    if clamped_angle.abs() < 0.01 {
-        // This smooths user experience
+    if new_angle.abs() < 0.01 {
         0.
     } else {
-        clamped_angle
+        new_angle
     }
 }
 

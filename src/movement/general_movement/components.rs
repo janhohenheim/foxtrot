@@ -75,10 +75,15 @@ impl Default for Mass {
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Walker {
+    /// Acceleration on the ground
     pub ground_acceleration: f32,
+    /// Acceleration in the air
     pub aerial_acceleration: f32,
+    /// Acceleration in opposide direction of velocity when not explicitely walking, i.e. [`Walker::direction`] is [`Option::None`]
     pub braking_acceleration: f32,
+    /// Speed at which we stop braking and just set the horizontal velocity to 0
     pub stopping_speed: f32,
+    /// Direction in which we want to walk. When not normalized, the acceleration will be scaled accordingly.
     pub direction: Option<Vec3>,
 }
 
@@ -97,7 +102,7 @@ impl Default for Walker {
     fn default() -> Self {
         Self {
             ground_acceleration: 13.,
-            aerial_acceleration: 13.,
+            aerial_acceleration: 8.,
             direction: None,
             braking_acceleration: 5.,
             stopping_speed: 0.1,

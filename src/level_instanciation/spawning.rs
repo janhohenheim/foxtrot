@@ -3,6 +3,7 @@ use crate::level_instanciation::spawning::animation_link::link_animations;
 use crate::level_instanciation::spawning::change_parent::change_parent;
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::duplication::duplicate;
+use crate::level_instanciation::spawning::objects::camera::CameraSpawner;
 use crate::level_instanciation::spawning::objects::level::LevelSpawner;
 use crate::level_instanciation::spawning::objects::npc::NpcSpawner;
 use crate::level_instanciation::spawning::objects::orb::OrbSpawner;
@@ -13,10 +14,10 @@ use crate::level_instanciation::spawning::objects::primitives::{
 };
 use crate::level_instanciation::spawning::objects::sunlight::SunlightSpawner;
 use crate::level_instanciation::spawning::post_spawn_modification::{
-    read_colliders, set_hidden, set_texture_to_repeat,
+    despawn_removed, read_colliders, set_hidden, set_texture_to_repeat,
 };
 use crate::level_instanciation::spawning::spawn::{
-    spawn_delayed, spawn_requested, DelayedSpawnEvents,
+    despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
 use crate::level_instanciation::spawning::spawn_container::{
     sync_container_registry, SpawnContainerRegistry,
@@ -56,6 +57,7 @@ impl Plugin for SpawningPlugin {
             .register_type::<ParentChangeEvent>()
             .register_type::<DuplicationEvent>()
             .register_type::<SpawnTracker>()
+            .register_type::<Despawn>()
             .register_type::<SpawnContainerRegistry>()
             .register_type::<DelayedSpawnEvents>()
             .register_type::<Counter>()
@@ -67,6 +69,7 @@ impl Plugin for SpawningPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(spawn_requested.label("spawn_requested"))
                     .with_system(spawn_delayed)
+                    .with_system(despawn)
                     .with_system(sync_container_registry.before("spawn_requested"))
                     .with_system(change_parent.after("spawn_requested"))
                     .with_system(duplicate.after("spawn_requested"))
@@ -76,7 +79,8 @@ impl Plugin for SpawningPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders)
                     .with_system(set_texture_to_repeat)
-                    .with_system(set_hidden),
+                    .with_system(set_hidden)
+                    .with_system(despawn_removed),
             );
     }
 }
@@ -100,7 +104,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         }
     }
 
-    pub fn spawn(&mut self, object: GameObject) {
+    pub fn spawn<'c: 'a>(&'c mut self, object: GameObject) {
         self.outer_spawner.implementors[&object].spawn(self, object);
     }
 }
@@ -121,6 +125,7 @@ fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Asset
     implementors.insert(GameObject::PointLight, Box::new(PointLightSpawner));
     implementors.insert(GameObject::Triangle, Box::new(TriangleSpawner));
     implementors.insert(GameObject::Empty, Box::new(EmptySpawner));
+    implementors.insert(GameObject::Camera, Box::new(CameraSpawner));
     implementors.insert(GameObject::Level, Box::new(LevelSpawner));
 
     let mut meshes = HashMap::new();
@@ -183,6 +188,7 @@ pub enum GameObject {
     Player,
     Level,
     Orb,
+    Camera,
 }
 
 impl Default for GameObject {
@@ -195,7 +201,11 @@ pub trait PrimedGameObjectSpawnerImplementor {
     fn create_mesh(&self, _mesh_assets: &mut ResMut<Assets<Mesh>>) -> Option<Handle<Mesh>> {
         None
     }
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, object: GameObject);
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        object: GameObject,
+    );
 }
 
 #[derive(Resource)]

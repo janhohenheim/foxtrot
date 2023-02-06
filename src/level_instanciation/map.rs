@@ -1,6 +1,7 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
-use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
-use crate::player_control::camera::MainCamera;
+use crate::level_instanciation::spawning::{
+    DelayedSpawnEvent, GameObject, SpawnEvent, SpawnEventParent,
+};
 use crate::GameState;
 use bevy::prelude::*;
 
@@ -22,16 +23,6 @@ fn setup(
         return;
     }
 
-    // Todo: move this into proper spawn object and then into level .ron (pretty print it while you're on it)
-    commands.spawn((
-        MainCamera::default(),
-        Camera3dBundle {
-            transform: Transform::from_xyz(10., 2., 0.),
-            ..default()
-        },
-        Name::new("Player Camera"),
-    ));
-
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.3,
@@ -46,9 +37,18 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_translation((0., 1., 0.).into()),
-            parent: None,
+            transform: Transform::from_xyz(0., 1., 0.),
+            parent: SpawnEventParent::None,
             name: Some("Player".into()),
+        },
+    });
+    delayed_spawner.send(DelayedSpawnEvent {
+        tick_delay: 2,
+        event: SpawnEvent {
+            object: GameObject::Camera,
+            transform: Transform::from_xyz(10., 2., 0.),
+            parent: SpawnEventParent::None,
+            name: Some("Main Camera".into()),
         },
     });
 }

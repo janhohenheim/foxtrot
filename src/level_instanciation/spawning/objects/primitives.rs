@@ -7,13 +7,22 @@ use bevy_rapier3d::prelude::*;
 pub struct EmptySpawner;
 
 impl PrimedGameObjectSpawnerImplementor for EmptySpawner {
-    fn spawn(&self, _spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {}
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        _spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
+    }
 }
 
 pub struct BoxSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for BoxSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         spawner.commands.spawn((
             TransformBundle::default(),
             Collider::cuboid(1., 1., 1.),
@@ -25,7 +34,11 @@ impl PrimedGameObjectSpawnerImplementor for BoxSpawner {
 pub struct SphereSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for SphereSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         spawner.commands.spawn((
             TransformBundle::default(),
             Collider::ball(1.),
@@ -37,7 +50,11 @@ impl PrimedGameObjectSpawnerImplementor for SphereSpawner {
 pub struct CapsuleSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for CapsuleSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         spawner.commands.spawn((
             TransformBundle::default(),
             Collider::capsule_y(1., 1.),
@@ -49,7 +66,11 @@ impl PrimedGameObjectSpawnerImplementor for CapsuleSpawner {
 pub struct TriangleSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for TriangleSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         spawner.commands.spawn((
             TransformBundle::default(),
             Collider::triangle(Vect::ZERO, Vect::Y, Vect::X),

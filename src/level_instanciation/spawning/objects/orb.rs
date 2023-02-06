@@ -13,7 +13,11 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
             ..default()
         })))
     }
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        object: GameObject,
+    ) {
         spawner
             .commands
             .spawn((

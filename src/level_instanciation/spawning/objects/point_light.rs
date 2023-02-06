@@ -6,7 +6,11 @@ use bevy::prelude::*;
 pub struct PointLightSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for PointLightSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         spawner.commands.spawn((
             PointLightBundle {
                 point_light: PointLight {

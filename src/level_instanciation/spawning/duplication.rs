@@ -1,7 +1,7 @@
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::event::{DuplicationEvent, SpawnEvent};
 use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
-use crate::level_instanciation::spawning::SpawnTracker;
+use crate::level_instanciation::spawning::{SpawnEventParent, SpawnTracker};
 use bevy::prelude::*;
 use regex::Regex;
 use std::borrow::Cow;
@@ -64,6 +64,10 @@ fn send_recursive_spawn_events(
     };
     let number = counter.next(name);
     let name = Some(format!("{name} {number}").into());
+    let parent = match parent {
+        Some(parent) => SpawnEventParent::Named(parent),
+        None => SpawnEventParent::None,
+    };
 
     spawn_requests.send(SpawnEvent {
         object: spawn_tracker.object,

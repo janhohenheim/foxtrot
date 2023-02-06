@@ -3,7 +3,7 @@ use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::event::SpawnEvent;
 use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
 use crate::level_instanciation::spawning::{
-    DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker,
+    DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnEventParent, SpawnTracker,
 };
 use crate::shader::Materials;
 use bevy::gltf::Gltf;
@@ -48,20 +48,47 @@ pub fn spawn_requested(
                 .spawn(spawn.object);
         };
 
-        if let Some(ref parent_name) = spawn.parent {
-            let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
-            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
-                && matches!(spawn.object, GameObject::Empty) {
-                commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {name}")).set_parent(parent_entity).insert(bundle);
-            }  else {
-                commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {parent_name}")).with_children(|parent| {
-                    let entity = parent.spawn(bundle).with_children(spawn_children).id();
-                    spawn_containers.0.insert(name.into(), entity);
-                });
+        match spawn.parent {
+            SpawnEventParent::Named(ref parent_name) => {
+                let parent_entity =
+                    spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
+                if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
+                    && matches!(spawn.object, GameObject::Empty) {
+                    commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {name}")).set_parent(parent_entity).insert(bundle);
+                }  else {
+                    commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {parent_name}")).with_children(|parent| {
+                        let entity = parent.spawn(bundle).with_children(spawn_children).id();
+                        spawn_containers.0.insert(name.into(), entity);
+                    });
+                }
             }
+            SpawnEventParent::Generated => {
+                let entity = commands.spawn(bundle).with_children(spawn_children).id();
+                spawn_containers.0.insert(name.into(), entity);
+            }
+            SpawnEventParent::None => {
+                let entity = commands.spawn(bundle).with_children(spawn_children).id();
+                commands.entity(entity).insert(Despawn { recursive: false });
+            }
+        }
+    }
+}
+
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub struct Despawn {
+    pub recursive: bool,
+}
+
+pub fn despawn(mut commands: Commands, despawn_query: Query<(Entity, &Despawn, &Children)>) {
+    for (entity, despawn, children) in despawn_query.iter() {
+        if despawn.recursive {
+            commands.entity(entity).despawn_recursive();
         } else {
-            let entity = commands.spawn(bundle).with_children(spawn_children).id();
-            spawn_containers.0.insert(name.into(), entity);
+            //commands.entity(entity).despawn();
+            for child in children.iter() {
+                commands.entity(*child).remove_parent();
+            }
         }
     }
 }

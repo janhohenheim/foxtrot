@@ -16,7 +16,11 @@ pub const SCALE: f32 = 0.6;
 pub struct NpcSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         let gltf = spawner
             .gltf
             .get(&spawner.scenes.character)

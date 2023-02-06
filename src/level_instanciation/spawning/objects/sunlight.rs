@@ -6,7 +6,11 @@ use bevy::prelude::*;
 pub struct SunlightSpawner;
 
 impl PrimedGameObjectSpawnerImplementor for SunlightSpawner {
-    fn spawn(&self, spawner: &mut PrimedGameObjectSpawner, _object: GameObject) {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        _object: GameObject,
+    ) {
         // directional 'sun' light
         const HALF_SIZE: f32 = 50.0;
         spawner.commands.spawn((

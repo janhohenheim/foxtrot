@@ -15,11 +15,17 @@ pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(PathMeshPlugin).add_system_set(
-            SystemSet::on_update(GameState::Playing)
-                .with_system(query_mesh)
-                .with_system(read_navmesh),
-        );
+        app.add_plugin(PathMeshPlugin)
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(query_mesh)
+                    .with_system(read_navmesh),
+            )
+            // See <https://bevy-cheatbook.github.io/features/transforms.html#transform-propagation>
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                read_navmesh.after(TransformSystem::TransformPropagate),
+            );
     }
 }
 

@@ -203,11 +203,32 @@ fn apply_drag(
     }
 }
 
-fn apply_walking(mut character_query: Query<(&mut Force, &Walker, &Grounded, &Mass)>) {
-    for (mut force, walker, grounded, mass) in &mut character_query {
+fn apply_walking(
+    mut character_query: Query<(
+        &mut Force,
+        &Walker,
+        &mut Velocity,
+        &KinematicCharacterController,
+        &Grounded,
+        &Mass,
+    )>,
+) {
+    for (mut force, walker, mut velocity, controller, grounded, mass) in &mut character_query {
         if let Some(acceleration) = walker.calculate_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass.0;
             force.0 += walking_force;
+        } else if grounded.is_grounded() {
+            let velocity_components = velocity.0.split(controller.up);
+            if velocity_components.horizontal.length_squared()
+                < walker.stopping_speed * walker.stopping_speed
+            {
+                velocity.0 = velocity_components.vertical;
+            } else if let Some(braking_direction) =
+                velocity_components.horizontal.try_normalize().map(|v| -v)
+            {
+                let braking_force = walker.braking_acceleration * braking_direction * mass.0;
+                force.0 += braking_force;
+            }
         }
     }
 }

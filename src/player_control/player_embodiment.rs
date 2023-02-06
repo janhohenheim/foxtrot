@@ -59,8 +59,7 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    // Todo: Why does this only work when it's negative?
-    let forward = -camera
+    let forward = camera
         .new
         .direction()
         .unwrap_or(Vec3::Z)

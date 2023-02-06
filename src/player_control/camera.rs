@@ -8,7 +8,7 @@ use bevy::window::CursorGrabMode;
 use bevy_rapier3d::na::Vector3;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::TAU;
+use std::f32::consts::{PI, TAU};
 
 const MAX_DISTANCE: f32 = 10.0;
 
@@ -23,13 +23,17 @@ impl Plugin for CameraPlugin {
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_camera_controls.label("handle_camera_controls"))
+                    .with_system(follow_target.label("follow_target"))
                     .with_system(
-                        follow_target
-                            .label("follow_target")
+                        handle_camera_controls
+                            .label("handle_camera_controls")
+                            .after("follow_target"),
+                    )
+                    .with_system(
+                        face_target
+                            .label("face_target")
                             .after("handle_camera_controls"),
                     )
-                    .with_system(face_target.label("face_target").after("follow_target"))
                     .with_system(
                         update_camera_transform
                             .label("update_camera_transform")
@@ -82,7 +86,7 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
 }
 
 fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res<Actions>) {
-    let mouse_sensitivity = 0.5;
+    let mouse_sensitivity = 1e-2;
     let camera_movement = match actions.camera_movement {
         Some(vector) => vector * mouse_sensitivity,
         None => return,
@@ -94,8 +98,8 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
     for mut camera in camera_query.iter_mut() {
         let direction = camera.new.direction().unwrap_or(Vec3::Z);
         let horizontal_rotation_axis = direction.xz().perp().x0y();
-        let horizontal_angle = camera_movement.x;
-        let vertical_angle = -camera_movement.y;
+        let horizontal_angle = camera_movement.x * PI;
+        let vertical_angle = -camera_movement.y * PI;
         let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
 
         let horizontal_rotation_matrix = get_rotation_matrix_around_y_axis(horizontal_angle);
@@ -106,7 +110,7 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
             (vertical_rotation_matrix * horizontal_rotation_matrix * Vector3::from(direction))
                 .into();
 
-        camera.new.eye.translation = camera.new.target - rotated_direction * MAX_DISTANCE;
+        camera.new.eye.translation = -camera.new.target - rotated_direction * MAX_DISTANCE;
     }
 }
 
@@ -158,7 +162,7 @@ fn update_camera_transform(
 ) {
     let dt = time.delta_seconds();
     for (mut transform, mut camera) in camera_query.iter_mut() {
-        let scale = (2. * dt).max(1.);
+        let scale = (2. * dt).min(1.);
         let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
         if line_of_sight_result.correction == LineOfSightCorrection::Closer {
             transform.translation = line_of_sight_result.location;

@@ -7,7 +7,7 @@ use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
 
-const MAX_DISTANCE: f32 = 10.0;
+const MAX_DISTANCE: f32 = 5.0;
 
 pub struct CameraPlugin;
 
@@ -31,7 +31,8 @@ impl Plugin for CameraPlugin {
                             .label("update_camera_transform")
                             .after("handle_camera_controls"),
                     )
-                    .with_system(cursor_grab_system),
+                    .with_system(cursor_grab_system)
+                    .with_system(init_camera_eye.before("follow_target")),
             );
     }
 }
@@ -43,8 +44,8 @@ pub struct UiCamera;
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct MainCamera {
-    pub current: CameraPosition,
-    pub new: CameraPosition,
+    current: CameraPosition,
+    new: CameraPosition,
 }
 
 impl MainCamera {
@@ -53,12 +54,8 @@ impl MainCamera {
         self
     }
 
-    pub fn look_at_new_target(&mut self) -> &mut Self {
-        let target = self.new.target;
-        if !(target - self.new.eye.translation).is_approx_zero() {
-            self.new.eye.look_at(target, Vect::Y);
-        }
-        self
+    pub fn forward(&self) -> Vec3 {
+        self.new.eye.forward()
     }
 }
 
@@ -79,11 +76,21 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
     }
 }
 
+fn init_camera_eye(mut camera_query: Query<(&Transform, &mut MainCamera), Added<MainCamera>>) {
+    for (transform, mut camera) in &mut camera_query {
+        camera.current.eye = transform.clone();
+    }
+}
+
 fn follow_target(mut camera_query: Query<&mut MainCamera>) {
     for mut camera in &mut camera_query {
-        let target_movement = camera.new.target - camera.current.target;
+        let target_movement = (camera.new.target - camera.current.target).collapse_approx_zero();
         camera.new.eye.translation = camera.current.eye.translation + target_movement;
-        camera.look_at_new_target();
+
+        let new_target = camera.new.target;
+        if !(new_target - camera.new.eye.translation).is_approx_zero() {
+            camera.new.eye.look_at(new_target, Vect::Y);
+        }
     }
 }
 
@@ -101,9 +108,9 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
         let direction = camera.new.eye.forward();
         let mut transform = camera.new.eye.with_rotation(default());
 
-        let horizontal_angle = -camera_movement.x.clamp(-PI + 1e-5, PI - 1e-5);
+        let horizontal_angle = -camera_movement.x.clamp(-PI, PI);
         transform.rotate_axis(Vec3::Y, horizontal_angle);
-        let vertical_angle = -camera_movement.y;
+        let vertical_angle = camera_movement.y;
         let vertical_angle = clamp_vertical_rotation(direction, vertical_angle);
         transform.rotate_local_x(vertical_angle);
 
@@ -144,14 +151,15 @@ fn update_camera_transform(
 ) {
     let dt = time.delta_seconds();
     for (mut transform, mut camera) in camera_query.iter_mut() {
-        let scale = (5. * dt).min(1.);
         let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
         if line_of_sight_result.correction == LineOfSightCorrection::Closer {
             transform.translation = line_of_sight_result.location;
         } else {
             let direction = line_of_sight_result.location - transform.translation;
+            let scale = (10. * dt).min(1.);
             transform.translation += direction * scale;
         }
+        let scale = (10. * dt).min(1.);
         transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
 
         camera.current = camera.new.clone();

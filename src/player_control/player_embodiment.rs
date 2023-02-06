@@ -22,6 +22,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     .with_system(
                         handle_horizontal_movement
                             .after("set_actions")
+                            .after("update_camera_transform")
                             .before("apply_walking"),
                     )
                     .with_system(set_camera_target.before("follow_target")),
@@ -59,7 +60,7 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = camera.new.eye.forward().xz().normalize();
+    let forward = camera.forward().xz().normalize();
     let sideward = forward.perp();
     let forward_action = forward * movement.y;
     let sideward_action = sideward * movement.x;

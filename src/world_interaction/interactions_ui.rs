@@ -25,7 +25,7 @@ pub struct InteractionUi(Option<InteractionKind>);
 
 #[derive(Debug)]
 pub enum InteractionKind {
-    Dialog(DialogTarget),
+    Dialog((Option<Entity>, DialogTarget)),
 }
 
 fn update_interaction_possibilities(
@@ -95,6 +95,7 @@ fn display_interaction_prompt(
         });
     if actions.interact {
         dialog_event_writer.send(DialogEvent {
+            target:
             dialog: dialog_id.dialog_id.clone(),
             page: None,
         });

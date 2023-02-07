@@ -24,8 +24,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .after("set_actions")
                             .after("update_camera_transform")
                             .before("apply_walking"),
-                    )
-                    .with_system(set_camera_target.before("follow_target")),
+                    ),
             );
     }
 }
@@ -69,18 +68,5 @@ fn handle_horizontal_movement(
     for mut walker in &mut player_query {
         walker.direction = Some(direction);
         walker.sprinting = actions.sprint;
-    }
-}
-
-// Todo: Move this into own system -> can focus dialog target
-fn set_camera_target(
-    mut camera_query: Query<&mut MainCamera>,
-    player_query: Query<&GlobalTransform, With<Player>>,
-) {
-    for player_transform in player_query.iter() {
-        let translation = player_transform.translation();
-        for mut camera in &mut camera_query {
-            camera.set_target(translation);
-        }
     }
 }

@@ -1,4 +1,5 @@
 use crate::player_control::actions::{Actions, ActionsFrozen};
+use crate::player_control::camera::focus::set_camera_focus;
 use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use crate::GameState;
 use bevy::prelude::*;
@@ -6,6 +7,8 @@ use bevy::window::CursorGrabMode;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
+
+pub mod focus;
 
 const MAX_DISTANCE: f32 = 5.0;
 
@@ -32,7 +35,8 @@ impl Plugin for CameraPlugin {
                             .after("handle_camera_controls"),
                     )
                     .with_system(cursor_grab_system)
-                    .with_system(init_camera_eye.before("follow_target")),
+                    .with_system(init_camera_eye.before("follow_target"))
+                    .with_system(set_camera_focus.before("follow_target")),
             );
     }
 }

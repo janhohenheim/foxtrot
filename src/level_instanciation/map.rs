@@ -20,6 +20,7 @@ fn setup(
     if current_level.is_some() {
         return;
     }
+
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.3,
@@ -34,9 +35,7 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_translation((0., 1., 0.).into()),
-            parent: None,
-            name: Some("Player".into()),
+            transform: Transform::from_xyz(0., 1.2, 0.),
         },
     });
 }

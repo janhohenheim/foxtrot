@@ -9,11 +9,13 @@ use serde::{Deserialize, Serialize};
 #[reflect(Serialize, Deserialize)]
 pub struct DialogEvent {
     pub dialog: DialogId,
+    pub source: Option<Entity>,
     pub page: Option<PageId>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct CurrentDialog {
+    pub source: Option<Entity>,
     pub id: DialogId,
     pub dialog: Dialog,
     pub current_page: PageId,

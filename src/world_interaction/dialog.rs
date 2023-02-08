@@ -68,6 +68,7 @@ fn set_current_dialog(
                 .clone()
         });
         commands.insert_resource(CurrentDialog {
+            source: dialog_event.source,
             id: dialog_event.dialog.clone(),
             dialog: dialog.clone(),
             current_page,

@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod level;
 pub mod npc;
 pub mod orb;

@@ -1,6 +1,7 @@
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
-use crate::player_control::camera::PlayerCamera;
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -10,26 +11,38 @@ pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
 pub const SCALE: f32 = 0.5;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_player(&'a mut self) {
-        let gltf = self
+pub struct PlayerSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        let gltf = spawner
             .gltf
-            .get(&self.scenes.character)
+            .get(&spawner.scenes.character)
             .unwrap_or_else(|| panic!("Failed to load scene for player"));
 
-        self.commands
+        spawner
+            .commands
             .spawn((
                 PbrBundle {
-                    transform: Transform::from_scale(Vec3::splat(SCALE)),
+                    transform: Transform {
+                        translation: transform.translation,
+                        rotation: transform.rotation,
+                        scale: transform.scale * SCALE,
+                    },
                     ..default()
                 },
                 Player,
                 Name::new("Player"),
                 KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
-                    idle: self.animations.character_idle.clone(),
-                    walk: self.animations.character_walking.clone(),
-                    aerial: self.animations.character_running.clone(),
+                    idle: spawner.animations.character_idle.clone(),
+                    walk: spawner.animations.character_walking.clone(),
+                    aerial: spawner.animations.character_running.clone(),
                 },
             ))
             .with_children(|parent| {
@@ -39,14 +52,6 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     PlayerSensor,
                     ActiveCollisionTypes::all(),
                     Name::new("Player Sensor"),
-                ));
-                parent.spawn((
-                    PlayerCamera,
-                    Camera3dBundle {
-                        transform: Transform::from_xyz(10., 2., 0.),
-                        ..default()
-                    },
-                    Name::new("Player Camera"),
                 ));
                 parent.spawn((
                     SceneBundle {
@@ -61,6 +66,7 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
                     Model,
                     Name::new("Player Model"),
                 ));
-            });
+            })
+            .id()
     }
 }

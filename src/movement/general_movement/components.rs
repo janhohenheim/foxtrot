@@ -33,7 +33,7 @@ impl Default for KinematicCharacterBundle {
             gravity: default(),
             rigid_body: RigidBody::KinematicVelocityBased,
             character_controller: KinematicCharacterController {
-                offset: CharacterLength::Relative(0.03),
+                offset: CharacterLength::Relative(0.05),
                 ..default()
             },
         }
@@ -226,7 +226,7 @@ pub struct Jump {
 impl Default for Jump {
     fn default() -> Self {
         Self {
-            speed: 5.,
+            speed: 4.,
             requested: false,
         }
     }

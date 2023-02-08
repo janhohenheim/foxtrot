@@ -12,7 +12,7 @@ pub struct InteractionsUiPlugin;
 
 impl Plugin for InteractionsUiPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<InteractionUi>().add_system_set(
+        app.add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(update_interaction_possibilities)
                 .with_system(display_interaction_prompt),
@@ -20,8 +20,11 @@ impl Plugin for InteractionsUiPlugin {
     }
 }
 
-#[derive(Resource, Default, Debug)]
-pub struct InteractionUi(Option<InteractionKind>);
+#[derive(Resource, Debug)]
+pub struct InteractionUi {
+    source: Option<Entity>,
+    kind: InteractionKind,
+}
 
 #[derive(Debug)]
 pub enum InteractionKind {
@@ -29,10 +32,12 @@ pub enum InteractionKind {
 }
 
 fn update_interaction_possibilities(
+    mut commands: Commands,
     mut collision_events: EventReader<CollisionEvent>,
     player_query: Query<Entity, With<PlayerSensor>>,
     dialog_target_query: Query<&DialogTarget>,
-    mut interaction_ui: ResMut<InteractionUi>,
+    interaction_ui: Option<Res<InteractionUi>>,
+    parent_query: Query<&Parent>,
 ) {
     for event in collision_events.iter() {
         let (entity_a, entity_b, kind, ongoing) = match event {
@@ -46,29 +51,35 @@ fn update_interaction_possibilities(
             .into_iter()
             .filter_map(|res| res.ok())
             .next();
-        let dialog_target = [
-            dialog_target_query.get(*entity_a),
-            dialog_target_query.get(*entity_b),
+        let dialog_result = [
+            (entity_a, dialog_target_query.get(*entity_a)),
+            (entity_b, dialog_target_query.get(*entity_b)),
         ]
         .into_iter()
-        .filter_map(|res| res.ok())
+        .filter_map(|(entity, res)| res.ok().map(|dialog_target| (entity, dialog_target)))
         .next();
 
-        if let Some(dialog_target) = dialog_target && player.is_some(){
-            if ongoing && interaction_ui.0.is_none(){
-                interaction_ui.0 = Some(InteractionKind::Dialog(dialog_target.clone()))
-            } else if let Some(interaction_kind) = &interaction_ui.0 &&
-                let InteractionKind::Dialog(current_dialog_target) = interaction_kind &&
+        if let Some((dialog_source, dialog_target)) = dialog_result && player.is_some(){
+            if ongoing && interaction_ui.is_none() {
+                let dialog_translation_source = parent_query
+                    .get(*dialog_source)
+                    .unwrap().get();
+                commands.insert_resource::<InteractionUi>(InteractionUi {
+                    source: Some(dialog_translation_source),
+                    kind: InteractionKind::Dialog(dialog_target.clone()),
+                });
+            } else if let Some(interaction_ui) = &interaction_ui &&
+                let InteractionKind::Dialog(current_dialog_target) = &interaction_ui.kind &&
                 *current_dialog_target == *dialog_target &&
                 !ongoing {
-                interaction_ui.0 = None;
+                commands.remove_resource::<InteractionUi>();
             }
         }
     }
 }
 
 fn display_interaction_prompt(
-    interaction_ui: Res<InteractionUi>,
+    interaction_ui: Option<Res<InteractionUi>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
     mut egui_context: ResMut<EguiContext>,
     actions: Res<Actions>,
@@ -78,10 +89,9 @@ fn display_interaction_prompt(
     if actions_frozen.is_some() {
         return;
     }
-
-    let dialog_id = match &interaction_ui.0 {
-        Some(InteractionKind::Dialog(dialog_id)) => dialog_id,
-        _ => return,
+    let interaction_ui = match interaction_ui {
+        Some(interaction_ui) => interaction_ui,
+        None => return,
     };
 
     let window = windows.get_primary().unwrap();
@@ -94,9 +104,14 @@ fn display_interaction_prompt(
             ui.label("E: Talk");
         });
     if actions.interact {
-        dialog_event_writer.send(DialogEvent {
-            dialog: dialog_id.dialog_id.clone(),
-            page: None,
-        });
+        match &interaction_ui.kind {
+            InteractionKind::Dialog(dialog_target) => {
+                dialog_event_writer.send(DialogEvent {
+                    source: interaction_ui.source,
+                    dialog: dialog_target.dialog_id.clone(),
+                    page: None,
+                });
+            }
+        }
     }
 }

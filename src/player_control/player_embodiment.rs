@@ -1,6 +1,6 @@
 use crate::movement::general_movement::{Jump, Walker};
 use crate::player_control::actions::Actions;
-use crate::player_control::camera::PlayerCamera;
+use crate::player_control::camera::MainCamera;
 use crate::util::trait_extension::Vec2Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -22,6 +22,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     .with_system(
                         handle_horizontal_movement
                             .after("set_actions")
+                            .after("update_camera_transform")
                             .before("apply_walking"),
                     ),
             );
@@ -47,7 +48,7 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Pl
 fn handle_horizontal_movement(
     actions: Res<Actions>,
     mut player_query: Query<&mut Walker, With<Player>>,
-    camera_query: Query<&Transform, With<PlayerCamera>>,
+    camera_query: Query<&MainCamera>,
 ) {
     let camera = match camera_query.iter().next() {
         Some(transform) => transform,
@@ -58,10 +59,7 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = (-camera.translation)
-        .xz()
-        .try_normalize()
-        .unwrap_or(Vec2::Y);
+    let forward = camera.forward().xz().normalize();
     let sideward = forward.perp();
     let forward_action = forward * movement.y;
     let sideward_action = sideward * movement.x;

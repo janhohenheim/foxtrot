@@ -42,9 +42,16 @@ impl SplitVec3 {
 }
 
 pub trait Vec2Ext {
+    #[allow(clippy::wrong_self_convention)] // Because [`Vec2`] is [`Copy`]
+    fn is_approx_zero(self) -> bool;
     fn x0y(self) -> Vec3;
 }
 impl Vec2Ext for Vec2 {
+    #[inline]
+    fn is_approx_zero(self) -> bool {
+        self.x.abs() < 1e-5 && self.y.abs() < 1e-5
+    }
+
     #[inline]
     fn x0y(self) -> Vec3 {
         Vec3::new(self.x, 0., self.y)

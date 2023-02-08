@@ -12,7 +12,7 @@ impl Plugin for BevyConfigPlugin {
             window: WindowDescriptor {
                 width: 800.,
                 height: 600.,
-                title: "Foxtrot".to_string(), // ToDo
+                title: "Foxtrot".to_string(),
                 canvas: Some("#bevy".to_owned()),
                 present_mode: PresentMode::AutoVsync,
                 ..default()

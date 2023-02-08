@@ -2,7 +2,6 @@ use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instanciation::spawning::{GameObject, SpawnEvent, SpawnTracker};
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
-use crate::world_interaction::interactions_ui::InteractionUi;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
@@ -39,7 +38,7 @@ pub struct CurrentLevel {
 
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
-    spawn_query: Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
+    spawn_query: Query<(&SpawnTracker, Option<&Transform>)>,
 ) {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
@@ -48,7 +47,7 @@ fn save_world(
             .map(|filename| {
                 Path::new("assets")
                     .join("levels")
-                    .join(format!("{filename}.scn.ron"))
+                    .join(format!("{filename}.lvl.ron"))
             })
             .map(|path| (path.clone(), fs::try_exists(path).ok()))
             .take(10)
@@ -123,7 +122,6 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
-        commands.init_resource::<InteractionUi>();
         commands.init_resource::<ActiveConditions>();
         commands.remove_resource::<CurrentDialog>();
 
@@ -131,29 +129,17 @@ fn load_world(
     }
 }
 
-fn serialize_world(
-    spawn_query: &Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
-) -> String {
+fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
-        .filter(|(spawn_tracker, _, _, _)| !matches!(spawn_tracker.object, GameObject::Player))
-        .map(|(spawn_tracker, name, parent, transform)| {
-            let parent = parent
-                .and_then(|parent| spawn_query.get(parent.get()).ok())
-                .and_then(|(spawn_tracker, name, _, _)| {
-                    (spawn_tracker.get_default_name() != name.as_str())
-                        .then(|| name.to_string().into())
-                });
-            SpawnEvent {
-                object: spawn_tracker.object,
-                transform: transform.map(Clone::clone).unwrap_or_default(),
-                name: Some(String::from(name).into()),
-                parent,
-            }
+        .filter(|(spawn_tracker, _)| !matches!(spawn_tracker.object, GameObject::Player))
+        .map(|(spawn_tracker, transform)| SpawnEvent {
+            object: spawn_tracker.object,
+            transform: transform.map(Clone::clone).unwrap_or_default(),
         })
         .collect();
     let serialized_level = SerializedLevel(objects);
-    ron::to_string(&serialized_level).expect("Failed to serialize world")
+    ron::ser::to_string_pretty(&serialized_level, default()).expect("Failed to serialize world")
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid)]

@@ -55,7 +55,7 @@ impl Plugin for GeneralMovementPlugin {
                             .label("reset_movement_components")
                             .after("apply_force"),
                     )
-                    .with_system(rotate_model)
+                    .with_system(rotate_characters)
                     .with_system(play_animations),
             );
     }
@@ -152,26 +152,25 @@ fn apply_jumping(
     }
 }
 
-fn rotate_model(
+fn rotate_characters(
     time: Res<Time>,
-    player_query: Query<(
+    mut player_query: Query<(
         &KinematicCharacterControllerOutput,
         &KinematicCharacterController,
-        &AnimationEntityLink,
+        &mut Transform,
     )>,
-    mut transforms: Query<&mut Transform>,
 ) {
     let dt = time.delta_seconds();
-    for (output, controller, link) in player_query.iter() {
+    for (output, controller, mut transform) in player_query.iter_mut() {
         let horizontal_movement = output.effective_translation.split(controller.up).horizontal;
         if horizontal_movement.is_approx_zero() {
             continue;
         }
-        let mut transform = transforms.get_mut(link.0).unwrap();
         let target_transform =
             transform.looking_at(transform.translation + horizontal_movement, controller.up);
         // Asymptotic averaging
-        let scale = 1.0 - (0.05f32).powf(dt);
+        const SMOOTHNESS: f32 = 3.;
+        let scale = (SMOOTHNESS * dt).min(1.);
         let rotation = transform.rotation.slerp(target_transform.rotation, scale);
         transform.rotation = rotation;
     }

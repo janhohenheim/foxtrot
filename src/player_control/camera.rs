@@ -50,11 +50,17 @@ pub struct UiCamera;
 pub struct MainCamera {
     current: CameraPosition,
     new: CameraPosition,
+    up: Vec3,
 }
 
 impl MainCamera {
     pub fn set_target(&mut self, target: Vec3) -> &mut Self {
         self.new.target = target;
+        self
+    }
+
+    pub fn set_up(&mut self, up: Vec3) -> &mut Self {
+        self.up = up;
         self
     }
 
@@ -93,7 +99,7 @@ fn follow_target(mut camera_query: Query<&mut MainCamera>) {
 
         let new_target = camera.new.target;
         if !(new_target - camera.new.eye.translation).is_approx_zero() {
-            camera.new.eye.look_at(new_target, Vect::Y);
+            camera.new.eye.look_at(new_target, camera.up);
         }
     }
 }
@@ -108,25 +114,28 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
     if camera_movement.is_approx_zero() {
         return;
     }
-    for mut camera in camera_query.iter_mut() {
-        let horizontal_angle = -camera_movement.x.clamp(-PI, PI);
-        let horizontal_rotation = Quat::from_axis_angle(Vec3::Y, horizontal_angle);
 
-        let vertical_angle = -camera_movement.y;
-        let vertical_angle = clamp_vertical_rotation(camera.new.eye, vertical_angle);
-        let vertical_rotation = Quat::from_axis_angle(camera.new.eye.local_x(), vertical_angle);
+    for mut camera in camera_query.iter_mut() {
+        let yaw = -camera_movement.x.clamp(-PI, PI);
+        let yaw_rotation = Quat::from_axis_angle(camera.up, yaw);
+
+        let pitch = -camera_movement.y;
+        let pitch = clamp_pitch(&camera, pitch);
+        let pitch_rotation = Quat::from_axis_angle(camera.new.eye.local_x(), pitch);
 
         let pivot = camera.new.target;
-        let rotation = horizontal_rotation * vertical_rotation;
+        let rotation = yaw_rotation * pitch_rotation;
         camera.new.eye.rotate_around(pivot, rotation);
     }
 }
 
-fn clamp_vertical_rotation(eye: Transform, angle: f32) -> f32 {
+fn clamp_pitch(camera: &MainCamera, angle: f32) -> f32 {
     const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
     const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
 
-    let angle_to_axis = eye.forward().angle_between(Vec3::Y);
+    let forward = camera.new.eye.forward();
+    let up = camera.up;
+    let angle_to_axis = forward.angle_between(up);
     let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
         (PI - angle_to_axis, MOST_ACUTE_ALLOWED_FROM_ABOVE, -1.)
     } else {

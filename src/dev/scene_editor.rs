@@ -1,8 +1,6 @@
 use crate::file_system_interaction::game_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
-use crate::level_instanciation::spawning::{
-    DelayedSpawnEvent, GameObject, SpawnEvent as SpawnRequestEvent,
-};
+use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::movement::navigation::navmesh::NavMesh;
 use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::GameState;
@@ -39,23 +37,15 @@ impl Default for SceneEditorState {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct SpawnEvent {
-    object: GameObject,
-}
-
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SpawnEvent>()
-            .init_resource::<SceneEditorState>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_toggle)
-                    .with_system(show_editor)
-                    .with_system(relay_spawn_requests)
-                    .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render),
-            );
+        app.init_resource::<SceneEditorState>().add_system_set(
+            SystemSet::on_update(GameState::Playing)
+                .with_system(handle_toggle)
+                .with_system(show_editor)
+                .with_system(handle_debug_render)
+                .with_system(handle_navmesh_render),
+        );
     }
 }
 
@@ -137,9 +127,9 @@ fn show_editor(
                         // Make sure the player is spawned after the level
                         delayed_spawner.send(DelayedSpawnEvent {
                             tick_delay: 2,
-                            event: SpawnRequestEvent {
+                            event: SpawnEvent {
                                 object: GameObject::Player,
-                                transform: Transform::from_translation((0., 1.2, 0.).into()),
+                                transform: Transform::from_translation((0., 1.5, 0.).into()),
                             },
                         });
                     }
@@ -167,6 +157,7 @@ fn show_editor(
             if ui.button("Spawn").clicked() {
                 spawn_events.send(SpawnEvent {
                     object: state.spawn_item,
+                    ..default()
                 });
             }
 
@@ -182,16 +173,4 @@ fn show_editor(
                     });
                 });
         });
-}
-
-fn relay_spawn_requests(
-    mut spawn_requests: EventReader<SpawnEvent>,
-    mut spawn_requester: EventWriter<SpawnRequestEvent>,
-) {
-    for object in spawn_requests.iter() {
-        spawn_requester.send(SpawnRequestEvent {
-            object: object.object,
-            transform: Transform::default(),
-        });
-    }
 }

@@ -4,15 +4,16 @@ use crate::world_interaction::dialog::CurrentDialog;
 use bevy::prelude::*;
 
 pub fn set_camera_focus(
-    camera_query: Query<&mut MainCamera>,
+    mut camera_query: Query<&mut MainCamera>,
     current_dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&GlobalTransform, With<Player>>,
     non_player_query: Query<&GlobalTransform, Without<Player>>,
 ) {
-    for mut camera in camera_query.iter() {
-        if let Some(ref active_dialogue) = current_dialog {
+    for mut camera in camera_query.iter_mut() {
+        if let Some(ref active_dialogue) = current_dialog &&
+            let Some(target_entity) = active_dialogue.source {
             let translation = non_player_query
-                .get(active_dialogue.target)
+                .get(target_entity)
                 .unwrap()
                 .translation();
             camera.set_target(translation);

@@ -2,7 +2,6 @@ use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instanciation::spawning::{GameObject, SpawnEvent, SpawnTracker};
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
-use crate::world_interaction::interactions_ui::InteractionUi;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
@@ -123,7 +122,6 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
-        commands.init_resource::<InteractionUi>();
         commands.init_resource::<ActiveConditions>();
         commands.remove_resource::<CurrentDialog>();
 

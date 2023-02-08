@@ -113,7 +113,7 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
         let horizontal_rotation = Quat::from_axis_angle(Vec3::Y, horizontal_angle);
 
         let vertical_angle = -camera_movement.y;
-        let vertical_angle = clamp_vertical_rotation(camera.new.eye.forward(), vertical_angle);
+        let vertical_angle = clamp_vertical_rotation(camera.new.eye, vertical_angle);
         let vertical_rotation = Quat::from_axis_angle(camera.new.eye.local_x(), vertical_angle);
 
         let pivot = camera.new.target;
@@ -122,16 +122,18 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
     }
 }
 
-fn clamp_vertical_rotation(forward: Vec3, angle: f32) -> f32 {
-    let angle_to_axis = forward.angle_between(Vect::Y);
-    let acute_angle_to_axis = if angle_to_axis > PI / 2. {
-        PI - angle_to_axis
+fn clamp_vertical_rotation(eye: Transform, angle: f32) -> f32 {
+    const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
+    const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
+
+    let angle_to_axis = eye.forward().angle_between(Vec3::Y);
+    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
+        (PI - angle_to_axis, MOST_ACUTE_ALLOWED_FROM_ABOVE, -1.)
     } else {
-        angle_to_axis
+        (angle_to_axis, MOST_ACUTE_ALLOWED_FROM_BELOW, 1.)
     };
-    let most_acute_allowed = TAU / 10.;
     let new_angle = if acute_angle_to_axis < most_acute_allowed {
-        angle - angle.signum() * (most_acute_allowed - acute_angle_to_axis)
+        angle - sign * (most_acute_allowed - acute_angle_to_axis)
     } else {
         angle
     };

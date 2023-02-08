@@ -85,10 +85,10 @@ impl Plugin for SpawningPlugin {
     }
 }
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
+impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn new(
         outer_spawner: &'a GameObjectSpawner,
-        commands: &'a mut ChildBuilder<'w, 's, 'b>,
+        commands: &'a mut Commands<'w, 's>,
         gltf: &'a Res<'a, Assets<Gltf>>,
         materials: &'a Res<'a, Materials>,
         animations: &'a Res<'a, AnimationAssets>,
@@ -104,8 +104,8 @@ impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
         }
     }
 
-    pub fn spawn<'c: 'a>(&'c mut self, object: GameObject) {
-        self.outer_spawner.implementors[&object].spawn(self, object);
+    pub fn spawn<'c: 'a>(&'c mut self, object: GameObject, transform: Transform) -> Entity {
+        self.outer_spawner.implementors[&object].spawn(self, object, transform)
     }
 }
 
@@ -203,9 +203,10 @@ pub trait PrimedGameObjectSpawnerImplementor {
     }
     fn spawn<'a, 'b: 'a>(
         &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
-    );
+        transform: Transform,
+    ) -> Entity;
 }
 
 #[derive(Resource)]
@@ -215,27 +216,27 @@ pub struct GameObjectSpawner {
 }
 
 #[derive(Resource)]
-pub struct PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
+pub struct PrimedGameObjectSpawner<'w, 's, 'a> {
     pub outer_spawner: &'a GameObjectSpawner,
     pub gltf: &'a Res<'a, Assets<Gltf>>,
     pub materials: &'a Res<'a, Materials>,
-    pub commands: &'a mut ChildBuilder<'w, 's, 'b>,
+    pub commands: &'a mut Commands<'w, 's>,
     pub animations: &'a Res<'a, AnimationAssets>,
     pub scenes: &'a Res<'a, SceneAssets>,
 }
 
-impl<'a, 'b, 'c, 'w, 's> GameObjectSpawner
+impl<'a, 'c, 'w, 's> GameObjectSpawner
 where
     'c: 'a,
 {
     pub fn attach(
         &'c self,
-        commands: &'a mut ChildBuilder<'w, 's, 'b>,
+        commands: &'a mut Commands<'w, 's>,
         gltf: &'a Res<'a, Assets<Gltf>>,
         materials: &'a Res<'a, Materials>,
         animations: &'a Res<'a, AnimationAssets>,
         scenes: &'a Res<'a, SceneAssets>,
-    ) -> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
+    ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
         PrimedGameObjectSpawner::new(self, commands, gltf, materials, animations, scenes)
     }
 }

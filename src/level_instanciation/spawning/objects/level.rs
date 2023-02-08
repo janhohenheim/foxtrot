@@ -8,9 +8,12 @@ pub struct LevelSpawner;
 impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
     fn spawn<'a, 'b: 'a>(
         &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
-    ) {
-        spawner.spawn_gltf(object, &spawner.scenes.level, Transform::default());
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .spawn_gltf(object, &spawner.scenes.level, transform)
+            .id()
     }
 }

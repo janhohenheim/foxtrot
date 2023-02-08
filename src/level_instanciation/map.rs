@@ -1,6 +1,5 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
-use crate::player_control::camera::MainCamera;
 use crate::GameState;
 use bevy::prelude::*;
 
@@ -22,15 +21,6 @@ fn setup(
         return;
     }
 
-    commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_xyz(10., 2., 0.),
-            ..default()
-        },
-        Name::new("Main Camera"),
-        MainCamera::default(),
-    ));
-
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.3,
@@ -48,6 +38,15 @@ fn setup(
             transform: Transform::from_xyz(0., 1., 0.),
             parent: None,
             name: Some("Player".into()),
+        },
+    });
+    delayed_spawner.send(DelayedSpawnEvent {
+        tick_delay: 2,
+        event: SpawnEvent {
+            object: GameObject::Camera,
+            transform: Transform::from_xyz(10., 2., 0.),
+            parent: None,
+            name: Some("Main Camera".into()),
         },
     });
 }

@@ -2,15 +2,12 @@ use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets
 use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::event::SpawnEvent;
 use crate::level_instanciation::spawning::spawn_container::SpawnContainerRegistry;
-use crate::level_instanciation::spawning::{
-    DelayedSpawnEvent, GameObject, GameObjectSpawner, SpawnTracker,
-};
+use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObjectSpawner, SpawnTracker};
 use crate::shader::Materials;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use std::str::FromStr;
 
 #[allow(clippy::too_many_arguments)]
@@ -36,33 +33,13 @@ pub fn spawn_requested(
             counter.set_at_least(&name, number);
         }
 
-        let bundle = (
-            Name::new(name.clone()),
-            VisibilityBundle::default(),
-            TransformBundle::from_transform(spawn.transform),
-            SpawnTracker::from(spawn.clone()),
-        );
-        let spawn_children = |parent: &mut ChildBuilder| {
-            spawner
-                .attach(parent, &gltf, &materials, &animations, &scenes)
-                .spawn(spawn.object);
-        };
-
-        if let Some(ref parent_name) = spawn.parent {
-            let parent_entity = spawn_containers.get_or_spawn(parent_name.clone(), &mut commands);
-            if let Some(&existing_entity) = spawn_containers.0.get::<Cow<'static, str>>(&name.clone().into())
-                    && matches!(spawn.object, GameObject::Empty) {
-                    commands.get_entity(existing_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {name}")).set_parent(parent_entity).insert(bundle);
-                }  else {
-                    commands.get_entity(parent_entity).unwrap_or_else(|| panic!("Failed to fetch entity with name {parent_name}")).with_children(|parent| {
-                        let entity = parent.spawn(bundle).with_children(spawn_children).id();
-                        spawn_containers.0.insert(name.into(), entity);
-                    });
-                }
-        } else {
-            let entity = commands.spawn(bundle).with_children(spawn_children).id();
-            spawn_containers.0.insert(name.into(), entity);
-        }
+        let entity = spawner
+            .attach(&mut commands, &gltf, &materials, &animations, &scenes)
+            .spawn(spawn.object, spawn.transform);
+        commands
+            .entity(entity)
+            .insert(SpawnTracker::from(spawn.clone()));
+        spawn_containers.0.insert(name.into(), entity);
     }
 }
 

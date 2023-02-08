@@ -16,7 +16,6 @@ pub fn read_navmesh(
     for (parent, name, global_transform) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let transform = global_transform.compute_transform();
-            info!("transform: {:?}", transform);
             for (child, mesh) in Mesh::search_in_children(parent, &children, &meshes, &mesh_handles)
             {
                 let mesh = mesh.transformed(transform);

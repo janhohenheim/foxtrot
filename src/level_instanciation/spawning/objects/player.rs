@@ -16,9 +16,10 @@ pub struct PlayerSpawner;
 impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
     fn spawn<'a, 'b: 'a>(
         &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
-    ) {
+        transform: Transform,
+    ) -> Entity {
         let gltf = spawner
             .gltf
             .get(&spawner.scenes.character)
@@ -28,7 +29,11 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
             .commands
             .spawn((
                 PbrBundle {
-                    transform: Transform::from_scale(Vec3::splat(SCALE)),
+                    transform: Transform {
+                        translation: transform.translation,
+                        rotation: transform.rotation,
+                        scale: transform.scale * SCALE,
+                    },
                     ..default()
                 },
                 Player,
@@ -61,6 +66,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     Model,
                     Name::new("Player Model"),
                 ));
-            });
+            })
+            .id()
     }
 }

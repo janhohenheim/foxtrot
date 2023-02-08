@@ -8,22 +8,27 @@ pub struct PointLightSpawner;
 impl PrimedGameObjectSpawnerImplementor for PointLightSpawner {
     fn spawn<'a, 'b: 'a>(
         &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
-    ) {
-        spawner.commands.spawn((
-            PointLightBundle {
-                point_light: PointLight {
-                    color: Color::WHITE,
-                    intensity: 1.0,
-                    range: 1.0,
-                    radius: 1.0,
-                    shadows_enabled: true,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                PointLightBundle {
+                    point_light: PointLight {
+                        color: Color::WHITE,
+                        intensity: 1.0,
+                        range: 1.0,
+                        radius: 1.0,
+                        shadows_enabled: true,
+                        ..default()
+                    },
+                    transform,
                     ..default()
                 },
-                ..default()
-            },
-            Name::new("Light"),
-        ));
+                Name::new("Light"),
+            ))
+            .id()
     }
 }

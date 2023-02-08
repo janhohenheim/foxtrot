@@ -15,16 +15,17 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
     }
     fn spawn<'a, 'b: 'a>(
         &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a, '_>,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
-    ) {
+        transform: Transform,
+    ) -> Entity {
         spawner
             .commands
             .spawn((
                 MaterialMeshBundle {
                     mesh: spawner.outer_spawner.meshes[&object].clone(),
                     material: spawner.materials.glowy.clone(),
-                    transform: Transform::from_translation((0., 1.5, 0.).into()),
+                    transform,
                     ..default()
                 },
                 Name::new("Orb"),
@@ -41,6 +42,7 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
                     },
                     ..default()
                 },));
-            });
+            })
+            .id()
     }
 }

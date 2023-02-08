@@ -45,12 +45,22 @@ impl Plugin for CameraPlugin {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct UiCamera;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct MainCamera {
     current: CameraPosition,
     new: CameraPosition,
     up: Vec3,
+}
+
+impl Default for MainCamera {
+    fn default() -> Self {
+        Self {
+            current: default(),
+            new: default(),
+            up: Vec3::Y,
+        }
+    }
 }
 
 impl MainCamera {
@@ -99,7 +109,8 @@ fn follow_target(mut camera_query: Query<&mut MainCamera>) {
 
         let new_target = camera.new.target;
         if !(new_target - camera.new.eye.translation).is_approx_zero() {
-            camera.new.eye.look_at(new_target, camera.up);
+            let up = camera.up;
+            camera.new.eye.look_at(new_target, up);
         }
     }
 }

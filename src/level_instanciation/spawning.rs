@@ -1,7 +1,5 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instanciation::spawning::animation_link::link_animations;
-use crate::level_instanciation::spawning::change_parent::change_parent;
-use crate::level_instanciation::spawning::counter::Counter;
 use crate::level_instanciation::spawning::duplication::duplicate;
 use crate::level_instanciation::spawning::objects::camera::CameraSpawner;
 use crate::level_instanciation::spawning::objects::level::LevelSpawner;
@@ -19,9 +17,6 @@ use crate::level_instanciation::spawning::post_spawn_modification::{
 use crate::level_instanciation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
-use crate::level_instanciation::spawning::spawn_container::{
-    sync_container_registry, SpawnContainerRegistry,
-};
 use crate::shader::Materials;
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
@@ -33,11 +28,8 @@ use serde::{Deserialize, Serialize};
 use strum_macros::EnumIter;
 
 pub mod objects;
-mod spawn_container;
 pub struct SpawningPlugin;
 mod animation_link;
-mod change_parent;
-mod counter;
 mod duplication;
 mod event;
 mod post_spawn_modification;
@@ -49,8 +41,6 @@ impl Plugin for SpawningPlugin {
             .add_event::<ParentChangeEvent>()
             .add_event::<DuplicationEvent>()
             .add_event::<DelayedSpawnEvent>()
-            .init_resource::<SpawnContainerRegistry>()
-            .init_resource::<Counter>()
             .init_resource::<DelayedSpawnEvents>()
             .register_type::<DelayedSpawnEvent>()
             .register_type::<SpawnEvent>()
@@ -58,9 +48,7 @@ impl Plugin for SpawningPlugin {
             .register_type::<DuplicationEvent>()
             .register_type::<SpawnTracker>()
             .register_type::<Despawn>()
-            .register_type::<SpawnContainerRegistry>()
             .register_type::<DelayedSpawnEvents>()
-            .register_type::<Counter>()
             .register_type::<AnimationEntityLink>()
             .add_system_set(
                 SystemSet::on_enter(GameState::Loading).with_system(load_assets_for_spawner),
@@ -70,8 +58,6 @@ impl Plugin for SpawningPlugin {
                     .with_system(spawn_requested.label("spawn_requested"))
                     .with_system(spawn_delayed)
                     .with_system(despawn)
-                    .with_system(sync_container_registry.before("spawn_requested"))
-                    .with_system(change_parent.after("spawn_requested"))
                     .with_system(duplicate.after("spawn_requested"))
                     .with_system(link_animations.after("spawn_requested")),
             )
@@ -145,12 +131,6 @@ fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Asset
 #[reflect(Component, Serialize, Deserialize)]
 pub struct SpawnTracker {
     pub object: GameObject,
-}
-
-impl SpawnTracker {
-    pub fn get_default_name(&self) -> String {
-        format!("{:?}", self.object)
-    }
 }
 
 impl From<SpawnEvent> for SpawnTracker {

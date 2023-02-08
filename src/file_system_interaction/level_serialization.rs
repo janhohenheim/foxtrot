@@ -38,7 +38,7 @@ pub struct CurrentLevel {
 
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
-    spawn_query: Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
+    spawn_query: Query<(&SpawnTracker, Option<&Transform>)>,
 ) {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
@@ -129,25 +129,13 @@ fn load_world(
     }
 }
 
-fn serialize_world(
-    spawn_query: &Query<(&SpawnTracker, &Name, Option<&Parent>, Option<&Transform>)>,
-) -> String {
+fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> String {
     let objects: Vec<_> = spawn_query
         .iter()
-        .filter(|(spawn_tracker, _, _, _)| !matches!(spawn_tracker.object, GameObject::Player))
-        .map(|(spawn_tracker, name, parent, transform)| {
-            let parent = parent
-                .and_then(|parent| spawn_query.get(parent.get()).ok())
-                .and_then(|(spawn_tracker, name, _, _)| {
-                    (spawn_tracker.get_default_name() != name.as_str())
-                        .then(|| name.to_string().into())
-                });
-            SpawnEvent {
-                object: spawn_tracker.object,
-                transform: transform.map(Clone::clone).unwrap_or_default(),
-                name: Some(String::from(name).into()),
-                parent,
-            }
+        .filter(|(spawn_tracker, _)| !matches!(spawn_tracker.object, GameObject::Player))
+        .map(|(spawn_tracker, transform)| SpawnEvent {
+            object: spawn_tracker.object,
+            transform: transform.map(Clone::clone).unwrap_or_default(),
         })
         .collect();
     let serialized_level = SerializedLevel(objects);

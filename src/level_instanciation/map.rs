@@ -36,8 +36,6 @@ fn setup(
         event: SpawnEvent {
             object: GameObject::Player,
             transform: Transform::from_xyz(0., 1., 0.),
-            parent: None,
-            name: Some("Player".into()),
         },
     });
     delayed_spawner.send(DelayedSpawnEvent {
@@ -45,8 +43,6 @@ fn setup(
         event: SpawnEvent {
             object: GameObject::Camera,
             transform: Transform::from_xyz(10., 2., 0.),
-            parent: None,
-            name: Some("Main Camera".into()),
         },
     });
 }

@@ -150,8 +150,6 @@ fn show_editor(
                             event: SpawnRequestEvent {
                                 object: GameObject::Player,
                                 transform: Transform::from_translation((0., 0.5, 0.).into()),
-                                parent: None,
-                                name: Some("Player".into()),
                             },
                         });
                     }
@@ -253,8 +251,6 @@ fn relay_spawn_requests(
         spawn_requester.send(SpawnRequestEvent {
             object: object.object,
             transform: Transform::default(),
-            parent: object.parent.clone(),
-            name: object.name.clone(),
         });
     }
 }

@@ -116,8 +116,6 @@ fn handle_load_requests(
                     scale: Vec3::splat(1.0),
                     ..save_model.player_transform
                 },
-                parent: None,
-                name: Some("Player".into()),
             },
         });
     }

@@ -113,7 +113,6 @@ fn handle_load_requests(
             event: SpawnEvent {
                 object: GameObject::Player,
                 transform: Transform {
-                    scale: Vec3::splat(1.0),
                     ..save_model.player_transform
                 },
             },

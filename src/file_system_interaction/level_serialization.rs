@@ -47,7 +47,7 @@ fn save_world(
             .map(|filename| {
                 Path::new("assets")
                     .join("levels")
-                    .join(format!("{filename}.scn.ron"))
+                    .join(format!("{filename}.lvl.ron"))
             })
             .map(|path| (path.clone(), fs::try_exists(path).ok()))
             .take(10)
@@ -139,7 +139,7 @@ fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> 
         })
         .collect();
     let serialized_level = SerializedLevel(objects);
-    ron::to_string(&serialized_level).expect("Failed to serialize world")
+    ron::ser::to_string_pretty(&serialized_level, default()).expect("Failed to serialize world")
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid)]

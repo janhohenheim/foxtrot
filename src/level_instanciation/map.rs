@@ -35,14 +35,7 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_xyz(0., 1., 0.),
-        },
-    });
-    delayed_spawner.send(DelayedSpawnEvent {
-        tick_delay: 2,
-        event: SpawnEvent {
-            object: GameObject::Camera,
-            transform: Transform::from_xyz(10., 2., 0.),
+            transform: Transform::from_xyz(0., 1.2, 0.),
         },
     });
 }

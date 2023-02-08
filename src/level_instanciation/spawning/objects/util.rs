@@ -3,7 +3,7 @@ use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a> {
+impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn spawn_gltf(
         &'a mut self,
         object: GameObject,

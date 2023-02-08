@@ -1,9 +1,6 @@
 use crate::file_system_interaction::game_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
-use crate::level_instanciation::spawning::{
-    DelayedSpawnEvent, DuplicationEvent, GameObject, ParentChangeEvent,
-    SpawnEvent as SpawnRequestEvent,
-};
+use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::movement::navigation::navmesh::NavMesh;
 use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::GameState;
@@ -12,7 +9,6 @@ use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use strum::IntoEnumIterator;
 
 pub struct SceneEditorPlugin;
@@ -23,8 +19,6 @@ pub struct SceneEditorState {
     active: bool,
     level_name: String,
     save_name: String,
-    parent_name: String,
-    entity_name: String,
     spawn_item: GameObject,
     collider_render_enabled: bool,
     navmesh_render_enabled: bool,
@@ -36,8 +30,6 @@ impl Default for SceneEditorState {
             level_name: "old_town".to_owned(),
             save_name: default(),
             active: default(),
-            parent_name: default(),
-            entity_name: default(),
             spawn_item: default(),
             collider_render_enabled: default(),
             navmesh_render_enabled: true,
@@ -45,25 +37,15 @@ impl Default for SceneEditorState {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct SpawnEvent {
-    object: GameObject,
-    name: Option<Cow<'static, str>>,
-    parent: Option<Cow<'static, str>>,
-}
-
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SpawnEvent>()
-            .init_resource::<SceneEditorState>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_toggle)
-                    .with_system(show_editor)
-                    .with_system(relay_spawn_requests)
-                    .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render),
-            );
+        app.init_resource::<SceneEditorState>().add_system_set(
+            SystemSet::on_update(GameState::Playing)
+                .with_system(handle_toggle)
+                .with_system(show_editor)
+                .with_system(handle_debug_render)
+                .with_system(handle_navmesh_render),
+        );
     }
 }
 
@@ -108,8 +90,6 @@ fn show_editor(
     mut level_load_events: EventWriter<WorldLoadRequest>,
     mut game_save_events: EventWriter<GameSaveRequest>,
     mut game_load_events: EventWriter<GameLoadRequest>,
-    mut parenting_events: EventWriter<ParentChangeEvent>,
-    mut duplication_events: EventWriter<DuplicationEvent>,
     mut state: ResMut<SceneEditorState>,
     mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
 ) {
@@ -147,9 +127,9 @@ fn show_editor(
                         // Make sure the player is spawned after the level
                         delayed_spawner.send(DelayedSpawnEvent {
                             tick_delay: 2,
-                            event: SpawnRequestEvent {
+                            event: SpawnEvent {
                                 object: GameObject::Player,
-                                transform: Transform::from_translation((0., 1.2, 0.).into()),
+                                transform: Transform::from_translation((0., 1.5, 0.).into()),
                             },
                         });
                     }
@@ -172,62 +152,14 @@ fn show_editor(
                 }
             });
 
-            ui.separator();
-            ui.heading("Entity Control");
-            ui.horizontal(|ui| {
-                ui.label("Entity:");
-                ui.text_edit_singleline(&mut state.entity_name);
-            });
-            let has_entity = !state.entity_name.is_empty();
-
-            ui.add_space(10.);
-            ui.horizontal(|ui| {
-                ui.label("New Parent:");
-                ui.text_edit_singleline(&mut state.parent_name);
-            });
-            let has_valid_parent = !state.parent_name.is_empty()
-                && has_entity
-                && state.entity_name != state.parent_name;
-            ui.horizontal(|ui| {
-                ui.add_enabled_ui(has_valid_parent, |ui| {
-                    if ui.button("Set Parent").clicked() {
-                        parenting_events.send(ParentChangeEvent {
-                            name: state.entity_name.clone().into(),
-                            new_parent: Some(state.parent_name.clone().into()),
-                        });
-                    }
-                });
-                if ui.button("Remove Parent").clicked() {
-                    parenting_events.send(ParentChangeEvent {
-                        name: state.entity_name.clone().into(),
-                        new_parent: None,
-                    });
-                }
-            });
-
             ui.add_space(10.);
             ui.label("Spawning");
-            ui.horizontal(|ui| {
-                ui.add_enabled_ui(has_entity, |ui| {
-                    if ui.button("Duplicate").clicked() {
-                        duplication_events.send(DuplicationEvent {
-                            name: state.entity_name.clone().into(),
-                        });
-                    }
+            if ui.button("Spawn").clicked() {
+                spawn_events.send(SpawnEvent {
+                    object: state.spawn_item,
+                    ..default()
                 });
-                if ui.button("Spawn").clicked() {
-                    let name = state.entity_name.clone();
-                    let name = (!name.is_empty()).then(|| name.into());
-                    let parent =
-                        (!state.parent_name.is_empty()).then(|| state.parent_name.clone().into());
-
-                    spawn_events.send(SpawnEvent {
-                        object: state.spawn_item,
-                        name,
-                        parent,
-                    });
-                }
-            });
+            }
 
             ui.add_space(3.);
 
@@ -241,16 +173,4 @@ fn show_editor(
                     });
                 });
         });
-}
-
-fn relay_spawn_requests(
-    mut spawn_requests: EventReader<SpawnEvent>,
-    mut spawn_requester: EventWriter<SpawnRequestEvent>,
-) {
-    for object in spawn_requests.iter() {
-        spawn_requester.send(SpawnRequestEvent {
-            object: object.object,
-            transform: Transform::default(),
-        });
-    }
 }

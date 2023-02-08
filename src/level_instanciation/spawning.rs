@@ -1,6 +1,5 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instanciation::spawning::animation_link::link_animations;
-use crate::level_instanciation::spawning::duplication::duplicate;
 use crate::level_instanciation::spawning::objects::camera::CameraSpawner;
 use crate::level_instanciation::spawning::objects::level::LevelSpawner;
 use crate::level_instanciation::spawning::objects::npc::NpcSpawner;
@@ -30,7 +29,6 @@ use strum_macros::EnumIter;
 pub mod objects;
 pub struct SpawningPlugin;
 mod animation_link;
-mod duplication;
 mod event;
 mod post_spawn_modification;
 mod spawn;
@@ -38,14 +36,10 @@ mod spawn;
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnEvent>()
-            .add_event::<ParentChangeEvent>()
-            .add_event::<DuplicationEvent>()
             .add_event::<DelayedSpawnEvent>()
             .init_resource::<DelayedSpawnEvents>()
             .register_type::<DelayedSpawnEvent>()
             .register_type::<SpawnEvent>()
-            .register_type::<ParentChangeEvent>()
-            .register_type::<DuplicationEvent>()
             .register_type::<SpawnTracker>()
             .register_type::<Despawn>()
             .register_type::<DelayedSpawnEvents>()
@@ -58,7 +52,6 @@ impl Plugin for SpawningPlugin {
                     .with_system(spawn_requested.label("spawn_requested"))
                     .with_system(spawn_delayed)
                     .with_system(despawn)
-                    .with_system(duplicate.after("spawn_requested"))
                     .with_system(link_animations.after("spawn_requested")),
             )
             .add_system_set(

@@ -11,7 +11,6 @@ use std::f32::consts::TAU;
 
 pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
-pub const SCALE: f32 = 0.6;
 
 pub struct NpcSpawner;
 
@@ -31,11 +30,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
             .commands
             .spawn((
                 PbrBundle {
-                    transform: Transform {
-                        translation: transform.translation,
-                        rotation: transform.rotation,
-                        scale: transform.scale * SCALE,
-                    },
+                    transform,
                     ..default()
                 },
                 Name::new("NPC"),
@@ -64,7 +59,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT, 0.),
-                            scale: Vec3::splat(0.02),
+                            scale: Vec3::splat(0.012),
                             rotation: Quat::from_rotation_y(TAU / 2.),
                         },
                         ..default()

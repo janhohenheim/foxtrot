@@ -107,7 +107,7 @@ fn display_interaction_prompt(
         match &interaction_ui.kind {
             InteractionKind::Dialog(dialog_target) => {
                 dialog_event_writer.send(DialogEvent {
-                    source: interaction_ui.source.clone(),
+                    source: interaction_ui.source,
                     dialog: dialog_target.dialog_id.clone(),
                     page: None,
                 });

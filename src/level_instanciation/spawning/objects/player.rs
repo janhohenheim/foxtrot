@@ -9,7 +9,6 @@ use std::f32::consts::TAU;
 
 pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
-pub const SCALE: f32 = 0.5;
 
 pub struct PlayerSpawner;
 
@@ -29,11 +28,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
             .commands
             .spawn((
                 PbrBundle {
-                    transform: Transform {
-                        translation: transform.translation,
-                        rotation: transform.rotation,
-                        scale: transform.scale * SCALE,
-                    },
+                    transform,
                     ..default()
                 },
                 Player,
@@ -59,7 +54,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT, 0.),
                             rotation: Quat::from_rotation_y(TAU / 2.),
-                            scale: Vec3::splat(0.02),
+                            scale: Vec3::splat(0.01),
                         },
                         ..default()
                     },

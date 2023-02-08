@@ -35,7 +35,7 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_xyz(0., 1.2, 0.),
+            transform: Transform::from_xyz(0., 1.5, 0.),
         },
     });
 }

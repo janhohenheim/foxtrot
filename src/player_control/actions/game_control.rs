@@ -128,6 +128,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 56,
             #[cfg(target_os = "windows")] 0x2A,
             #[cfg(target_os = "linux")] 0x2A,
+            #[cfg(target_arch = "wasm32")] 0x2A,
         ),
     ],
     GameControl::Jump => [

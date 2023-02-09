@@ -20,13 +20,14 @@ fn setup(
     if current_level.is_some() {
         return;
     }
+
     commands.insert_resource(AmbientLight {
-        color: Color::ORANGE_RED,
-        brightness: 0.1,
+        color: Color::WHITE,
+        brightness: 0.3,
     });
 
     loader.send(WorldLoadRequest {
-        filename: "demo".to_string(),
+        filename: "old_town".to_string(),
     });
 
     // Make sure the player is spawned after the level
@@ -34,9 +35,7 @@ fn setup(
         tick_delay: 2,
         event: SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_translation((0., 0.5, 0.).into()),
-            parent: None,
-            name: Some("Player".into()),
+            transform: Transform::from_xyz(0., 1.5, 0.),
         },
     });
 }

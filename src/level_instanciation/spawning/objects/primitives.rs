@@ -1,39 +1,98 @@
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_empty(&'a mut self) {}
+pub struct EmptySpawner;
 
-    pub fn spawn_box(&'a mut self) {
-        self.commands.spawn((
-            TransformBundle::default(),
-            Collider::cuboid(1., 1., 1.),
-            Name::new("Box Collider"),
-        ));
+impl PrimedGameObjectSpawnerImplementor for EmptySpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        _transform: Transform,
+    ) -> Entity {
+        spawner.commands.spawn_empty().id()
     }
+}
 
-    pub fn spawn_sphere(&'a mut self) {
-        self.commands.spawn((
-            TransformBundle::default(),
-            Collider::ball(1.),
-            Name::new("Sphere Collider"),
-        ));
+pub struct BoxSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for BoxSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                TransformBundle::from_transform(transform),
+                Collider::cuboid(1., 1., 1.),
+                Name::new("Box Collider"),
+            ))
+            .id()
     }
+}
 
-    pub fn spawn_capsule(&'a mut self) {
-        self.commands.spawn((
-            TransformBundle::default(),
-            Collider::capsule_y(1., 1.),
-            Name::new("Capsule Collider"),
-        ));
+pub struct SphereSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for SphereSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                TransformBundle::from_transform(transform),
+                Collider::ball(1.),
+                Name::new("Sphere Collider"),
+            ))
+            .id()
     }
+}
 
-    pub fn spawn_triangle(&'a mut self) {
-        self.commands.spawn((
-            TransformBundle::default(),
-            Collider::triangle(Vect::ZERO, Vect::Y, Vect::X),
-            Name::new("Triangle Collider"),
-        ));
+pub struct CapsuleSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for CapsuleSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                TransformBundle::from_transform(transform),
+                Collider::capsule_y(1., 1.),
+                Name::new("Capsule Collider"),
+            ))
+            .id()
+    }
+}
+
+pub struct TriangleSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for TriangleSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                TransformBundle::from_transform(transform),
+                Collider::triangle(Vect::ZERO, Vect::Y, Vect::X),
+                Name::new("Triangle Collider"),
+            ))
+            .id()
     }
 }

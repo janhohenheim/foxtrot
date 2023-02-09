@@ -3,7 +3,7 @@ authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
 publish = false
-version = "0.1.0"
+version = "0.1.5"
 license = "MIT or Apache-2.0"
 exclude = ["dist", "build", "assets", "credits", "saves", "resources"]
 
@@ -48,18 +48,19 @@ wasm = [
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = { version = "0.14", features = ["3d"] }
-bevy_egui = "0.18"
-serde = { version = "1.0", features = ["derive"] }
-indexmap = { version = "1.9.2", features = ["serde-1"] }
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7", features = ["3d", "standard_dynamic_assets"] }
+bevy_common_assets = { version = "0.4.0", features = ["ron"] }
+bevy_egui = "0.19"
+serde = { version = "1", features = ["derive"] }
+indexmap = { version = "1", features = ["serde-1"] }
 strum = "0.24.1"
 strum_macros = "0.24.3"
 ron = "0.8.0"
 regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
-polyanya = { version = "0.2.0", default-features = false }
-bevy_pathmesh = { git = "https://github.com/vleue/bevy_pathmesh.git", rev = "242b6066fbf852117a4073a3062e9f8820868f04"}
+polyanya = "0.2.0"
+bevy_pathmesh = "0.3.0"
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
@@ -72,7 +73,7 @@ features = ["3d"]
 
 [dependencies.bevy_editor_pls]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"
-rev = "50ea82bf08289bfe9fcf8a4f024d67d575f15548"
+rev = "6062b860aea87034081399369fd7ef5715f13256"
 optional = true
 
 [dependencies.bevy_rapier3d]

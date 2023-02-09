@@ -26,6 +26,10 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 
 ## Usage
 
+### Cloning the repo
+
+Make sure you have [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage) installed before cloning the repo, otherwise most runtime resources will be missing!
+
 ### Running the game
 Native:
 ```bash

@@ -15,8 +15,9 @@ pub struct ActionsFrozen;
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Actions>()
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
+        app.init_resource::<Actions>().add_system_set(
+            SystemSet::on_update(GameState::Playing).with_system(set_actions.label("set_actions")),
+        );
     }
 }
 
@@ -27,6 +28,7 @@ pub struct Actions {
     pub toggle_editor: bool,
     pub interact: bool,
     pub jump: bool,
+    pub sprint: bool,
 }
 
 pub fn set_actions(
@@ -57,6 +59,7 @@ pub fn set_actions(
         actions.player_movement = None;
     }
     actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+    actions.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
     actions.camera_movement = None;

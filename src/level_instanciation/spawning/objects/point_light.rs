@@ -1,21 +1,34 @@
-use crate::level_instanciation::spawning::PrimedGameObjectSpawner;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use bevy::prelude::*;
 
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_point_light(&'a mut self) {
-        self.commands.spawn((
-            PointLightBundle {
-                point_light: PointLight {
-                    color: Color::WHITE,
-                    intensity: 1.0,
-                    range: 1.0,
-                    radius: 1.0,
-                    shadows_enabled: true,
+pub struct PointLightSpawner;
+
+impl PrimedGameObjectSpawnerImplementor for PointLightSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        _object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .commands
+            .spawn((
+                PointLightBundle {
+                    point_light: PointLight {
+                        color: Color::WHITE,
+                        intensity: 1.0,
+                        range: 1.0,
+                        radius: 1.0,
+                        shadows_enabled: true,
+                        ..default()
+                    },
+                    transform,
                     ..default()
                 },
-                ..default()
-            },
-            Name::new("Light"),
-        ));
+                Name::new("Light"),
+            ))
+            .id()
     }
 }

@@ -31,11 +31,9 @@ pub fn link_animations(
 
 /// Source: <https://github.com/bevyengine/bevy/discussions/5564>
 fn get_top_parent(curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
-    let mut last_two_entities = [curr_entity; 2];
-    while let Ok(parent) = parent_query.get(last_two_entities[0]) {
-        last_two_entities[1] = last_two_entities[0];
-        last_two_entities[0] = parent.get();
+    let mut last_entity = curr_entity;
+    while let Ok(parent) = parent_query.get(last_entity) {
+        last_entity = parent.get();
     }
-    // The top parent is an organizational node, so use the one below.
-    last_two_entities[1]
+    last_entity
 }

@@ -1,5 +1,6 @@
 use crate::world_interaction::condition::{ActiveConditions, ConditionId};
 use bevy::prelude::*;
+use bevy::reflect::TypeUuid;
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
@@ -8,11 +9,13 @@ use serde::{Deserialize, Serialize};
 #[reflect(Serialize, Deserialize)]
 pub struct DialogEvent {
     pub dialog: DialogId,
+    pub source: Option<Entity>,
     pub page: Option<PageId>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct CurrentDialog {
+    pub source: Option<Entity>,
     pub id: DialogId,
     pub dialog: Dialog,
     pub current_page: PageId,
@@ -31,7 +34,8 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
+#[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
 pub struct Dialog {
     pub initial_page: Vec<InitialPage>,
     pub pages: HashMap<PageId, Page>,

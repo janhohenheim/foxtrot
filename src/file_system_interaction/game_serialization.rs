@@ -113,11 +113,8 @@ fn handle_load_requests(
             event: SpawnEvent {
                 object: GameObject::Player,
                 transform: Transform {
-                    scale: Vec3::splat(1.0),
                     ..save_model.player_transform
                 },
-                parent: None,
-                name: Some("Player".into()),
             },
         });
     }
@@ -144,6 +141,7 @@ fn handle_save_requests(
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {
                 dialog: dialog.id,
+                source: dialog.source,
                 page: Some(dialog.current_page),
             });
             let save_model = SaveModel {

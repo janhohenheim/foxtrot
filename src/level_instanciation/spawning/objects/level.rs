@@ -1,15 +1,19 @@
-use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
-use bevy::gltf::Gltf;
+use crate::level_instanciation::spawning::{
+    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
+};
 use bevy::prelude::*;
 
-pub const PATH: &str = "scenes/level.glb";
+pub struct LevelSpawner;
 
-pub fn load_scene(asset_server: &Res<AssetServer>) -> Handle<Gltf> {
-    asset_server.load(PATH)
-}
-
-impl<'w, 's, 'a, 'b> PrimedGameObjectSpawner<'w, 's, 'a, 'b> {
-    pub fn spawn_level(&'a mut self) {
-        self.spawn_gltf(GameObject::Level, Transform::from_scale(Vec3::splat(3.)));
+impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
+    fn spawn<'a, 'b: 'a>(
+        &self,
+        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
+        object: GameObject,
+        transform: Transform,
+    ) -> Entity {
+        spawner
+            .spawn_gltf(object, &spawner.scenes.level, transform)
+            .id()
     }
 }

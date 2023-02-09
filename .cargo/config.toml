@@ -29,7 +29,8 @@ opt-level = 1
 opt-level = 3
 
 [profile.release]
-lto = "thin"
+# Don't change this to "thin" or your macOS releases will be broken after being packed to a .app for some reason.
+lto = true
 codegen-units = 1
 
 [build]

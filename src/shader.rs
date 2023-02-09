@@ -1,7 +1,9 @@
 use crate::GameState;
+use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef};
+use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
+use bevy::utils::HashMap;
 use std::path::Path;
 
 pub struct ShaderPlugin;
@@ -17,13 +19,13 @@ impl Plugin for ShaderPlugin {
 #[derive(Resource, Debug, Clone)]
 pub struct Materials {
     pub glowy: Handle<GlowyMaterial>,
-    pub repeated: Handle<RepeatedMaterial>,
+    /// (Texture asset ID, Repeats) -> RepeatedMaterial
+    pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
 }
 
 fn setup_shader(
     mut commands: Commands,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
-    mut repeated_materials: ResMut<Assets<RepeatedMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
     let env_texture_path = Path::new("hdri").join("stone_alley_2.hdr");
@@ -32,15 +34,9 @@ fn setup_shader(
         env_texture: Some(env_texture),
     });
 
-    let texture_path = Path::new("textures").join("ground_forest.png");
-    let texture = asset_server.load(texture_path);
-    let repeated_material = repeated_materials.add(RepeatedMaterial {
-        texture: Some(texture),
-    });
-
     commands.insert_resource(Materials {
         glowy: glowy_material,
-        repeated: repeated_material,
+        repeated: HashMap::new(),
     });
 }
 
@@ -58,12 +54,20 @@ impl Material for GlowyMaterial {
     }
 }
 
+#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
+pub struct Repeats {
+    pub horizontal: u32,
+    pub vertical: u32,
+}
+
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
 pub struct RepeatedMaterial {
     #[texture(0)]
     #[sampler(1)]
     pub texture: Option<Handle<Image>>,
+    #[uniform(2)]
+    pub repeats: Repeats,
 }
 
 impl Material for RepeatedMaterial {

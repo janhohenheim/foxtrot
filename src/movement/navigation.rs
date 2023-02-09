@@ -1,24 +1,31 @@
-use crate::movement::general_movement::CharacterVelocity;
+use crate::movement::general_movement::Walker;
 use crate::movement::navigation::navmesh::read_navmesh;
 use crate::player_control::player_embodiment::Player;
+use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use bevy::prelude::*;
+use bevy::transform::TransformSystem;
 use bevy_pathmesh::PathMesh;
 use bevy_pathmesh::PathMeshPlugin;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-
 pub mod navmesh;
 
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(PathMeshPlugin).add_system_set(
-            SystemSet::on_update(GameState::Playing)
-                .with_system(query_mesh)
-                .with_system(read_navmesh),
-        );
+        app.add_plugin(PathMeshPlugin)
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(query_mesh)
+                    .with_system(read_navmesh),
+            )
+            // See <https://bevy-cheatbook.github.io/features/transforms.html#transform-propagation>
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                read_navmesh.after(TransformSystem::TransformPropagate),
+            );
     }
 }
 
@@ -28,9 +35,13 @@ pub struct Follower;
 
 #[allow(clippy::type_complexity)]
 fn query_mesh(
-    time: Res<Time>,
     mut with_follower: Query<
-        (Entity, &GlobalTransform, &mut CharacterVelocity),
+        (
+            Entity,
+            &GlobalTransform,
+            &KinematicCharacterController,
+            &mut Walker,
+        ),
         (With<Follower>, Without<Player>),
     >,
     with_player: Query<(Entity, &GlobalTransform), (With<Player>, Without<Follower>)>,
@@ -38,9 +49,8 @@ fn query_mesh(
     nav_meshes: Query<&Handle<PathMesh>>,
     rapier_context: Res<RapierContext>,
 ) {
-    let dt = time.delta_seconds();
     for path_mesh_handle in nav_meshes.iter() {
-        for (follower_entity, follower_transform, mut character_velocity) in &mut with_follower {
+        for (follower_entity, follower_transform, controller, mut walker) in &mut with_follower {
             for (player_entity, player_transform) in &with_player {
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
                 let from = follower_transform.translation();
@@ -57,25 +67,21 @@ fn query_mesh(
                     Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
                     && entity == player_entity
                 {
-                    Some(vec![to])
+                    Some(to)
                 } else if let Some(path) = path_mesh.transformed_path(from, to) {
-                    Some(path.path)
+                    Some(path.path[0])
                 } else {
                     None
                 };
-                if let Some(path) = path && let Some(dir) = move_along_path(from, &path) {
-                    let speed = 3.;
-                    character_velocity.0 += dir * dt * speed;
+                if let Some(path) = path {
+                    let dir = (path - from)
+                        .split(controller.up)
+                        .horizontal
+                        .try_normalize()
+                        .unwrap();
+                    walker.direction = Some(dir);
                 }
             }
         }
     }
-}
-
-fn move_along_path(from: Vec3, path: &[Vec3]) -> Option<Vec3> {
-    path.iter()
-        .map(|point| *point - from)
-        .filter(|dir| dir.length_squared() > 0.05)
-        .map(|dir| dir.try_normalize().unwrap_or_default())
-        .next()
 }

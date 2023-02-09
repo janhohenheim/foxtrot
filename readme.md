@@ -54,10 +54,10 @@ Don't worry, it's super easy:
 - **MacOS**: Modern LLD does not yet support MacOS, but we can use zld instead: `brew install michaeleisel/zld/zld`
 
 
-Building WASM requires the right target and `trunk`:
+Building WASM requires `trunk`:
 
 ```bash
-cargo install --locked trunk && rustup target add wasm32-unknown-unknown
+cargo install --locked trunk
 ```
 
 ### Updating assets

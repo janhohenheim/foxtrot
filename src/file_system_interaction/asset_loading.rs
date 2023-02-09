@@ -26,6 +26,7 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<ShaderAssets>()
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
+                    //.with_collection::<TextureAssets>()
                     .continue_to_state(GameState::Menu),
             );
     }
@@ -82,4 +83,10 @@ pub struct DialogAssets {
     // Not simply linking to "levels/" because of <https://github.com/NiklasEi/bevy_asset_loader/issues/104>
     #[asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))]
     pub dialogs: HashMap<String, Handle<Dialog>>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct TextureAssets {
+    #[asset(path = "hdri/stone_alley_2.hdr")]
+    pub glowy_interior: Handle<Image>,
 }

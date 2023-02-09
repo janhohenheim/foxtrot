@@ -26,8 +26,7 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<ShaderAssets>()
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
-                    // Todo: This somehow calls thread::spawn internally, which breaks WASM
-                    // .with_collection::<TextureAssets>()
+                    .with_collection::<TextureAssets>()
                     .continue_to_state(GameState::Menu),
             );
     }

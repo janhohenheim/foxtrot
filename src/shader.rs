@@ -1,3 +1,4 @@
+use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
 use bevy::asset::HandleId;
 use bevy::prelude::*;
@@ -11,8 +12,8 @@ pub struct ShaderPlugin;
 impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
-            .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
-            .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_shader));
+            .add_plugin(MaterialPlugin::<RepeatedMaterial>::default());
+        //.add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
     }
 }
 

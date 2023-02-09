@@ -13,6 +13,7 @@ impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default());
+        // Todo: This somehow calls thread::spawn internally, which breaks WASM
         //.add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
     }
 }

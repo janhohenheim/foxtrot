@@ -45,7 +45,6 @@ fn setup_shader(
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
 pub struct GlowyMaterial {
     // Docs for the attributes at <https://github.com/bevyengine/bevy/blob/ee4e98f8a98e1f528065ddaa4a87394715a4c339/crates/bevy_render/src/render_resource/bind_group.rs#L105>
-    // The docs disappeared in newer versions. At least I can't find them.
     // Also, this is for some reason only needed on WASM. Weird, since the input is 32 bit precision image and thus does indeed not support filtering.
     #[texture(0, filterable = false)]
     #[sampler(1, sampler_type = "non_filtering")]

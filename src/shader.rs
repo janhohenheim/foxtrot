@@ -41,14 +41,8 @@ fn setup_shader(
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
 pub struct GlowyMaterial {
-    // Docs for the attributes at <https://github.com/bevyengine/bevy/blob/ee4e98f8a98e1f528065ddaa4a87394715a4c339/crates/bevy_render/src/render_resource/bind_group.rs#L105>
-    // Also, this is for some reason only needed on WASM. Weird, since the input is 32 bit precision image and thus does indeed not support filtering.
-    #[texture(0, filterable = false)]
-    #[sampler(1, sampler_type = "non_filtering")]
-    // TODO: panicked at 'wgpu error: Validation Error
-    // Caused by:
-    //     In Device::create_bind_group
-    //     sampler binding 1 expects filtering = false, but given a sampler with filtering = true
+    #[texture(0)]
+    #[sampler(1)]
     pub env_texture: Option<Handle<Image>>,
 }
 
@@ -58,6 +52,8 @@ impl Material for GlowyMaterial {
     }
 }
 
+// repr(C) to make sure the struct doesn't get padded because WGPU expects a multiple of 16 bytes
+#[repr(C)]
 #[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
 pub struct Repeats {
     pub horizontal: u32,

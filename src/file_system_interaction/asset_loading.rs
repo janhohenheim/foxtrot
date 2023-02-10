@@ -87,6 +87,6 @@ pub struct DialogAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct TextureAssets {
-    #[asset(path = "hdri/stone_alley_2.hdr")]
+    #[asset(path = "textures/stone_alley_2.jpg")]
     pub glowy_interior: Handle<Image>,
 }

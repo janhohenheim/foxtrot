@@ -1,11 +1,10 @@
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
-use bevy::asset::{Asset, HandleId};
+use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType, Texture};
+use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
-use std::ops::Deref;
 
 pub struct ShaderPlugin;
 
@@ -24,7 +23,11 @@ pub struct Materials {
     pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
 }
 
-fn setup_shader(mut commands: Commands, mut glow_materials: ResMut<Assets<GlowyMaterial>>) {
+fn setup_shader(
+    mut commands: Commands,
+    mut glow_materials: ResMut<Assets<GlowyMaterial>>,
+    texture_assets: Res<TextureAssets>,
+) {
     let glowy_material = glow_materials.add(GlowyMaterial {
         env_texture: Some(texture_assets.glowy_interior.clone()),
     });

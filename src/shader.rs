@@ -42,6 +42,10 @@ pub struct GlowyMaterial {
     // Also, this is for some reason only needed on WASM. Weird, since the input is 32 bit precision image and thus does indeed not support filtering.
     #[texture(0, filterable = false)]
     #[sampler(1, sampler_type = "non_filtering")]
+    // TODO: panicked at 'wgpu error: Validation Error
+    // Caused by:
+    //     In Device::create_bind_group
+    //     sampler binding 1 expects filtering = false, but given a sampler with filtering = true
     pub env_texture: Option<Handle<Image>>,
 }
 

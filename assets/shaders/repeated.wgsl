@@ -10,8 +10,8 @@
 #import bevy_pbr::pbr_functions
 
 struct Repeats {
-    horizontal: u32,
-    vertical: u32,
+    horizontal: f32,
+    vertical: f32,
 }
 
 @group(1) @binding(0)
@@ -30,8 +30,8 @@ struct FragmentInput {
 
 fn get_texture_sample(coords: vec2<f32>) -> vec3<f32> {
     let repeated_coords = vec2<f32>(
-        (coords.x % (1. / f32(repeats.horizontal))) * f32(repeats.horizontal),
-        (coords.y % (1. / f32(repeats.vertical))) * f32(repeats.vertical)
+        (coords.x % (1. / f32(repeats.horizontal))) * repeats.horizontal,
+        (coords.y % (1. / f32(repeats.vertical))) * repeats.vertical
     );
     return textureSample(texture, texture_sampler, repeated_coords).rgb;
 }

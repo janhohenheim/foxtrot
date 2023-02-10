@@ -80,7 +80,7 @@ optional = true
 git = "https://github.com/janhohenheim/bevy_rapier"
 branch = "own-fork"
 features = [
-    #"simd-nightly",
+    "simd-nightly",
     "serde-serialize",
 ]
 

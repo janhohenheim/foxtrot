@@ -1,20 +1,20 @@
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
-use bevy::asset::HandleId;
+use bevy::asset::{Asset, HandleId};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
+use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType, Texture};
 use bevy::utils::HashMap;
-use std::path::Path;
+use std::ops::Deref;
 
 pub struct ShaderPlugin;
 
 impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
-            .add_plugin(MaterialPlugin::<RepeatedMaterial>::default());
-        // Todo: This somehow calls thread::spawn internally, which breaks WASM
-        //.add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
+            .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
+            // Todo: This somehow calls thread::spawn internally, which breaks WASM
+            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
     }
 }
 
@@ -28,12 +28,11 @@ pub struct Materials {
 fn setup_shader(
     mut commands: Commands,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
-    asset_server: Res<AssetServer>,
+
+    : Res<TextureAssets>,
 ) {
-    let env_texture_path = Path::new("hdri").join("stone_alley_2.hdr");
-    let env_texture = asset_server.load(env_texture_path);
     let glowy_material = glow_materials.add(GlowyMaterial {
-        env_texture: Some(env_texture),
+        env_texture: Some(texture_assets.glowy_interior.clone()),
     });
 
     commands.insert_resource(Materials {
@@ -45,8 +44,11 @@ fn setup_shader(
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
 pub struct GlowyMaterial {
-    #[texture(0)]
-    #[sampler(1)]
+    // Docs for the attributes at <https://github.com/bevyengine/bevy/blob/ee4e98f8a98e1f528065ddaa4a87394715a4c339/crates/bevy_render/src/render_resource/bind_group.rs#L105>
+    // The docs disappeared in newer versions. At least I can't find them.
+    // Also, this is for some reason only needed on WASM. Weird, since the input is 32 bit precision image and thus does indeed not support filtering.
+    #[texture(0, filterable = false)]
+    #[sampler(1, sampler_type = "non_filtering")]
     pub env_texture: Option<Handle<Image>>,
 }
 

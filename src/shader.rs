@@ -25,12 +25,7 @@ pub struct Materials {
     pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
 }
 
-fn setup_shader(
-    mut commands: Commands,
-    mut glow_materials: ResMut<Assets<GlowyMaterial>>,
-
-    : Res<TextureAssets>,
-) {
+fn setup_shader(mut commands: Commands, mut glow_materials: ResMut<Assets<GlowyMaterial>>) {
     let glowy_material = glow_materials.add(GlowyMaterial {
         env_texture: Some(texture_assets.glowy_interior.clone()),
     });

@@ -1,3 +1,4 @@
+#![allow(clippy::extra_unused_type_parameters)]
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
 use bevy::asset::HandleId;

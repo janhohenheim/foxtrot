@@ -1,7 +1,8 @@
 # Foxtrot
 The all-in-one Bevy 3D game template.  
 
-![Foxtrot in action](https://media.giphy.com/media/W8HrtPMGP7C0uCQuQh/giphy-downsized-large.gif)  
+
+![Foxtrot in action](https://media.giphy.com/media/NKBVjKZewDfttXSx56/giphy.gif)  
 [Live Demo](https://janhohenheim.github.io/foxtrot/)  
 
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features

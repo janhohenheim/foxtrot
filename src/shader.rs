@@ -62,7 +62,7 @@ pub struct Repeats {
     pub _wasm_padding2: u32,
 }
 
-impl Repeasts {
+impl Repeats {
     #[allow(unused)]
     pub fn new(horizontal: u32, vertical: u32, _wasm_padding1: u32, _wasm_padding2: u32) -> Self {
         Self {

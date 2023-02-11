@@ -52,7 +52,7 @@ impl Material for GlowyMaterial {
     }
 }
 
-#[repr(C)] // To keep the alignment constant
+#[repr(align(16))] // All WebGPU uniforms must be aligned to 16 byte
 #[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq, Default)]
 pub struct Repeats {
     pub horizontal: u32,

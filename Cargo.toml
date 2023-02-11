@@ -86,6 +86,3 @@ features = [
 
 [build-dependencies]
 embed-resource = "1.4"
-
-[patch.crates-io]
-image = { git = "https://github.com/bash/image.git", branch = "remove-scoped_threadpool" }

@@ -38,7 +38,8 @@ native-dev = [
 ]
 
 native = [
-    "bevy_rapier3d/parallel"
+    "bevy_rapier3d/parallel",
+    "bevy_rapier3d/simd-nightly",
 ]
 
 wasm = [
@@ -80,7 +81,6 @@ optional = true
 git = "https://github.com/janhohenheim/bevy_rapier"
 branch = "own-fork"
 features = [
-    "simd-nightly",
     "serde-serialize",
 ]
 

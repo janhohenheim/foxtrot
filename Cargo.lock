@@ -2327,7 +2327,8 @@ dependencies = [
 [[package]]
 name = "image"
 version = "0.24.5"
-source = "git+https://github.com/bash/image.git?branch=remove-scoped_threadpool#60c16498e092847893d66e4f3da32602a06ed706"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69b7ea949b537b0fd0af141fff8c77690f2ce96f4f41f042ccb6c69c6c965945"
 dependencies = [
  "bytemuck",
  "byteorder",
@@ -2336,6 +2337,7 @@ dependencies = [
  "num-rational 0.4.1",
  "num-traits",
  "png 0.17.7",
+ "scoped_threadpool",
  "tiff 0.8.1",
 ]
 
@@ -3540,6 +3542,12 @@ checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
 ]
+
+[[package]]
+name = "scoped_threadpool"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d51f5df5af43ab3f1360b429fa5e0152ac5ce8c0bd6485cae490332e96846a8"
 
 [[package]]
 name = "scopeguard"

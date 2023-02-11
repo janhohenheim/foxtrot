@@ -160,7 +160,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+      - name: Check out LFS objects
+        run: |
+          git lfs pull
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -177,7 +182,7 @@ jobs:
           rustup target add wasm32-unknown-unknown
       - name: Build Release
         run: |
-          trunk build --release --public-url "${GITHUB_REPOSITORY#*/}" --no-default-features --features core,wasm
+          trunk build --release --public-url "${GITHUB_REPOSITORY#*/}" --no-default-features --features core
       - name: optimize Wasm
         uses: NiklasEi/wasm-opt-action@v2
         with:

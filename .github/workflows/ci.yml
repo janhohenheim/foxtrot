@@ -84,7 +84,7 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
       - name: Build wasm
-        run: trunk build --no-default-features --features core,wasm,dev
+        run: trunk build --no-default-features --features core,dev
   lint:
     runs-on: ubuntu-latest
     steps:

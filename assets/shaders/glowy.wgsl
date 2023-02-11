@@ -35,7 +35,8 @@ fn dir_to_equirectangular(dir: vec3<f32>) -> vec2<f32> {
 
 /// Source: <https://registry.khronos.org/OpenGL-Refpages/gl4/html/refract.xhtml>
 /// Params: incident vector i, surface normal n, and the ratio of indices of refraction eta.
-fn refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
+/// Is prefixed with "own_" because the built-in refract function is only available in WASM for some reason.
+fn own_refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
     let k = 1.0 - eta * eta * (1.0 - dot(n, i) * dot(n, i));
     let k = max(k, 0.0);
     return eta * i - (eta * dot(n, i) + sqrt(k)) * n;
@@ -84,14 +85,11 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     // This n is shifted a bit stochastically so that refraction is heterogenous
     let bumped_n = n + bump * 2.;
     // refract image like a glass ball would
-    let refraction = get_texture_sample(refract(-v, bumped_n, 1./1.52));
+    let refraction = get_texture_sample(own_refract(-v, bumped_n, 1./1.52));
 
     /// The RGB of the refraction is multiplied with a gradient from center (orange) to edge (black)
     /// The RGB of the reflection is multiplied with a fresnel on the edge, making it only appear as a "sheen"
     let total = color * refraction + reflection * (fresnel + 0.05);
 
-    // correct "over-exposed" edges: <https://en.wikipedia.org/wiki/Tone_mapping>
-    // TL;DR: an LCD screen can't portray the full range of a high dynamic range image (HDRi), so we map the
-    // original color range down to a more limited one
-    return tone_mapping(vec4(total, 0.));
+    return vec4(total, 0.);
 }

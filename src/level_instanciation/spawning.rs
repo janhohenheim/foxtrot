@@ -35,8 +35,8 @@ mod spawn;
 
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SpawnEvent>()
-            .add_event::<DelayedSpawnEvent>()
+        app.add_event::<SpawnEvent>();
+        app.add_event::<DelayedSpawnEvent>()
             .init_resource::<DelayedSpawnEvents>()
             .register_type::<DelayedSpawnEvent>()
             .register_type::<SpawnEvent>()
@@ -45,7 +45,7 @@ impl Plugin for SpawningPlugin {
             .register_type::<DelayedSpawnEvents>()
             .register_type::<AnimationEntityLink>()
             .add_system_set(
-                SystemSet::on_enter(GameState::Loading).with_system(load_assets_for_spawner),
+                SystemSet::on_exit(GameState::Loading).with_system(load_assets_for_spawner),
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)

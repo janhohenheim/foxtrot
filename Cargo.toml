@@ -10,7 +10,9 @@ exclude = ["dist", "build", "assets", "credits", "saves", "resources"]
 [features]
 default = [
     "core",
-    "dynamic",
+    "native-dev",
+    "dev",
+    "native",
 ]
 
 core = [
@@ -19,26 +21,35 @@ core = [
     "bevy/hdr",
     "bevy/png",
     "bevy/jpeg",
+    "bevy/bevy_asset",
     "bevy/x11",
     "bevy/animation",
     "bevy/serialize",
-    "bevy_kira_audio/ogg",
 ]
 
 dev = [
     "dep:bevy_editor_pls",
     "dep:bevy_prototype_debug_lines",
+]
+
+native-dev = [
+    "bevy/dynamic",
     "bevy/filesystem_watcher",
 ]
 
-dynamic = [
-    "bevy/dynamic",
+native = [
+    "bevy_rapier3d/parallel",
+    "bevy_rapier3d/simd-nightly",
+]
+
+wasm = [
+    "bevy_rapier3d/wasm-bindgen"
 ]
 
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7", features = ["3d", "standard_dynamic_assets"] }
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7" }
 bevy_common_assets = { version = "0.4.0", features = ["ron"] }
 bevy_egui = "0.19"
 serde = { version = "1", features = ["derive"] }
@@ -70,12 +81,8 @@ optional = true
 git = "https://github.com/janhohenheim/bevy_rapier"
 branch = "own-fork"
 features = [
-    "debug-render-3d",
-    "simd-nightly",
-    "parallel",
     "serde-serialize",
 ]
 
 [build-dependencies]
 embed-resource = "1.4"
-

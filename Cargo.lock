@@ -367,8 +367,6 @@ dependencies = [
  "anyhow",
  "bevy",
  "bevy_asset_loader_derive",
- "bevy_common_assets",
- "serde",
 ]
 
 [[package]]
@@ -3338,6 +3336,7 @@ dependencies = [
  "bitflags",
  "crossbeam",
  "downcast-rs",
+ "instant",
  "nalgebra",
  "num-derive",
  "num-traits",

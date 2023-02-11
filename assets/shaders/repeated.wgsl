@@ -12,6 +12,8 @@
 struct Repeats {
     horizontal: u32,
     vertical: u32,
+    _wasm_padding1: u32,
+    _wasm_padding2: u32,
 }
 
 @group(1) @binding(0)

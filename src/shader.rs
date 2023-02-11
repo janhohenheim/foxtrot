@@ -52,8 +52,9 @@ impl Material for GlowyMaterial {
     }
 }
 
-#[repr(align(16))] // All WebGPU uniforms must be aligned to 16 byte
+#[repr(align(16))] // All WebGPU uniforms must be aligned to 16 bytes
 #[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq, Default)]
+#[allow(clippy::extra_unused_type_parameters)]
 pub struct Repeats {
     pub horizontal: u32,
     pub vertical: u32,

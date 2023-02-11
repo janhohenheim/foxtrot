@@ -35,7 +35,7 @@ jobs:
         run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
         if : runner.os == 'windows'
       - name: Build & run tests for native
-        run: cargo test --no-default-features --features core,native,dev,native-dev
+        run: cargo test --features dev
   test-native-docs:
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +84,7 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
       - name: Build wasm
-        run: trunk build --no-default-features --features core,dev
+        run: trunk build --no-default-features --features core,dev,wasm
   lint:
     runs-on: ubuntu-latest
     steps:

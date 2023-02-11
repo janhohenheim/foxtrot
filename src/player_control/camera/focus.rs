@@ -21,13 +21,13 @@ pub fn set_camera_focus(
                 .unwrap();
             let translation = global_translation.translation();
             let up = kinematic_character_controller.map(|kcc| kcc.up).unwrap_or(Vec3::Y);
-            camera.set_target(translation);
-            camera.set_up(up);
+            camera.target = translation;
+            camera.up = up;
         } else {
             for (global_translation, kinematic_character_controller ) in player_query.iter() {
                 let translation = global_translation.translation();
-                camera.set_target(translation);
-                camera.set_up(kinematic_character_controller.up);
+                camera.target = translation;
+                camera.up = kinematic_character_controller.up;
             }
         }
     }

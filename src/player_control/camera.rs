@@ -48,42 +48,29 @@ pub struct UiCamera;
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct MainCamera {
-    current: CameraPosition,
-    new: CameraPosition,
-    up: Vec3,
+    pub eye: Transform,
+    pub target: Vec3,
+    pub up: Vec3,
+    last_eye: Transform,
+    last_target: Vec3,
 }
 
 impl Default for MainCamera {
     fn default() -> Self {
         Self {
-            current: default(),
-            new: default(),
+            eye: default(),
+            target: default(),
+            last_eye: default(),
+            last_target: default(),
             up: Vec3::Y,
         }
     }
 }
 
 impl MainCamera {
-    pub fn set_target(&mut self, target: Vec3) -> &mut Self {
-        self.new.target = target;
-        self
-    }
-
-    pub fn set_up(&mut self, up: Vec3) -> &mut Self {
-        self.up = up;
-        self
-    }
-
     pub fn forward(&self) -> Vec3 {
-        self.new.eye.forward()
+        self.eye.forward()
     }
-}
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct CameraPosition {
-    pub eye: Transform,
-    pub target: Vec3,
 }
 
 fn spawn_ui_camera(mut commands: Commands) {
@@ -98,19 +85,19 @@ fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>
 
 fn init_camera_eye(mut camera_query: Query<(&Transform, &mut MainCamera), Added<MainCamera>>) {
     for (transform, mut camera) in &mut camera_query {
-        camera.current.eye = *transform;
+        camera.last_eye = *transform;
     }
 }
 
 fn follow_target(mut camera_query: Query<&mut MainCamera>) {
     for mut camera in &mut camera_query {
-        let target_movement = (camera.new.target - camera.current.target).collapse_approx_zero();
-        camera.new.eye.translation = camera.current.eye.translation + target_movement;
+        let target_movement = (camera.target - camera.last_target).collapse_approx_zero();
+        camera.eye.translation = camera.last_eye.translation + target_movement;
 
-        let new_target = camera.new.target;
-        if !(new_target - camera.new.eye.translation).is_approx_zero() {
+        let new_target = camera.target;
+        if !(new_target - camera.eye.translation).is_approx_zero() {
             let up = camera.up;
-            camera.new.eye.look_at(new_target, up);
+            camera.eye.look_at(new_target, up);
         }
     }
 }
@@ -132,11 +119,11 @@ fn handle_camera_controls(mut camera_query: Query<&mut MainCamera>, actions: Res
 
         let pitch = -camera_movement.y;
         let pitch = clamp_pitch(&camera, pitch);
-        let pitch_rotation = Quat::from_axis_angle(camera.new.eye.local_x(), pitch);
+        let pitch_rotation = Quat::from_axis_angle(camera.eye.local_x(), pitch);
 
-        let pivot = camera.new.target;
+        let pivot = camera.target;
         let rotation = yaw_rotation * pitch_rotation;
-        camera.new.eye.rotate_around(pivot, rotation);
+        camera.eye.rotate_around(pivot, rotation);
     }
 }
 
@@ -144,7 +131,7 @@ fn clamp_pitch(camera: &MainCamera, angle: f32) -> f32 {
     const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
     const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
 
-    let forward = camera.new.eye.forward();
+    let forward = camera.eye.forward();
     let up = camera.up;
     let angle_to_axis = forward.angle_between(up);
     let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
@@ -184,15 +171,16 @@ fn update_camera_transform(
 
         let rotation_smoothing = 15.;
         let scale = (rotation_smoothing * dt).max(1.);
-        transform.rotation = transform.rotation.slerp(camera.new.eye.rotation, scale);
+        transform.rotation = transform.rotation.slerp(camera.eye.rotation, scale);
 
-        camera.current = camera.new.clone();
+        camera.last_eye = camera.eye;
+        camera.last_target = camera.target;
     }
 }
 
 fn keep_line_of_sight(camera: &MainCamera, rapier_context: &RapierContext) -> LineOfSightResult {
-    let origin = camera.new.target;
-    let desired_direction = camera.new.eye.translation - camera.new.target;
+    let origin = camera.target;
+    let desired_direction = camera.eye.translation - camera.target;
     let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
     let distance = get_raycast_distance(origin, norm_direction, rapier_context, MAX_DISTANCE);

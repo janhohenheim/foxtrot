@@ -91,8 +91,5 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     /// The RGB of the reflection is multiplied with a fresnel on the edge, making it only appear as a "sheen"
     let total = color * refraction + reflection * (fresnel + 0.05);
 
-    // correct "over-exposed" edges: <https://en.wikipedia.org/wiki/Tone_mapping>
-    // TL;DR: an LCD screen can't portray the full range of a high dynamic range image (HDRi), so we map the
-    // original color range down to a more limited one
     return vec4(total, 0.);
 }

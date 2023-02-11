@@ -57,8 +57,7 @@ impl Plugin for SpawningPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders)
-                    // Todo: Something in the repeat shader, probs the `Repeat` struct, is not 16 bit aligned.
-                    //.with_system(set_texture_to_repeat)
+                    .with_system(set_texture_to_repeat)
                     .with_system(set_hidden)
                     .with_system(despawn_removed),
             );

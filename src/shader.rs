@@ -52,12 +52,13 @@ impl Material for GlowyMaterial {
     }
 }
 
-// repr(C) to make sure the struct doesn't get padded because WGPU expects a multiple of 16 bytes
-#[repr(C)]
-#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
+#[repr(C)] // To keep the alignment constant
+#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq, Default)]
 pub struct Repeats {
     pub horizontal: u32,
     pub vertical: u32,
+    pub _wasm_padding1: u32,
+    pub _wasm_padding2: u32,
 }
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]

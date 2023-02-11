@@ -66,7 +66,9 @@ pub fn set_texture_to_repeat(
             let repeats = Repeats {
                 horizontal: captures[1].parse().unwrap(),
                 vertical: captures[2].parse().unwrap(),
+                ..default()
             };
+            info!("Size: {}", std::mem::size_of::<Repeats>());
             for child in children.iter() {
                 if let Ok(standard_material_handle) = material_handles.get(*child) {
                     let standard_material =

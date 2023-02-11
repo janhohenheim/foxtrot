@@ -1,6 +1,7 @@
 # Foxtrot
 The all-in-one Bevy 3D game template.  
 
+
 ![Foxtrot in action](https://media.giphy.com/media/NKBVjKZewDfttXSx56/giphy.gif)
 
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
@@ -30,12 +31,16 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 Make sure you have [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage) installed before cloning the repo, otherwise most runtime resources will be missing!
 
 ### Running the game
-
+Native:
 ```bash
-cargo run --features dev
+cargo run
+```
+WASM:
+```bash
+trunk serve --no-default-features --features core,dev
 ```
 
-Building requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
+Building in general requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).
 Don't worry, it's super easy:
 - **Ubuntu**: `sudo apt-get install lld`
 - **Arch**: `sudo pacman -S lld`
@@ -47,6 +52,13 @@ Don't worry, it's super easy:
     ```
 
 - **MacOS**: Modern LLD does not yet support MacOS, but we can use zld instead: `brew install michaeleisel/zld/zld`
+
+
+Building WASM requires `trunk`:
+
+```bash
+cargo install --locked trunk
+```
 
 ### Updating assets
 

@@ -37,7 +37,6 @@ pub fn despawn(mut commands: Commands, despawn_query: Query<(Entity, &Despawn, &
         if despawn.recursive {
             commands.entity(entity).despawn_recursive();
         } else {
-            //commands.entity(entity).despawn();
             for child in children.iter() {
                 commands.entity(*child).remove_parent();
             }

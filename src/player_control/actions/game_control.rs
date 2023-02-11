@@ -64,12 +64,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 13,
             #[cfg(target_os = "windows")] 0x11,
             #[cfg(target_os = "linux")] 0x11,
+            #[cfg(target_arch = "wasm32")] 0x11,
         ),
         // Up arrow
         ScanCode(
             #[cfg(target_os = "macos")] 126,
             #[cfg(target_os = "windows")] 0x48,
             #[cfg(target_os = "linux")] 0x48,
+            #[cfg(target_arch = "wasm32")] 0x48,
         ),
     ],
     GameControl::Down => [
@@ -78,12 +80,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 1,
             #[cfg(target_os = "windows")] 0x1F,
             #[cfg(target_os = "linux")] 0x1F,
+            #[cfg(target_arch = "wasm32")] 0x1F,
         ),
         // Down arrow
         ScanCode(
             #[cfg(target_os = "macos")] 125,
             #[cfg(target_os = "windows")] 0x50,
             #[cfg(target_os = "linux")] 0x50,
+            #[cfg(target_arch = "wasm32")] 0x50,
         ),
     ],
     GameControl::Left => [
@@ -92,12 +96,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 0,
             #[cfg(target_os = "windows")] 0x1E,
             #[cfg(target_os = "linux")] 0x1E,
+            #[cfg(target_arch = "wasm32")] 0x1E,
         ),
         // Left arrow
         ScanCode(
             #[cfg(target_os = "macos")] 123,
             #[cfg(target_os = "windows")] 0x4B,
             #[cfg(target_os = "linux")] 0x4B,
+            #[cfg(target_arch = "wasm32")] 0x4B,
         ),
     ],
     GameControl::Right => [
@@ -106,12 +112,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 2,
             #[cfg(target_os = "windows")] 0x20,
             #[cfg(target_os = "linux")] 0x20,
+            #[cfg(target_arch = "wasm32")] 0x20,
         ),
         // Right arrow
         ScanCode(
             #[cfg(target_os = "macos")] 124,
             #[cfg(target_os = "windows")] 0x4D,
             #[cfg(target_os = "linux")] 0x4D,
+            #[cfg(target_arch = "wasm32")] 0x4D,
         ),
     ],
     GameControl::Sprint => [
@@ -120,6 +128,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 56,
             #[cfg(target_os = "windows")] 0x2A,
             #[cfg(target_os = "linux")] 0x2A,
+            #[cfg(target_arch = "wasm32")] 0x2A,
         ),
     ],
     GameControl::Jump => [
@@ -128,6 +137,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 49,
             #[cfg(target_os = "windows")] 0x39,
             #[cfg(target_os = "linux")] 0x39,
+            #[cfg(target_arch = "wasm32")] 0x39,
         ),
     ],
     GameControl::ToggleEditor => [
@@ -136,6 +146,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 12,
             #[cfg(target_os = "windows")] 0x10,
             #[cfg(target_os = "linux")] 0x10,
+            #[cfg(target_arch = "wasm32")] 0x10,
         ),
     ],
     GameControl::Interact => [
@@ -144,6 +155,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 14,
             #[cfg(target_os = "windows")] 0x12,
             #[cfg(target_os = "linux")] 0x12,
+            #[cfg(target_arch = "wasm32")] 0x12,
         ),
     ],
 }

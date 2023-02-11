@@ -1,10 +1,11 @@
+#![allow(clippy::extra_unused_type_parameters)]
+use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
 use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
-use std::path::Path;
 
 pub struct ShaderPlugin;
 
@@ -12,7 +13,7 @@ impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
-            .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_shader));
+            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
     }
 }
 
@@ -26,12 +27,10 @@ pub struct Materials {
 fn setup_shader(
     mut commands: Commands,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
-    asset_server: Res<AssetServer>,
+    texture_assets: Res<TextureAssets>,
 ) {
-    let env_texture_path = Path::new("hdri").join("stone_alley_2.hdr");
-    let env_texture = asset_server.load(env_texture_path);
     let glowy_material = glow_materials.add(GlowyMaterial {
-        env_texture: Some(env_texture),
+        env_texture: Some(texture_assets.glowy_interior.clone()),
     });
 
     commands.insert_resource(Materials {
@@ -54,10 +53,13 @@ impl Material for GlowyMaterial {
     }
 }
 
-#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq)]
+#[repr(C, align(16))] // All WebGPU uniforms must be aligned to 16 bytes
+#[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq, Default)]
 pub struct Repeats {
     pub horizontal: u32,
     pub vertical: u32,
+    pub _wasm_padding1: u32,
+    pub _wasm_padding2: u32,
 }
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]

@@ -1,11 +1,11 @@
-use crate::player_control::camera::MainCamera;
+use crate::player_control::camera::ThirdPersonCamera;
 use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::dialog::CurrentDialog;
 use bevy::prelude::*;
 use bevy_rapier3d::control::KinematicCharacterController;
 
 pub fn set_camera_focus(
-    mut camera_query: Query<&mut MainCamera>,
+    mut camera_query: Query<&mut ThirdPersonCamera>,
     current_dialog: Option<Res<CurrentDialog>>,
     player_query: Query<(&GlobalTransform, &KinematicCharacterController), With<Player>>,
     non_player_query: Query<

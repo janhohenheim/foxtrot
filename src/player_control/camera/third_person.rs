@@ -7,8 +7,8 @@ use std::f32::consts::{PI, TAU};
 
 const MAX_DISTANCE: f32 = 5.0;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
 pub struct ThirdPersonCamera {
     pub eye: Transform,
     pub target: Vec3,
@@ -33,89 +33,99 @@ impl ThirdPersonCamera {
     pub fn forward(&self) -> Vec3 {
         self.eye.forward()
     }
-}
 
-pub fn init_camera_eye(
-    mut camera_query: Query<(&Transform, &mut ThirdPersonCamera), Added<ThirdPersonCamera>>,
-) {
-    for (transform, mut camera) in &mut camera_query {
-        camera.last_eye = *transform;
+    pub fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
+        let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
+        let eye_to_target = (self.target - self.eye.translation)
+            .split(self.up)
+            .horizontal;
+        let yaw = eye_to_target.angle_between(target_to_secondary_target);
+
+        self.rotate_around_target(yaw, 0.0);
     }
-}
 
-pub fn follow_target(mut camera_query: Query<&mut ThirdPersonCamera>) {
-    for mut camera in &mut camera_query {
-        let target_movement = (camera.target - camera.last_target).collapse_approx_zero();
-        camera.eye.translation = camera.last_eye.translation + target_movement;
+    fn rotate_around_target(&mut self, yaw: f32, pitch: f32) {
+        let yaw_rotation = Quat::from_axis_angle(self.up, yaw);
+        let pitch_rotation = Quat::from_axis_angle(self.eye.local_x(), pitch);
 
-        let new_target = camera.target;
-        if !(new_target - camera.eye.translation).is_approx_zero() {
-            let up = camera.up;
-            camera.eye.look_at(new_target, up);
+        let pivot = self.target;
+        let rotation = yaw_rotation * pitch_rotation;
+        self.eye.rotate_around(pivot, rotation);
+    }
+
+    pub fn init_transform(&mut self, transform: Transform) {
+        self.last_eye = transform;
+    }
+
+    pub fn update_transform(
+        &mut self,
+        dt: f32,
+        transform: Transform,
+        actions: &Actions,
+        rapier_context: &RapierContext,
+    ) -> Transform {
+        self.follow_target();
+        self.handle_camera_controls(actions);
+        self.update_camera_transform(dt, transform, rapier_context)
+    }
+    fn follow_target(&mut self) {
+        let target_movement = (self.target - self.last_target).collapse_approx_zero();
+        self.eye.translation = self.last_eye.translation + target_movement;
+
+        let new_target = self.target;
+        if !(new_target - self.eye.translation).is_approx_zero() {
+            let up = self.up;
+            self.eye.look_at(new_target, up);
         }
     }
-}
 
-pub fn handle_camera_controls(
-    mut camera_query: Query<&mut ThirdPersonCamera>,
-    actions: Res<Actions>,
-) {
-    let mouse_sensitivity = 1e-2;
-    let camera_movement = match actions.camera_movement {
-        Some(vector) => vector * mouse_sensitivity,
-        None => return,
-    };
+    fn handle_camera_controls(&mut self, actions: &Actions) {
+        let mouse_sensitivity = 1e-2;
+        let camera_movement = match actions.camera_movement {
+            Some(vector) => vector * mouse_sensitivity,
+            None => return,
+        };
 
-    if camera_movement.is_approx_zero() {
-        return;
-    }
+        if camera_movement.is_approx_zero() {
+            return;
+        }
 
-    for mut camera in camera_query.iter_mut() {
         let yaw = -camera_movement.x.clamp(-PI, PI);
-        let yaw_rotation = Quat::from_axis_angle(camera.up, yaw);
-
-        let pitch = -camera_movement.y;
-        let pitch = clamp_pitch(&camera, pitch);
-        let pitch_rotation = Quat::from_axis_angle(camera.eye.local_x(), pitch);
-
-        let pivot = camera.target;
-        let rotation = yaw_rotation * pitch_rotation;
-        camera.eye.rotate_around(pivot, rotation);
+        let pitch = self.clamp_pitch(-camera_movement.y);
+        self.rotate_around_target(yaw, pitch);
     }
-}
 
-pub fn clamp_pitch(camera: &ThirdPersonCamera, angle: f32) -> f32 {
-    const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
-    const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
+    fn clamp_pitch(&self, angle: f32) -> f32 {
+        const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
+        const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
 
-    let forward = camera.eye.forward();
-    let up = camera.up;
-    let angle_to_axis = forward.angle_between(up);
-    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
-        (PI - angle_to_axis, MOST_ACUTE_ALLOWED_FROM_ABOVE, -1.)
-    } else {
-        (angle_to_axis, MOST_ACUTE_ALLOWED_FROM_BELOW, 1.)
-    };
-    let new_angle = if acute_angle_to_axis < most_acute_allowed {
-        angle - sign * (most_acute_allowed - acute_angle_to_axis)
-    } else {
-        angle
-    };
-    if new_angle.abs() < 0.01 {
-        0.
-    } else {
-        new_angle
+        let forward = self.eye.forward();
+        let up = self.up;
+        let angle_to_axis = forward.angle_between(up);
+        let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
+            (PI - angle_to_axis, MOST_ACUTE_ALLOWED_FROM_ABOVE, -1.)
+        } else {
+            (angle_to_axis, MOST_ACUTE_ALLOWED_FROM_BELOW, 1.)
+        };
+        let new_angle = if acute_angle_to_axis < most_acute_allowed {
+            angle - sign * (most_acute_allowed - acute_angle_to_axis)
+        } else {
+            angle
+        };
+        if new_angle.abs() < 0.01 {
+            0.
+        } else {
+            new_angle
+        }
     }
-}
 
-pub fn update_camera_transform(
-    time: Res<Time>,
-    mut camera_query: Query<(&mut Transform, &mut ThirdPersonCamera)>,
-    rapier_context: Res<RapierContext>,
-) {
-    let dt = time.delta_seconds();
-    for (mut transform, mut camera) in camera_query.iter_mut() {
-        let line_of_sight_result = keep_line_of_sight(&camera, &rapier_context);
+    fn update_camera_transform(
+        &mut self,
+        dt: f32,
+        mut transform: Transform,
+        rapier_context: &RapierContext,
+    ) -> Transform {
+        let line_of_sight_result = self.keep_line_of_sight(rapier_context);
         let translation_smoothing =
             if line_of_sight_result.correction == LineOfSightCorrection::Closer {
                 25.
@@ -128,31 +138,29 @@ pub fn update_camera_transform(
 
         let rotation_smoothing = 15.;
         let scale = (rotation_smoothing * dt).max(1.);
-        transform.rotation = transform.rotation.slerp(camera.eye.rotation, scale);
+        transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
 
-        camera.last_eye = camera.eye;
-        camera.last_target = camera.target;
+        self.last_eye = self.eye;
+        self.last_target = self.target;
+        transform
     }
-}
 
-pub fn keep_line_of_sight(
-    camera: &ThirdPersonCamera,
-    rapier_context: &RapierContext,
-) -> LineOfSightResult {
-    let origin = camera.target;
-    let desired_direction = camera.eye.translation - camera.target;
-    let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
+    pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
+        let origin = self.target;
+        let desired_direction = self.eye.translation - self.target;
+        let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
-    let distance = get_raycast_distance(origin, norm_direction, rapier_context, MAX_DISTANCE);
-    let location = origin + norm_direction * distance;
-    let correction = if distance * distance < desired_direction.length_squared() {
-        LineOfSightCorrection::Closer
-    } else {
-        LineOfSightCorrection::Further
-    };
-    LineOfSightResult {
-        location,
-        correction,
+        let distance = get_raycast_distance(origin, norm_direction, rapier_context, MAX_DISTANCE);
+        let location = origin + norm_direction * distance;
+        let correction = if distance * distance < desired_direction.length_squared() {
+            LineOfSightCorrection::Closer
+        } else {
+            LineOfSightCorrection::Further
+        };
+        LineOfSightResult {
+            location,
+            correction,
+        }
     }
 }
 

@@ -92,13 +92,14 @@ impl ThirdPersonCamera {
         if target_to_secondary_target.is_approx_zero() {
             return;
         }
-
+        let target_to_secondary_target = target_to_secondary_target.normalize();
         let eye_to_target = (self.target - self.eye.translation)
             .split(self.up)
-            .horizontal;
-        let yaw = eye_to_target.angle_between(target_to_secondary_target);
-
-        self.rotate_around_target(yaw, 0.0);
+            .horizontal
+            .normalize();
+        let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
+        let pivot = self.target;
+        self.eye.rotate_around(pivot, rotation);
     }
 
     fn clamp_pitch(&self, angle: f32) -> f32 {
@@ -135,11 +136,11 @@ impl ThirdPersonCamera {
             };
         let mut transform = self.eye;
         let direction = line_of_sight_result.location - transform.translation;
-        let scale = (translation_smoothing * dt).max(1.);
+        let scale = (translation_smoothing * dt).min(1.);
         transform.translation += direction * scale;
 
         let rotation_smoothing = 15.;
-        let scale = (rotation_smoothing * dt).max(1.);
+        let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
 
         self.last_eye = self.eye;
@@ -242,7 +243,23 @@ mod test {
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        let expected_position = Vec3::new(-2., 0., 2.);
+        let expected_position = Vec3::new(-2., 0., 4.);
+        assert_nearly_eq(camera.eye.translation, expected_position);
+    }
+
+    #[test]
+    fn faces_secondary_target_that_is_at_right_angle_with_primary_ignoring_y() {
+        let mut camera = ThirdPersonCamera::default();
+        let camera_transform = Transform::from_xyz(2., 2., 0.);
+        let primary_target = Vec3::new(-2., -3., 0.);
+        let secondary_target = Vec3::new(-2., -1., -2.);
+
+        camera.init_transform(camera_transform);
+        camera.follow_target();
+        camera.target = primary_target;
+        camera.move_eye_to_align_target_with(secondary_target);
+
+        let expected_position = Vec3::new(-2., 2., 4.);
         assert_nearly_eq(camera.eye.translation, expected_position);
     }
 

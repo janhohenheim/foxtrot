@@ -1,4 +1,4 @@
-use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
+use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -14,16 +14,18 @@ pub struct ThirdPersonCamera {
     pub up: Vec3,
     last_eye: Transform,
     last_target: Vec3,
+    secondary_target: Option<Vec3>,
 }
 
 impl Default for ThirdPersonCamera {
     fn default() -> Self {
         Self {
+            up: Vec3::Y,
             eye: default(),
             target: default(),
             last_eye: default(),
             last_target: default(),
-            up: Vec3::Y,
+            secondary_target: default(),
         }
     }
 }
@@ -33,14 +35,8 @@ impl ThirdPersonCamera {
         self.eye.forward()
     }
 
-    pub fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
-        let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
-        let eye_to_target = (self.target - self.eye.translation)
-            .split(self.up)
-            .horizontal;
-        let yaw = eye_to_target.angle_between(target_to_secondary_target);
-
-        self.rotate_around_target(yaw, 0.0);
+    pub fn set_secondary_target(&mut self, secondary_target: Vec3) {
+        self.secondary_target = Some(secondary_target);
     }
 
     fn rotate_around_target(&mut self, yaw: f32, pitch: f32) {
@@ -59,16 +55,20 @@ impl ThirdPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        transform: Transform,
         camera_movement: Option<Vec2>,
         rapier_context: &RapierContext,
     ) -> Transform {
         self.follow_target();
-        if let Some(camera_movement) = camera_movement {
+
+        if let Some(secondary_target) = self.secondary_target {
+            self.move_eye_to_align_target_with(secondary_target);
+        } else if let Some(camera_movement) = camera_movement {
             self.handle_camera_controls(camera_movement);
         }
-        self.update_camera_transform(dt, transform, rapier_context)
+
+        self.update_camera_transform(dt, rapier_context)
     }
+
     fn follow_target(&mut self) {
         let target_movement = (self.target - self.last_target).collapse_approx_zero();
         self.eye.translation = self.last_eye.translation + target_movement;
@@ -84,13 +84,20 @@ impl ThirdPersonCamera {
         let mouse_sensitivity = 1e-2;
         let camera_movement = camera_movement * mouse_sensitivity;
 
-        if camera_movement.is_approx_zero() {
-            return;
-        }
-
         let yaw = -camera_movement.x.clamp(-PI, PI);
         let pitch = self.clamp_pitch(-camera_movement.y);
         self.rotate_around_target(yaw, pitch);
+    }
+
+    fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
+        let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
+        let eye_to_target = (self.target - self.eye.translation)
+            .split(self.up)
+            .horizontal;
+        let yaw = eye_to_target.angle_between(target_to_secondary_target);
+        info!("yaw: {}", yaw);
+
+        self.rotate_around_target(yaw, 0.0);
     }
 
     fn clamp_pitch(&self, angle: f32) -> f32 {
@@ -117,12 +124,7 @@ impl ThirdPersonCamera {
         }
     }
 
-    fn update_camera_transform(
-        &mut self,
-        dt: f32,
-        mut transform: Transform,
-        rapier_context: &RapierContext,
-    ) -> Transform {
+    fn update_camera_transform(&mut self, dt: f32, rapier_context: &RapierContext) -> Transform {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
         let translation_smoothing =
             if line_of_sight_result.correction == LineOfSightCorrection::Closer {
@@ -130,6 +132,7 @@ impl ThirdPersonCamera {
             } else {
                 10.
             };
+        let mut transform = self.eye;
         let direction = line_of_sight_result.location - transform.translation;
         let scale = (translation_smoothing * dt).max(1.);
         transform.translation += direction * scale;

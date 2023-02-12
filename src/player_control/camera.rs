@@ -20,7 +20,7 @@ pub struct IngameCamera {
 }
 
 impl IngameCamera {
-    pub fn move_to(&mut self, target: Vec3) {
+    pub fn set_primary_target(&mut self, target: Vec3) {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => {
                 camera.target = target;
@@ -40,10 +40,10 @@ impl IngameCamera {
         }
     }
 
-    pub fn look_at(&mut self, target: Vec3) {
+    pub fn set_secondary_target(&mut self, target: Vec3) {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => {
-                camera.move_eye_to_align_target_with(target);
+                camera.set_secondary_target(target);
             }
         }
     }
@@ -108,12 +108,9 @@ fn update_transform(
         let movement = camera.movement;
         let new_transform = {
             match &mut camera.kind {
-                IngameCameraKind::ThirdPerson(camera) => camera.update_transform(
-                    time.delta_seconds(),
-                    *transform,
-                    movement,
-                    &rapier_context,
-                ),
+                IngameCameraKind::ThirdPerson(camera) => {
+                    camera.update_transform(time.delta_seconds(), movement, &rapier_context)
+                }
             }
         };
         *transform = new_transform;

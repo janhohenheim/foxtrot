@@ -1,4 +1,3 @@
-use crate::player_control::actions::Actions;
 use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -61,11 +60,13 @@ impl ThirdPersonCamera {
         &mut self,
         dt: f32,
         transform: Transform,
-        actions: &Actions,
+        camera_movement: Option<Vec2>,
         rapier_context: &RapierContext,
     ) -> Transform {
         self.follow_target();
-        self.handle_camera_controls(actions);
+        if let Some(camera_movement) = camera_movement {
+            self.handle_camera_controls(camera_movement);
+        }
         self.update_camera_transform(dt, transform, rapier_context)
     }
     fn follow_target(&mut self) {
@@ -79,12 +80,9 @@ impl ThirdPersonCamera {
         }
     }
 
-    fn handle_camera_controls(&mut self, actions: &Actions) {
+    fn handle_camera_controls(&mut self, camera_movement: Vec2) {
         let mouse_sensitivity = 1e-2;
-        let camera_movement = match actions.camera_movement {
-            Some(vector) => vector * mouse_sensitivity,
-            None => return,
-        };
+        let camera_movement = camera_movement * mouse_sensitivity;
 
         if camera_movement.is_approx_zero() {
             return;

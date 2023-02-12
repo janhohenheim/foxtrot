@@ -22,7 +22,6 @@ pub fn set_camera_focus(
             for (global_translation, kinematic_character_controller ) in player_query.iter() {
                 let translation = global_translation.translation();
                 camera.move_to(translation);
-                info!("moving camera to {:?}", translation);
                 *camera.up_mut() = kinematic_character_controller.up;
             }
         }

@@ -130,22 +130,23 @@ impl ThirdPersonCamera {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
         let translation_smoothing =
             if line_of_sight_result.correction == LineOfSightCorrection::Closer {
-                25.
+                50.
             } else {
                 10.
             };
-        let mut transform = self.eye;
-        let direction = line_of_sight_result.location - transform.translation;
         let scale = (translation_smoothing * dt).min(1.);
-        transform.translation += direction * scale;
+        self.eye.translation = self
+            .eye
+            .translation
+            .lerp(line_of_sight_result.location, scale);
 
         let rotation_smoothing = 15.;
         let scale = (rotation_smoothing * dt).min(1.);
-        transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
+        self.eye.rotation = self.eye.rotation.slerp(self.eye.rotation, scale);
 
         self.last_eye = self.eye;
         self.last_target = self.target;
-        transform
+        self.eye
     }
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {

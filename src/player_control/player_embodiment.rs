@@ -1,6 +1,6 @@
 use crate::movement::general_movement::{Jump, Walker};
 use crate::player_control::actions::Actions;
-use crate::player_control::camera::ThirdPersonCamera;
+use crate::player_control::camera::IngameCamera;
 use crate::util::trait_extension::Vec2Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -48,10 +48,10 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Pl
 fn handle_horizontal_movement(
     actions: Res<Actions>,
     mut player_query: Query<&mut Walker, With<Player>>,
-    camera_query: Query<&ThirdPersonCamera>,
+    camera_query: Query<&IngameCamera>,
 ) {
     let camera = match camera_query.iter().next() {
-        Some(transform) => transform,
+        Some(camera) => camera,
         None => return,
     };
     let movement = match actions.player_movement {

@@ -12,9 +12,10 @@ pub struct ThirdPersonCamera {
     pub eye: Transform,
     pub target: Vec3,
     pub up: Vec3,
+    pub secondary_target: Option<Vec3>,
+    pub distance: f32,
     last_eye: Transform,
     last_target: Vec3,
-    pub secondary_target: Option<Vec3>,
 }
 
 impl Default for ThirdPersonCamera {
@@ -22,6 +23,7 @@ impl Default for ThirdPersonCamera {
         Self {
             up: Vec3::Y,
             eye: default(),
+            distance: MAX_DISTANCE,
             target: default(),
             last_eye: default(),
             last_target: default(),
@@ -150,7 +152,7 @@ impl ThirdPersonCamera {
         let desired_direction = self.eye.translation - self.target;
         let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
-        let distance = get_raycast_distance(origin, norm_direction, rapier_context, MAX_DISTANCE);
+        let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
         let location = origin + norm_direction * distance;
         let correction = if distance * distance < desired_direction.length_squared() {
             LineOfSightCorrection::Closer
@@ -233,14 +235,14 @@ mod test {
         let mut camera = ThirdPersonCamera::default();
         let camera_transform = Transform::from_xyz(2., 0., 0.);
         let primary_target = Vec3::new(-2., 0., 0.);
-        let secondary_target = Vec3::new(-2., -2., 0.);
+        let secondary_target = Vec3::new(-2., 0., -2.);
 
         camera.init_transform(camera_transform);
         camera.follow_target();
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        let expected_position = Vec3::new(-2., 2., 0.);
+        let expected_position = Vec3::new(-2., 0., 2.);
         assert_nearly_eq(camera.eye.translation, expected_position);
     }
 

@@ -106,9 +106,12 @@ fn update_transform(
         let movement = camera.movement;
         let new_transform = {
             match &mut camera.kind {
-                IngameCameraKind::ThirdPerson(camera) => {
-                    camera.update_transform(time.delta_seconds(), movement, &rapier_context)
-                }
+                IngameCameraKind::ThirdPerson(camera) => camera.update_transform(
+                    time.delta_seconds(),
+                    movement,
+                    &rapier_context,
+                    *transform,
+                ),
             }
         };
         *transform = new_transform;

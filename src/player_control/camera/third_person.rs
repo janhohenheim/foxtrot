@@ -55,6 +55,7 @@ impl ThirdPersonCamera {
         dt: f32,
         camera_movement: Option<Vec2>,
         rapier_context: &RapierContext,
+        transform: Transform,
     ) -> Transform {
         self.follow_target();
 
@@ -63,8 +64,8 @@ impl ThirdPersonCamera {
         } else if let Some(camera_movement) = camera_movement {
             self.handle_camera_controls(camera_movement);
         }
-
-        self.update_camera_transform(dt, rapier_context)
+        let los_correction = self.place_eye_in_valid_position(rapier_context);
+        self.get_camera_transform(dt, transform, los_correction)
     }
 
     fn follow_target(&mut self) {
@@ -126,27 +127,37 @@ impl ThirdPersonCamera {
         }
     }
 
-    fn update_camera_transform(&mut self, dt: f32, rapier_context: &RapierContext) -> Transform {
+    fn place_eye_in_valid_position(
+        &mut self,
+        rapier_context: &RapierContext,
+    ) -> LineOfSightCorrection {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
-        let translation_smoothing =
-            if line_of_sight_result.correction == LineOfSightCorrection::Closer {
-                50.
-            } else {
-                10.
-            };
-        let scale = (translation_smoothing * dt).min(1.);
-        self.eye.translation = self
-            .eye
-            .translation
-            .lerp(line_of_sight_result.location, scale);
-
-        let rotation_smoothing = 15.;
-        let scale = (rotation_smoothing * dt).min(1.);
-        self.eye.rotation = self.eye.rotation.slerp(self.eye.rotation, scale);
-
+        self.eye.translation = line_of_sight_result.location;
         self.last_eye = self.eye;
         self.last_target = self.target;
-        self.eye
+        line_of_sight_result.correction
+    }
+
+    fn get_camera_transform(
+        &self,
+        dt: f32,
+        mut transform: Transform,
+        line_of_sight_correction: LineOfSightCorrection,
+    ) -> Transform {
+        let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Closer {
+            10.
+        } else {
+            500000.
+        };
+
+        let scale = (translation_smoothing * dt).min(1.);
+        transform.translation = transform.translation.lerp(self.eye.translation, scale);
+
+        let rotation_smoothing = 50000.;
+        let scale = (rotation_smoothing * dt).min(1.);
+        transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
+
+        transform
     }
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
@@ -156,7 +167,7 @@ impl ThirdPersonCamera {
 
         let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
         let location = origin + norm_direction * distance;
-        let correction = if distance * distance < desired_direction.length_squared() {
+        let correction = if distance * distance < desired_direction.length_squared() - 1e-5 {
             LineOfSightCorrection::Closer
         } else {
             LineOfSightCorrection::Further

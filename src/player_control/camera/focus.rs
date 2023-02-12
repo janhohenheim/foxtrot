@@ -17,7 +17,9 @@ pub fn set_camera_focus(
                 .get(target_entity)
                 .unwrap();
             let translation = global_translation.translation();
-            camera.set_secondary_target(translation);
+            *camera.secondary_target_mut() = Some(translation);
+        } else {
+            *camera.secondary_target_mut() = None;
         }
         for (global_translation, kinematic_character_controller) in player_query.iter() {
             let translation = global_translation.translation();

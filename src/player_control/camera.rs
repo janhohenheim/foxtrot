@@ -40,11 +40,9 @@ impl IngameCamera {
         }
     }
 
-    pub fn set_secondary_target(&mut self, target: Vec3) {
+    pub fn secondary_target_mut(&mut self) -> &mut Option<Vec3> {
         match &mut self.kind {
-            IngameCameraKind::ThirdPerson(camera) => {
-                camera.set_secondary_target(target);
-            }
+            IngameCameraKind::ThirdPerson(camera) => &mut camera.secondary_target,
         }
     }
 }

@@ -17,13 +17,12 @@ pub fn set_camera_focus(
                 .get(target_entity)
                 .unwrap();
             let translation = global_translation.translation();
-            camera.look_at(translation);
-        } else {
-            for (global_translation, kinematic_character_controller ) in player_query.iter() {
-                let translation = global_translation.translation();
-                camera.move_to(translation);
-                *camera.up_mut() = kinematic_character_controller.up;
-            }
+            camera.set_secondary_target(translation);
+        }
+        for (global_translation, kinematic_character_controller) in player_query.iter() {
+            let translation = global_translation.translation();
+            camera.set_primary_target(translation);
+            *camera.up_mut() = kinematic_character_controller.up;
         }
     }
 }

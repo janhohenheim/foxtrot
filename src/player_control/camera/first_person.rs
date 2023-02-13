@@ -1,5 +1,6 @@
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
+use crate::player_control::camera::ThirdPersonCamera;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::PI;
@@ -18,6 +19,16 @@ impl Default for FirstPersonCamera {
             transform: default(),
             look_target: default(),
             up: Vec3::Y,
+        }
+    }
+}
+
+impl From<&ThirdPersonCamera> for FirstPersonCamera {
+    fn from(camera: &ThirdPersonCamera) -> Self {
+        Self {
+            transform: camera.eye,
+            look_target: camera.secondary_target,
+            up: camera.up,
         }
     }
 }

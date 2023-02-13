@@ -100,6 +100,6 @@ pub fn set_actions(
     }
 
     for event in mouse_wheel.iter() {
-        actions.camera.zoom = Some(-event.y)
+        actions.camera.zoom = Some(event.y)
     }
 }

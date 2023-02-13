@@ -2,9 +2,9 @@ pub mod actions;
 pub mod camera;
 pub mod player_embodiment;
 
-use crate::player_control::actions::ActionsPlugin;
-use crate::player_control::camera::CameraPlugin;
-use crate::player_control::player_embodiment::PlayerEmbodimentPlugin;
+pub use crate::player_control::actions::ActionsPlugin;
+pub use crate::player_control::camera::CameraPlugin;
+pub use crate::player_control::player_embodiment::PlayerEmbodimentPlugin;
 use bevy::prelude::*;
 
 /// Handles systems exclusive to the player's control. Is split into the following sub-plugins:

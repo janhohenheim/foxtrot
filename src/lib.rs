@@ -4,20 +4,19 @@
 #![feature(never_type)]
 #![feature(if_let_guard)]
 
-
-mod bevy_config;
+pub mod bevy_config;
 #[cfg(feature = "dev")]
-mod dev;
-mod file_system_interaction;
-mod level_instanciation;
-mod menu;
-mod movement;
-mod player_control;
-mod shader;
-mod util;
-mod world_interaction;
+pub mod dev;
+pub mod file_system_interaction;
+pub mod level_instanciation;
+pub mod menu;
+pub mod movement;
+pub mod player_control;
+pub mod shader;
+pub mod util;
+pub mod world_interaction;
 
-use crate::bevy_config::BevyConfigPlugin;
+pub use crate::bevy_config::BevyConfigPlugin;
 #[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
@@ -43,6 +42,16 @@ enum GameState {
 /// Foxtrot is split into many plugins with their own set of responsibilities.
 /// This is an organizational measure and not meant to be imply that you can turn them on or off at will,
 /// since the plugins are inter-dependent.
+/// The top-level plugins are:
+/// - [`BevyConfigPlugin`]: Sets up the bevy configuration.
+/// - [`MenuPlugin`]: Handles the menu.
+/// - [`MovementPlugin`]: Handles the movement of entities.
+/// - [`PlayerControlPlugin`]: Handles the player's control.
+/// - [`WorldInteractionPlugin`]: Handles the interaction of entities with the world.
+/// - [`LevelInstanciationPlugin`]: Handles the creation of levels and objects.
+/// - [`FileSystemInteractionPlugin`]: Handles the loading and saving of games.
+/// - [`ShaderPlugin`]: Handles the shaders.
+/// - [`DevPlugin`]: Handles the dev tools.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {

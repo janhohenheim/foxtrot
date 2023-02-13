@@ -1,8 +1,8 @@
-use bevy::input::mouse::MouseMotion;
-use bevy::prelude::*;
-
 use crate::player_control::actions::game_control::{get_movement, GameControl};
 use crate::GameState;
+use bevy::input::mouse::{MouseMotion, MouseWheel};
+use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 mod game_control;
 
@@ -27,15 +27,18 @@ impl Plugin for ActionsPlugin {
     }
 }
 
-#[derive(Debug, Clone, Reflect, FromReflect, Default, Resource)]
-#[reflect(Resource)]
+#[derive(
+    Debug, Clone, PartialEq, Reflect, FromReflect, Default, Resource, Serialize, Deserialize,
+)]
+#[reflect(Resource, Serialize, Deserialize)]
 pub struct Actions {
     pub player: PlayerActions,
     pub camera: CameraActions,
     pub ui: UiActions,
 }
 
-#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
 pub struct PlayerActions {
     pub movement: Option<Vec2>,
     pub interact: bool,
@@ -43,12 +46,15 @@ pub struct PlayerActions {
     pub sprint: bool,
 }
 
-#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
 pub struct CameraActions {
     pub movement: Option<Vec2>,
+    pub zoom: Option<f32>,
 }
 
-#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
 pub struct UiActions {
     pub toggle_editor: bool,
 }
@@ -57,6 +63,7 @@ pub fn set_actions(
     mut actions: ResMut<Actions>,
     keyboard_input: Res<Input<ScanCode>>,
     mut mouse_motion: EventReader<MouseMotion>,
+    mut mouse_wheel: EventReader<MouseWheel>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
     actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
@@ -90,5 +97,9 @@ pub fn set_actions(
     actions.camera.movement = None;
     for event in mouse_motion.iter() {
         actions.camera.movement = Some(event.delta)
+    }
+
+    for event in mouse_wheel.iter() {
+        actions.camera.zoom = Some(-event.y)
     }
 }

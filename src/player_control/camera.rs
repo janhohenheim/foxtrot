@@ -1,4 +1,4 @@
-use crate::player_control::actions::ActionsFrozen;
+use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::set_camera_focus;
 use crate::GameState;
 use bevy::prelude::*;
@@ -16,7 +16,7 @@ mod ui;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
     pub kind: IngameCameraKind,
-    pub movement: Option<Vec2>,
+    pub actions: CameraActions,
 }
 
 impl IngameCamera {
@@ -81,7 +81,7 @@ impl Plugin for CameraPlugin {
                     )
                     .with_system(set_camera_focus.label("set_camera_focus"))
                     .with_system(
-                        reset_movement
+                        reset_actions
                             .label("reset_movement")
                             .after("update_camera_transform"),
                     ),
@@ -103,12 +103,12 @@ fn update_transform(
     mut camera: Query<(&mut IngameCamera, &mut Transform)>,
 ) {
     for (mut camera, mut transform) in camera.iter_mut() {
-        let movement = camera.movement;
+        let actions = camera.actions.clone();
         let new_transform = {
             match &mut camera.kind {
                 IngameCameraKind::ThirdPerson(camera) => camera.update_transform(
                     time.delta_seconds(),
-                    movement,
+                    actions,
                     &rapier_context,
                     *transform,
                 ),
@@ -118,9 +118,9 @@ fn update_transform(
     }
 }
 
-fn reset_movement(mut camera: Query<&mut IngameCamera>) {
+fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     for mut camera in camera.iter_mut() {
-        camera.movement = None;
+        camera.actions = default();
     }
 }
 

@@ -1,10 +1,12 @@
+use crate::player_control::actions::CameraActions;
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
 
-const MAX_DISTANCE: f32 = 5.0;
+const MIN_DISTANCE: f32 = 1e-2;
+const MAX_DISTANCE: f32 = 10.0;
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
@@ -23,7 +25,7 @@ impl Default for ThirdPersonCamera {
         Self {
             up: Vec3::Y,
             eye: default(),
-            distance: MAX_DISTANCE,
+            distance: MAX_DISTANCE / 2.,
             target: default(),
             last_eye: default(),
             last_target: default(),
@@ -53,7 +55,7 @@ impl ThirdPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        camera_movement: Option<Vec2>,
+        camera_actions: CameraActions,
         rapier_context: &RapierContext,
         transform: Transform,
     ) -> Transform {
@@ -61,8 +63,17 @@ impl ThirdPersonCamera {
 
         if let Some(secondary_target) = self.secondary_target {
             self.move_eye_to_align_target_with(secondary_target);
-        } else if let Some(camera_movement) = camera_movement {
+        }
+        if let Some(camera_movement) = camera_actions.movement {
+            let camera_movement = if self.secondary_target.is_some() {
+                Vec2::new(0.0, camera_movement.y)
+            } else {
+                camera_movement
+            };
             self.handle_camera_controls(camera_movement);
+        }
+        if let Some(zoom) = camera_actions.zoom {
+            self.zoom(zoom);
         }
         let los_correction = self.place_eye_in_valid_position(rapier_context);
         self.get_camera_transform(dt, transform, los_correction)
@@ -86,6 +97,12 @@ impl ThirdPersonCamera {
         let yaw = -camera_movement.x.clamp(-PI, PI);
         let pitch = self.clamp_pitch(-camera_movement.y);
         self.rotate_around_target(yaw, pitch);
+    }
+
+    fn zoom(&mut self, zoom: f32) {
+        let zoom_speed = 0.1;
+        let zoom = zoom * zoom_speed;
+        self.distance = (self.distance + zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
     }
 
     fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {

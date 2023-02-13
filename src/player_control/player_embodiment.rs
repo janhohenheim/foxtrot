@@ -83,7 +83,5 @@ fn handle_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut Ing
         None => return,
     };
 
-    if let Some(movement) = actions.camera.movement {
-        camera.movement = Some(movement);
-    }
+    camera.actions = actions.camera.clone();
 }

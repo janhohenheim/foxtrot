@@ -13,7 +13,7 @@ const MAX_DISTANCE: f32 = 10.0;
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct ThirdPersonCamera {
-    pub eye: Transform,
+    pub transform: Transform,
     pub target: Vec3,
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
@@ -24,7 +24,7 @@ impl Default for ThirdPersonCamera {
     fn default() -> Self {
         Self {
             up: Vec3::Y,
-            eye: default(),
+            transform: default(),
             distance: MAX_DISTANCE / 2.,
             target: default(),
             secondary_target: default(),
@@ -40,7 +40,7 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
         let up = first_person_camera.up;
         let eye = Transform::from_translation(eye).looking_at(target, up);
         Self {
-            eye,
+            transform: eye,
             target,
             up,
             distance,
@@ -56,7 +56,7 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
         let eye = fixed_angle_camera.transform;
         let up = fixed_angle_camera.up;
         Self {
-            eye,
+            transform: eye,
             target,
             up,
             distance,
@@ -67,20 +67,20 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
 
 impl ThirdPersonCamera {
     pub fn forward(&self) -> Vec3 {
-        self.eye.forward()
+        self.transform.forward()
     }
 
     fn rotate_around_target(&mut self, yaw: f32, pitch: f32) {
         let yaw_rotation = Quat::from_axis_angle(self.up, yaw);
-        let pitch_rotation = Quat::from_axis_angle(self.eye.local_x(), pitch);
+        let pitch_rotation = Quat::from_axis_angle(self.transform.local_x(), pitch);
 
         let pivot = self.target;
         let rotation = yaw_rotation * pitch_rotation;
-        self.eye.rotate_around(pivot, rotation);
+        self.transform.rotate_around(pivot, rotation);
     }
 
     pub fn init_transform(&mut self, transform: Transform) {
-        self.eye = transform;
+        self.transform = transform;
     }
 
     pub fn update_transform(
@@ -111,11 +111,11 @@ impl ThirdPersonCamera {
     }
 
     fn follow_target(&mut self) {
-        self.eye.translation = self.target - self.forward() * self.distance;
+        self.transform.translation = self.target - self.forward() * self.distance;
 
-        if !(self.target - self.eye.translation).is_approx_zero() {
+        if !(self.target - self.transform.translation).is_approx_zero() {
             let up = self.up;
-            self.eye.look_at(self.target, up);
+            self.transform.look_at(self.target, up);
         }
     }
 
@@ -144,13 +144,13 @@ impl ThirdPersonCamera {
             return;
         }
         let target_to_secondary_target = target_to_secondary_target.normalize();
-        let eye_to_target = (self.target - self.eye.translation)
+        let eye_to_target = (self.target - self.transform.translation)
             .split(self.up)
             .horizontal
             .normalize();
         let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
         let pivot = self.target;
-        self.eye.rotate_around(pivot, rotation);
+        self.transform.rotate_around(pivot, rotation);
     }
 
     fn place_eye_in_valid_position(
@@ -158,7 +158,7 @@ impl ThirdPersonCamera {
         rapier_context: &RapierContext,
     ) -> LineOfSightCorrection {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
-        self.eye.translation = line_of_sight_result.location;
+        self.transform.translation = line_of_sight_result.location;
         line_of_sight_result.correction
     }
 
@@ -175,18 +175,20 @@ impl ThirdPersonCamera {
         };
 
         let scale = (translation_smoothing * dt).min(1.);
-        transform.translation = transform.translation.lerp(self.eye.translation, scale);
+        transform.translation = transform
+            .translation
+            .lerp(self.transform.translation, scale);
 
         let rotation_smoothing = 45.;
         let scale = (rotation_smoothing * dt).min(1.);
-        transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
+        transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
 
         transform
     }
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
         let origin = self.target;
-        let desired_direction = self.eye.translation - self.target;
+        let desired_direction = self.transform.translation - self.target;
         let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
         let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
@@ -249,7 +251,7 @@ mod test {
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.eye.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
     }
 
     #[test]
@@ -264,7 +266,7 @@ mod test {
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.eye.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
     }
 
     #[test]
@@ -280,7 +282,7 @@ mod test {
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 0., 4.);
-        assert_nearly_eq(camera.eye.translation, expected_position);
+        assert_nearly_eq(camera.transform.translation, expected_position);
     }
 
     #[test]
@@ -296,7 +298,7 @@ mod test {
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 2., 4.);
-        assert_nearly_eq(camera.eye.translation, expected_position);
+        assert_nearly_eq(camera.transform.translation, expected_position);
     }
 
     fn assert_nearly_eq(actual: Vec3, expected: Vec3) {

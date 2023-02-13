@@ -2,10 +2,14 @@ use crate::file_system_interaction::asset_loading::FontAssets;
 use crate::GameState;
 use bevy::prelude::*;
 
+
+/// This plugin is responsible for the game menu
+/// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
+/// Because the Bevy UI situation is not quite mature yet, this work would ideally be done in egui instead,
+/// so don't try to replicate this.
+/// See issue: https://github.com/janhohenheim/foxtrot/issues/13
 pub struct MenuPlugin;
 
-/// This plugin is responsible for the game menu (containing only one button...)
-/// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ButtonColors>()

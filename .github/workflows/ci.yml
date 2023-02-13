@@ -35,7 +35,7 @@ jobs:
         run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
         if : runner.os == 'windows'
       - name: Build & run tests for native
-        run: cargo test --features dev
+        run: cargo test
   test-native-docs:
     runs-on: ubuntu-latest
     steps:

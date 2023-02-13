@@ -26,7 +26,7 @@ impl Default for FirstPersonCamera {
 impl From<&ThirdPersonCamera> for FirstPersonCamera {
     fn from(camera: &ThirdPersonCamera) -> Self {
         Self {
-            transform: camera.eye,
+            transform: camera.transform,
             look_target: camera.secondary_target,
             up: camera.up,
         }

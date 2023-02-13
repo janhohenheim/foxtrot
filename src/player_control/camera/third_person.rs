@@ -18,8 +18,6 @@ pub struct ThirdPersonCamera {
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
-    last_eye: Transform,
-    last_target: Vec3,
 }
 
 impl Default for ThirdPersonCamera {
@@ -29,8 +27,6 @@ impl Default for ThirdPersonCamera {
             eye: default(),
             distance: MAX_DISTANCE / 2.,
             target: default(),
-            last_eye: default(),
-            last_target: default(),
             secondary_target: default(),
         }
     }
@@ -46,8 +42,6 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
         Self {
             eye,
             target,
-            last_eye: eye,
-            last_target: target,
             up,
             distance,
             secondary_target: first_person_camera.look_target,
@@ -64,8 +58,6 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
         Self {
             eye,
             target,
-            last_eye: eye,
-            last_target: target,
             up,
             distance,
             secondary_target: fixed_angle_camera.secondary_target,
@@ -88,7 +80,7 @@ impl ThirdPersonCamera {
     }
 
     pub fn init_transform(&mut self, transform: Transform) {
-        self.last_eye = transform;
+        self.eye = transform;
     }
 
     pub fn update_transform(
@@ -119,13 +111,11 @@ impl ThirdPersonCamera {
     }
 
     fn follow_target(&mut self) {
-        let target_movement = (self.target - self.last_target).collapse_approx_zero();
-        self.eye.translation = self.last_eye.translation + target_movement;
+        self.eye.translation = self.target - self.forward() * self.distance;
 
-        let new_target = self.target;
-        if !(new_target - self.eye.translation).is_approx_zero() {
+        if !(self.target - self.eye.translation).is_approx_zero() {
             let up = self.up;
-            self.eye.look_at(new_target, up);
+            self.eye.look_at(self.target, up);
         }
     }
 
@@ -169,8 +159,6 @@ impl ThirdPersonCamera {
     ) -> LineOfSightCorrection {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
         self.eye.translation = line_of_sight_result.location;
-        self.last_eye = self.eye;
-        self.last_target = self.target;
         line_of_sight_result.correction
     }
 

@@ -5,11 +5,13 @@ use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::prelude::*;
 pub use first_person::FirstPersonCamera;
+pub use fixed_angle::FixedAngleCamera;
 use serde::{Deserialize, Serialize};
 pub use third_person::ThirdPersonCamera;
 use ui::*;
 
 mod first_person;
+mod fixed_angle;
 pub mod focus;
 mod third_person;
 mod ui;
@@ -31,6 +33,9 @@ impl IngameCamera {
             IngameCameraKind::FirstPerson(camera) => {
                 camera.transform.translation = target;
             }
+            IngameCameraKind::FixedAngle(camera) => {
+                camera.target = target;
+            }
         }
     }
 
@@ -38,6 +43,7 @@ impl IngameCamera {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => &mut camera.up,
             IngameCameraKind::FirstPerson(camera) => &mut camera.up,
+            IngameCameraKind::FixedAngle(camera) => &mut camera.up,
         }
     }
 
@@ -45,6 +51,7 @@ impl IngameCamera {
         match &self.kind {
             IngameCameraKind::ThirdPerson(camera) => camera.forward(),
             IngameCameraKind::FirstPerson(camera) => camera.forward(),
+            IngameCameraKind::FixedAngle(camera) => camera.forward(),
         }
     }
 
@@ -52,6 +59,7 @@ impl IngameCamera {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => &mut camera.secondary_target,
             IngameCameraKind::FirstPerson(camera) => &mut camera.look_target,
+            IngameCameraKind::FixedAngle(camera) => &mut camera.secondary_target,
         }
     }
 }
@@ -61,6 +69,7 @@ impl IngameCamera {
 pub enum IngameCameraKind {
     ThirdPerson(ThirdPersonCamera),
     FirstPerson(FirstPersonCamera),
+    FixedAngle(FixedAngleCamera),
 }
 
 impl Default for IngameCameraKind {
@@ -110,6 +119,7 @@ fn init_camera(mut camera: Query<(&mut IngameCamera, &Transform), Added<IngameCa
         match &mut camera.kind {
             IngameCameraKind::ThirdPerson(camera) => camera.init_transform(*transform),
             IngameCameraKind::FirstPerson(camera) => camera.init_transform(*transform),
+            IngameCameraKind::FixedAngle(camera) => camera.init_transform(*transform),
         }
     }
 }
@@ -121,16 +131,17 @@ fn update_transform(
 ) {
     for (mut camera, mut transform) in camera.iter_mut() {
         let actions = camera.actions.clone();
+        let dt = time.delta_seconds();
         let new_transform = {
             match &mut camera.kind {
-                IngameCameraKind::ThirdPerson(camera) => camera.update_transform(
-                    time.delta_seconds(),
-                    actions,
-                    &rapier_context,
-                    *transform,
-                ),
+                IngameCameraKind::ThirdPerson(camera) => {
+                    camera.update_transform(dt, actions, &rapier_context, *transform)
+                }
                 IngameCameraKind::FirstPerson(camera) => {
-                    camera.update_transform(time.delta_seconds(), actions, *transform)
+                    camera.update_transform(dt, actions, *transform)
+                }
+                IngameCameraKind::FixedAngle(camera) => {
+                    camera.update_transform(dt, actions, *transform)
                 }
             }
         };

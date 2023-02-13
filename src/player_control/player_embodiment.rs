@@ -102,7 +102,9 @@ fn handle_camera_kind(
                     player_transform.rotation = camera_transform.rotation;
                     visibility.is_visible = false;
                 }
-                IngameCameraKind::ThirdPerson(_) => visibility.is_visible = true,
+                IngameCameraKind::ThirdPerson(_) | IngameCameraKind::FixedAngle(_) => {
+                    visibility.is_visible = true
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 use crate::level_instanciation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::player_control::camera::MainCamera;
+use crate::player_control::camera::IngameCamera;
 use bevy::prelude::*;
 
 pub struct CameraSpawner;
@@ -16,7 +16,7 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
         spawner
             .commands
             .spawn((
-                MainCamera::default(),
+                IngameCamera::default(),
                 Camera3dBundle {
                     transform,
                     ..default()

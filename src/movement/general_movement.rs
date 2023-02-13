@@ -169,7 +169,7 @@ fn rotate_characters(
         let target_transform =
             transform.looking_at(transform.translation + horizontal_movement, controller.up);
         // Asymptotic averaging
-        const SMOOTHNESS: f32 = 3.;
+        const SMOOTHNESS: f32 = 4.;
         let scale = (SMOOTHNESS * dt).min(1.);
         let rotation = transform.rotation.slerp(target_transform.rotation, scale);
         transform.rotation = rotation;

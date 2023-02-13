@@ -11,7 +11,7 @@ pub trait Vec3Ext {
 impl Vec3Ext for Vec3 {
     #[inline]
     fn is_approx_zero(self) -> bool {
-        self.x.abs() < 1e-5 && self.y.abs() < 1e-5 && self.z.abs() < 1e-5
+        self.length_squared() < 1e-5
     }
 
     fn collapse_approx_zero(self) -> Vec3 {
@@ -49,7 +49,7 @@ pub trait Vec2Ext {
 impl Vec2Ext for Vec2 {
     #[inline]
     fn is_approx_zero(self) -> bool {
-        self.x.abs() < 1e-5 && self.y.abs() < 1e-5
+        self.length_squared() < 1e-5
     }
 
     #[inline]

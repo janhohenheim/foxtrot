@@ -4,13 +4,16 @@ use crate::GameState;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::prelude::*;
+pub use first_person::FirstPersonCamera;
 use serde::{Deserialize, Serialize};
 pub use third_person::ThirdPersonCamera;
 use ui::*;
 
+mod first_person;
 pub mod focus;
 mod third_person;
 mod ui;
+mod util;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -25,24 +28,30 @@ impl IngameCamera {
             IngameCameraKind::ThirdPerson(camera) => {
                 camera.target = target;
             }
+            IngameCameraKind::FirstPerson(camera) => {
+                camera.transform.translation = target;
+            }
         }
     }
 
     pub fn up_mut(&mut self) -> &mut Vec3 {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => &mut camera.up,
+            IngameCameraKind::FirstPerson(camera) => &mut camera.up,
         }
     }
 
     pub fn forward(&self) -> Vec3 {
         match &self.kind {
             IngameCameraKind::ThirdPerson(camera) => camera.forward(),
+            IngameCameraKind::FirstPerson(camera) => camera.forward(),
         }
     }
 
     pub fn secondary_target_mut(&mut self) -> &mut Option<Vec3> {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => &mut camera.secondary_target,
+            IngameCameraKind::FirstPerson(camera) => &mut camera.look_target,
         }
     }
 }
@@ -51,6 +60,7 @@ impl IngameCamera {
 #[reflect(Serialize, Deserialize)]
 pub enum IngameCameraKind {
     ThirdPerson(ThirdPersonCamera),
+    FirstPerson(FirstPersonCamera),
 }
 
 impl Default for IngameCameraKind {
@@ -93,6 +103,7 @@ fn init_camera(mut camera: Query<(&mut IngameCamera, &Transform), Added<IngameCa
     for (mut camera, transform) in camera.iter_mut() {
         match &mut camera.kind {
             IngameCameraKind::ThirdPerson(camera) => camera.init_transform(*transform),
+            IngameCameraKind::FirstPerson(camera) => camera.init_transform(*transform),
         }
     }
 }
@@ -112,6 +123,9 @@ fn update_transform(
                     &rapier_context,
                     *transform,
                 ),
+                IngameCameraKind::FirstPerson(camera) => {
+                    camera.update_transform(time.delta_seconds(), actions, *transform)
+                }
             }
         };
         *transform = new_transform;

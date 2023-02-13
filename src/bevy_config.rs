@@ -4,6 +4,7 @@ use bevy::winit::WinitWindows;
 use std::io::Cursor;
 use winit::window::Icon;
 
+/// Overrides the default Bevy plugins and configures things like the screen settings.
 pub struct BevyConfigPlugin;
 
 impl Plugin for BevyConfigPlugin {

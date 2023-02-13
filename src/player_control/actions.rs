@@ -1,8 +1,8 @@
-use bevy::input::mouse::MouseMotion;
-use bevy::prelude::*;
-
 use crate::player_control::actions::game_control::{get_movement, GameControl};
 use crate::GameState;
+use bevy::input::mouse::{MouseMotion, MouseWheel};
+use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 mod game_control;
 
@@ -15,32 +15,63 @@ pub struct ActionsFrozen;
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Actions>().add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(set_actions.label("set_actions")),
-        );
+        app.register_type::<Actions>()
+            .register_type::<PlayerActions>()
+            .register_type::<CameraActions>()
+            .register_type::<UiActions>()
+            .init_resource::<Actions>()
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(set_actions.label("set_actions")),
+            );
     }
 }
 
-#[derive(Default, Resource)]
+#[derive(
+    Debug, Clone, PartialEq, Reflect, FromReflect, Default, Resource, Serialize, Deserialize,
+)]
+#[reflect(Resource, Serialize, Deserialize)]
 pub struct Actions {
-    pub player_movement: Option<Vec2>,
-    pub camera_movement: Option<Vec2>,
-    pub toggle_editor: bool,
+    pub player: PlayerActions,
+    pub camera: CameraActions,
+    pub ui: UiActions,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct PlayerActions {
+    pub movement: Option<Vec2>,
     pub interact: bool,
     pub jump: bool,
     pub sprint: bool,
 }
 
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct CameraActions {
+    pub movement: Option<Vec2>,
+    pub zoom: Option<f32>,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize)]
+pub struct UiActions {
+    pub toggle_editor: bool,
+}
+
 pub fn set_actions(
     mut actions: ResMut<Actions>,
     keyboard_input: Res<Input<ScanCode>>,
-    mut mouse_input: EventReader<MouseMotion>,
+    mut mouse_motion: EventReader<MouseMotion>,
+    mut mouse_wheel: EventReader<MouseWheel>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
-    actions.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
     if actions_frozen.is_some() {
         *actions = Actions {
-            toggle_editor: actions.toggle_editor,
+            ui: UiActions {
+                toggle_editor: actions.ui.toggle_editor,
+            },
             ..default()
         };
         return;
@@ -54,16 +85,20 @@ pub fn set_actions(
     );
 
     if player_movement != Vec2::ZERO {
-        actions.player_movement = Some(player_movement.normalize());
+        actions.player.movement = Some(player_movement.normalize());
     } else {
-        actions.player_movement = None;
+        actions.player.movement = None;
     }
-    actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
-    actions.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
-    actions.interact = GameControl::Interact.just_pressed(&keyboard_input);
+    actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+    actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
+    actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
-    actions.camera_movement = None;
-    for event in mouse_input.iter() {
-        actions.camera_movement = Some(event.delta)
+    actions.camera.movement = None;
+    for event in mouse_motion.iter() {
+        actions.camera.movement = Some(event.delta)
+    }
+
+    for event in mouse_wheel.iter() {
+        actions.camera.zoom = Some(event.y)
     }
 }

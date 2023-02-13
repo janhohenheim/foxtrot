@@ -103,7 +103,7 @@ fn display_interaction_prompt(
         .show(egui_context.ctx_mut(), |ui| {
             ui.label("E: Talk");
         });
-    if actions.interact {
+    if actions.player.interact {
         match &interaction_ui.kind {
             InteractionKind::Dialog(dialog_target) => {
                 dialog_event_writer.send(DialogEvent {

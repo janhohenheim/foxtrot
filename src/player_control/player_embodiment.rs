@@ -45,7 +45,7 @@ pub struct PlayerSensor;
 
 fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Player>>) {
     for mut jump in &mut player_query {
-        if actions.jump {
+        if actions.player.jump {
             jump.requested = true;
         }
     }
@@ -60,7 +60,7 @@ fn handle_horizontal_movement(
         Some(camera) => camera,
         None => return,
     };
-    let movement = match actions.player_movement {
+    let movement = match actions.player.movement {
         Some(movement) => movement,
         None => return,
     };
@@ -73,7 +73,7 @@ fn handle_horizontal_movement(
 
     for mut walker in &mut player_query {
         walker.direction = Some(direction);
-        walker.sprinting = actions.sprint;
+        walker.sprinting = actions.player.sprint;
     }
 }
 
@@ -83,7 +83,7 @@ fn handle_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut Ing
         None => return,
     };
 
-    if let Some(movement) = actions.camera_movement {
+    if let Some(movement) = actions.camera.movement {
         camera.movement = Some(movement);
     }
 }

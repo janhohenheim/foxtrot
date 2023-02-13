@@ -15,32 +15,57 @@ pub struct ActionsFrozen;
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Actions>().add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(set_actions.label("set_actions")),
-        );
+        app.register_type::<Actions>()
+            .register_type::<PlayerActions>()
+            .register_type::<CameraActions>()
+            .register_type::<UiActions>()
+            .init_resource::<Actions>()
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(set_actions.label("set_actions")),
+            );
     }
 }
 
-#[derive(Default, Resource)]
+#[derive(Debug, Clone, Reflect, FromReflect, Default, Resource)]
+#[reflect(Resource)]
 pub struct Actions {
-    pub player_movement: Option<Vec2>,
-    pub camera_movement: Option<Vec2>,
-    pub toggle_editor: bool,
+    pub player: PlayerActions,
+    pub camera: CameraActions,
+    pub ui: UiActions,
+}
+
+#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+pub struct PlayerActions {
+    pub movement: Option<Vec2>,
     pub interact: bool,
     pub jump: bool,
     pub sprint: bool,
 }
 
+#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+pub struct CameraActions {
+    pub movement: Option<Vec2>,
+}
+
+#[derive(Debug, Clone, Reflect, FromReflect, Default)]
+pub struct UiActions {
+    pub toggle_editor: bool,
+}
+
 pub fn set_actions(
     mut actions: ResMut<Actions>,
     keyboard_input: Res<Input<ScanCode>>,
-    mut mouse_input: EventReader<MouseMotion>,
+    mut mouse_motion: EventReader<MouseMotion>,
     actions_frozen: Option<Res<ActionsFrozen>>,
 ) {
-    actions.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
     if actions_frozen.is_some() {
         *actions = Actions {
-            toggle_editor: actions.toggle_editor,
+            ui: UiActions {
+                toggle_editor: actions.ui.toggle_editor,
+                ..default()
+            },
             ..default()
         };
         return;
@@ -54,16 +79,16 @@ pub fn set_actions(
     );
 
     if player_movement != Vec2::ZERO {
-        actions.player_movement = Some(player_movement.normalize());
+        actions.player.movement = Some(player_movement.normalize());
     } else {
-        actions.player_movement = None;
+        actions.player.movement = None;
     }
-    actions.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
-    actions.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
-    actions.interact = GameControl::Interact.just_pressed(&keyboard_input);
+    actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
+    actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
+    actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
-    actions.camera_movement = None;
-    for event in mouse_input.iter() {
-        actions.camera_movement = Some(event.delta)
+    actions.camera.movement = None;
+    for event in mouse_motion.iter() {
+        actions.camera.movement = Some(event.delta)
     }
 }

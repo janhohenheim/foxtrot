@@ -4,6 +4,7 @@
 #![feature(never_type)]
 #![feature(if_let_guard)]
 
+
 mod bevy_config;
 #[cfg(feature = "dev")]
 mod dev;
@@ -28,19 +29,20 @@ use crate::shader::ShaderPlugin;
 use crate::world_interaction::WorldInteractionPlugin;
 use bevy::prelude::*;
 
-// This example game uses States to separate logic
-// See https://bevy-cheatbook.github.io/programming/states.html
-// Or https://github.com/bevyengine/bevy/blob/main/examples/ecs/state.rs
 #[derive(Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
-    // During the loading State the LoadingPlugin will load our assets
+    /// During the loading State the LoadingPlugin will load our assets
     Loading,
-    // During this State the actual game logic is executed
+    /// During this State the actual game logic is executed
     Playing,
-    // Here the menu is drawn and waiting for player interaction
+    /// Here the menu is drawn and waiting for player interaction
     Menu,
 }
 
+/// Main entrypoint for Foxtrot.
+/// Foxtrot is split into many plugins with their own set of responsibilities.
+/// This is an organizational measure and not meant to be imply that you can turn them on or off at will,
+/// since the plugins are inter-dependent.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {

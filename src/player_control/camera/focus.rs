@@ -38,9 +38,11 @@ pub fn switch_kind(mut camera: Query<&mut IngameCamera>) {
                     if zoom > 1e-5
                         && third_person.distance < THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD =>
                 {
+                    info!("Switching 3rd -> 1st person");
                     Some(IngameCameraKind::FirstPerson(third_person.into()))
                 }
                 IngameCameraKind::FirstPerson(first_person) if zoom < -1e-5 => {
+                    info!("Switching 1st -> 3rd person");
                     Some(IngameCameraKind::ThirdPerson(first_person.into()))
                 }
                 _ => None,

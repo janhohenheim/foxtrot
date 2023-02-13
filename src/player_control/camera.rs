@@ -3,7 +3,6 @@ use crate::player_control::camera::focus::set_camera_focus;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
-use bevy_egui::EguiContext;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 pub use third_person::ThirdPersonCamera;

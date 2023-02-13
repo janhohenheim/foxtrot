@@ -54,7 +54,7 @@ fn handle_toggle(
     actions: Res<Actions>,
     mut scene_editor_state: ResMut<SceneEditorState>,
 ) {
-    if !actions.toggle_editor {
+    if !actions.ui.toggle_editor {
         return;
     }
     scene_editor_state.active = !scene_editor_state.active;

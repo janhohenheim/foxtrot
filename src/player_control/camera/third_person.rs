@@ -1,6 +1,5 @@
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
@@ -146,19 +145,15 @@ impl ThirdPersonCamera {
         line_of_sight_correction: LineOfSightCorrection,
     ) -> Transform {
         let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Further {
-            egui_state.translational_smoothing_further
+            50.
         } else {
-            if egui_state.translational_smoothing_same {
-                50.
-            } else {
-                100.
-            }
+            100.
         };
 
         let scale = (translation_smoothing * dt).min(1.);
         transform.translation = transform.translation.lerp(self.eye.translation, scale);
 
-        let rotation_smoothing = 45;
+        let rotation_smoothing = 45.;
         let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
 

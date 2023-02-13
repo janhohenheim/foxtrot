@@ -1,5 +1,6 @@
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
+use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::{PI, TAU};
@@ -80,7 +81,7 @@ impl ThirdPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 1e-2;
+        let mouse_sensitivity = 3e-2;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);
@@ -144,16 +145,20 @@ impl ThirdPersonCamera {
         mut transform: Transform,
         line_of_sight_correction: LineOfSightCorrection,
     ) -> Transform {
-        let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Closer {
-            10.
+        let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Further {
+            egui_state.translational_smoothing_further
         } else {
-            500000.
+            if egui_state.translational_smoothing_same {
+                50.
+            } else {
+                100.
+            }
         };
 
         let scale = (translation_smoothing * dt).min(1.);
         transform.translation = transform.translation.lerp(self.eye.translation, scale);
 
-        let rotation_smoothing = 50000.;
+        let rotation_smoothing = 45;
         let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
 
@@ -167,7 +172,7 @@ impl ThirdPersonCamera {
 
         let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
         let location = origin + norm_direction * distance;
-        let correction = if distance * distance < desired_direction.length_squared() - 1e-5 {
+        let correction = if distance * distance < desired_direction.length_squared() - 1e-3 {
             LineOfSightCorrection::Closer
         } else {
             LineOfSightCorrection::Further

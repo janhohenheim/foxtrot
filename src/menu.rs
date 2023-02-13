@@ -6,7 +6,7 @@ use bevy::prelude::*;
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
 /// Because the Bevy UI situation is not quite mature yet, this work would ideally be done in egui instead,
 /// so don't try to replicate this.
-/// See issue: https://github.com/janhohenheim/foxtrot/issues/13
+/// See [issue #13](https://github.com/janhohenheim/foxtrot/issues/13)
 pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {

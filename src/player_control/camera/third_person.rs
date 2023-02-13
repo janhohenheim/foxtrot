@@ -1,10 +1,14 @@
+use crate::player_control::actions::CameraActions;
+use crate::player_control::camera::util::clamp_pitch;
+use crate::player_control::camera::FirstPersonCamera;
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::{PI, TAU};
+use std::f32::consts::PI;
 
-const MAX_DISTANCE: f32 = 5.0;
+const MIN_DISTANCE: f32 = 1e-2;
+const MAX_DISTANCE: f32 = 10.0;
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
@@ -23,11 +27,30 @@ impl Default for ThirdPersonCamera {
         Self {
             up: Vec3::Y,
             eye: default(),
-            distance: MAX_DISTANCE,
+            distance: MAX_DISTANCE / 2.,
             target: default(),
             last_eye: default(),
             last_target: default(),
             secondary_target: default(),
+        }
+    }
+}
+
+impl From<&FirstPersonCamera> for ThirdPersonCamera {
+    fn from(first_person_camera: &FirstPersonCamera) -> Self {
+        let target = first_person_camera.transform.translation;
+        let distance = MIN_DISTANCE;
+        let eye = target - first_person_camera.forward() * distance;
+        let up = first_person_camera.up;
+        let eye = Transform::from_translation(eye).looking_at(target, up);
+        Self {
+            eye,
+            target,
+            last_eye: eye,
+            last_target: target,
+            up,
+            distance,
+            secondary_target: first_person_camera.look_target,
         }
     }
 }
@@ -53,7 +76,7 @@ impl ThirdPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        camera_movement: Option<Vec2>,
+        camera_actions: CameraActions,
         rapier_context: &RapierContext,
         transform: Transform,
     ) -> Transform {
@@ -61,8 +84,17 @@ impl ThirdPersonCamera {
 
         if let Some(secondary_target) = self.secondary_target {
             self.move_eye_to_align_target_with(secondary_target);
-        } else if let Some(camera_movement) = camera_movement {
+        }
+        if let Some(camera_movement) = camera_actions.movement {
+            let camera_movement = if self.secondary_target.is_some() {
+                Vec2::new(0.0, camera_movement.y)
+            } else {
+                camera_movement
+            };
             self.handle_camera_controls(camera_movement);
+        }
+        if let Some(zoom) = camera_actions.zoom {
+            self.zoom(zoom);
         }
         let los_correction = self.place_eye_in_valid_position(rapier_context);
         self.get_camera_transform(dt, transform, los_correction)
@@ -88,6 +120,16 @@ impl ThirdPersonCamera {
         self.rotate_around_target(yaw, pitch);
     }
 
+    fn clamp_pitch(&self, angle: f32) -> f32 {
+        clamp_pitch(self.up, self.forward(), angle)
+    }
+
+    fn zoom(&mut self, zoom: f32) {
+        let zoom_speed = 0.1;
+        let zoom = zoom * zoom_speed;
+        self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
+    }
+
     fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
         let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
         if target_to_secondary_target.is_approx_zero() {
@@ -101,30 +143,6 @@ impl ThirdPersonCamera {
         let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
         let pivot = self.target;
         self.eye.rotate_around(pivot, rotation);
-    }
-
-    fn clamp_pitch(&self, angle: f32) -> f32 {
-        const MOST_ACUTE_ALLOWED_FROM_ABOVE: f32 = TAU / 10.;
-        const MOST_ACUTE_ALLOWED_FROM_BELOW: f32 = TAU / 7.;
-
-        let forward = self.eye.forward();
-        let up = self.up;
-        let angle_to_axis = forward.angle_between(up);
-        let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
-            (PI - angle_to_axis, MOST_ACUTE_ALLOWED_FROM_ABOVE, -1.)
-        } else {
-            (angle_to_axis, MOST_ACUTE_ALLOWED_FROM_BELOW, 1.)
-        };
-        let new_angle = if acute_angle_to_axis < most_acute_allowed {
-            angle - sign * (most_acute_allowed - acute_angle_to_axis)
-        } else {
-            angle
-        };
-        if new_angle.abs() < 0.01 {
-            0.
-        } else {
-            new_angle
-        }
     }
 
     fn place_eye_in_valid_position(

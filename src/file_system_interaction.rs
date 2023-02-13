@@ -8,6 +8,7 @@ use crate::file_system_interaction::asset_loading::LoadingPlugin;
 use crate::file_system_interaction::game_serialization::SavingPlugin;
 use crate::file_system_interaction::level_serialization::WorldSerializationPlugin;
 
+///
 pub struct FileSystemInteractionPlugin;
 
 impl Plugin for FileSystemInteractionPlugin {

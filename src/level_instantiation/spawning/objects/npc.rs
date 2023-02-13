@@ -1,8 +1,10 @@
-use crate::level_instanciation::spawning::{
+use crate::level_instantiation::spawning::post_spawn_modification::CustomCollider;
+use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
-use crate::player_control::player_embodiment::{Player, PlayerSensor};
+use crate::movement::navigation::Follower;
+use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -10,9 +12,9 @@ use std::f32::consts::TAU;
 pub const HEIGHT: f32 = 1.;
 pub const RADIUS: f32 = 0.4;
 
-pub struct PlayerSpawner;
+pub struct NpcSpawner;
 
-impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
+impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
     fn spawn<'a, 'b: 'a>(
         &self,
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
@@ -22,7 +24,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
         let gltf = spawner
             .gltf
             .get(&spawner.scenes.character)
-            .unwrap_or_else(|| panic!("Failed to load scene for player"));
+            .unwrap_or_else(|| panic!("Failed to load scene for NPC"));
 
         spawner
             .commands
@@ -31,9 +33,9 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     transform,
                     ..default()
                 },
-                Player,
-                Name::new("Player"),
+                Name::new("NPC"),
                 KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
+                Follower,
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),
                     walk: spawner.animations.character_walking.clone(),
@@ -42,24 +44,28 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
             ))
             .with_children(|parent| {
                 parent.spawn((
-                    Collider::capsule_y(HEIGHT / 2., RADIUS),
+                    DialogTarget {
+                        dialog_id: DialogId::new("follower"),
+                    },
+                    Name::new("NPC Dialog Collider"),
+                    Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
-                    PlayerSensor,
-                    ActiveCollisionTypes::all(),
-                    Name::new("Player Sensor"),
+                    ActiveEvents::COLLISION_EVENTS,
+                    ActiveCollisionTypes::KINEMATIC_STATIC,
+                    CustomCollider,
                 ));
                 parent.spawn((
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT, 0.),
+                            scale: Vec3::splat(0.012),
                             rotation: Quat::from_rotation_y(TAU / 2.),
-                            scale: Vec3::splat(0.01),
                         },
                         ..default()
                     },
                     Model,
-                    Name::new("Player Model"),
+                    Name::new("NPC Model"),
                 ));
             })
             .id()

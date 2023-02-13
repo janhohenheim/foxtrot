@@ -1,6 +1,6 @@
 use crate::movement::general_movement::{Jump, Walker};
 use crate::player_control::actions::Actions;
-use crate::player_control::camera::IngameCamera;
+use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::Vec2Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -30,6 +30,11 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .after("set_actions")
                             .before("update_camera_transform")
                             .before("apply_walking"),
+                    )
+                    .with_system(
+                        handle_camera_kind
+                            .after("switch_camera_kind")
+                            .before("apply_walking"),
                     ),
             );
     }
@@ -45,7 +50,7 @@ pub struct PlayerSensor;
 
 fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Player>>) {
     for mut jump in &mut player_query {
-        if actions.jump {
+        if actions.player.jump {
             jump.requested = true;
         }
     }
@@ -60,7 +65,7 @@ fn handle_horizontal_movement(
         Some(camera) => camera,
         None => return,
     };
-    let movement = match actions.player_movement {
+    let movement = match actions.player.movement {
         Some(movement) => movement,
         None => return,
     };
@@ -73,7 +78,7 @@ fn handle_horizontal_movement(
 
     for mut walker in &mut player_query {
         walker.direction = Some(direction);
-        walker.sprinting = actions.sprint;
+        walker.sprinting = actions.player.sprint;
     }
 }
 
@@ -83,7 +88,22 @@ fn handle_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut Ing
         None => return,
     };
 
-    if let Some(movement) = actions.camera_movement {
-        camera.movement = Some(movement);
+    camera.actions = actions.camera.clone();
+}
+
+fn handle_camera_kind(
+    mut with_player: Query<(&mut Transform, &mut Visibility), With<Player>>,
+    camera_query: Query<(&Transform, &IngameCamera), Without<Player>>,
+) {
+    for (camera_transform, camera) in camera_query.iter() {
+        for (mut player_transform, mut visibility) in with_player.iter_mut() {
+            match camera.kind {
+                IngameCameraKind::FirstPerson(_) => {
+                    player_transform.rotation = camera_transform.rotation;
+                    visibility.is_visible = false;
+                }
+                IngameCameraKind::ThirdPerson(_) => visibility.is_visible = true,
+            }
+        }
     }
 }

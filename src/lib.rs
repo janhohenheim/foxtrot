@@ -14,7 +14,7 @@ pub mod bevy_config;
 #[cfg(feature = "dev")]
 pub mod dev;
 pub mod file_system_interaction;
-pub mod level_instanciation;
+pub mod level_instantiation;
 pub mod menu;
 pub mod movement;
 pub mod player_control;
@@ -26,7 +26,7 @@ pub use crate::bevy_config::BevyConfigPlugin;
 #[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
-use crate::level_instanciation::LevelInstanciationPlugin;
+use crate::level_instantiation::LevelInstantiationPlugin;
 use crate::menu::MenuPlugin;
 use crate::movement::MovementPlugin;
 use crate::player_control::PlayerControlPlugin;
@@ -52,7 +52,7 @@ enum GameState {
 /// - [`MovementPlugin`]: Handles the movement of entities.
 /// - [`PlayerControlPlugin`]: Handles the player's control.
 /// - [`WorldInteractionPlugin`]: Handles the interaction of entities with the world.
-/// - [`LevelInstanciationPlugin`]: Handles the creation of levels and objects.
+/// - [`LevelInstantiationPlugin`]: Handles the creation of levels and objects.
 /// - [`FileSystemInteractionPlugin`]: Handles the loading and saving of games.
 /// - [`ShaderPlugin`]: Handles the shaders.
 /// - [`DevPlugin`]: Handles the dev tools.
@@ -66,7 +66,7 @@ impl Plugin for GamePlugin {
             .add_plugin(MovementPlugin)
             .add_plugin(PlayerControlPlugin)
             .add_plugin(WorldInteractionPlugin)
-            .add_plugin(LevelInstanciationPlugin)
+            .add_plugin(LevelInstantiationPlugin)
             .add_plugin(FileSystemInteractionPlugin)
             .add_plugin(ShaderPlugin);
         #[cfg(feature = "dev")]

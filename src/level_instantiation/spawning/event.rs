@@ -1,4 +1,4 @@
-use crate::level_instanciation::spawning::GameObject;
+use crate::level_instantiation::spawning::GameObject;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 

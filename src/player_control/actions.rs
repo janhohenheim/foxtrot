@@ -71,7 +71,6 @@ pub fn set_actions(
         *actions = Actions {
             ui: UiActions {
                 toggle_editor: actions.ui.toggle_editor,
-                ..default()
             },
             ..default()
         };

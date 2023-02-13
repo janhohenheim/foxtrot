@@ -29,9 +29,9 @@ pub fn set_camera_focus(
     }
 }
 
-pub fn switch_kind(mut camera: Query<(&mut IngameCamera, &Transform)>) {
+pub fn switch_kind(mut camera: Query<&mut IngameCamera>) {
     const THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD: f32 = 0.5;
-    for (mut camera, transform) in camera.iter_mut() {
+    for mut camera in camera.iter_mut() {
         if let Some(zoom) = camera.actions.zoom {
             let new_kind = match &camera.kind {
                 IngameCameraKind::ThirdPerson(third_person)

@@ -1,7 +1,7 @@
 use crate::movement::general_movement::{Jump, Walker};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::util::trait_extension::Vec2Ext;
+use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -99,7 +99,10 @@ fn handle_camera_kind(
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
                 IngameCameraKind::FirstPerson(_) => {
-                    player_transform.rotation = camera_transform.rotation;
+                    let up = camera.up();
+                    let horizontal_direction = camera_transform.forward().split(up).horizontal;
+                    let looking_target = camera_transform.translation + horizontal_direction;
+                    player_transform.look_at(looking_target, up);
                     visibility.is_visible = false;
                 }
                 IngameCameraKind::ThirdPerson(_) | IngameCameraKind::FixedAngle(_) => {

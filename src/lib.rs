@@ -2,6 +2,7 @@
 #![feature(let_chains)]
 #![feature(fs_try_exists)]
 #![feature(never_type)]
+#![feature(if_let_guard)]
 
 mod bevy_config;
 #[cfg(feature = "dev")]

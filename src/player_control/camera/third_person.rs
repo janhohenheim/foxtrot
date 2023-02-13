@@ -1,5 +1,6 @@
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
+use crate::player_control::camera::FirstPersonCamera;
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -31,6 +32,25 @@ impl Default for ThirdPersonCamera {
             last_eye: default(),
             last_target: default(),
             secondary_target: default(),
+        }
+    }
+}
+
+impl From<&FirstPersonCamera> for ThirdPersonCamera {
+    fn from(first_person_camera: &FirstPersonCamera) -> Self {
+        let target = first_person_camera.transform.translation;
+        let distance = MIN_DISTANCE;
+        let eye = target - first_person_camera.forward() * distance;
+        let up = first_person_camera.up;
+        let eye = Transform::from_translation(eye).looking_at(target, up);
+        Self {
+            eye,
+            target,
+            last_eye: eye,
+            last_target: target,
+            up,
+            distance,
+            secondary_target: first_person_camera.look_target,
         }
     }
 }
@@ -107,7 +127,7 @@ impl ThirdPersonCamera {
     fn zoom(&mut self, zoom: f32) {
         let zoom_speed = 0.1;
         let zoom = zoom * zoom_speed;
-        self.distance = (self.distance + zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
+        self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
     }
 
     fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {

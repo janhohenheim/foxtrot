@@ -1,4 +1,4 @@
-use crate::player_control::camera::IngameCamera;
+use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::dialog::CurrentDialog;
 use bevy::prelude::*;
@@ -25,6 +25,29 @@ pub fn set_camera_focus(
             let translation = global_translation.translation();
             camera.set_primary_target(translation);
             *camera.up_mut() = kinematic_character_controller.up;
+        }
+    }
+}
+
+pub fn switch_kind(mut camera: Query<(&mut IngameCamera, &Transform)>) {
+    const THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD: f32 = 0.5;
+    for (mut camera, transform) in camera.iter_mut() {
+        if let Some(zoom) = camera.actions.zoom {
+            let new_kind = match &camera.kind {
+                IngameCameraKind::ThirdPerson(third_person)
+                    if zoom > 1e-5
+                        && third_person.distance < THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD =>
+                {
+                    Some(IngameCameraKind::FirstPerson(third_person.into()))
+                }
+                IngameCameraKind::FirstPerson(first_person) if zoom < -1e-5 => {
+                    Some(IngameCameraKind::ThirdPerson(first_person.into()))
+                }
+                _ => None,
+            };
+            if let Some(new_kind) = new_kind {
+                camera.kind = new_kind;
+            }
         }
     }
 }

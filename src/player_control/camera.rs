@@ -39,6 +39,14 @@ impl IngameCamera {
         }
     }
 
+    pub fn up(&self) -> Vec3 {
+        match &self.kind {
+            IngameCameraKind::ThirdPerson(camera) => camera.up,
+            IngameCameraKind::FirstPerson(camera) => camera.up,
+            IngameCameraKind::FixedAngle(camera) => camera.up,
+        }
+    }
+
     pub fn up_mut(&mut self) -> &mut Vec3 {
         match &mut self.kind {
             IngameCameraKind::ThirdPerson(camera) => &mut camera.up,

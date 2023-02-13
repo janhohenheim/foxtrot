@@ -55,7 +55,6 @@ impl FixedAngleCamera {
         camera_actions: CameraActions,
         transform: Transform,
     ) -> Transform {
-        info!("self: {:?}", self);
         if let Some(zoom) = camera_actions.zoom {
             self.zoom(zoom);
         }
@@ -70,9 +69,8 @@ impl FixedAngleCamera {
         } else {
             self.target
         };
-
         self.transform.translation = target + self.up * self.distance;
-        self.transform.look_at(target, self.up);
+        self.transform.look_at(target, self.transform.up());
     }
 
     fn zoom(&mut self, zoom: f32) {

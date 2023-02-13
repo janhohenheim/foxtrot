@@ -86,6 +86,7 @@ impl Plugin for CameraPlugin {
                     .with_system(
                         switch_kind
                             .label("switch_camera_kind")
+                            .after("set_actions")
                             .before("update_camera_transform"),
                     )
                     .with_system(

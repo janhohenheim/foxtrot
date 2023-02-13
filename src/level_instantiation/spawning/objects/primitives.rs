@@ -1,4 +1,4 @@
-use crate::level_instanciation::spawning::{
+use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use bevy::prelude::*;

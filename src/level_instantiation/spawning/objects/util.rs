@@ -1,4 +1,4 @@
-use crate::level_instanciation::spawning::{GameObject, PrimedGameObjectSpawner};
+use crate::level_instantiation::spawning::{GameObject, PrimedGameObjectSpawner};
 use bevy::ecs::system::EntityCommands;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;

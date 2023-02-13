@@ -1,6 +1,6 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instanciation::spawning::event::SpawnEvent;
-use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObjectSpawner, SpawnTracker};
+use crate::level_instantiation::spawning::event::SpawnEvent;
+use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObjectSpawner, SpawnTracker};
 use crate::shader::Materials;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;

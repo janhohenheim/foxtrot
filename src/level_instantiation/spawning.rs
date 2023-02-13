@@ -1,19 +1,19 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instanciation::spawning::animation_link::link_animations;
-use crate::level_instanciation::spawning::objects::camera::CameraSpawner;
-use crate::level_instanciation::spawning::objects::level::LevelSpawner;
-use crate::level_instanciation::spawning::objects::npc::NpcSpawner;
-use crate::level_instanciation::spawning::objects::orb::OrbSpawner;
-use crate::level_instanciation::spawning::objects::player::PlayerSpawner;
-use crate::level_instanciation::spawning::objects::point_light::PointLightSpawner;
-use crate::level_instanciation::spawning::objects::primitives::{
+use crate::level_instantiation::spawning::animation_link::link_animations;
+use crate::level_instantiation::spawning::objects::camera::CameraSpawner;
+use crate::level_instantiation::spawning::objects::level::LevelSpawner;
+use crate::level_instantiation::spawning::objects::npc::NpcSpawner;
+use crate::level_instantiation::spawning::objects::orb::OrbSpawner;
+use crate::level_instantiation::spawning::objects::player::PlayerSpawner;
+use crate::level_instantiation::spawning::objects::point_light::PointLightSpawner;
+use crate::level_instantiation::spawning::objects::primitives::{
     BoxSpawner, CapsuleSpawner, EmptySpawner, SphereSpawner, TriangleSpawner,
 };
-use crate::level_instanciation::spawning::objects::sunlight::SunlightSpawner;
-use crate::level_instanciation::spawning::post_spawn_modification::{
+use crate::level_instantiation::spawning::objects::sunlight::SunlightSpawner;
+use crate::level_instantiation::spawning::post_spawn_modification::{
     despawn_removed, read_colliders, set_hidden, set_texture_to_repeat,
 };
-use crate::level_instanciation::spawning::spawn::{
+use crate::level_instantiation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
 use crate::shader::Materials;

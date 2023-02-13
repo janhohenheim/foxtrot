@@ -1,5 +1,5 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
-use crate::level_instanciation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::GameState;
 use bevy::prelude::*;
 

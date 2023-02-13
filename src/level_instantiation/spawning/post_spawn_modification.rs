@@ -1,4 +1,4 @@
-use crate::level_instanciation::spawning::spawn::Despawn;
+use crate::level_instantiation::spawning::spawn::Despawn;
 use crate::shader::{Materials, RepeatedMaterial, Repeats};
 use crate::util::trait_extension::MeshExt;
 use bevy::prelude::*;

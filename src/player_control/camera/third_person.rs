@@ -1,6 +1,6 @@
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
-use crate::player_control::camera::FirstPersonCamera;
+use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -51,6 +51,24 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
             up,
             distance,
             secondary_target: first_person_camera.look_target,
+        }
+    }
+}
+
+impl From<&FixedAngleCamera> for ThirdPersonCamera {
+    fn from(fixed_angle_camera: &FixedAngleCamera) -> Self {
+        let target = fixed_angle_camera.target;
+        let distance = MAX_DISTANCE;
+        let eye = fixed_angle_camera.transform;
+        let up = fixed_angle_camera.up;
+        Self {
+            eye,
+            target,
+            last_eye: eye,
+            last_target: target,
+            up,
+            distance,
+            secondary_target: fixed_angle_camera.secondary_target,
         }
     }
 }

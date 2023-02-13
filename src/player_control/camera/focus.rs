@@ -31,6 +31,7 @@ pub fn set_camera_focus(
 
 pub fn switch_kind(mut camera: Query<&mut IngameCamera>) {
     const THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD: f32 = 0.5;
+    const THIRD_PERSON_TO_FIXED_ANGLE_ZOOM_THRESHOLD: f32 = 9.5;
     for mut camera in camera.iter_mut() {
         if let Some(zoom) = camera.actions.zoom {
             let new_kind = match &camera.kind {
@@ -39,6 +40,18 @@ pub fn switch_kind(mut camera: Query<&mut IngameCamera>) {
                         && third_person.distance < THIRD_TO_FIRST_PERSON_ZOOM_THRESHOLD =>
                 {
                     Some(IngameCameraKind::FirstPerson(third_person.into()))
+                }
+                IngameCameraKind::ThirdPerson(third_person)
+                    if zoom < -1e-5
+                        && third_person.distance > THIRD_PERSON_TO_FIXED_ANGLE_ZOOM_THRESHOLD =>
+                {
+                    Some(IngameCameraKind::FixedAngle(third_person.into()))
+                }
+                IngameCameraKind::FixedAngle(fixed_angle)
+                    if zoom > 1e-5
+                        && fixed_angle.distance < THIRD_PERSON_TO_FIXED_ANGLE_ZOOM_THRESHOLD =>
+                {
+                    Some(IngameCameraKind::ThirdPerson(fixed_angle.into()))
                 }
                 IngameCameraKind::FirstPerson(first_person) if zoom < -1e-5 => {
                     Some(IngameCameraKind::ThirdPerson(first_person.into()))

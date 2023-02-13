@@ -1,6 +1,6 @@
 use crate::movement::general_movement::{Jump, Walker};
 use crate::player_control::actions::Actions;
-use crate::player_control::camera::IngameCamera;
+use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::Vec2Ext;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
@@ -29,6 +29,11 @@ impl Plugin for PlayerEmbodimentPlugin {
                         handle_camera_actions
                             .after("set_actions")
                             .before("update_camera_transform")
+                            .before("apply_walking"),
+                    )
+                    .with_system(
+                        handle_camera_kind
+                            .after("switch_camera_kind")
                             .before("apply_walking"),
                     ),
             );
@@ -84,4 +89,22 @@ fn handle_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut Ing
     };
 
     camera.actions = actions.camera.clone();
+}
+
+fn handle_camera_kind(
+    mut with_player: Query<(&mut Transform, &mut Visibility), With<Player>>,
+    camera_query: Query<(&Transform, &IngameCamera), Without<Player>>,
+) {
+    for (camera_transform, camera) in camera_query.iter() {
+        for (mut player_transform, mut visibility) in with_player.iter_mut() {
+            match camera.kind {
+                IngameCameraKind::FirstPerson(_) => {
+                    player_transform.rotation = camera_transform.rotation;
+                    visibility.is_visible = false;
+                    info!("invisible");
+                }
+                IngameCameraKind::ThirdPerson(_) => visibility.is_visible = true,
+            }
+        }
+    }
 }

@@ -2,7 +2,6 @@ use crate::file_system_interaction::asset_loading::FontAssets;
 use crate::GameState;
 use bevy::prelude::*;
 
-
 /// This plugin is responsible for the game menu
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
 /// Because the Bevy UI situation is not quite mature yet, this work would ideally be done in egui instead,

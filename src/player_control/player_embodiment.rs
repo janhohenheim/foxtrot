@@ -156,10 +156,8 @@ fn rotate_to_speaker(
     current_dialog: Option<Res<CurrentDialog>>,
 ) {
     let speaker_entity = current_dialog
-        .map(|current_dialog| current_dialog.source)
-        .flatten()
-        .map(|source| without_player.get(source).ok())
-        .flatten();
+        .and_then(|current_dialog| current_dialog.source)
+        .and_then(|source| without_player.get(source).ok());
     let speaker_transform = match speaker_entity {
         Some(speaker_transform) => speaker_transform,
         None => return,

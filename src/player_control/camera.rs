@@ -121,8 +121,8 @@ impl Plugin for CameraPlugin {
     }
 }
 
-fn init_camera(mut camera: Query<(&mut IngameCamera, &Transform), Added<IngameCamera>>) {
-    for (mut camera, transform) in camera.iter_mut() {
+fn init_camera(mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>) {
+    for (transform, mut camera) in camera.iter_mut() {
         match &mut camera.kind {
             IngameCameraKind::ThirdPerson(camera) => camera.init_transform(*transform),
             IngameCameraKind::FirstPerson(camera) => camera.init_transform(*transform),

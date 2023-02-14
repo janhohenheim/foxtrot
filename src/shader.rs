@@ -31,7 +31,7 @@ fn setup_shader(
     texture_assets: Res<TextureAssets>,
 ) {
     let glowy_material = glow_materials.add(GlowyMaterial {
-        env_texture: Some(texture_assets.glowy_interior.clone()),
+        env_texture: texture_assets.glowy_interior.clone(),
     });
 
     commands.insert_resource(Materials {
@@ -45,7 +45,7 @@ fn setup_shader(
 pub struct GlowyMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub env_texture: Option<Handle<Image>>,
+    pub env_texture: Handle<Image>,
 }
 
 impl Material for GlowyMaterial {
@@ -68,7 +68,7 @@ pub struct Repeats {
 pub struct RepeatedMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub texture: Option<Handle<Image>>,
+    pub texture: Handle<Image>,
     #[uniform(2)]
     pub repeats: Repeats,
 }

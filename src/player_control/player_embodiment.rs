@@ -20,8 +20,8 @@ use std::ops::DerefMut;
 
 pub struct PlayerEmbodimentPlugin;
 
-/// This plugin handles player related stuff like general_movement
-/// Player logic is only active during the State `GameState::Playing`
+/// This plugin handles everything that has to do with the player's physical representation in the world.
+/// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
 impl Plugin for PlayerEmbodimentPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Timer>()

@@ -1,6 +1,6 @@
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
-use crate::player_control::camera::FirstPersonCamera;
+use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -13,24 +13,20 @@ const MAX_DISTANCE: f32 = 10.0;
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct ThirdPersonCamera {
-    pub eye: Transform,
+    pub transform: Transform,
     pub target: Vec3,
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
-    last_eye: Transform,
-    last_target: Vec3,
 }
 
 impl Default for ThirdPersonCamera {
     fn default() -> Self {
         Self {
             up: Vec3::Y,
-            eye: default(),
+            transform: default(),
             distance: MAX_DISTANCE / 2.,
             target: default(),
-            last_eye: default(),
-            last_target: default(),
             secondary_target: default(),
         }
     }
@@ -44,10 +40,8 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
         let up = first_person_camera.up;
         let eye = Transform::from_translation(eye).looking_at(target, up);
         Self {
-            eye,
+            transform: eye,
             target,
-            last_eye: eye,
-            last_target: target,
             up,
             distance,
             secondary_target: first_person_camera.look_target,
@@ -55,22 +49,34 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
     }
 }
 
+impl From<&FixedAngleCamera> for ThirdPersonCamera {
+    fn from(fixed_angle_camera: &FixedAngleCamera) -> Self {
+        Self {
+            transform: fixed_angle_camera.transform,
+            target: fixed_angle_camera.target,
+            up: fixed_angle_camera.up,
+            distance: fixed_angle_camera.distance,
+            secondary_target: fixed_angle_camera.secondary_target,
+        }
+    }
+}
+
 impl ThirdPersonCamera {
     pub fn forward(&self) -> Vec3 {
-        self.eye.forward()
+        self.transform.forward()
     }
 
     fn rotate_around_target(&mut self, yaw: f32, pitch: f32) {
         let yaw_rotation = Quat::from_axis_angle(self.up, yaw);
-        let pitch_rotation = Quat::from_axis_angle(self.eye.local_x(), pitch);
+        let pitch_rotation = Quat::from_axis_angle(self.transform.local_x(), pitch);
 
         let pivot = self.target;
         let rotation = yaw_rotation * pitch_rotation;
-        self.eye.rotate_around(pivot, rotation);
+        self.transform.rotate_around(pivot, rotation);
     }
 
     pub fn init_transform(&mut self, transform: Transform) {
-        self.last_eye = transform;
+        self.transform = transform;
     }
 
     pub fn update_transform(
@@ -101,18 +107,15 @@ impl ThirdPersonCamera {
     }
 
     fn follow_target(&mut self) {
-        let target_movement = (self.target - self.last_target).collapse_approx_zero();
-        self.eye.translation = self.last_eye.translation + target_movement;
+        self.transform.translation = self.target - self.forward() * self.distance;
 
-        let new_target = self.target;
-        if !(new_target - self.eye.translation).is_approx_zero() {
-            let up = self.up;
-            self.eye.look_at(new_target, up);
+        if !(self.target - self.transform.translation).is_approx_zero() {
+            self.transform.look_at(self.target, self.transform.up());
         }
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 3e-2;
+        let mouse_sensitivity = 1e-3;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);
@@ -125,7 +128,7 @@ impl ThirdPersonCamera {
     }
 
     fn zoom(&mut self, zoom: f32) {
-        let zoom_speed = 0.1;
+        let zoom_speed = 0.5;
         let zoom = zoom * zoom_speed;
         self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
     }
@@ -136,13 +139,13 @@ impl ThirdPersonCamera {
             return;
         }
         let target_to_secondary_target = target_to_secondary_target.normalize();
-        let eye_to_target = (self.target - self.eye.translation)
+        let eye_to_target = (self.target - self.transform.translation)
             .split(self.up)
             .horizontal
             .normalize();
         let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
         let pivot = self.target;
-        self.eye.rotate_around(pivot, rotation);
+        self.transform.rotate_around(pivot, rotation);
     }
 
     fn place_eye_in_valid_position(
@@ -150,9 +153,7 @@ impl ThirdPersonCamera {
         rapier_context: &RapierContext,
     ) -> LineOfSightCorrection {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
-        self.eye.translation = line_of_sight_result.location;
-        self.last_eye = self.eye;
-        self.last_target = self.target;
+        self.transform.translation = line_of_sight_result.location;
         line_of_sight_result.correction
     }
 
@@ -169,18 +170,20 @@ impl ThirdPersonCamera {
         };
 
         let scale = (translation_smoothing * dt).min(1.);
-        transform.translation = transform.translation.lerp(self.eye.translation, scale);
+        transform.translation = transform
+            .translation
+            .lerp(self.transform.translation, scale);
 
         let rotation_smoothing = 45.;
         let scale = (rotation_smoothing * dt).min(1.);
-        transform.rotation = transform.rotation.slerp(self.eye.rotation, scale);
+        transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
 
         transform
     }
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
         let origin = self.target;
-        let desired_direction = self.eye.translation - self.target;
+        let desired_direction = self.transform.translation - self.target;
         let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
         let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
@@ -243,7 +246,7 @@ mod test {
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.eye.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
     }
 
     #[test]
@@ -258,7 +261,7 @@ mod test {
         camera.target = primary_target;
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.eye.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
     }
 
     #[test]
@@ -274,7 +277,7 @@ mod test {
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 0., 4.);
-        assert_nearly_eq(camera.eye.translation, expected_position);
+        assert_nearly_eq(camera.transform.translation, expected_position);
     }
 
     #[test]
@@ -290,7 +293,7 @@ mod test {
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 2., 4.);
-        assert_nearly_eq(camera.eye.translation, expected_position);
+        assert_nearly_eq(camera.transform.translation, expected_position);
     }
 
     fn assert_nearly_eq(actual: Vec3, expected: Vec3) {

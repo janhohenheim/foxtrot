@@ -1,7 +1,8 @@
 use crate::movement::general_movement::{Jump, Velocity, Walker};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::util::trait_extension::{F32Ext, Vec2Ext, Vec3Ext};
+use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
+use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
@@ -39,7 +40,18 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .after("switch_camera_kind")
                             .before("apply_walking"),
                     )
-                    .with_system(handle_speed_effects.label("handle_speed_effects")),
+                    .with_system(
+                        handle_speed_effects
+                            .label("handle_speed_effects")
+                            .after("apply_force")
+                            .before("reset_movement_components"),
+                    )
+                    .with_system(
+                        rotate_to_speaker
+                            .label("rotate_to_speaker")
+                            .after("apply_force")
+                            .before("reset_movement_components"),
+                    ),
             );
     }
 }
@@ -133,6 +145,38 @@ fn handle_speed_effects(
                     .squared();
                 perspective.fov = MIN_FOV + (MAX_FOV - MIN_FOV) * scale;
             }
+        }
+    }
+}
+
+fn rotate_to_speaker(
+    time: Res<Time>,
+    mut with_player: Query<(&mut Transform, &Velocity), With<Player>>,
+    without_player: Query<&Transform, Without<Player>>,
+    current_dialog: Option<Res<CurrentDialog>>,
+) {
+    let speaker_entity = current_dialog
+        .map(|current_dialog| current_dialog.source)
+        .flatten()
+        .map(|source| without_player.get(source).ok())
+        .flatten();
+    let speaker_transform = match speaker_entity {
+        Some(speaker_transform) => speaker_transform,
+        None => return,
+    };
+    let dt = time.delta_seconds();
+
+    for (mut transform, velocity) in with_player.iter_mut() {
+        let horizontal_velocity = velocity.0.split(transform.up()).horizontal;
+        if horizontal_velocity.is_approx_zero() {
+            let up = transform.up();
+            let target_rotation = transform
+                .horizontally_looking_at(speaker_transform.translation, up)
+                .rotation;
+            const SMOOTHNESS: f32 = 4.;
+            let scale = (SMOOTHNESS * dt).min(1.);
+            let rotation = transform.rotation.slerp(target_rotation, scale);
+            transform.rotation = rotation;
         }
     }
 }

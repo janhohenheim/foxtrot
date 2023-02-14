@@ -22,7 +22,7 @@ impl Plugin for GameStateSerializationPlugin {
             .register_type::<GameLoadRequest>()
             .add_system_set(
                 SystemSet::on_in_stack_update(GameState::Playing)
-                    .with_system(handle_load_requests.label("handle_game_load_requests"))
+                    .with_system(handle_load_requests)
                     .with_system(handle_save_requests.after(handle_load_requests)),
             );
     }

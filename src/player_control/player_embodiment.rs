@@ -1,11 +1,14 @@
-use crate::movement::general_movement::{Jumping, Velocity, Walking};
-use crate::player_control::actions::Actions;
+use crate::file_system_interaction::audio::AudioHandles;
+use crate::movement::general_movement::{Grounded, Jumping, Velocity, Walking};
+use crate::player_control::actions::{set_actions, Actions};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
+use bevy_kira_audio::AudioInstance;
+use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;
 
@@ -51,7 +54,8 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .label("rotate_to_speaker")
                             .after("apply_force")
                             .before("reset_movement_components"),
-                    ),
+                    )
+                    .with_system(control_walking_sound.after(set_actions)),
             );
     }
 }
@@ -175,6 +179,35 @@ fn rotate_to_speaker(
             let scale = (SMOOTHNESS * dt).min(1.);
             let rotation = transform.rotation.slerp(target_rotation, scale);
             transform.rotation = rotation;
+        }
+    }
+}
+
+fn control_walking_sound(
+    character_query: Query<
+        (
+            &KinematicCharacterControllerOutput,
+            &KinematicCharacterController,
+            &Grounded,
+        ),
+        With<Player>,
+    >,
+    audio: Res<AudioHandles>,
+    mut audio_instances: ResMut<Assets<AudioInstance>>,
+) {
+    for (output, controller, grounded) in character_query.iter() {
+        if let Some(instance) = audio_instances.get_mut(&audio.walking) {
+            let has_horizontal_movement = !output
+                .effective_translation
+                .split(controller.up)
+                .horizontal
+                .is_approx_zero();
+            let is_moving_on_ground = has_horizontal_movement && grounded.is_grounded();
+            if is_moving_on_ground {
+                instance.resume(default());
+            } else {
+                instance.pause(default());
+            }
         }
     }
 }

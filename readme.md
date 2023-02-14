@@ -35,7 +35,7 @@ Native:
 ```bash
 cargo run
 ```
-WASM:
+WASM (not fully functional yet, see [#11](https://github.com/janhohenheim/foxtrot/issues/11)):
 ```bash
 trunk serve --no-default-features --features core,dev,wasm
 ```

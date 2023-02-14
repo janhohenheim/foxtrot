@@ -7,6 +7,7 @@ use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
 
+/// Handles instantiation of shaders.
 pub struct ShaderPlugin;
 
 impl Plugin for ShaderPlugin {

@@ -8,7 +8,7 @@ use bevy_rapier3d::prelude::*;
 mod scene_editor;
 
 /// Plugin with debugging utility intended for use during development only.
-/// Will not do anything when used in a release build.
+/// Don't include this in a release build.
 pub struct DevPlugin;
 
 impl Plugin for DevPlugin {

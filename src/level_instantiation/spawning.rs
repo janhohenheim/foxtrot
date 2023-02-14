@@ -10,9 +10,7 @@ use crate::level_instantiation::spawning::objects::primitives::{
     BoxSpawner, CapsuleSpawner, EmptySpawner, SphereSpawner, TriangleSpawner,
 };
 use crate::level_instantiation::spawning::objects::sunlight::SunlightSpawner;
-use crate::level_instantiation::spawning::post_spawn_modification::{
-    despawn_removed, read_colliders, set_hidden, set_texture_to_repeat,
-};
+use crate::level_instantiation::spawning::post_spawn_modification::{despawn_removed, set_hidden};
 use crate::level_instantiation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
@@ -31,7 +29,7 @@ pub struct SpawningPlugin;
 mod animation_link;
 mod event;
 mod post_spawn_modification;
-mod spawn;
+pub mod spawn;
 
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
@@ -49,15 +47,13 @@ impl Plugin for SpawningPlugin {
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(spawn_requested.label("spawn_requested"))
+                    .with_system(spawn_requested)
                     .with_system(spawn_delayed)
                     .with_system(despawn)
-                    .with_system(link_animations.after("spawn_requested")),
+                    .with_system(link_animations.after(spawn_requested)),
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(read_colliders)
-                    .with_system(set_texture_to_repeat)
                     .with_system(set_hidden)
                     .with_system(despawn_removed),
             );

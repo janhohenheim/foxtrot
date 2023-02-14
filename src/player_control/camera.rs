@@ -162,31 +162,14 @@ fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     }
 }
 
-fn cursor_grab_system(
-    mut windows: ResMut<Windows>,
-    key: Res<Input<KeyCode>>,
-    frozen: Option<Res<ActionsFrozen>>,
-) {
+fn cursor_grab_system(mut windows: ResMut<Windows>, frozen: Option<Res<ActionsFrozen>>) {
     let window = windows.get_primary_mut().unwrap();
     if frozen.is_some() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);
         return;
-    }
-    if key.just_pressed(KeyCode::Escape) {
-        if matches!(window.cursor_grab_mode(), CursorGrabMode::None) {
-            // if you want to use the cursor, but not let it leave the window,
-            // use `Confined` mode:
-            window.set_cursor_grab_mode(CursorGrabMode::Confined);
-
-            // for a game that doesn't use the cursor (like a shooter):
-            // use `Locked` mode to keep the cursor in one place
-            window.set_cursor_grab_mode(CursorGrabMode::Locked);
-            // also hide the cursor
-            window.set_cursor_visibility(false);
-        } else {
-            window.set_cursor_grab_mode(CursorGrabMode::None);
-            window.set_cursor_visibility(true);
-        }
+    } else {
+        window.set_cursor_grab_mode(CursorGrabMode::Locked);
+        window.set_cursor_visibility(false);
     }
 }

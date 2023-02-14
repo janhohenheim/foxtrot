@@ -71,7 +71,7 @@ impl FirstPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 3e-2;
+        let mouse_sensitivity = 1e-3;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);

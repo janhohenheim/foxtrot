@@ -51,15 +51,11 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
 
 impl From<&FixedAngleCamera> for ThirdPersonCamera {
     fn from(fixed_angle_camera: &FixedAngleCamera) -> Self {
-        let target = fixed_angle_camera.target;
-        let distance = MAX_DISTANCE;
-        let eye = fixed_angle_camera.transform;
-        let up = fixed_angle_camera.up;
         Self {
-            transform: eye,
-            target,
-            up,
-            distance,
+            transform: fixed_angle_camera.transform,
+            target: fixed_angle_camera.target,
+            up: fixed_angle_camera.up,
+            distance: fixed_angle_camera.distance,
             secondary_target: fixed_angle_camera.secondary_target,
         }
     }
@@ -114,13 +110,12 @@ impl ThirdPersonCamera {
         self.transform.translation = self.target - self.forward() * self.distance;
 
         if !(self.target - self.transform.translation).is_approx_zero() {
-            let up = self.up;
-            self.transform.look_at(self.target, up);
+            self.transform.look_at(self.target, self.transform.up());
         }
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 3e-2;
+        let mouse_sensitivity = 1e-3;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);
@@ -133,7 +128,7 @@ impl ThirdPersonCamera {
     }
 
     fn zoom(&mut self, zoom: f32) {
-        let zoom_speed = 0.1;
+        let zoom_speed = 0.5;
         let zoom = zoom * zoom_speed;
         self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
     }

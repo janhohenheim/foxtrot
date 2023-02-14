@@ -1,7 +1,7 @@
 use crate::movement::general_movement::Walker;
 use crate::movement::navigation::navmesh::read_navmesh;
 use crate::player_control::player_embodiment::Player;
-use crate::util::trait_extension::Vec3Ext;
+use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::transform::TransformSystem;
@@ -55,7 +55,7 @@ fn query_mesh(
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
                 let from = follower_transform.translation();
                 let to = player_transform.translation();
-                if (to - from).length_squared() < 2.0 {
+                if (to - from).length_squared() < 3.0f32.squared() {
                     continue;
                 }
                 let max_toi = 50.;

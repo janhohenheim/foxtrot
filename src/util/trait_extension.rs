@@ -131,11 +131,30 @@ impl MeshExt for Mesh {
 pub trait F32Ext {
     #[allow(clippy::wrong_self_convention)] // Because [`f32`] is [`Copy`]
     fn is_approx_zero(self) -> bool;
+    fn squared(self) -> f32;
 }
 
 impl F32Ext for f32 {
     #[inline]
     fn is_approx_zero(self) -> bool {
         self.abs() < 1e-5
+    }
+
+    #[inline]
+    fn squared(self) -> f32 {
+        self * self
+    }
+}
+
+pub trait TransformExt {
+    fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform;
+}
+
+impl TransformExt for Transform {
+    fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform {
+        let direction = target - self.translation;
+        let horizontal_direction = direction - up * direction.dot(up);
+        let look_target = self.translation + horizontal_direction;
+        self.looking_at(look_target, up)
     }
 }

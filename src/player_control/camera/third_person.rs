@@ -236,44 +236,35 @@ mod test {
 
     #[test]
     fn facing_secondary_target_that_is_primary_changes_nothing() {
-        let mut camera = ThirdPersonCamera::default();
-        let camera_transform = Transform::from_xyz(2., 0., 0.);
+        let camera_translation = Vec3::new(2., 0., 0.);
         let primary_target = Vec3::new(-2., 0., 0.);
         let secondary_target = Vec3::new(-2., 0., 0.);
 
-        camera.init_transform(camera_transform);
-        camera.follow_target();
-        camera.target = primary_target;
+        let mut camera = build_camera(camera_translation, primary_target);
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_translation);
     }
 
     #[test]
     fn facing_secondary_target_that_is_aligned_with_primary_changes_nothing() {
-        let mut camera = ThirdPersonCamera::default();
-        let camera_transform = Transform::from_xyz(2., 0., 0.);
+        let camera_translation = Vec3::new(2., 0., 0.);
         let primary_target = Vec3::new(-2., 0., 0.);
         let secondary_target = Vec3::new(-3., 0., 0.);
 
-        camera.init_transform(camera_transform);
-        camera.follow_target();
-        camera.target = primary_target;
+        let mut camera = build_camera(camera_translation, primary_target);
         camera.move_eye_to_align_target_with(secondary_target);
 
-        assert_nearly_eq(camera.transform.translation, camera_transform.translation);
+        assert_nearly_eq(camera.transform.translation, camera_translation);
     }
 
     #[test]
     fn faces_secondary_target_that_is_at_right_angle_with_primary() {
-        let mut camera = ThirdPersonCamera::default();
-        let camera_transform = Transform::from_xyz(2., 0., 0.);
+        let camera_translation = Vec3::new(2., 0., 0.);
         let primary_target = Vec3::new(-2., 0., 0.);
         let secondary_target = Vec3::new(-2., 0., -2.);
 
-        camera.init_transform(camera_transform);
-        camera.follow_target();
-        camera.target = primary_target;
+        let mut camera = build_camera(camera_translation, primary_target);
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 0., 4.);
@@ -282,18 +273,27 @@ mod test {
 
     #[test]
     fn faces_secondary_target_that_is_at_right_angle_with_primary_ignoring_y() {
-        let mut camera = ThirdPersonCamera::default();
-        let camera_transform = Transform::from_xyz(2., 2., 0.);
+        let camera_translation = Vec3::new(2., 2., 0.);
         let primary_target = Vec3::new(-2., -3., 0.);
         let secondary_target = Vec3::new(-2., -1., -2.);
 
-        camera.init_transform(camera_transform);
-        camera.follow_target();
-        camera.target = primary_target;
+        let mut camera = build_camera(camera_translation, primary_target);
         camera.move_eye_to_align_target_with(secondary_target);
 
         let expected_position = Vec3::new(-2., 2., 4.);
         assert_nearly_eq(camera.transform.translation, expected_position);
+    }
+
+    fn build_camera(camera_translation: Vec3, primary_target: Vec3) -> ThirdPersonCamera {
+        let mut camera = ThirdPersonCamera::default();
+        let camera_transform = Transform::from_translation(camera_translation);
+
+        camera.transform = camera_transform.looking_at(primary_target, Vec3::Y);
+        camera.target = primary_target;
+        camera.distance = camera.target.distance(camera.transform.translation);
+        camera.follow_target();
+
+        camera
     }
 
     fn assert_nearly_eq(actual: Vec3, expected: Vec3) {

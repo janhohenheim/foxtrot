@@ -12,9 +12,9 @@ use std::borrow::Cow;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub struct SavingPlugin;
+pub struct GameStateSerializationPlugin;
 
-impl Plugin for SavingPlugin {
+impl Plugin for GameStateSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GameSaveRequest>()
             .add_event::<GameLoadRequest>()
@@ -22,8 +22,8 @@ impl Plugin for SavingPlugin {
             .register_type::<GameLoadRequest>()
             .add_system_set(
                 SystemSet::on_in_stack_update(GameState::Playing)
-                    .with_system(handle_load_requests.label("handle_game_load_requests"))
-                    .with_system(handle_save_requests.after("handle_game_load_requests")),
+                    .with_system(handle_load_requests)
+                    .with_system(handle_save_requests.after(handle_load_requests)),
             );
     }
 }

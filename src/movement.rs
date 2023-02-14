@@ -1,9 +1,7 @@
-pub mod audio;
 pub mod general_movement;
 pub mod navigation;
 pub mod physics;
 
-use crate::movement::audio::InternalAudioPlugin;
 use crate::movement::general_movement::GeneralMovementPlugin;
 use crate::movement::navigation::NavigationPlugin;
 use crate::movement::physics::PhysicsPlugin;
@@ -16,14 +14,12 @@ use bevy::prelude::*;
 /// this sense is anything that behaves in a not-quite completely physical way, like a player, an npc, an elevator, a moving platform, etc.
 /// Contrast this with pure rigidbodies like a ball, a crate, etc.
 /// - [`NavigationPlugin`]: Handles npc pathfinding via bevy_pathmesh integration.
-/// - [`InternalAudioPlugin`]: Handles audio playback
 pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(PhysicsPlugin)
             .add_plugin(GeneralMovementPlugin)
-            .add_plugin(NavigationPlugin)
-            .add_plugin(InternalAudioPlugin);
+            .add_plugin(NavigationPlugin);
     }
 }

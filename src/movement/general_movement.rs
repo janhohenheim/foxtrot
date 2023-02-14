@@ -7,54 +7,56 @@ use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::{Velocity, *};
 
+/// Handles movement of kinematic character controllers, i.e. entities with the [`KinematicCharacterBundle`]. A movement is done by applying forces to the objects.
+/// The default forces on a character going right are:  
+/// ```text
+/// ┌──────────────────────────────┐
+/// │            Gravity           │
+/// │               ↓              │
+/// │              ╔═╗             │
+/// │   Walking ─► ║ ║ ◄─ Drag     │
+/// │              ╚═╝             │  
+/// │                              │
+/// └──────────────────────────────┘
+/// ```
+/// All physics values are assumed to be in SI units, e.g. forces are measured in N and acceleration in m/s².
+///
+/// The [`Walking`] and [`Jumping`] components are user friendly ways of influencing the corresponding forces.
+/// There is no explicit maximum speed since the [`Drag`] counteracts all other forces until reaching an equilibrium.
+/// The [`Grounded`] component is used to determine whether the character is on the ground or not.
+/// To influence movement, apply your force by adding it to the character's total [`Force`]. Common ways to do this are:
+/// - A continuous force like walking: `force.0 += acceleration * mass.0`, with `force`: [`Force`], `mass`: [`Mass`], and a user-defined `acceleration`: [`f32`]
+/// - An instantaneous force (i.e. an impulse) like jumping: `force.0 += velocity * mass.0 / time.delta_seconds()`, with `force`: [`Force`], `mass`: [`Mass`], `time`: [`Res<Time>`](Time) and a user-defined `velocity`: [`f32`]
+///
+/// Note: you might notice that the normal force is not included in the above diagram. This is because the underlying [`KinematicCharacterController`] takes care of the character not penetrating colliders, thus emulating this force.
 pub struct GeneralMovementPlugin;
 
 impl Plugin for GeneralMovementPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Model>()
             .register_type::<Grounded>()
-            .register_type::<Jump>()
+            .register_type::<Jumping>()
             .register_type::<Velocity>()
             .register_type::<Drag>()
-            .register_type::<Walker>()
+            .register_type::<Walking>()
             .register_type::<Force>()
             .register_type::<Mass>()
             .register_type::<Gravity>()
             .register_type::<CharacterAnimations>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(update_grounded.label("update_grounded"))
-                    .with_system(
-                        apply_gravity
-                            .label("apply_gravity")
-                            .after("update_grounded")
-                            .before("apply_force"),
-                    )
-                    .with_system(
-                        apply_walking
-                            .label("apply_walking")
-                            .after("update_grounded")
-                            .before("apply_force"),
-                    )
-                    .with_system(
-                        apply_jumping
-                            .label("apply_jumping")
-                            .after("apply_gravity")
-                            .before("apply_force"),
-                    )
+                    .with_system(update_grounded)
+                    .with_system(apply_gravity.after(update_grounded).before(apply_force))
+                    .with_system(apply_walking.after(update_grounded).before(apply_force))
+                    .with_system(apply_jumping.after(apply_gravity).before(apply_force))
                     .with_system(
                         apply_drag
-                            .label("apply_drag")
-                            .after("apply_walking")
-                            .after("apply_jumping")
-                            .before("apply_force"),
+                            .after(apply_walking)
+                            .after(apply_jumping)
+                            .before(apply_force),
                     )
-                    .with_system(apply_force.label("apply_force"))
-                    .with_system(
-                        reset_movement_components
-                            .label("reset_movement_components")
-                            .after("apply_force"),
-                    )
+                    .with_system(apply_force)
+                    .with_system(reset_movement_components.after(apply_force))
                     .with_system(rotate_characters)
                     .with_system(play_animations),
             );
@@ -89,7 +91,7 @@ fn apply_gravity(
 }
 
 /// Treat `Force` as readonly after this system.
-fn apply_force(
+pub fn apply_force(
     time: Res<Time>,
     mut player_query: Query<(
         &Force,
@@ -108,17 +110,17 @@ fn apply_force(
     }
 }
 
-fn reset_movement_components(
+pub fn reset_movement_components(
     mut forces: Query<&mut Force>,
-    mut walkers: Query<&mut Walker>,
-    mut jumpers: Query<&mut Jump>,
+    mut walking: Query<&mut Walking>,
+    mut jumpers: Query<&mut Jumping>,
     mut velocities: Query<&mut Velocity>,
 ) {
     for mut force in &mut forces {
         force.0 = Vec3::ZERO;
     }
-    for mut walker in &mut walkers {
-        walker.direction = None;
+    for mut walk in &mut walking {
+        walk.direction = None;
     }
     for mut jumper in &mut jumpers {
         jumper.requested = false;
@@ -128,7 +130,7 @@ fn reset_movement_components(
     }
 }
 
-fn apply_jumping(
+pub fn apply_jumping(
     time: Res<Time>,
     mut character_query: Query<(
         &Grounded,
@@ -136,7 +138,7 @@ fn apply_jumping(
         &mut Velocity,
         &KinematicCharacterController,
         &Mass,
-        &Jump,
+        &Jumping,
     )>,
 ) {
     let dt = time.delta_seconds();
@@ -145,7 +147,7 @@ fn apply_jumping(
             force.0 += controller.up * mass.0 * jump.speed / dt;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
-            // Otherwards, the falling velocity from the last tick dampens the jump velocity.
+            // Otherwise the falling velocity from the last tick would dampen the jump velocity.
             let velocity_components = velocity.0.split(controller.up);
             velocity.0 = velocity_components.horizontal;
         }
@@ -218,30 +220,30 @@ fn apply_drag(
     }
 }
 
-fn apply_walking(
+pub fn apply_walking(
     mut character_query: Query<(
         &mut Force,
-        &Walker,
+        &Walking,
         &mut Velocity,
         &KinematicCharacterController,
         &Grounded,
         &Mass,
     )>,
 ) {
-    for (mut force, walker, mut velocity, controller, grounded, mass) in &mut character_query {
-        if let Some(acceleration) = walker.get_acceleration(grounded.is_grounded()) {
+    for (mut force, walking, mut velocity, controller, grounded, mass) in &mut character_query {
+        if let Some(acceleration) = walking.get_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass.0;
             force.0 += walking_force;
         } else if grounded.is_grounded() {
             let velocity_components = velocity.0.split(controller.up);
             if velocity_components.horizontal.length_squared()
-                < walker.stopping_speed * walker.stopping_speed
+                < walking.stopping_speed * walking.stopping_speed
             {
                 velocity.0 = velocity_components.vertical;
             } else if let Some(braking_direction) =
                 velocity_components.horizontal.try_normalize().map(|v| -v)
             {
-                let braking_force = walker.braking_acceleration * braking_direction * mass.0;
+                let braking_force = walking.braking_acceleration * braking_direction * mass.0;
                 force.0 += braking_force;
             }
         }

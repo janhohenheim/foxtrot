@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 
 mod game_control;
 
+/// Configures [`Actions`], the resource that holds all player input.
+/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
 pub struct ActionsPlugin;
 
 #[derive(Resource, Default)]
@@ -21,10 +23,7 @@ impl Plugin for ActionsPlugin {
             .register_type::<CameraActions>()
             .register_type::<UiActions>()
             .init_resource::<Actions>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_actions.label("set_actions")),
-            );
+            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
     }
 }
 

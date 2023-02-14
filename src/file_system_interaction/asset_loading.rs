@@ -20,7 +20,6 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<AudioAssets>()
                     .with_collection::<SceneAssets>()
                     .with_collection::<AnimationAssets>()
-                    .with_collection::<ShaderAssets>()
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
                     .with_collection::<TextureAssets>()
@@ -60,12 +59,6 @@ pub struct AnimationAssets {
     pub character_walking: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation2")]
     pub character_running: Handle<AnimationClip>,
-}
-
-#[derive(AssetCollection, Resource)]
-pub struct ShaderAssets {
-    #[asset(path = "shaders/glowy.wgsl")]
-    pub glowy: Handle<Shader>,
 }
 
 #[derive(AssetCollection, Resource)]

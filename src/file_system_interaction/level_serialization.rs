@@ -1,4 +1,5 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
+use crate::level_instantiation::spawning::spawn::spawn_requested;
 use crate::level_instantiation::spawning::{GameObject, SpawnEvent, SpawnTracker};
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
@@ -8,13 +9,13 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::{fs, iter};
 
-pub struct WorldSerializationPlugin;
+pub struct LevelSerializationPlugin;
 
-impl Plugin for WorldSerializationPlugin {
+impl Plugin for LevelSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
-            .add_system(save_world.after("spawn_requested"))
+            .add_system(save_world.after(spawn_requested))
             .add_system_to_stage(CoreStage::PostUpdate, load_world);
     }
 }

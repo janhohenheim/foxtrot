@@ -1,5 +1,6 @@
 use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
+use crate::player_control::player_embodiment::set_camera_actions;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
@@ -86,6 +87,9 @@ impl Default for IngameCameraKind {
     }
 }
 
+/// Handles the main ingame camera, i.e. not the UI camera in the menu.
+/// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
+/// third person or fixed angle camera is used.
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -100,23 +104,14 @@ impl Plugin for CameraPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(cursor_grab_system)
                     .with_system(init_camera)
-                    .with_system(set_camera_focus.label("set_camera_focus"))
+                    .with_system(set_camera_focus)
                     .with_system(
                         switch_kind
-                            .label("switch_camera_kind")
-                            .after("set_camera_actions")
-                            .after("set_camera_focus"),
+                            .after(set_camera_actions)
+                            .after(set_camera_focus),
                     )
-                    .with_system(
-                        update_transform
-                            .label("update_camera_transform")
-                            .after("switch_camera_kind"),
-                    )
-                    .with_system(
-                        reset_actions
-                            .label("reset_movement")
-                            .after("update_camera_transform"),
-                    ),
+                    .with_system(update_transform.after(switch_kind))
+                    .with_system(reset_actions.after(update_transform)),
             );
     }
 }
@@ -131,7 +126,7 @@ fn init_camera(mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCa
     }
 }
 
-fn update_transform(
+pub fn update_transform(
     time: Res<Time>,
     rapier_context: Res<RapierContext>,
     mut camera: Query<(&mut IngameCamera, &mut Transform)>,
@@ -162,31 +157,13 @@ fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     }
 }
 
-fn cursor_grab_system(
-    mut windows: ResMut<Windows>,
-    key: Res<Input<KeyCode>>,
-    frozen: Option<Res<ActionsFrozen>>,
-) {
+fn cursor_grab_system(mut windows: ResMut<Windows>, frozen: Option<Res<ActionsFrozen>>) {
     let window = windows.get_primary_mut().unwrap();
     if frozen.is_some() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);
-        return;
-    }
-    if key.just_pressed(KeyCode::Escape) {
-        if matches!(window.cursor_grab_mode(), CursorGrabMode::None) {
-            // if you want to use the cursor, but not let it leave the window,
-            // use `Confined` mode:
-            window.set_cursor_grab_mode(CursorGrabMode::Confined);
-
-            // for a game that doesn't use the cursor (like a shooter):
-            // use `Locked` mode to keep the cursor in one place
-            window.set_cursor_grab_mode(CursorGrabMode::Locked);
-            // also hide the cursor
-            window.set_cursor_visibility(false);
-        } else {
-            window.set_cursor_grab_mode(CursorGrabMode::None);
-            window.set_cursor_visibility(true);
-        }
+    } else {
+        window.set_cursor_grab_mode(CursorGrabMode::Locked);
+        window.set_cursor_visibility(false);
     }
 }

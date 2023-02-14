@@ -7,7 +7,9 @@ use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
 
-/// Handles instantiation of shaders.
+/// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
+/// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
+/// The handles can be stored and retrieved in the [`Materials`] resource.
 pub struct ShaderPlugin;
 
 impl Plugin for ShaderPlugin {
@@ -42,6 +44,7 @@ fn setup_shader(
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
+/// Material for [`glowy.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/glowy.wgsl).
 pub struct GlowyMaterial {
     #[texture(0)]
     #[sampler(1)]
@@ -65,6 +68,7 @@ pub struct Repeats {
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
+/// Material for [`repeated.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/repeated.wgsl).
 pub struct RepeatedMaterial {
     #[texture(0)]
     #[sampler(1)]

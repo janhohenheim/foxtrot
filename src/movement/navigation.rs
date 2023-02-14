@@ -1,4 +1,4 @@
-use crate::movement::general_movement::Walker;
+use crate::movement::general_movement::Walking;
 use crate::movement::navigation::navmesh::read_navmesh;
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
@@ -40,7 +40,7 @@ fn query_mesh(
             Entity,
             &GlobalTransform,
             &KinematicCharacterController,
-            &mut Walker,
+            &mut Walking,
         ),
         (With<Follower>, Without<Player>),
     >,
@@ -50,7 +50,7 @@ fn query_mesh(
     rapier_context: Res<RapierContext>,
 ) {
     for path_mesh_handle in nav_meshes.iter() {
-        for (follower_entity, follower_transform, controller, mut walker) in &mut with_follower {
+        for (follower_entity, follower_transform, controller, mut walking) in &mut with_follower {
             for (player_entity, player_transform) in &with_player {
                 let path_mesh = path_meshes.get(path_mesh_handle).unwrap();
                 let from = follower_transform.translation();
@@ -79,7 +79,7 @@ fn query_mesh(
                         .horizontal
                         .try_normalize()
                         .unwrap();
-                    walker.direction = Some(dir);
+                    walking.direction = Some(dir);
                 }
             }
         }

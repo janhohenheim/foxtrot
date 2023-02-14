@@ -1,4 +1,4 @@
-use crate::movement::general_movement::{Jump, Velocity, Walker};
+use crate::movement::general_movement::{Jumping, Velocity, Walking};
 use crate::player_control::actions::Actions;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
@@ -64,7 +64,7 @@ pub struct Player;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct PlayerSensor;
 
-fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Player>>) {
+fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With<Player>>) {
     for mut jump in &mut player_query {
         if actions.player.jump {
             jump.requested = true;
@@ -74,7 +74,7 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jump, With<Pl
 
 fn handle_horizontal_movement(
     actions: Res<Actions>,
-    mut player_query: Query<&mut Walker, With<Player>>,
+    mut player_query: Query<&mut Walking, With<Player>>,
     camera_query: Query<&IngameCamera>,
 ) {
     let camera = match camera_query.iter().next() {
@@ -92,9 +92,9 @@ fn handle_horizontal_movement(
     let sideward_action = sideward * movement.x;
     let direction = (forward_action + sideward_action).x0y().normalize();
 
-    for mut walker in &mut player_query {
-        walker.direction = Some(direction);
-        walker.sprinting = actions.player.sprint;
+    for mut walk in &mut player_query {
+        walk.direction = Some(direction);
+        walk.sprinting = actions.player.sprint;
     }
 }
 

@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 
 mod game_control;
 
-///
+/// Configures [`Actions`], the resource that holds all player input.
+/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
 pub struct ActionsPlugin;
 
 #[derive(Resource, Default)]

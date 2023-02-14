@@ -6,6 +6,7 @@ use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
+use regex::Regex;
 
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
@@ -16,7 +17,10 @@ impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
-            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader));
+            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader))
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing).with_system(set_texture_to_repeat),
+            );
     }
 }
 
@@ -80,5 +84,45 @@ pub struct RepeatedMaterial {
 impl Material for RepeatedMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/repeated.wgsl".into()
+    }
+}
+
+pub fn set_texture_to_repeat(
+    mut commands: Commands,
+    added_name: Query<(&Name, &Children), Added<Name>>,
+    material_handles: Query<&Handle<StandardMaterial>>,
+    mut materials: ResMut<Materials>,
+    standard_materials: Res<Assets<StandardMaterial>>,
+    mut repeated_materials: ResMut<Assets<RepeatedMaterial>>,
+) {
+    let re = Regex::new(r"\[repeat:(\d+),(\d+)\]").unwrap();
+    for (name, children) in &added_name {
+        if let Some(captures) = re.captures(&name.to_lowercase()) {
+            let repeats = Repeats {
+                horizontal: captures[1].parse().unwrap(),
+                vertical: captures[2].parse().unwrap(),
+                ..default()
+            };
+            for child in children.iter() {
+                if let Ok(standard_material_handle) = material_handles.get(*child) {
+                    let standard_material =
+                        standard_materials.get(standard_material_handle).unwrap();
+                    let texture = standard_material.base_color_texture.as_ref().unwrap();
+                    let key = (texture.id(), repeats);
+
+                    let repeated_material = materials.repeated.entry(key).or_insert_with(|| {
+                        repeated_materials.add(RepeatedMaterial {
+                            texture: texture.clone(),
+                            repeats,
+                        })
+                    });
+
+                    commands
+                        .entity(*child)
+                        .remove::<Handle<StandardMaterial>>()
+                        .insert(repeated_material.clone());
+                }
+            }
+        }
     }
 }

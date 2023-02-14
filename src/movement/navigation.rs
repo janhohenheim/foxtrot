@@ -11,6 +11,8 @@ use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 pub mod navmesh;
 
+/// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
+/// Currently only one navmesh is supported. It is loaded automagically in
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {

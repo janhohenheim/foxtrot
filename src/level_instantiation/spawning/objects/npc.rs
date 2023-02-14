@@ -1,9 +1,9 @@
-use crate::level_instantiation::spawning::post_spawn_modification::CustomCollider;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::movement::navigation::Follower;
+use crate::movement::physics::CustomCollider;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;

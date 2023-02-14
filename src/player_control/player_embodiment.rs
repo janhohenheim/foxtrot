@@ -26,7 +26,8 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .before("apply_walking"),
                     )
                     .with_system(
-                        handle_camera_actions
+                        set_camera_actions
+                            .label("set_camera_actions")
                             .after("set_actions")
                             .before("update_camera_transform")
                             .before("apply_walking"),
@@ -82,7 +83,7 @@ fn handle_horizontal_movement(
     }
 }
 
-fn handle_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
+fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
     let mut camera = match camera_query.iter_mut().next() {
         Some(camera) => camera,
         None => return,

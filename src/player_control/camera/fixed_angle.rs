@@ -42,7 +42,9 @@ impl From<&ThirdPersonCamera> for FixedAngleCamera {
 
 impl FixedAngleCamera {
     pub fn forward(&self) -> Vec3 {
-        self.transform.forward()
+        // The camera is rotated to always look down,
+        // so the forward vector for the player is actually the camera's up vector
+        self.transform.up()
     }
 
     pub fn init_transform(&mut self, transform: Transform) {
@@ -74,7 +76,7 @@ impl FixedAngleCamera {
     }
 
     fn zoom(&mut self, zoom: f32) {
-        let zoom_speed = 0.1;
+        let zoom_speed = 0.5;
         let zoom = zoom * zoom_speed;
         self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
     }

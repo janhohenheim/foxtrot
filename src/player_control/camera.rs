@@ -100,19 +100,18 @@ impl Plugin for CameraPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(cursor_grab_system)
                     .with_system(init_camera)
+                    .with_system(set_camera_focus.label("set_camera_focus"))
                     .with_system(
                         switch_kind
                             .label("switch_camera_kind")
-                            .after("set_actions")
-                            .before("update_camera_transform"),
+                            .after("set_camera_actions")
+                            .after("set_camera_focus"),
                     )
                     .with_system(
                         update_transform
                             .label("update_camera_transform")
-                            .after("set_actions")
-                            .after("set_camera_focus"),
+                            .after("switch_camera_kind"),
                     )
-                    .with_system(set_camera_focus.label("set_camera_focus"))
                     .with_system(
                         reset_actions
                             .label("reset_movement")

@@ -1,4 +1,4 @@
-use crate::file_system_interaction::game_serialization::{GameLoadRequest, GameSaveRequest};
+use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::movement::navigation::navmesh::NavMesh;

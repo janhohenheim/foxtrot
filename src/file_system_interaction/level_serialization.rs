@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::{fs, iter};
 
-pub struct WorldSerializationPlugin;
+pub struct LevelSerializationPlugin;
 
-impl Plugin for WorldSerializationPlugin {
+impl Plugin for LevelSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()

@@ -49,7 +49,7 @@ impl Plugin for SpawningPlugin {
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(spawn_requested.label("spawn_requested"))
+                    .with_system(spawn_requested)
                     .with_system(spawn_delayed)
                     .with_system(despawn)
                     .with_system(link_animations.after(spawn_requested)),

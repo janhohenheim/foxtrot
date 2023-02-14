@@ -21,10 +21,7 @@ impl Plugin for ActionsPlugin {
             .register_type::<CameraActions>()
             .register_type::<UiActions>()
             .init_resource::<Actions>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_actions.label("set_actions")),
-            );
+            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
     }
 }
 

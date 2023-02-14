@@ -38,26 +38,22 @@ impl Plugin for PlayerEmbodimentPlugin {
                     )
                     .with_system(
                         set_camera_actions
-                            .label("set_camera_actions")
                             .after(set_actions)
                             .before(update_camera_transform)
                             .before(apply_walking),
                     )
                     .with_system(
                         handle_camera_kind
-                            .label("handle_camera_kind")
                             .after(switch_camera_kind)
                             .before(apply_walking),
                     )
                     .with_system(
                         handle_speed_effects
-                            .label("handle_speed_effects")
                             .after(apply_force)
                             .before(reset_movement_components),
                     )
                     .with_system(
                         rotate_to_speaker
-                            .label("rotate_to_speaker")
                             .after(apply_force)
                             .before(reset_movement_components),
                     )

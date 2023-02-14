@@ -45,38 +45,18 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<CharacterAnimations>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(update_grounded.label("update_grounded"))
-                    .with_system(
-                        apply_gravity
-                            .label("apply_gravity")
-                            .after(update_grounded)
-                            .before(apply_force),
-                    )
-                    .with_system(
-                        apply_walking
-                            .label("apply_walking")
-                            .after(update_grounded)
-                            .before(apply_force),
-                    )
-                    .with_system(
-                        apply_jumping
-                            .label("apply_jumping")
-                            .after(apply_gravity)
-                            .before(apply_force),
-                    )
+                    .with_system(update_grounded)
+                    .with_system(apply_gravity.after(update_grounded).before(apply_force))
+                    .with_system(apply_walking.after(update_grounded).before(apply_force))
+                    .with_system(apply_jumping.after(apply_gravity).before(apply_force))
                     .with_system(
                         apply_drag
-                            .label("apply_drag")
                             .after(apply_walking)
                             .after(apply_jumping)
                             .before(apply_force),
                     )
-                    .with_system(apply_force.label("apply_force"))
-                    .with_system(
-                        reset_movement_components
-                            .label("reset_movement_components")
-                            .after(apply_force),
-                    )
+                    .with_system(apply_force)
+                    .with_system(reset_movement_components.after(apply_force))
                     .with_system(rotate_characters)
                     .with_system(play_animations),
             );

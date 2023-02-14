@@ -159,7 +159,6 @@ fn cursor_grab_system(mut windows: ResMut<Windows>, frozen: Option<Res<ActionsFr
     if frozen.is_some() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);
-        return;
     } else {
         window.set_cursor_grab_mode(CursorGrabMode::Locked);
         window.set_cursor_visibility(false);

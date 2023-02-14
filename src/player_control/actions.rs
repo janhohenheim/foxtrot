@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 
 mod game_control;
 
+///
 pub struct ActionsPlugin;
 
 #[derive(Resource, Default)]

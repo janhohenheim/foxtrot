@@ -49,33 +49,33 @@ impl Plugin for GeneralMovementPlugin {
                     .with_system(
                         apply_gravity
                             .label("apply_gravity")
-                            .after("update_grounded")
-                            .before("apply_force"),
+                            .after(update_grounded)
+                            .before(apply_force),
                     )
                     .with_system(
                         apply_walking
                             .label("apply_walking")
-                            .after("update_grounded")
-                            .before("apply_force"),
+                            .after(update_grounded)
+                            .before(apply_force),
                     )
                     .with_system(
                         apply_jumping
                             .label("apply_jumping")
-                            .after("apply_gravity")
-                            .before("apply_force"),
+                            .after(apply_gravity)
+                            .before(apply_force),
                     )
                     .with_system(
                         apply_drag
                             .label("apply_drag")
-                            .after("apply_walking")
-                            .after("apply_jumping")
-                            .before("apply_force"),
+                            .after(apply_walking)
+                            .after(apply_jumping)
+                            .before(apply_force),
                     )
                     .with_system(apply_force.label("apply_force"))
                     .with_system(
                         reset_movement_components
                             .label("reset_movement_components")
-                            .after("apply_force"),
+                            .after(apply_force),
                     )
                     .with_system(rotate_characters)
                     .with_system(play_animations),
@@ -111,7 +111,7 @@ fn apply_gravity(
 }
 
 /// Treat `Force` as readonly after this system.
-fn apply_force(
+pub fn apply_force(
     time: Res<Time>,
     mut player_query: Query<(
         &Force,
@@ -130,7 +130,7 @@ fn apply_force(
     }
 }
 
-fn reset_movement_components(
+pub fn reset_movement_components(
     mut forces: Query<&mut Force>,
     mut walking: Query<&mut Walking>,
     mut jumpers: Query<&mut Jumping>,
@@ -150,7 +150,7 @@ fn reset_movement_components(
     }
 }
 
-fn apply_jumping(
+pub fn apply_jumping(
     time: Res<Time>,
     mut character_query: Query<(
         &Grounded,
@@ -240,7 +240,7 @@ fn apply_drag(
     }
 }
 
-fn apply_walking(
+pub fn apply_walking(
     mut character_query: Query<(
         &mut Force,
         &Walking,

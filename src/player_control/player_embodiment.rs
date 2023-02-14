@@ -139,7 +139,7 @@ fn handle_speed_effects(
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
                 const MAX_SPEED_FOR_FOV: f32 = 10.;
                 const MIN_FOV: f32 = 0.75;
-                const MAX_FOV: f32 = 1.7;
+                const MAX_FOV: f32 = 1.5;
                 let scale = (speed_squared / MAX_SPEED_FOR_FOV.squared())
                     .min(1.0)
                     .squared();

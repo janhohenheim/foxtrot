@@ -77,7 +77,7 @@ pub fn set_texture_to_repeat(
 
                     let repeated_material = materials.repeated.entry(key).or_insert_with(|| {
                         repeated_materials.add(RepeatedMaterial {
-                            texture: Some(texture.clone()),
+                            texture: texture.clone(),
                             repeats,
                         })
                     });

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
+/// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub struct PhysicsPlugin;
 
 impl Plugin for PhysicsPlugin {

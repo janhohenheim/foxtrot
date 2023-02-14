@@ -9,8 +9,8 @@ pub struct KinematicCharacterBundle {
     pub velocity: Velocity,
     pub force: Force,
     pub mass: Mass,
-    pub walker: Walker,
-    pub jump: Jump,
+    pub walking: Walking,
+    pub jumping: Jumping,
     pub grounded: Grounded,
     pub drag: Drag,
     pub rigid_body: RigidBody,
@@ -25,8 +25,8 @@ impl Default for KinematicCharacterBundle {
             velocity: default(),
             force: default(),
             mass: default(),
-            walker: default(),
-            jump: default(),
+            walking: default(),
+            jumping: default(),
             grounded: default(),
             drag: default(),
             collider: default(),
@@ -74,14 +74,14 @@ impl Default for Mass {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Walker {
+pub struct Walking {
     /// Acceleration on the ground
     pub ground_acceleration: f32,
-    /// Acceleration on the ground when[`Walker::sprinting`] is `true`
+    /// Acceleration on the ground when[`Walking::sprinting`] is `true`
     pub sprinting_acceleration: f32,
     /// Acceleration in the air
     pub aerial_acceleration: f32,
-    /// Acceleration in opposide direction of velocity when not explicitely walking, i.e. [`Walker::direction`] is [`Option::None`]
+    /// Acceleration in opposide direction of velocity when not explicitely walking, i.e. [`Walking::direction`] is [`Option::None`]
     pub braking_acceleration: f32,
     /// Speed at which we stop braking and just set the horizontal velocity to 0
     pub stopping_speed: f32,
@@ -91,7 +91,7 @@ pub struct Walker {
     pub sprinting: bool,
 }
 
-impl Walker {
+impl Walking {
     pub fn get_acceleration(&self, grounded: bool) -> Option<Vec3> {
         let acceleration = if grounded {
             if self.sprinting {
@@ -106,7 +106,7 @@ impl Walker {
     }
 }
 
-impl Default for Walker {
+impl Default for Walking {
     fn default() -> Self {
         Self {
             ground_acceleration: 10.,
@@ -216,14 +216,14 @@ impl Default for Gravity {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Jump {
+pub struct Jumping {
     /// Speed of the jump in m/s
     pub speed: f32,
     /// Was jump requested?
     pub requested: bool,
 }
 
-impl Default for Jump {
+impl Default for Jumping {
     fn default() -> Self {
         Self {
             speed: 4.,

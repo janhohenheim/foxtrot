@@ -1,7 +1,13 @@
 use crate::file_system_interaction::audio::AudioHandles;
-use crate::movement::general_movement::{Grounded, Jumping, Velocity, Walking};
+use crate::movement::general_movement::{
+    apply_force, apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping,
+    Velocity, Walking,
+};
 use crate::player_control::actions::{set_actions, Actions};
-use crate::player_control::camera::{IngameCamera, IngameCameraKind};
+use crate::player_control::camera::{
+    focus::switch_kind as switch_camera_kind, update_transform as update_camera_transform,
+    IngameCamera, IngameCameraKind,
+};
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
@@ -23,37 +29,37 @@ impl Plugin for PlayerEmbodimentPlugin {
             .register_type::<PlayerSensor>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_jump.after("set_actions").before("apply_jumping"))
+                    .with_system(handle_jump.after(set_actions).before(apply_jumping))
                     .with_system(
                         handle_horizontal_movement
-                            .after("set_actions")
-                            .after("update_camera_transform")
-                            .before("apply_walking"),
+                            .after(set_actions)
+                            .after(update_camera_transform)
+                            .before(apply_walking),
                     )
                     .with_system(
                         set_camera_actions
                             .label("set_camera_actions")
-                            .after("set_actions")
-                            .before("update_camera_transform")
-                            .before("apply_walking"),
+                            .after(set_actions)
+                            .before(update_camera_transform)
+                            .before(apply_walking),
                     )
                     .with_system(
                         handle_camera_kind
                             .label("handle_camera_kind")
-                            .after("switch_camera_kind")
-                            .before("apply_walking"),
+                            .after(switch_camera_kind)
+                            .before(apply_walking),
                     )
                     .with_system(
                         handle_speed_effects
                             .label("handle_speed_effects")
-                            .after("apply_force")
-                            .before("reset_movement_components"),
+                            .after(apply_force)
+                            .before(reset_movement_components),
                     )
                     .with_system(
                         rotate_to_speaker
                             .label("rotate_to_speaker")
-                            .after("apply_force")
-                            .before("reset_movement_components"),
+                            .after(apply_force)
+                            .before(reset_movement_components),
                     )
                     .with_system(control_walking_sound.after(set_actions)),
             );
@@ -102,7 +108,7 @@ fn handle_horizontal_movement(
     }
 }
 
-fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
+pub fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
     let mut camera = match camera_query.iter_mut().next() {
         Some(camera) => camera,
         None => return,

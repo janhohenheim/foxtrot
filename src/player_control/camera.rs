@@ -1,5 +1,6 @@
 use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
+use crate::player_control::player_embodiment::set_camera_actions;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
@@ -104,18 +105,18 @@ impl Plugin for CameraPlugin {
                     .with_system(
                         switch_kind
                             .label("switch_camera_kind")
-                            .after("set_camera_actions")
-                            .after("set_camera_focus"),
+                            .after(set_camera_actions)
+                            .after(set_camera_focus),
                     )
                     .with_system(
                         update_transform
                             .label("update_camera_transform")
-                            .after("switch_camera_kind"),
+                            .after(switch_kind),
                     )
                     .with_system(
                         reset_actions
                             .label("reset_movement")
-                            .after("update_camera_transform"),
+                            .after(update_transform),
                     ),
             );
     }
@@ -131,7 +132,7 @@ fn init_camera(mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCa
     }
 }
 
-fn update_transform(
+pub fn update_transform(
     time: Res<Time>,
     rapier_context: Res<RapierContext>,
     mut camera: Query<(&mut IngameCamera, &mut Transform)>,

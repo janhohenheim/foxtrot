@@ -31,7 +31,7 @@ pub struct SpawningPlugin;
 mod animation_link;
 mod event;
 mod post_spawn_modification;
-mod spawn;
+pub mod spawn;
 
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
@@ -52,7 +52,7 @@ impl Plugin for SpawningPlugin {
                     .with_system(spawn_requested.label("spawn_requested"))
                     .with_system(spawn_delayed)
                     .with_system(despawn)
-                    .with_system(link_animations.after("spawn_requested")),
+                    .with_system(link_animations.after(spawn_requested)),
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)

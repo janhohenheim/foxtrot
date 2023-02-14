@@ -127,3 +127,15 @@ impl MeshExt for Mesh {
         }
     }
 }
+
+pub trait F32Ext {
+    #[allow(clippy::wrong_self_convention)] // Because [`f32`] is [`Copy`]
+    fn is_approx_zero(self) -> bool;
+}
+
+impl F32Ext for f32 {
+    #[inline]
+    fn is_approx_zero(self) -> bool {
+        self.abs() < 1e-5
+    }
+}

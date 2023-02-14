@@ -1,4 +1,5 @@
 use crate::player_control::actions::game_control::{get_movement, GameControl};
+use crate::util::trait_extension::{F32Ext, Vec2Ext};
 use crate::GameState;
 use bevy::input::mouse::{MouseMotion, MouseWheel};
 use bevy::prelude::*;
@@ -84,21 +85,26 @@ pub fn set_actions(
             - get_movement(GameControl::Down, &keyboard_input),
     );
 
-    if player_movement != Vec2::ZERO {
-        actions.player.movement = Some(player_movement.normalize());
-    } else {
-        actions.player.movement = None;
-    }
+    actions.player.movement = (player_movement != Vec2::ZERO).then(|| player_movement.normalize());
     actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
     actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
     actions.camera.movement = None;
+    let mut camera_movement = Vec2::ZERO;
     for event in mouse_motion.iter() {
-        actions.camera.movement = Some(event.delta)
+        camera_movement += event.delta;
+    }
+    if !camera_movement.is_approx_zero() {
+        actions.camera.movement = Some(camera_movement);
     }
 
+    actions.camera.zoom = None;
+    let mut zoom = 0.0;
     for event in mouse_wheel.iter() {
-        actions.camera.zoom = Some(event.y)
+        zoom += event.y;
+    }
+    if !zoom.is_approx_zero() {
+        actions.camera.zoom = Some(zoom);
     }
 }

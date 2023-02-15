@@ -18,6 +18,9 @@ jobs:
   build-macOS:
     runs-on: macos-latest
 
+    env:
+        # macOS 11.0 Big Sur is the first version of macOS to support universal binaries
+        MACOSX_DEPLOYMENT_TARGET: 11.0
     steps:
       - name: Get tag
         id: tag
@@ -43,7 +46,7 @@ jobs:
           brew install michaeleisel/zld/zld
       - name: Build release for Apple Silicon
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version) cargo build --release --no-default-features --features core,native --target=aarch64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features core,native --target=aarch64-apple-darwin
       - name: Install rust toolchain for Apple x86
         uses: actions-rs/toolchain@v1
         with:
@@ -52,7 +55,7 @@ jobs:
           override: true
       - name: Build release for x86 Apple
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version) cargo build --release --no-default-features --features core,native --target=x86_64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features core,native --target=x86_64-apple-darwin
       - name: Create Universal Binary
         run: |
           lipo -create -output target/release/${{ env.GAME_EXECUTABLE_NAME }} target/aarch64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }} target/x86_64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }}
@@ -135,6 +138,10 @@ jobs:
         with:
           toolchain: nightly
           override: true
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: build/windows/installer/global.json
       - name: Build release
         run: |
           cargo build --release --no-default-features --features core,native
@@ -147,6 +154,8 @@ jobs:
         with:
           files: target/release/assets/ target/release/credits/ target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe
           dest: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
+      - name: Create Installer
+        run: dotnet build -c Release build/windows/installer/Installer.wixproj --output installer
       - name: Upload release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -155,6 +164,14 @@ jobs:
           asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.zip
           tag: ${{ github.ref }}
           overwrite: true
+      - name: Upload installer
+        uses: svenstaro/upload-release-action@v2
+        with:
+         repo_token: ${{ secrets.GITHUB_TOKEN }}
+         file: installer/en-US/installer.msi
+         asset_name: ${{ env.EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.msi
+         tag: ${{ github.ref }}
+         overwrite: true
   build-web:
     runs-on: ubuntu-latest
 
@@ -183,7 +200,7 @@ jobs:
       - name: Build Release
         run: |
           trunk build --release --public-url "${GITHUB_REPOSITORY#*/}" --no-default-features --features core,wasm
-      - name: optimize Wasm
+      - name: Optimize Wasm
         uses: NiklasEi/wasm-opt-action@v2
         with:
           file: dist/*.wasm

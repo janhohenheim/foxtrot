@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use anyhow::Result;
 use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
 
@@ -18,8 +19,8 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 MaterialMeshBundle {
@@ -43,6 +44,6 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
                     ..default()
                 },));
             })
-            .id()
+            .id())
     }
 }

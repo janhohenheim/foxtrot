@@ -15,8 +15,10 @@ use crate::level_instantiation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
 use crate::shader::Materials;
+use crate::util::log_error::log_errors;
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
+use anyhow::Result;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
@@ -30,6 +32,9 @@ mod animation_link;
 mod event;
 mod post_spawn_modification;
 pub mod spawn;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemLabel)]
+pub struct SpawnRequestedLabel;
 
 impl Plugin for SpawningPlugin {
     fn build(&self, app: &mut App) {
@@ -47,10 +52,10 @@ impl Plugin for SpawningPlugin {
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(spawn_requested)
+                    .with_system(spawn_requested.pipe(log_errors).label(SpawnRequestedLabel))
                     .with_system(spawn_delayed)
                     .with_system(despawn)
-                    .with_system(link_animations.after(spawn_requested)),
+                    .with_system(link_animations.after(SpawnRequestedLabel)),
             )
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
@@ -79,7 +84,7 @@ impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
         }
     }
 
-    pub fn spawn<'c: 'a>(&'c mut self, object: GameObject, transform: Transform) -> Entity {
+    pub fn spawn<'c: 'a>(&'c mut self, object: GameObject, transform: Transform) -> Result<Entity> {
         self.outer_spawner.implementors[&object].spawn(self, object, transform)
     }
 }
@@ -175,7 +180,7 @@ pub trait PrimedGameObjectSpawnerImplementor {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
         transform: Transform,
-    ) -> Entity;
+    ) -> Result<Entity>;
 }
 
 #[derive(Resource)]

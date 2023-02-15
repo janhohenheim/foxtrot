@@ -1,8 +1,10 @@
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::AnimationEntityLink;
+use crate::util::log_error::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::{Velocity, *};
@@ -58,7 +60,7 @@ impl Plugin for GeneralMovementPlugin {
                     .with_system(apply_force)
                     .with_system(reset_movement_components.after(apply_force))
                     .with_system(rotate_characters)
-                    .with_system(play_animations),
+                    .with_system(play_animations.pipe(log_errors)),
             );
     }
 }
@@ -187,11 +189,11 @@ fn play_animations(
         &AnimationEntityLink,
         &CharacterAnimations,
     )>,
-) {
+) -> Result<()> {
     for (output, controller, grounded, animation_entity_link, animations) in characters.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
-            .expect("animation_entity_link held entity without animation player");
+            .context("animation_entity_link held entity without animation player")?;
 
         let has_horizontal_movement = !output
             .effective_translation
@@ -209,6 +211,7 @@ fn play_animations(
             animation_player.play(animations.idle.clone_weak()).repeat();
         }
     }
+    Ok(())
 }
 
 fn apply_drag(

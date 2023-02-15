@@ -2,6 +2,7 @@ use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::player_control::camera::IngameCamera;
+use anyhow::Result;
 use bevy::prelude::*;
 
 pub struct CameraSpawner;
@@ -12,8 +13,8 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 IngameCamera::default(),
@@ -23,6 +24,6 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                 },
                 Name::new("Main Camera"),
             ))
-            .id()
+            .id())
     }
 }

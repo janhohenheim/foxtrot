@@ -1,5 +1,7 @@
 use crate::file_system_interaction::asset_loading::FontAssets;
+use crate::util::log_error::log_errors;
 use crate::GameState;
+use anyhow::Result;
 use bevy::prelude::*;
 
 /// This plugin is responsible for the game menu
@@ -13,7 +15,10 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ButtonColors>()
             .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(setup_menu))
-            .add_system_set(SystemSet::on_update(GameState::Menu).with_system(click_play_button));
+            .add_system_set(
+                SystemSet::on_update(GameState::Menu)
+                    .with_system(click_play_button.pipe(log_errors)),
+            );
     }
 }
 
@@ -79,12 +84,12 @@ fn click_play_button(
         (Entity, &Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<Button>),
     >,
-) {
+) -> Result<()> {
     for (button, interaction, mut color) in interaction_query.iter_mut() {
         match *interaction {
             Interaction::Clicked => {
                 commands.entity(button).despawn_recursive();
-                state.set(GameState::Playing).unwrap();
+                state.set(GameState::Playing)?;
             }
             Interaction::Hovered => {
                 *color = button_colors.hovered.into();
@@ -94,4 +99,5 @@ fn click_play_button(
             }
         }
     }
+    Ok(())
 }

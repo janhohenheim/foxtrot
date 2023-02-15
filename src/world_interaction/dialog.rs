@@ -1,10 +1,12 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::ActionsFrozen;
+use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
@@ -21,8 +23,8 @@ impl Plugin for DialogPlugin {
             .add_event::<DialogEvent>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(set_current_dialog)
-                    .with_system(show_dialog),
+                    .with_system(set_current_dialog.pipe(log_errors))
+                    .with_system(show_dialog.pipe(log_errors)),
             );
     }
 }
@@ -39,7 +41,7 @@ fn set_current_dialog(
     mut dialog_events: EventReader<DialogEvent>,
     dialogs: Res<Assets<Dialog>>,
     dialog_handles: Res<DialogAssets>,
-) {
+) -> Result<()> {
     for dialog_event in dialog_events.iter() {
         let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0);
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
@@ -53,20 +55,23 @@ fn set_current_dialog(
                 continue;
             }
         };
-        let dialog = dialogs.get(dialog_handle).unwrap();
-        let current_page = dialog_event.page.clone().unwrap_or_else(|| {
+        let dialog = dialogs
+            .get(dialog_handle)
+            .context("Failed to get dialog handle in dialog assets")?;
+        let current_page = dialog_event.page.clone().or_else(|| {
             dialog
                 .initial_page
                 .iter()
                 .find(|page| page.is_available(&active_conditions))
-                .unwrap_or_else(|| {
-                    panic!(
-                        "No valid active page for dialog {dialog:?}. Current conditions: {active_conditions:?}"
-                    )
-                })
+                ?
                 .id
                 .clone()
-        });
+                .into()
+        }).with_context(|| {
+            format!(
+                "No valid active page for dialog {dialog:?}. Current conditions: {active_conditions:?}"
+            )
+        })?;
         commands.insert_resource(CurrentDialog {
             source: dialog_event.source,
             id: dialog_event.dialog.clone(),
@@ -76,6 +81,7 @@ fn set_current_dialog(
         });
         commands.init_resource::<ActionsFrozen>();
     }
+    Ok(())
 }
 
 fn show_dialog(
@@ -84,12 +90,13 @@ fn show_dialog(
     active_conditions: Res<ActiveConditions>,
     mut condition_writer: EventWriter<ConditionAddEvent>,
     mut egui_context: ResMut<EguiContext>,
-) {
+) -> Result<()> {
     let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
-        None => return,
+        None => return Ok(()),
     };
     let height = 150.;
+    let current_page = current_dialog.fetch_current_page()?;
     egui::TopBottomPanel::bottom("Dialog")
         .resizable(false)
         .exact_height(height)
@@ -98,7 +105,6 @@ fn show_dialog(
             ..default()
         })
         .show(egui_context.ctx_mut(), |ui| {
-            let current_page = current_dialog.fetch_current_page();
             ui.vertical_centered_justified(|ui| {
                 ui.add_space(5.);
                 ui.label(current_page.text.clone());
@@ -110,10 +116,12 @@ fn show_dialog(
                     &active_conditions,
                     &mut condition_writer,
                     current_page.next_page,
-                );
+                )
+                .expect("Failed to present dialog choices");
                 ui.add_space(5.);
             });
         });
+    Ok(())
 }
 
 fn present_choices(
@@ -123,7 +131,7 @@ fn present_choices(
     active_conditions: &ActiveConditions,
     condition_writer: &mut EventWriter<ConditionAddEvent>,
     next_page: NextPage,
-) {
+) -> Result<()> {
     match next_page {
         NextPage::Continue(next_page_id) => {
             if ui.button("Continue").clicked() {
@@ -148,7 +156,7 @@ fn present_choices(
             }
         }
         NextPage::SameAs(other_page_id) => {
-            let next_page = current_dialog.fetch_page(&other_page_id).next_page;
+            let next_page = current_dialog.fetch_page(&other_page_id)?.next_page;
             present_choices(
                 ui,
                 commands,
@@ -156,7 +164,7 @@ fn present_choices(
                 active_conditions,
                 condition_writer,
                 next_page,
-            );
+            )?;
         }
         NextPage::Exit => {
             if ui.button("Exit").clicked() {
@@ -165,4 +173,5 @@ fn present_choices(
             }
         }
     }
+    Ok(())
 }

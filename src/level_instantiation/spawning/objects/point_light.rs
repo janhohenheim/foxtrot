@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use anyhow::Result;
 use bevy::prelude::*;
 
 pub struct PointLightSpawner;
@@ -11,8 +12,8 @@ impl PrimedGameObjectSpawnerImplementor for PointLightSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 PointLightBundle {
@@ -29,6 +30,6 @@ impl PrimedGameObjectSpawnerImplementor for PointLightSpawner {
                 },
                 Name::new("Light"),
             ))
-            .id()
+            .id())
     }
 }

@@ -1,7 +1,9 @@
 use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
 use crate::player_control::player_embodiment::set_camera_actions;
+use crate::util::log_error::log_errors;
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_rapier3d::prelude::*;
@@ -92,6 +94,9 @@ impl Default for IngameCameraKind {
 /// third person or fixed angle camera is used.
 pub struct CameraPlugin;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemLabel)]
+pub struct SetCameraFocusLabel;
+
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<UiCamera>()
@@ -102,13 +107,13 @@ impl Plugin for CameraPlugin {
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(cursor_grab_system)
+                    .with_system(cursor_grab_system.pipe(log_errors))
                     .with_system(init_camera)
-                    .with_system(set_camera_focus)
+                    .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
                     .with_system(
                         switch_kind
                             .after(set_camera_actions)
-                            .after(set_camera_focus),
+                            .after(SetCameraFocusLabel),
                     )
                     .with_system(update_transform.after(switch_kind))
                     .with_system(reset_actions.after(update_transform)),
@@ -157,8 +162,13 @@ fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     }
 }
 
-fn cursor_grab_system(mut windows: ResMut<Windows>, frozen: Option<Res<ActionsFrozen>>) {
-    let window = windows.get_primary_mut().unwrap();
+fn cursor_grab_system(
+    mut windows: ResMut<Windows>,
+    frozen: Option<Res<ActionsFrozen>>,
+) -> Result<()> {
+    let window = windows
+        .get_primary_mut()
+        .context("Failed to get primary window")?;
     if frozen.is_some() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);
@@ -166,4 +176,5 @@ fn cursor_grab_system(mut windows: ResMut<Windows>, frozen: Option<Res<ActionsFr
         window.set_cursor_grab_mode(CursorGrabMode::Locked);
         window.set_cursor_visibility(false);
     }
+    Ok(())
 }

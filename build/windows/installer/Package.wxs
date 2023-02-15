@@ -9,7 +9,7 @@
 
         <Media Id="1" Cabinet="myapplication.cab" EmbedCab="yes" />
 
-        <Property Id="ApplicationFolderName" Value="Foxtrot" />
+        <Property Id="ApplicationFolderName" Value="!(bind.Property.ProductName)" />
 
         <!-- Installer Icon -->
         <Icon Id="icon.ico" SourceFile="..\icon.ico"/>
@@ -41,7 +41,7 @@
         <!-- Source: https://wixtoolset.org/docs/v3/howtos/files_and_registry/create_start_menu_shortcut/ -->
         <StandardDirectory Id="ProgramMenuFolder">
             <Component Id="StartMenuShortcut" Guid="*">
-                <Shortcut Id="ApplicationStartMenuShortcut" Name="Foxtrot" Target="[#foxtrot.exe]" WorkingDirectory="INSTALLFOLDER" />
+                <Shortcut Id="ApplicationStartMenuShortcut" Name="!(bind.Property.ProductName)" Target="[#foxtrot.exe]" WorkingDirectory="INSTALLFOLDER" />
                 <RegistryValue Root="HKCU" Key="Software\!(bind.Property.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
       </StandardDirectory>

@@ -66,6 +66,7 @@ bevy_pathmesh = "0.3.0"
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
 image = { version = "0.24", default-features = false }
+anyhow = "1.0.69"
 
 [dependencies.bevy_prototype_debug_lines]
 version = "0.9.0"

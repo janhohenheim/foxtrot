@@ -1,3 +1,5 @@
+use crate::util::log_error::log_errors;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::{PresentMode, WindowId};
 use bevy::winit::WinitWindows;
@@ -28,13 +30,15 @@ impl Plugin for BevyConfigPlugin {
         app.insert_resource(Msaa { samples: 4 })
             .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
             .add_plugins(default_plugins)
-            .add_startup_system(set_window_icon);
+            .add_startup_system(set_window_icon.pipe(log_errors));
     }
 }
 
 // Sets the icon on Windows and X11
-fn set_window_icon(windows: NonSend<WinitWindows>) {
-    let primary = windows.get_window(WindowId::primary()).unwrap();
+fn set_window_icon(windows: NonSend<WinitWindows>) -> Result<()> {
+    let primary = windows
+        .get_window(WindowId::primary())
+        .context("Failed to get primary window")?;
     let icon_buf = Cursor::new(include_bytes!(
         "../build/macos/AppIcon.iconset/icon_256x256.png"
     ));
@@ -42,7 +46,8 @@ fn set_window_icon(windows: NonSend<WinitWindows>) {
         let image = image.into_rgba8();
         let (width, height) = image.dimensions();
         let rgba = image.into_raw();
-        let icon = Icon::from_rgba(rgba, width, height).unwrap();
+        let icon = Icon::from_rgba(rgba, width, height)?;
         primary.set_window_icon(Some(icon));
     };
+    Ok(())
 }

@@ -27,6 +27,7 @@
             <ComponentGroupRef Id="MainComponent" />
             <ComponentRef Id="StartMenuShortcut" />
             <ComponentGroupRef Id="AssetsDirectory" />
+            <ComponentGroupRef Id="CreditsDirectory" />
         </Feature>
 
         <!-- Installs the actual files -->

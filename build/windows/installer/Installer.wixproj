@@ -16,5 +16,14 @@
               <SuppressRootDirectory>false</SuppressRootDirectory>
         </HarvestDirectory>
         <BindPath Include="..\..\..\assets" />
-  </ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+        <HarvestDirectory Include="..\..\..\credits">
+              <ComponentGroupName>CreditsDirectory</ComponentGroupName>
+              <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+              <SuppressRootDirectory>false</SuppressRootDirectory>
+        </HarvestDirectory>
+        <BindPath Include="..\..\..\credits" />
+    </ItemGroup>
 </Project>

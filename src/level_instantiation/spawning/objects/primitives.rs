@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use anyhow::Result;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
@@ -12,8 +13,8 @@ impl PrimedGameObjectSpawnerImplementor for EmptySpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         _transform: Transform,
-    ) -> Entity {
-        spawner.commands.spawn_empty().id()
+    ) -> Result<Entity> {
+        Ok(spawner.commands.spawn_empty().id())
     }
 }
 
@@ -25,15 +26,15 @@ impl PrimedGameObjectSpawnerImplementor for BoxSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 TransformBundle::from_transform(transform),
                 Collider::cuboid(1., 1., 1.),
                 Name::new("Box Collider"),
             ))
-            .id()
+            .id())
     }
 }
 
@@ -45,15 +46,15 @@ impl PrimedGameObjectSpawnerImplementor for SphereSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 TransformBundle::from_transform(transform),
                 Collider::ball(1.),
                 Name::new("Sphere Collider"),
             ))
-            .id()
+            .id())
     }
 }
 
@@ -65,15 +66,15 @@ impl PrimedGameObjectSpawnerImplementor for CapsuleSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 TransformBundle::from_transform(transform),
                 Collider::capsule_y(1., 1.),
                 Name::new("Capsule Collider"),
             ))
-            .id()
+            .id())
     }
 }
 
@@ -85,14 +86,14 @@ impl PrimedGameObjectSpawnerImplementor for TriangleSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
+    ) -> Result<Entity> {
+        Ok(spawner
             .commands
             .spawn((
                 TransformBundle::from_transform(transform),
                 Collider::triangle(Vect::ZERO, Vect::Y, Vect::X),
                 Name::new("Triangle Collider"),
             ))
-            .id()
+            .id())
     }
 }

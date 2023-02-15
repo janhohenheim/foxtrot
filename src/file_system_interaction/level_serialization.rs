@@ -1,6 +1,7 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
-use crate::level_instantiation::spawning::spawn::spawn_requested;
-use crate::level_instantiation::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::level_instantiation::spawning::{
+    GameObject, SpawnEvent, SpawnRequestedLabel, SpawnTracker,
+};
 use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
@@ -17,7 +18,7 @@ impl Plugin for LevelSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
-            .add_system(save_world.pipe(log_errors).after(spawn_requested))
+            .add_system(save_world.pipe(log_errors).after(SpawnRequestedLabel))
             .add_system_to_stage(CoreStage::PostUpdate, load_world.pipe(log_errors));
     }
 }

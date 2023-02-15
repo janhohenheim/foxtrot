@@ -2,6 +2,7 @@ use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets
 use crate::level_instantiation::spawning::event::SpawnEvent;
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObjectSpawner, SpawnTracker};
 use crate::shader::Materials;
+use anyhow::Result;
 use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -15,15 +16,16 @@ pub fn spawn_requested(
     spawner: Res<GameObjectSpawner>,
     animations: Res<AnimationAssets>,
     scenes: Res<SceneAssets>,
-) {
+) -> Result<()> {
     for spawn in spawn_requests.iter() {
         let entity = spawner
             .attach(&mut commands, &gltf, &materials, &animations, &scenes)
-            .spawn(spawn.object, spawn.transform);
+            .spawn(spawn.object, spawn.transform)?;
         commands
             .entity(entity)
             .insert(SpawnTracker::from(spawn.clone()));
     }
+    Ok(())
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]

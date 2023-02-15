@@ -11,8 +11,22 @@ mod game_control;
 /// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
 pub struct ActionsPlugin;
 
-#[derive(Resource, Default)]
-pub struct ActionsFrozen;
+#[derive(Resource, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Resource, Serialize, Deserialize)]
+pub struct ActionsFrozen {
+    freeze_count: usize,
+}
+impl ActionsFrozen {
+    pub fn freeze(&mut self) {
+        self.freeze_count += 1;
+    }
+    pub fn unfreeze(&mut self) {
+        self.freeze_count -= 1;
+    }
+    pub fn is_frozen(&self) -> bool {
+        self.freeze_count > 0
+    }
+}
 
 // This plugin listens for keyboard input and converts the input into Actions
 // Actions can then be used as a resource in other systems to act on the player input.
@@ -22,7 +36,9 @@ impl Plugin for ActionsPlugin {
             .register_type::<PlayerActions>()
             .register_type::<CameraActions>()
             .register_type::<UiActions>()
+            .register_type::<ActionsFrozen>()
             .init_resource::<Actions>()
+            .init_resource::<ActionsFrozen>()
             .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
     }
 }
@@ -64,10 +80,10 @@ pub fn set_actions(
     keyboard_input: Res<Input<ScanCode>>,
     mut mouse_motion: EventReader<MouseMotion>,
     mut mouse_wheel: EventReader<MouseWheel>,
-    actions_frozen: Option<Res<ActionsFrozen>>,
+    actions_frozen: Res<ActionsFrozen>,
 ) {
     actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
-    if actions_frozen.is_some() {
+    if actions_frozen.is_frozen() {
         *actions = Actions {
             ui: UiActions {
                 toggle_editor: actions.ui.toggle_editor,

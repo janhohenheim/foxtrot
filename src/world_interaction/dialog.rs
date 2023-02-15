@@ -41,6 +41,7 @@ fn set_current_dialog(
     mut dialog_events: EventReader<DialogEvent>,
     dialogs: Res<Assets<Dialog>>,
     dialog_handles: Res<DialogAssets>,
+    mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     for dialog_event in dialog_events.iter() {
         let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0);
@@ -79,7 +80,7 @@ fn set_current_dialog(
             current_page,
             last_choice: None,
         });
-        commands.init_resource::<ActionsFrozen>();
+        actions_frozen.freeze();
     }
     Ok(())
 }
@@ -90,6 +91,7 @@ fn show_dialog(
     active_conditions: Res<ActiveConditions>,
     mut condition_writer: EventWriter<ConditionAddEvent>,
     mut egui_context: ResMut<EguiContext>,
+    mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
@@ -115,6 +117,7 @@ fn show_dialog(
                     &mut current_dialog,
                     &active_conditions,
                     &mut condition_writer,
+                    &mut actions_frozen,
                     current_page.next_page,
                 )
                 .expect("Failed to present dialog choices");
@@ -130,6 +133,7 @@ fn present_choices(
     current_dialog: &mut CurrentDialog,
     active_conditions: &ActiveConditions,
     condition_writer: &mut EventWriter<ConditionAddEvent>,
+    actions_frozen: &mut ActionsFrozen,
     next_page: NextPage,
 ) -> Result<()> {
     match next_page {
@@ -163,13 +167,14 @@ fn present_choices(
                 current_dialog,
                 active_conditions,
                 condition_writer,
+                actions_frozen,
                 next_page,
             )?;
         }
         NextPage::Exit => {
             if ui.button("Exit").clicked() {
                 commands.remove_resource::<CurrentDialog>();
-                commands.remove_resource::<ActionsFrozen>();
+                actions_frozen.unfreeze();
             }
         }
     }

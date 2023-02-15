@@ -164,12 +164,12 @@ fn reset_actions(mut camera: Query<&mut IngameCamera>) {
 
 fn cursor_grab_system(
     mut windows: ResMut<Windows>,
-    frozen: Option<Res<ActionsFrozen>>,
+    actions_frozen: Res<ActionsFrozen>,
 ) -> Result<()> {
     let window = windows
         .get_primary_mut()
         .context("Failed to get primary window")?;
-    if frozen.is_some() {
+    if actions_frozen.is_frozen() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);
     } else {

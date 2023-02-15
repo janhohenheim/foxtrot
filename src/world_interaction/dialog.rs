@@ -1,10 +1,12 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::ActionsFrozen;
+use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
@@ -21,7 +23,7 @@ impl Plugin for DialogPlugin {
             .add_event::<DialogEvent>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(set_current_dialog)
+                    .with_system(set_current_dialog.pipe(log_errors))
                     .with_system(show_dialog),
             );
     }
@@ -39,7 +41,7 @@ fn set_current_dialog(
     mut dialog_events: EventReader<DialogEvent>,
     dialogs: Res<Assets<Dialog>>,
     dialog_handles: Res<DialogAssets>,
-) {
+) -> Result<()> {
     for dialog_event in dialog_events.iter() {
         let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0);
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
@@ -53,7 +55,9 @@ fn set_current_dialog(
                 continue;
             }
         };
-        let dialog = dialogs.get(dialog_handle).unwrap();
+        let dialog = dialogs
+            .get(dialog_handle)
+            .context("Failed to get dialog handle in dialog assets")?;
         let current_page = dialog_event.page.clone().unwrap_or_else(|| {
             dialog
                 .initial_page
@@ -76,6 +80,7 @@ fn set_current_dialog(
         });
         commands.init_resource::<ActionsFrozen>();
     }
+    Ok(())
 }
 
 fn show_dialog(

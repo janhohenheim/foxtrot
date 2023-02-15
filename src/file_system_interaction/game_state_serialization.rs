@@ -1,9 +1,11 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::player_control::player_embodiment::Player;
+use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use chrono::prelude::Local;
 use glob::glob;
@@ -23,7 +25,11 @@ impl Plugin for GameStateSerializationPlugin {
             .add_system_set(
                 SystemSet::on_in_stack_update(GameState::Playing)
                     .with_system(handle_load_requests)
-                    .with_system(handle_save_requests.after(handle_load_requests)),
+                    .with_system(
+                        handle_save_requests
+                            .pipe(log_errors)
+                            .after(handle_load_requests),
+                    ),
             );
     }
 }
@@ -126,7 +132,7 @@ fn handle_save_requests(
     dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&GlobalTransform, With<Player>>,
     current_level: Option<Res<CurrentLevel>>,
-) {
+) -> Result<()> {
     let dialog = if let Some(ref dialog) = dialog {
         let dialog: CurrentDialog = dialog.as_ref().clone();
         Some(dialog)
@@ -135,7 +141,7 @@ fn handle_save_requests(
     };
     let current_level = match current_level {
         Some(level) => level,
-        None => return,
+        None => return Ok(()),
     };
     for save in save_events.iter() {
         for player in &player_query {
@@ -162,13 +168,15 @@ fn handle_save_requests(
                 .clone()
                 .unwrap_or_else(|| Local::now().to_rfc2822().replace(':', "-"));
             let path = get_save_path(filename.clone());
-            fs::create_dir_all(path.parent().unwrap()).expect("Failed to create save directory");
+            let dir = path.parent().context("Failed to get save directory")?;
+            fs::create_dir_all(dir).context("Failed to create save directory")?;
             fs::write(&path, serialized)
                 .unwrap_or_else(|e| error!("Failed to write save {filename}: {e}"));
 
             info!("Successfully saved game at {}", path.to_string_lossy());
         }
     }
+    Ok(())
 }
 
 fn get_save_path(filename: impl Into<Cow<'static, str>>) -> PathBuf {

@@ -1,8 +1,10 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instantiation::spawning::spawn::spawn_requested;
 use crate::level_instantiation::spawning::{GameObject, SpawnEvent, SpawnTracker};
+use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
@@ -15,8 +17,8 @@ impl Plugin for LevelSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
-            .add_system(save_world.after(spawn_requested))
-            .add_system_to_stage(CoreStage::PostUpdate, load_world);
+            .add_system(save_world.pipe(log_errors).after(spawn_requested))
+            .add_system_to_stage(CoreStage::PostUpdate, load_world.pipe(log_errors));
     }
 }
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
@@ -40,7 +42,7 @@ pub struct CurrentLevel {
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&SpawnTracker, Option<&Transform>)>,
-) {
+) -> Result<()> {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
         let valid_candidates: Vec<_> = iter::once(scene.clone())
@@ -61,22 +63,24 @@ fn save_world(
             .filter_map(|(path, exists)| (!exists).then_some(path))
             .next()
         {
-            let serialized_world = serialize_world(&spawn_query);
-            fs::create_dir_all(path.parent().unwrap()).expect("Failed to create scene directory");
+            let serialized_world = serialize_world(&spawn_query)?;
+            let dir = path.parent().context("Failed to get level directory")?;
+            fs::create_dir_all(dir).context("Failed to create level directory")?;
             fs::write(path, serialized_world)
-                .unwrap_or_else(|e| error!("Failed to save scene \"{}\": {}", scene, e));
+                .unwrap_or_else(|e| error!("Failed to save level \"{}\": {}", scene, e));
             info!(
-                "Successfully saved scene \"{}\" at {}",
+                "Successfully saved level \"{}\" at {}",
                 scene,
                 path.to_string_lossy()
             );
         } else {
             error!(
-                "Failed to save scene \"{}\": Already got too many saves with this name",
+                "Failed to save level \"{}\": Already got too many saves with this name",
                 scene
             );
         }
     }
+    Ok(())
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -90,11 +94,11 @@ fn load_world(
     mut spawn_requests: EventWriter<SpawnEvent>,
     levels: Res<Assets<SerializedLevel>>,
     level_handles: Option<Res<LevelAssets>>,
-) {
+) -> Result<()> {
     let level_handles = match level_handles {
         Some(level_handles) => level_handles,
         None => {
-            return;
+            return Ok(());
         }
     };
     for load in load_requests.iter() {
@@ -110,7 +114,10 @@ fn load_world(
                 continue;
             }
         };
-        let spawn_events = &levels.get(handle).unwrap().0;
+        let spawn_events = &levels
+            .get(handle)
+            .context("Failed to get level from handle in level assets")?
+            .0;
         for entity in &current_spawn_query {
             commands
                 .get_entity(entity)
@@ -128,9 +135,10 @@ fn load_world(
 
         info!("Successfully loaded scene \"{}\"", load.filename,)
     }
+    Ok(())
 }
 
-fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> String {
+fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> Result<String> {
     let objects: Vec<_> = spawn_query
         .iter()
         .filter(|(spawn_tracker, _)| !matches!(spawn_tracker.object, GameObject::Player))
@@ -140,7 +148,7 @@ fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> 
         })
         .collect();
     let serialized_level = SerializedLevel(objects);
-    ron::ser::to_string_pretty(&serialized_level, default()).expect("Failed to serialize world")
+    ron::ser::to_string_pretty(&serialized_level, default()).context("Failed to serialize world")
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid)]

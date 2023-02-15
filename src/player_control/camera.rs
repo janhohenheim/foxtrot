@@ -1,6 +1,7 @@
 use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
 use crate::player_control::player_embodiment::set_camera_actions;
+use crate::util::log_error::log_errors;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
@@ -104,7 +105,7 @@ impl Plugin for CameraPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(cursor_grab_system)
                     .with_system(init_camera)
-                    .with_system(set_camera_focus)
+                    .with_system(set_camera_focus.pipe(log_errors))
                     .with_system(
                         switch_kind
                             .after(set_camera_actions)

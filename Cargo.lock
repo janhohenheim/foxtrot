@@ -1976,6 +1976,7 @@ dependencies = [
 name = "foxtrot"
 version = "0.1.6"
 dependencies = [
+ "anyhow",
  "bevy",
  "bevy_asset_loader",
  "bevy_common_assets",

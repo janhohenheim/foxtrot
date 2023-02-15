@@ -26,14 +26,13 @@
         <Feature Id="Main">
             <ComponentGroupRef Id="MainComponent" />
             <ComponentRef Id="StartMenuShortcut" />
+            <ComponentGroupRef Id="AssetsDirectory" />
         </Feature>
 
         <!-- Installs the actual files -->
         <ComponentGroup Id="MainComponent" Directory="INSTALLFOLDER">
             <Component>
-                <File Id="foxtrot.exe" Source="..\..\..\target\release\foxtrot.exe" Vital="true" />
-                <File Id="assets" Source="..\..\..\assets" Vital="true" />
-                <File Id="assets" Source="..\..\..\credits" Vital="true" />
+                <File Id="foxtrot.exe" Source="..\..\..\target\debug\foxtrot.exe" Vital="true" />
             </Component>
         </ComponentGroup>
 

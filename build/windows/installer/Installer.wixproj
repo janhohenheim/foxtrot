@@ -6,5 +6,15 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="WixToolset.UI.wixext" Version="4.0.0-rc.2" />
+        <PackageReference Include="WixToolset.Heat" Version="4.0.0-rc.2" />
     </ItemGroup>
+
+    <ItemGroup>
+        <HarvestDirectory Include="..\..\..\assets">
+              <ComponentGroupName>AssetsDirectory</ComponentGroupName>
+              <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+              <SuppressRootDirectory>false</SuppressRootDirectory>
+        </HarvestDirectory>
+        <BindPath Include="..\..\..\assets" />
+  </ItemGroup>
 </Project>

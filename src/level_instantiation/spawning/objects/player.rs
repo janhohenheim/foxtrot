@@ -3,6 +3,7 @@ use crate::level_instantiation::spawning::{
 };
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::player_control::player_embodiment::{Player, PlayerSensor};
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -18,13 +19,13 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
+    ) -> Result<Entity> {
         let gltf = spawner
             .gltf
             .get(&spawner.scenes.character)
-            .unwrap_or_else(|| panic!("Failed to load scene for player"));
+            .context("Failed to load scene for player")?;
 
-        spawner
+        Ok(spawner
             .commands
             .spawn((
                 PbrBundle {
@@ -62,6 +63,6 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     Name::new("Player Model"),
                 ));
             })
-            .id()
+            .id())
     }
 }

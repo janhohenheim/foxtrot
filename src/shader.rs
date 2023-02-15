@@ -1,12 +1,15 @@
 #![allow(clippy::extra_unused_type_parameters)]
 use crate::file_system_interaction::asset_loading::TextureAssets;
+use crate::util::log_error::log_errors;
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::asset::HandleId;
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
 use bevy::utils::HashMap;
 use regex::Regex;
+use std::sync::LazyLock;
 
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
@@ -19,7 +22,8 @@ impl Plugin for ShaderPlugin {
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
             .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader))
             .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(set_texture_to_repeat),
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(set_texture_to_repeat.pipe(log_errors)),
             );
     }
 }
@@ -87,6 +91,10 @@ impl Material for RepeatedMaterial {
     }
 }
 
+static REPEAT_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"\[repeat:(\d+),(\d+)\]").expect("Failed to compile repeat regex")
+});
+
 pub fn set_texture_to_repeat(
     mut commands: Commands,
     added_name: Query<(&Name, &Children), Added<Name>>,
@@ -94,20 +102,22 @@ pub fn set_texture_to_repeat(
     mut materials: ResMut<Materials>,
     standard_materials: Res<Assets<StandardMaterial>>,
     mut repeated_materials: ResMut<Assets<RepeatedMaterial>>,
-) {
-    let re = Regex::new(r"\[repeat:(\d+),(\d+)\]").unwrap();
+) -> Result<()> {
     for (name, children) in &added_name {
-        if let Some(captures) = re.captures(&name.to_lowercase()) {
+        if let Some(captures) = REPEAT_REGEX.captures(&name.to_lowercase()) {
             let repeats = Repeats {
-                horizontal: captures[1].parse().unwrap(),
-                vertical: captures[2].parse().unwrap(),
+                horizontal: captures[1].parse().context("Failed to parse repeat")?,
+                vertical: captures[2].parse().context("Failed to parse repeat")?,
                 ..default()
             };
             for child in children.iter() {
                 if let Ok(standard_material_handle) = material_handles.get(*child) {
-                    let standard_material =
-                        standard_materials.get(standard_material_handle).unwrap();
-                    let texture = standard_material.base_color_texture.as_ref().unwrap();
+                    let standard_material = standard_materials
+                        .get(standard_material_handle)
+                        .context("Failed to get standard material from handle")?;
+                    let texture = standard_material.base_color_texture.as_ref().context(
+                        "Failed to get texture from standard material. Is the texture missing?",
+                    )?;
                     let key = (texture.id(), repeats);
 
                     let repeated_material = materials.repeated.entry(key).or_insert_with(|| {
@@ -125,4 +135,5 @@ pub fn set_texture_to_repeat(
             }
         }
     }
+    Ok(())
 }

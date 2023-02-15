@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use anyhow::Result;
 use bevy::prelude::*;
 
 pub struct SunlightSpawner;
@@ -11,10 +12,10 @@ impl PrimedGameObjectSpawnerImplementor for SunlightSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
+    ) -> Result<Entity> {
         // directional 'sun' light
         const HALF_SIZE: f32 = 50.0;
-        spawner
+        Ok(spawner
             .commands
             .spawn((
                 DirectionalLightBundle {
@@ -37,6 +38,6 @@ impl PrimedGameObjectSpawnerImplementor for SunlightSpawner {
                 },
                 Name::new("Light"),
             ))
-            .id()
+            .id())
     }
 }

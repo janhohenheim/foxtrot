@@ -91,9 +91,13 @@ impl MeshExt for Mesh {
     }
 
     fn read_coords_mut(&mut self, id: impl Into<MeshVertexAttributeId>) -> &mut Vec<[f32; 3]> {
-        match self.attribute_mut(id).unwrap() {
+        // Guaranteed by Bevy for the current usage
+        match self
+            .attribute_mut(id)
+            .expect("Failed to read unknown mesh attribute")
+        {
             VertexAttributeValues::Float32x3(values) => values,
-            // Guaranteed by Bevy
+            // Guaranteed by Bevy for the current usage
             _ => unreachable!(),
         }
     }
@@ -108,7 +112,14 @@ impl MeshExt for Mesh {
             let mut result: Vec<_> = children
                 .iter()
                 .filter_map(|entity| mesh_handles.get(*entity).ok().map(|mesh| (*entity, mesh)))
-                .map(|(entity, mesh_handle)| (entity, meshes.get(mesh_handle).unwrap()))
+                .map(|(entity, mesh_handle)| {
+                    (
+                        entity,
+                        meshes
+                            .get(mesh_handle)
+                            .expect("Failed to get mesh from handle"),
+                    )
+                })
                 .map(|(entity, mesh)| {
                     assert_eq!(mesh.primitive_topology(), PrimitiveTopology::TriangleList);
                     (entity, mesh)

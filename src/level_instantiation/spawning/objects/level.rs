@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use anyhow::Result;
 use bevy::prelude::*;
 
 pub struct LevelSpawner;
@@ -11,9 +12,9 @@ impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         object: GameObject,
         transform: Transform,
-    ) -> Entity {
-        spawner
-            .spawn_gltf(object, &spawner.scenes.level, transform)
-            .id()
+    ) -> Result<Entity> {
+        Ok(spawner
+            .spawn_gltf(object, &spawner.scenes.level, transform)?
+            .id())
     }
 }

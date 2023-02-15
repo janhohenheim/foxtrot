@@ -5,6 +5,7 @@ use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterB
 use crate::movement::navigation::Follower;
 use crate::movement::physics::CustomCollider;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -20,13 +21,13 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
         spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
         _object: GameObject,
         transform: Transform,
-    ) -> Entity {
+    ) -> Result<Entity> {
         let gltf = spawner
             .gltf
             .get(&spawner.scenes.character)
-            .unwrap_or_else(|| panic!("Failed to load scene for NPC"));
+            .context("Failed to load scene for NPC")?;
 
-        spawner
+        Ok(spawner
             .commands
             .spawn((
                 PbrBundle {
@@ -68,6 +69,6 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     Name::new("NPC Model"),
                 ));
             })
-            .id()
+            .id())
     }
 }

@@ -121,7 +121,7 @@ fn load_world(
         for entity in &current_spawn_query {
             commands
                 .get_entity(entity)
-                .unwrap_or_else(|| panic!("Failed to get entity while loading"))
+                .context("Failed to get entity while loading")?
                 .despawn_recursive();
         }
         for event in spawn_events {

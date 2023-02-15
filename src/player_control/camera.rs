@@ -93,6 +93,9 @@ impl Default for IngameCameraKind {
 /// third person or fixed angle camera is used.
 pub struct CameraPlugin;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemLabel)]
+pub struct SetCameraFocusLabel;
+
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<UiCamera>()
@@ -105,11 +108,11 @@ impl Plugin for CameraPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(cursor_grab_system)
                     .with_system(init_camera)
-                    .with_system(set_camera_focus.pipe(log_errors))
+                    .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
                     .with_system(
                         switch_kind
                             .after(set_camera_actions)
-                            .after(set_camera_focus),
+                            .after(SetCameraFocusLabel),
                     )
                     .with_system(update_transform.after(switch_kind))
                     .with_system(reset_actions.after(update_transform)),

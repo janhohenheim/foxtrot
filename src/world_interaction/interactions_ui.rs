@@ -87,9 +87,9 @@ fn display_interaction_prompt(
     mut egui_context: ResMut<EguiContext>,
     actions: Res<Actions>,
     windows: Res<Windows>,
-    actions_frozen: Option<Res<ActionsFrozen>>,
+    actions_frozen: Res<ActionsFrozen>,
 ) -> Result<()> {
-    if actions_frozen.is_some() {
+    if actions_frozen.is_frozen() {
         return Ok(());
     }
     let interaction_ui = match interaction_ui {

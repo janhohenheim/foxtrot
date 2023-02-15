@@ -50,9 +50,9 @@ impl Plugin for SceneEditorPlugin {
 }
 
 fn handle_toggle(
-    mut commands: Commands,
     actions: Res<Actions>,
     mut scene_editor_state: ResMut<SceneEditorState>,
+    mut actions_frozen: ResMut<ActionsFrozen>,
 ) {
     if !actions.ui.toggle_editor {
         return;
@@ -60,9 +60,9 @@ fn handle_toggle(
     scene_editor_state.active = !scene_editor_state.active;
 
     if scene_editor_state.active {
-        commands.init_resource::<ActionsFrozen>();
+        actions_frozen.freeze();
     } else {
-        commands.remove_resource::<ActionsFrozen>();
+        actions_frozen.unfreeze();
     }
 }
 

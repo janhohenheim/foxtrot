@@ -34,7 +34,7 @@
         <!-- Installs the actual files -->
         <ComponentGroup Id="MainComponent" Directory="INSTALLFOLDER">
             <Component>
-                <File Id="Executable" Source="..\..\..\target\debug\foxtrot.exe" Vital="true" />
+                <File Id="Executable" Source="..\..\..\target\release\foxtrot.exe" Vital="true" />
             </Component>
         </ComponentGroup>
 

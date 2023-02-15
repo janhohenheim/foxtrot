@@ -1,4 +1,5 @@
 use crate::world_interaction::condition::{ActiveConditions, ConditionId};
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::utils::{HashMap, HashSet};
@@ -22,14 +23,14 @@ pub struct CurrentDialog {
     pub last_choice: Option<ConditionId>,
 }
 impl CurrentDialog {
-    pub fn fetch_page(&self, page_id: &PageId) -> Page {
+    pub fn fetch_page(&self, page_id: &PageId) -> Result<Page> {
         self.dialog
             .pages
             .get(page_id)
-            .unwrap_or_else(|| panic!("Failed to fetch page with id {}", page_id.0))
-            .clone()
+            .with_context(|| format!("Failed to fetch page with id {}", page_id.0))
+            .cloned()
     }
-    pub fn fetch_current_page(&self) -> Page {
+    pub fn fetch_current_page(&self) -> Result<Page> {
         self.fetch_page(&self.current_page)
     }
 }

@@ -6,7 +6,9 @@ use bevy_rapier3d::prelude::*;
 use bevy_rapier3d::rapier::prelude::CollisionEventFlags;
 
 use crate::player_control::player_embodiment::PlayerSensor;
+use crate::util::log_error::log_errors;
 use crate::GameState;
+use anyhow::{Context, Result};
 
 pub struct InteractionsUiPlugin;
 
@@ -14,8 +16,8 @@ impl Plugin for InteractionsUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::on_update(GameState::Playing)
-                .with_system(update_interaction_possibilities)
-                .with_system(display_interaction_prompt),
+                .with_system(update_interaction_possibilities.pipe(log_errors))
+                .with_system(display_interaction_prompt.pipe(log_errors)),
         );
     }
 }
@@ -38,7 +40,7 @@ fn update_interaction_possibilities(
     dialog_target_query: Query<&DialogTarget>,
     interaction_ui: Option<Res<InteractionUi>>,
     parent_query: Query<&Parent>,
-) {
+) -> Result<()> {
     for event in collision_events.iter() {
         let (entity_a, entity_b, kind, ongoing) = match event {
             CollisionEvent::Started(entity_a, entity_b, kind) => (entity_a, entity_b, kind, true),
@@ -63,7 +65,7 @@ fn update_interaction_possibilities(
             if ongoing && interaction_ui.is_none() {
                 let dialog_translation_source = parent_query
                     .get(*dialog_source)
-                    .unwrap().get();
+                    ?.get();
                 commands.insert_resource::<InteractionUi>(InteractionUi {
                     source: Some(dialog_translation_source),
                     kind: InteractionKind::Dialog(dialog_target.clone()),
@@ -76,6 +78,7 @@ fn update_interaction_possibilities(
             }
         }
     }
+    Ok(())
 }
 
 fn display_interaction_prompt(
@@ -85,16 +88,18 @@ fn display_interaction_prompt(
     actions: Res<Actions>,
     windows: Res<Windows>,
     actions_frozen: Option<Res<ActionsFrozen>>,
-) {
+) -> Result<()> {
     if actions_frozen.is_some() {
-        return;
+        return Ok(());
     }
     let interaction_ui = match interaction_ui {
         Some(interaction_ui) => interaction_ui,
-        None => return,
+        None => return Ok(()),
     };
 
-    let window = windows.get_primary().unwrap();
+    let window = windows
+        .get_primary()
+        .context("Failed to get primary window")?;
     egui::Window::new("Interaction")
         .collapsible(false)
         .title_bar(false)
@@ -114,4 +119,5 @@ fn display_interaction_prompt(
             }
         }
     }
+    Ok(())
 }

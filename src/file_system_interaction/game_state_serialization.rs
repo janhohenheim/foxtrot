@@ -74,7 +74,12 @@ fn handle_load_requests(
                     .filter_map(|entry| entry.ok())
                     .filter(|entry| entry.is_file())
                     .collect();
-                saves.sort_by_cached_key(|f| f.metadata().unwrap().modified().unwrap());
+                saves.sort_by_cached_key(|f| {
+                    f.metadata()
+                        .expect("Failed to read file metadata")
+                        .modified()
+                        .expect("Failed to read file modified time")
+                });
                 saves.last().map(|entry| entry.to_owned())
             }) {
             Some(path) => path,

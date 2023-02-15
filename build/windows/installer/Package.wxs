@@ -3,6 +3,7 @@
         Name="Foxtrot"
         Manufacturer="Jan Hohenheim"
         Version="0.1.6.0"
+
         UpgradeCode="5b55f5ef-3eba-4782-8bd5-7711d414728d"
         Scope="perUserOrMachine">
         <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
@@ -33,7 +34,7 @@
         <!-- Installs the actual files -->
         <ComponentGroup Id="MainComponent" Directory="INSTALLFOLDER">
             <Component>
-                <File Id="foxtrot.exe" Source="..\..\..\target\debug\foxtrot.exe" Vital="true" />
+                <File Id="Executable" Source="..\..\..\target\debug\foxtrot.exe" Vital="true" />
             </Component>
         </ComponentGroup>
 
@@ -41,7 +42,7 @@
         <!-- Source: https://wixtoolset.org/docs/v3/howtos/files_and_registry/create_start_menu_shortcut/ -->
         <StandardDirectory Id="ProgramMenuFolder">
             <Component Id="StartMenuShortcut" Guid="*">
-                <Shortcut Id="ApplicationStartMenuShortcut" Name="!(bind.Property.ProductName)" Target="[#foxtrot.exe]" WorkingDirectory="INSTALLFOLDER" />
+                <Shortcut Id="ApplicationStartMenuShortcut" Name="!(bind.Property.ProductName)" Target="[!Executable]" WorkingDirectory="INSTALLFOLDER" />
                 <RegistryValue Root="HKCU" Key="Software\!(bind.Property.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
       </StandardDirectory>

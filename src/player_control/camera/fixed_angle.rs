@@ -15,6 +15,7 @@ pub struct FixedAngleCamera {
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
+    pub config: GameConfig,
 }
 
 impl Default for FixedAngleCamera {
@@ -25,6 +26,7 @@ impl Default for FixedAngleCamera {
             distance: MAX_DISTANCE / 2.,
             target: default(),
             secondary_target: default(),
+            config: default(),
         }
     }
 }
@@ -37,6 +39,7 @@ impl From<&ThirdPersonCamera> for FixedAngleCamera {
             up: third_person_camera.up,
             distance: third_person_camera.distance,
             secondary_target: third_person_camera.secondary_target,
+            config: third_person_camera.config.clone(),
         }
     }
 }

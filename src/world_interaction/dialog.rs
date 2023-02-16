@@ -11,6 +11,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::Color32;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use serde::{Deserialize, Serialize};
+use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
 
@@ -93,13 +94,27 @@ fn show_dialog(
     mut egui_context: ResMut<EguiContext>,
     mut actions_frozen: ResMut<ActionsFrozen>,
     actions: Res<Actions>,
+    time: Res<Time>,
+    mut elapsed_time: Local<f32>,
 ) -> Result<()> {
     let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
-        None => return Ok(()),
+        None => {
+            *elapsed_time = 0.0;
+            return Ok(());
+        }
     };
     let height = 150.;
     let current_page = current_dialog.fetch_current_page()?;
+
+    const LETTERS_PER_SECOND: f32 = 50.;
+    let letters_to_display = (LETTERS_PER_SECOND * *elapsed_time) as usize;
+    let text: String = current_page
+        .text
+        .graphemes(true)
+        .take(letters_to_display)
+        .collect();
+
     egui::TopBottomPanel::bottom("Dialog")
         .resizable(false)
         .exact_height(height)
@@ -110,22 +125,26 @@ fn show_dialog(
         .show(egui_context.ctx_mut(), |ui| {
             ui.vertical_centered_justified(|ui| {
                 ui.add_space(5.);
-                ui.label(current_page.text.clone());
+                ui.label(&text);
                 ui.add_space(8.);
-                present_choices(
-                    ui,
-                    &mut commands,
-                    &mut current_dialog,
-                    &active_conditions,
-                    &mut condition_writer,
-                    &mut actions_frozen,
-                    &actions.ui,
-                    current_page.next_page,
-                )
-                .expect("Failed to present dialog choices");
-                ui.add_space(5.);
+                if text == current_page.text {
+                    present_choices(
+                        ui,
+                        &mut commands,
+                        &mut current_dialog,
+                        &active_conditions,
+                        &mut condition_writer,
+                        &mut actions_frozen,
+                        &actions.ui,
+                        current_page.next_page,
+                        &mut elapsed_time,
+                    )
+                    .expect("Failed to present dialog choices");
+                    ui.add_space(5.);
+                }
             });
         });
+    *elapsed_time += time.delta_seconds();
     Ok(())
 }
 
@@ -139,11 +158,13 @@ fn present_choices(
     actions_frozen: &mut ActionsFrozen,
     actions: &UiActions,
     next_page: NextPage,
+    elapsed_time: &mut f32,
 ) -> Result<()> {
     match next_page {
         NextPage::Continue(next_page_id) => {
             if ui.button("1. Continue").clicked() || actions.numbered_choice[1] {
                 current_dialog.current_page = next_page_id;
+                *elapsed_time = 0.0;
             }
         }
         NextPage::Choice(choices) => {
@@ -166,6 +187,7 @@ fn present_choices(
                 condition_writer.send(ConditionAddEvent(choice_id.clone()));
                 current_dialog.last_choice = Some(choice_id);
                 current_dialog.current_page = choice.next_page_id;
+                *elapsed_time = 0.0;
             }
         }
         NextPage::SameAs(other_page_id) => {
@@ -179,6 +201,7 @@ fn present_choices(
                 actions_frozen,
                 actions,
                 next_page,
+                elapsed_time,
             )?;
         }
         NextPage::Exit => {

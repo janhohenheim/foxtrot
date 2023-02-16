@@ -86,6 +86,7 @@ fn set_current_dialog(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_dialog(
     mut commands: Commands,
     current_dialog: Option<ResMut<CurrentDialog>>,
@@ -231,7 +232,7 @@ fn create_dialog_rich_text(page: &Page, elapsed_time: f32) -> egui::RichText {
 
 fn create_choice_rich_text(index: usize, text: &str) -> egui::RichText {
     let text = format!("{}. {}", index + 1, text);
-    egui::RichText::new(&text)
+    egui::RichText::new(text)
         .color(egui::Color32::from_gray(220))
         .size(14.)
 }

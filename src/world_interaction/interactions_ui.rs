@@ -92,13 +92,12 @@ fn update_interaction_ui(
         } else {
             commands.remove_resource::<InteractionUi>();
         }
-    } else {
-        if let Some(valid_target) = valid_target {
-            commands.insert_resource(InteractionUi {
-                source: valid_target,
-            });
-        }
+    } else if let Some(valid_target) = valid_target {
+        commands.insert_resource(InteractionUi {
+            source: valid_target,
+        });
     }
+
     Ok(())
 }
 

@@ -107,8 +107,9 @@ fn show_dialog(
     let height = 150.;
     let current_page = current_dialog.fetch_current_page()?;
 
-    const LETTERS_PER_SECOND: f32 = 50.;
-    let letters_to_display = (LETTERS_PER_SECOND * *elapsed_time) as usize;
+    const BASE_LETTERS_PER_SECOND: f32 = 60.;
+    let letters_to_display =
+        (BASE_LETTERS_PER_SECOND * current_page.talking_speed * *elapsed_time) as usize;
     let text: String = current_page
         .text
         .graphemes(true)

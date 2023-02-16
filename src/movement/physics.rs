@@ -4,7 +4,6 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
-use serde::{Deserialize, Serialize};
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub struct PhysicsPlugin;
@@ -23,14 +22,10 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct CustomCollider;
-
 #[allow(clippy::type_complexity)]
 pub fn read_colliders(
     mut commands: Commands,
-    added_name: Query<(Entity, &Name), (Added<Name>, Without<CustomCollider>)>,
+    added_name: Query<(Entity, &Name), Added<Name>>,
     children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,

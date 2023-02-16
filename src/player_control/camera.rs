@@ -20,7 +20,9 @@ mod third_person;
 mod ui;
 mod util;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(
+    Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect, Default,
+)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
     pub kind: IngameCameraKind,
@@ -124,9 +126,9 @@ impl Plugin for CameraPlugin {
 fn init_camera(mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>) {
     for (transform, mut camera) in camera.iter_mut() {
         match &mut camera.kind {
-            IngameCameraKind::ThirdPerson(camera) => camera.init_transform(*transform),
-            IngameCameraKind::FirstPerson(camera) => camera.init_transform(*transform),
-            IngameCameraKind::FixedAngle(camera) => camera.init_transform(*transform),
+            IngameCameraKind::ThirdPerson(camera) => camera.transform = *transform,
+            IngameCameraKind::FirstPerson(camera) => camera.transform = *transform,
+            IngameCameraKind::FixedAngle(camera) => camera.transform = *transform,
         }
     }
 }

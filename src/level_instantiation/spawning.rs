@@ -66,24 +66,6 @@ impl Plugin for SpawningPlugin {
 }
 
 impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
-    pub fn new(
-        outer_spawner: &'a GameObjectSpawner,
-        commands: &'a mut Commands<'w, 's>,
-        gltf: &'a Res<'a, Assets<Gltf>>,
-        materials: &'a Res<'a, Materials>,
-        animations: &'a Res<'a, AnimationAssets>,
-        scenes: &'a Res<'a, SceneAssets>,
-    ) -> Self {
-        Self {
-            outer_spawner,
-            commands,
-            gltf,
-            materials,
-            animations,
-            scenes,
-        }
-    }
-
     pub fn spawn<'c: 'a>(&'c mut self, object: GameObject, transform: Transform) -> Result<Entity> {
         self.outer_spawner.implementors[&object].spawn(self, object, transform)
     }
@@ -211,6 +193,13 @@ where
         animations: &'a Res<'a, AnimationAssets>,
         scenes: &'a Res<'a, SceneAssets>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
-        PrimedGameObjectSpawner::new(self, commands, gltf, materials, animations, scenes)
+        PrimedGameObjectSpawner {
+            outer_spawner: self,
+            gltf,
+            materials,
+            commands,
+            animations,
+            scenes,
+        }
     }
 }

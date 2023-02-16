@@ -28,8 +28,9 @@ impl Default for FirstPersonCamera {
 
 impl From<&ThirdPersonCamera> for FirstPersonCamera {
     fn from(camera: &ThirdPersonCamera) -> Self {
+        let transform = camera.transform.with_translation(camera.target);
         Self {
-            transform: camera.transform,
+            transform,
             look_target: camera.secondary_target,
             up: camera.up,
             config: camera.config.clone(),

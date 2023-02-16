@@ -8,7 +8,9 @@ pub use crate::world_interaction::dialog::resources::{
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy_egui::egui::Color32;
+use bevy::window::WindowId;
+use bevy::winit::WinitWindows;
+use bevy_egui::egui::{Color32, Pos2};
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
@@ -96,6 +98,7 @@ fn show_dialog(
     actions: Res<Actions>,
     time: Res<Time>,
     mut elapsed_time: Local<f32>,
+    windows: NonSend<WinitWindows>,
 ) -> Result<()> {
     let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
@@ -104,7 +107,6 @@ fn show_dialog(
             return Ok(());
         }
     };
-    let height = 150.;
     let current_page = current_dialog.fetch_current_page()?;
 
     const BASE_LETTERS_PER_SECOND: f32 = 60.;
@@ -116,15 +118,26 @@ fn show_dialog(
         .take(letters_to_display)
         .collect();
 
-    egui::TopBottomPanel::bottom("Dialog")
+    let total_window_size = windows
+        .get_window(WindowId::primary())
+        .context("Failed to get primary window")?
+        .inner_size();
+    let dialog_size = egui::Vec2::new(500., 150.);
+    egui::Window::new("Dialog")
         .resizable(false)
-        .exact_height(height)
+        .fixed_pos(Pos2::new(30., 400.))
+        .fixed_size(dialog_size)
+        .default_size(dialog_size)
+        .anchor(egui::Align2::CENTER_BOTTOM, egui::Vec2::new(0., -30.))
+        .collapsible(false)
+        .title_bar(false)
         .frame(egui::Frame {
             fill: Color32::from_black_alpha(250),
             ..default()
         })
         .show(egui_context.ctx_mut(), |ui| {
-            ui.vertical_centered_justified(|ui| {
+            ui.style_mut().visuals.button_frame = false;
+            ui.vertical(|ui| {
                 ui.add_space(5.);
                 ui.label(&text);
                 ui.add_space(8.);

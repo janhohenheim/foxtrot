@@ -129,6 +129,7 @@ fn show_dialog(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn present_choices(
     ui: &mut egui::Ui,
     commands: &mut Commands,

@@ -35,7 +35,7 @@ fn handle_pause(
                 })
                 .show(egui_context.ctx_mut(), |ui| {
                     ui.vertical_centered_justified(|ui| {
-                        ui.visuals_mut().override_text_color = Some(egui::Color32::WHITE);
+                        ui.visuals_mut().override_text_color = Some(egui::Color32::from_gray(240));
                         ui.add_space(100.0);
                         ui.heading("Game Paused");
                         ui.separator();

@@ -6,17 +6,17 @@ use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Serialize, Deserialize)]
 pub struct DialogEvent {
     pub dialog: DialogId,
-    pub source: Option<Entity>,
+    pub source: Entity,
     pub page: Option<PageId>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize)]
 pub struct CurrentDialog {
-    pub source: Option<Entity>,
+    pub source: Entity,
     pub id: DialogId,
     pub dialog: Dialog,
     pub current_page: PageId,
@@ -42,7 +42,7 @@ pub struct Dialog {
     pub pages: HashMap<PageId, Page>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default, FromReflect)]
 #[reflect(Serialize, Deserialize)]
 pub struct InitialPage {
     pub id: PageId,
@@ -82,7 +82,7 @@ impl Default for NextPage {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Serialize, Deserialize)]
 pub struct DialogChoice {
     /// The player's answer
@@ -102,7 +102,17 @@ impl DialogChoice {
 }
 
 #[derive(
-    Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,
+    Debug,
+    Clone,
+    Eq,
+    PartialEq,
+    Default,
+    Component,
+    Reflect,
+    Hash,
+    Serialize,
+    Deserialize,
+    FromReflect,
 )]
 #[reflect(Component, Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]

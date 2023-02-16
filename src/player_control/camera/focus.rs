@@ -12,11 +12,8 @@ pub fn set_camera_focus(
     non_player_query: Query<&GlobalTransform, Without<Player>>,
 ) -> Result<()> {
     for mut camera in camera_query.iter_mut() {
-        if let Some(ref active_dialogue) = current_dialog &&
-            let Some(target_entity) = active_dialogue.source {
-            let global_translation = non_player_query
-                .get(target_entity)
-                ?;
+        if let Some(ref active_dialogue) = current_dialog {
+            let global_translation = non_player_query.get(active_dialogue.source)?;
             let translation = global_translation.translation();
             *camera.secondary_target_mut() = Some(translation);
         } else {

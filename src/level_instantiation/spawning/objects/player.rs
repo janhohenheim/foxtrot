@@ -1,8 +1,9 @@
+use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
-use crate::player_control::player_embodiment::{Player, PlayerSensor};
+use crate::player_control::player_embodiment::Player;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -40,15 +41,12 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     walk: spawner.animations.character_walking.clone(),
                     aerial: spawner.animations.character_running.clone(),
                 },
+                CollisionGroups::new(
+                    GameCollisionGroup::PLAYER.into(),
+                    GameCollisionGroup::ALL.into(),
+                ),
             ))
             .with_children(|parent| {
-                parent.spawn((
-                    Collider::capsule_y(HEIGHT / 2., RADIUS),
-                    Sensor,
-                    PlayerSensor,
-                    ActiveCollisionTypes::all(),
-                    Name::new("Player Sensor"),
-                ));
                 parent.spawn((
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),

@@ -24,7 +24,7 @@ impl Default for ThirdPersonCamera {
         Self {
             up: Vec3::Y,
             transform: default(),
-            distance: 1.,
+            distance: 5.,
             target: default(),
             secondary_target: default(),
             config: default(),

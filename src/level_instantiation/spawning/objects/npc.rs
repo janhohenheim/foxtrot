@@ -1,3 +1,4 @@
+use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
@@ -52,7 +53,11 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
-                    ActiveCollisionTypes::KINEMATIC_STATIC,
+                    ActiveCollisionTypes::KINEMATIC_KINEMATIC,
+                    CollisionGroups::new(
+                        GameCollisionGroup::OTHER.into(),
+                        GameCollisionGroup::PLAYER.into(),
+                    ),
                     CustomCollider,
                 ));
                 parent.spawn((

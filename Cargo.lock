@@ -1986,6 +1986,7 @@ dependencies = [
  "bevy_pathmesh",
  "bevy_prototype_debug_lines",
  "bevy_rapier3d",
+ "bitflags",
  "chrono",
  "embed-resource",
  "glob",

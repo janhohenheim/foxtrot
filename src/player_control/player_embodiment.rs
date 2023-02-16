@@ -26,7 +26,6 @@ impl Plugin for PlayerEmbodimentPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Timer>()
             .register_type::<Player>()
-            .register_type::<PlayerSensor>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_jump.after(set_actions).before(apply_jumping))
@@ -65,10 +64,6 @@ impl Plugin for PlayerEmbodimentPlugin {
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Player;
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct PlayerSensor;
 
 fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With<Player>>) {
     for mut jump in &mut player_query {
@@ -143,7 +138,7 @@ fn handle_speed_effects(
         let speed_squared = velocity.0.length_squared();
         for mut projection in projections.iter_mut() {
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
-                const MAX_SPEED_FOR_FOV: f32 = 10.;
+                const MAX_SPEED_FOR_FOV: f32 = 12.;
                 const MIN_FOV: f32 = 0.75;
                 const MAX_FOV: f32 = 1.5;
                 let scale = (speed_squared / MAX_SPEED_FOR_FOV.squared())

@@ -1,9 +1,9 @@
+use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
 use crate::movement::navigation::Follower;
-use crate::movement::physics::CustomCollider;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -42,18 +42,21 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     walk: spawner.animations.character_walking.clone(),
                     aerial: spawner.animations.character_running.clone(),
                 },
+                DialogTarget {
+                    dialog_id: DialogId::new("follower"),
+                },
             ))
             .with_children(|parent| {
                 parent.spawn((
-                    DialogTarget {
-                        dialog_id: DialogId::new("follower"),
-                    },
                     Name::new("NPC Dialog Collider"),
                     Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
-                    ActiveCollisionTypes::KINEMATIC_STATIC,
-                    CustomCollider,
+                    ActiveCollisionTypes::KINEMATIC_KINEMATIC,
+                    CollisionGroups::new(
+                        GameCollisionGroup::OTHER.into(),
+                        GameCollisionGroup::PLAYER.into(),
+                    ),
                 ));
                 parent.spawn((
                     SceneBundle {

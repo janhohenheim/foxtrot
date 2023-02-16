@@ -22,7 +22,9 @@ impl ActiveConditions {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize, FromReflect,
+)]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
 pub struct ConditionId(pub String);

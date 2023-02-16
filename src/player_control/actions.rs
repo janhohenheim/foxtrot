@@ -73,6 +73,7 @@ pub struct CameraActions {
 #[reflect(Serialize, Deserialize)]
 pub struct UiActions {
     pub toggle_editor: bool,
+    pub numbered_choice: [bool; 10],
 }
 
 pub fn set_actions(
@@ -82,14 +83,13 @@ pub fn set_actions(
     mut mouse_wheel: EventReader<MouseWheel>,
     actions_frozen: Res<ActionsFrozen>,
 ) {
+    *actions = default();
     actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    for i in 0..=9 {
+        actions.ui.numbered_choice[i] =
+            GameControl::NumberedChoice(i as u16).just_pressed(&keyboard_input);
+    }
     if actions_frozen.is_frozen() {
-        *actions = Actions {
-            ui: UiActions {
-                toggle_editor: actions.ui.toggle_editor,
-            },
-            ..default()
-        };
         return;
     }
 
@@ -105,7 +105,6 @@ pub fn set_actions(
     actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);
 
-    actions.camera.movement = None;
     let mut camera_movement = Vec2::ZERO;
     for event in mouse_motion.iter() {
         camera_movement += event.delta;
@@ -114,7 +113,6 @@ pub fn set_actions(
         actions.camera.movement = Some(camera_movement);
     }
 
-    actions.camera.zoom = None;
     let mut zoom = 0.0;
     for event in mouse_wheel.iter() {
         zoom += event.y;

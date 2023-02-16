@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
@@ -6,6 +7,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
+use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_kira_audio::AudioSource;
 
 pub struct LoadingPlugin;
@@ -14,6 +16,7 @@ impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
             .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
+            .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
             .add_loading_state(
                 LoadingState::new(GameState::Loading)
                     .with_collection::<FontAssets>()
@@ -23,6 +26,7 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
                     .with_collection::<TextureAssets>()
+                    .with_collection::<ConfigAssets>()
                     .continue_to_state(GameState::Menu),
             );
     }
@@ -79,4 +83,10 @@ pub struct DialogAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub glowy_interior: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct ConfigAssets {
+    #[asset(path = "config/config.game.toml")]
+    pub game: Handle<GameConfig>,
 }

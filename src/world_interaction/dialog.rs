@@ -1,7 +1,7 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::{Actions, ActionsFrozen, UiActions};
 use crate::util::log_error::log_errors;
-use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
+use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
@@ -147,22 +147,25 @@ fn present_choices(
             }
         }
         NextPage::Choice(choices) => {
-            for (index, (choice_id, choice)) in choices.iter().enumerate() {
+            let mut picked_choice = None;
+            for (index, (choice_id, choice)) in choices
+                .iter()
+                .filter(|(choice_id, choice)| {
+                    choice.is_available(active_conditions)
+                        && !was_just_picked(current_dialog, choice_id)
+                })
+                .enumerate()
+            {
                 let index = index + 1;
-                let was_just_picked = current_dialog
-                    .last_choice
-                    .as_ref()
-                    .map(|id| id == choice_id)
-                    .unwrap_or_default();
                 let text = format!("{}. {}", index, choice.text);
-                if choice.is_available(active_conditions)
-                    && !was_just_picked
-                    && (ui.button(text).clicked() || actions.numbered_choice[index])
-                {
-                    condition_writer.send(ConditionAddEvent(choice_id.clone()));
-                    current_dialog.last_choice = Some(choice_id.clone());
-                    current_dialog.current_page = choice.next_page_id.clone();
+                if ui.button(text).clicked() || actions.numbered_choice[index] {
+                    picked_choice = Some((choice_id.clone(), choice.clone()));
                 }
+            }
+            if let Some((choice_id, choice)) = picked_choice {
+                condition_writer.send(ConditionAddEvent(choice_id.clone()));
+                current_dialog.last_choice = Some(choice_id);
+                current_dialog.current_page = choice.next_page_id;
             }
         }
         NextPage::SameAs(other_page_id) => {
@@ -186,4 +189,12 @@ fn present_choices(
         }
     }
     Ok(())
+}
+
+fn was_just_picked(current_dialog: &CurrentDialog, choice_id: &ConditionId) -> bool {
+    current_dialog
+        .last_choice
+        .as_ref()
+        .map(|id| id == choice_id)
+        .unwrap_or_default()
 }

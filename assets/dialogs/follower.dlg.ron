@@ -54,6 +54,7 @@
         ),
         "page:exit": (
             text: "Goodbye.\n*The creature\'s gaze shifts ever so slightly. It now looks just past you into the void.*",
+            talking_speed: 2.,
             next_page: Exit,
         ),
         "page:main-choice-unnest": (

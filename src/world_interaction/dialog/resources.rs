@@ -14,7 +14,7 @@ pub struct DialogEvent {
     pub page: Option<PageId>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Resource, Serialize, Deserialize)]
 pub struct CurrentDialog {
     pub source: Entity,
     pub id: DialogId,
@@ -35,7 +35,7 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
 #[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
 pub struct Dialog {
     pub initial_page: Vec<InitialPage>,
@@ -59,10 +59,26 @@ impl InitialPage {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Page {
     pub text: String,
+    #[serde(default = "get_default_talking_speed")]
+    pub talking_speed: f32,
     pub next_page: NextPage,
+}
+
+fn get_default_talking_speed() -> f32 {
+    1.
+}
+
+impl Default for Page {
+    fn default() -> Self {
+        Self {
+            text: default(),
+            talking_speed: get_default_talking_speed(),
+            next_page: default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]

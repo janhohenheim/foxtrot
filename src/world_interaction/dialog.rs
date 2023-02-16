@@ -110,13 +110,11 @@ fn show_dialog(
 
     let dialog_size = egui::Vec2::new(500., 150.);
     egui::Window::new("Dialog")
-        .resizable(true)
         .anchor(egui::Align2::CENTER_BOTTOM, egui::Vec2::new(0., -30.))
         .collapsible(false)
-        .resizable(false)
         .title_bar(false)
         .frame(egui::Frame {
-            fill: egui::Color32::from_black_alpha(220),
+            fill: egui::Color32::from_black_alpha(230),
             inner_margin: egui::style::Margin::same(25.),
             rounding: egui::Rounding::same(30.0),
             ..default()
@@ -127,7 +125,6 @@ fn show_dialog(
 
             let style = ui.style_mut();
             style.visuals.button_frame = false;
-            style.visuals.override_text_color = Some(egui::Color32::WHITE);
             ui.vertical(|ui| {
                 ui.add_space(5.);
                 ui.label(dialog_text.clone());
@@ -232,9 +229,7 @@ fn create_dialog_rich_text(page: &Page, elapsed_time: f32) -> egui::RichText {
 
 fn create_choice_rich_text(index: usize, text: &str) -> egui::RichText {
     let text = format!("{}. {}", index + 1, text);
-    egui::RichText::new(text)
-        .color(egui::Color32::from_gray(220))
-        .size(14.)
+    egui::RichText::new(text).size(14.)
 }
 
 fn was_just_picked(current_dialog: &CurrentDialog, choice_id: &ConditionId) -> bool {

@@ -5,7 +5,7 @@ use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
 use bevy_rapier3d::rapier::prelude::CollisionEventFlags;
 
-use crate::player_control::player_embodiment::PlayerSensor;
+use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -36,7 +36,7 @@ pub enum InteractionKind {
 fn update_interaction_possibilities(
     mut commands: Commands,
     mut collision_events: EventReader<CollisionEvent>,
-    player_query: Query<Entity, With<PlayerSensor>>,
+    player_query: Query<Entity, With<Player>>,
     dialog_target_query: Query<&DialogTarget>,
     interaction_ui: Option<Res<InteractionUi>>,
     parent_query: Query<&Parent>,

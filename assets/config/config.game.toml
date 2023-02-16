@@ -1,0 +1,6 @@
+[camera.fixed_angle]
+min_distance = 5.0
+max_distance = 20.0
+zoom_speed = 0.5
+rotation_smoothing = 45.0
+translation_smoothing = 50.0

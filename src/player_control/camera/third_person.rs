@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
@@ -7,9 +8,6 @@ use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::PI;
 
-const MIN_DISTANCE: f32 = 1e-2;
-const MAX_DISTANCE: f32 = 10.0;
-
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct ThirdPersonCamera {
@@ -18,6 +16,7 @@ pub struct ThirdPersonCamera {
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
+    pub config: GameConfig,
 }
 
 impl Default for ThirdPersonCamera {
@@ -25,9 +24,10 @@ impl Default for ThirdPersonCamera {
         Self {
             up: Vec3::Y,
             transform: default(),
-            distance: MAX_DISTANCE / 2.,
+            distance: 1.,
             target: default(),
             secondary_target: default(),
+            config: default(),
         }
     }
 }
@@ -35,7 +35,7 @@ impl Default for ThirdPersonCamera {
 impl From<&FirstPersonCamera> for ThirdPersonCamera {
     fn from(first_person_camera: &FirstPersonCamera) -> Self {
         let target = first_person_camera.transform.translation;
-        let distance = MIN_DISTANCE;
+        let distance = first_person_camera.config.camera.third_person.min_distance;
         let eye = target - first_person_camera.forward() * distance;
         let up = first_person_camera.up;
         let eye = Transform::from_translation(eye).looking_at(target, up);
@@ -45,6 +45,7 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
             up,
             distance,
             secondary_target: first_person_camera.look_target,
+            config: first_person_camera.config.clone(),
         }
     }
 }
@@ -57,6 +58,7 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
             up: fixed_angle_camera.up,
             distance: fixed_angle_camera.distance,
             secondary_target: fixed_angle_camera.secondary_target,
+            config: fixed_angle_camera.config.clone(),
         }
     }
 }
@@ -73,10 +75,6 @@ impl ThirdPersonCamera {
         let pivot = self.target;
         let rotation = yaw_rotation * pitch_rotation;
         self.transform.rotate_around(pivot, rotation);
-    }
-
-    pub fn init_transform(&mut self, transform: Transform) {
-        self.transform = transform;
     }
 
     pub fn update_transform(
@@ -115,7 +113,7 @@ impl ThirdPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 1e-3;
+        let mouse_sensitivity = self.config.camera.mouse_sensitivity;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);
@@ -124,13 +122,21 @@ impl ThirdPersonCamera {
     }
 
     fn clamp_pitch(&self, angle: f32) -> f32 {
-        clamp_pitch(self.up, self.forward(), angle)
+        clamp_pitch(
+            self.up,
+            self.forward(),
+            angle,
+            self.config.camera.third_person.most_acute_from_above,
+            self.config.camera.third_person.most_acute_from_below,
+        )
     }
 
     fn zoom(&mut self, zoom: f32) {
-        let zoom_speed = 0.5;
+        let zoom_speed = self.config.camera.third_person.zoom_speed;
         let zoom = zoom * zoom_speed;
-        self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
+        let min_distance = self.config.camera.third_person.min_distance;
+        let max_distance = self.config.camera.third_person.max_distance;
+        self.distance = (self.distance - zoom).clamp(min_distance, max_distance);
     }
 
     fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
@@ -164,9 +170,15 @@ impl ThirdPersonCamera {
         line_of_sight_correction: LineOfSightCorrection,
     ) -> Transform {
         let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Further {
-            50.
+            self.config
+                .camera
+                .third_person
+                .translation_smoothing_going_further
         } else {
-            100.
+            self.config
+                .camera
+                .third_person
+                .translation_smoothing_going_closer
         };
 
         let scale = (translation_smoothing * dt).min(1.);
@@ -174,7 +186,7 @@ impl ThirdPersonCamera {
             .translation
             .lerp(self.transform.translation, scale);
 
-        let rotation_smoothing = 45.;
+        let rotation_smoothing = self.config.camera.first_person.rotation_smoothing;
         let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
 
@@ -186,7 +198,7 @@ impl ThirdPersonCamera {
         let desired_direction = self.transform.translation - self.target;
         let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
 
-        let distance = get_raycast_distance(origin, norm_direction, rapier_context, self.distance);
+        let distance = self.get_raycast_distance(origin, norm_direction, rapier_context);
         let location = origin + norm_direction * distance;
         let correction = if distance * distance < desired_direction.length_squared() - 1e-3 {
             LineOfSightCorrection::Closer
@@ -197,6 +209,24 @@ impl ThirdPersonCamera {
             location,
             correction,
         }
+    }
+
+    pub fn get_raycast_distance(
+        &self,
+        origin: Vec3,
+        direction: Vec3,
+        rapier_context: &RapierContext,
+    ) -> f32 {
+        let max_toi = self.distance;
+        let solid = true;
+        let mut filter = QueryFilter::only_fixed();
+        filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
+
+        let min_distance_to_objects = self.config.camera.third_person.min_distance_to_objects;
+        rapier_context
+            .cast_ray(origin, direction, max_toi, solid, filter)
+            .map(|(_entity, toi)| toi - min_distance_to_objects)
+            .unwrap_or(max_toi)
     }
 }
 
@@ -210,24 +240,6 @@ pub struct LineOfSightResult {
 pub enum LineOfSightCorrection {
     Closer,
     Further,
-}
-
-pub fn get_raycast_distance(
-    origin: Vec3,
-    direction: Vec3,
-    rapier_context: &RapierContext,
-    max_distance: f32,
-) -> f32 {
-    let max_toi = max_distance;
-    let solid = true;
-    let mut filter = QueryFilter::only_fixed();
-    filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
-
-    let min_distance_to_objects = 0.01;
-    rapier_context
-        .cast_ray(origin, direction, max_toi, solid, filter)
-        .map(|(_entity, toi)| toi - min_distance_to_objects)
-        .unwrap_or(max_distance)
 }
 
 #[cfg(test)]

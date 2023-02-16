@@ -389,6 +389,7 @@ dependencies = [
  "bevy",
  "ron 0.7.1",
  "serde",
+ "toml",
 ]
 
 [[package]]

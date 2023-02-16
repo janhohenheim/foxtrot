@@ -367,6 +367,7 @@ dependencies = [
  "anyhow",
  "bevy",
  "bevy_asset_loader_derive",
+ "iyes_progress",
 ]
 
 [[package]]
@@ -1993,6 +1994,7 @@ dependencies = [
  "glob",
  "image 0.24.5",
  "indexmap",
+ "iyes_progress",
  "polyanya",
  "regex",
  "ron 0.8.0",
@@ -2407,6 +2409,16 @@ name = "itoa"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
+
+[[package]]
+name = "iyes_progress"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "266c468795c5af070ab4c5fa01aca792a8f01f511e76feb9bea3878a1dbee144"
+dependencies = [
+ "bevy_app",
+ "bevy_ecs",
+]
 
 [[package]]
 name = "jni"

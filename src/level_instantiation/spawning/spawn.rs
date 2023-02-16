@@ -1,5 +1,4 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::file_system_interaction::config::GameConfig;
 use crate::level_instantiation::spawning::event::SpawnEvent;
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObjectSpawner, SpawnTracker};
 use crate::shader::Materials;

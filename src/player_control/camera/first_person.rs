@@ -12,6 +12,7 @@ pub struct FirstPersonCamera {
     pub transform: Transform,
     pub look_target: Option<Vec3>,
     pub up: Vec3,
+    pub config: GameConfig,
 }
 
 impl Default for FirstPersonCamera {
@@ -20,6 +21,7 @@ impl Default for FirstPersonCamera {
             transform: default(),
             look_target: default(),
             up: Vec3::Y,
+            config: default(),
         }
     }
 }
@@ -30,6 +32,7 @@ impl From<&ThirdPersonCamera> for FirstPersonCamera {
             transform: camera.transform,
             look_target: camera.secondary_target,
             up: camera.up,
+            config: camera.config.clone(),
         }
     }
 }

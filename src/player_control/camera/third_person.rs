@@ -19,6 +19,7 @@ pub struct ThirdPersonCamera {
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
+    pub config: GameConfig,
 }
 
 impl Default for ThirdPersonCamera {
@@ -29,6 +30,7 @@ impl Default for ThirdPersonCamera {
             distance: MAX_DISTANCE / 2.,
             target: default(),
             secondary_target: default(),
+            config: default(),
         }
     }
 }
@@ -46,6 +48,7 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
             up,
             distance,
             secondary_target: first_person_camera.look_target,
+            config: first_person_camera.config.clone(),
         }
     }
 }
@@ -58,6 +61,7 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
             up: fixed_angle_camera.up,
             distance: fixed_angle_camera.distance,
             secondary_target: fixed_angle_camera.secondary_target,
+            config: fixed_angle_camera.config.clone(),
         }
     }
 }

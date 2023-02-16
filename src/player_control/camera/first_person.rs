@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::ThirdPersonCamera;
@@ -36,10 +37,6 @@ impl From<&ThirdPersonCamera> for FirstPersonCamera {
 impl FirstPersonCamera {
     pub fn forward(&self) -> Vec3 {
         self.transform.forward()
-    }
-
-    pub fn init_transform(&mut self, transform: Transform) {
-        self.transform = transform;
     }
 
     pub fn update_transform(

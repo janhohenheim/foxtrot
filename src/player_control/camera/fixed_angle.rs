@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::ThirdPersonCamera;
 use bevy::prelude::*;
@@ -45,10 +46,6 @@ impl FixedAngleCamera {
         // The camera is rotated to always look down,
         // so the forward vector for the player is actually the camera's up vector
         self.transform.up()
-    }
-
-    pub fn init_transform(&mut self, transform: Transform) {
-        self.transform = transform;
     }
 
     pub fn update_transform(

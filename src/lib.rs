@@ -15,6 +15,7 @@ pub mod bevy_config;
 #[cfg(feature = "dev")]
 pub mod dev;
 pub mod file_system_interaction;
+pub mod ingame_menu;
 pub mod level_instantiation;
 pub mod menu;
 pub mod movement;
@@ -27,6 +28,7 @@ pub use crate::bevy_config::BevyConfigPlugin;
 #[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
+use crate::ingame_menu::IngameMenuPlugin;
 use crate::level_instantiation::LevelInstantiationPlugin;
 use crate::menu::MenuPlugin;
 use crate::movement::MovementPlugin;
@@ -57,6 +59,7 @@ enum GameState {
 /// - [`FileSystemInteractionPlugin`]: Handles the loading and saving of games.
 /// - [`ShaderPlugin`]: Handles the shaders.
 /// - [`DevPlugin`]: Handles the dev tools.
+/// - [`IngameMenuPlugin`]: Handles the ingame menu accessed via ESC.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -69,7 +72,8 @@ impl Plugin for GamePlugin {
             .add_plugin(WorldInteractionPlugin)
             .add_plugin(LevelInstantiationPlugin)
             .add_plugin(FileSystemInteractionPlugin)
-            .add_plugin(ShaderPlugin);
+            .add_plugin(ShaderPlugin)
+            .add_plugin(IngameMenuPlugin);
         #[cfg(feature = "dev")]
         app.add_plugin(DevPlugin);
     }

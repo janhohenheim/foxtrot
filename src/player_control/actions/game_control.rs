@@ -8,6 +8,7 @@ pub enum GameControl {
     Sprint,
     Jump,
     ToggleEditor,
+    TogglePause,
     Interact,
     NumberedChoice(u16),
 }
@@ -149,6 +150,8 @@ generate_bindings! {
             #[cfg(target_os = "linux")] 0x10,
             #[cfg(target_arch = "wasm32")] 0x10,
         ),
+    ],
+    GameControl::TogglePause => [
         // Esc
         ScanCode(
             #[cfg(target_os = "macos")] 53,

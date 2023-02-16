@@ -1,5 +1,5 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
-use crate::player_control::actions::ActionsFrozen;
+use crate::player_control::actions::{Actions, ActionsFrozen, UiActions};
 use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent};
 pub use crate::world_interaction::dialog::resources::{
@@ -92,6 +92,7 @@ fn show_dialog(
     mut condition_writer: EventWriter<ConditionAddEvent>,
     mut egui_context: ResMut<EguiContext>,
     mut actions_frozen: ResMut<ActionsFrozen>,
+    actions: Res<Actions>,
 ) -> Result<()> {
     let mut current_dialog = match current_dialog {
         Some(current_dialog) => current_dialog,
@@ -118,6 +119,7 @@ fn show_dialog(
                     &active_conditions,
                     &mut condition_writer,
                     &mut actions_frozen,
+                    &actions.ui,
                     current_page.next_page,
                 )
                 .expect("Failed to present dialog choices");
@@ -127,6 +129,7 @@ fn show_dialog(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn present_choices(
     ui: &mut egui::Ui,
     commands: &mut Commands,
@@ -134,24 +137,27 @@ fn present_choices(
     active_conditions: &ActiveConditions,
     condition_writer: &mut EventWriter<ConditionAddEvent>,
     actions_frozen: &mut ActionsFrozen,
+    actions: &UiActions,
     next_page: NextPage,
 ) -> Result<()> {
     match next_page {
         NextPage::Continue(next_page_id) => {
-            if ui.button("Continue").clicked() {
+            if ui.button("1. Continue").clicked() || actions.numbered_choice[1] {
                 current_dialog.current_page = next_page_id;
             }
         }
         NextPage::Choice(choices) => {
-            for (choice_id, choice) in choices.iter() {
+            for (index, (choice_id, choice)) in choices.iter().enumerate() {
+                let index = index + 1;
                 let was_just_picked = current_dialog
                     .last_choice
                     .as_ref()
                     .map(|id| id == choice_id)
                     .unwrap_or_default();
+                let text = format!("{}. {}", index, choice.text);
                 if choice.is_available(active_conditions)
                     && !was_just_picked
-                    && ui.button(choice.text.clone()).clicked()
+                    && (ui.button(text).clicked() || actions.numbered_choice[index])
                 {
                     condition_writer.send(ConditionAddEvent(choice_id.clone()));
                     current_dialog.last_choice = Some(choice_id.clone());
@@ -168,11 +174,12 @@ fn present_choices(
                 active_conditions,
                 condition_writer,
                 actions_frozen,
+                actions,
                 next_page,
             )?;
         }
         NextPage::Exit => {
-            if ui.button("Exit").clicked() {
+            if ui.button("1. Exit").clicked() || actions.numbered_choice[1] {
                 commands.remove_resource::<CurrentDialog>();
                 actions_frozen.unfreeze();
             }

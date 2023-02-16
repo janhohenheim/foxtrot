@@ -67,7 +67,7 @@
             next_page: SameAs("page:main-choice"),
         ),
         "page:possibilities": (
-            text: "The fox perches its hears. \"Certainly, master. What do you wish to learn about?\"",
+            text: "The fox perches its ears. \"Certainly, master. What do you wish to learn about?\"",
             next_page: Choice({
                 "choice:movement": (
                     text: "\"What can my body do?\"",

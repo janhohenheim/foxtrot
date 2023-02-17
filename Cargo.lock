@@ -787,17 +787,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_pathmesh"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ec81407de780554a715fc55c87080b07616818393468bfde7928c673a60dc09"
-dependencies = [
- "bevy",
- "itertools",
- "polyanya",
-]
-
-[[package]]
 name = "bevy_pbr"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1140,7 +1129,7 @@ checksum = "16750aae52cd35bd7b60eb61cee883420b250e11b4a290b8d44b2b2941795739"
 dependencies = [
  "ahash 0.7.6",
  "getrandom",
- "hashbrown 0.12.3",
+ "hashbrown",
  "instant",
  "tracing",
  "uuid",
@@ -1249,15 +1238,6 @@ name = "bumpalo"
 version = "3.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
-
-[[package]]
-name = "bvh2d"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c570202f586e8e43bf5b903d2ff22761c78a7d3e1e61c62fbd87ba2d0ab596ba"
-dependencies = [
- "glam",
-]
 
 [[package]]
 name = "bytemuck"
@@ -2009,7 +1989,6 @@ dependencies = [
  "bevy_egui 0.19.0",
  "bevy_hanabi",
  "bevy_kira_audio",
- "bevy_pathmesh",
  "bevy_prototype_debug_lines",
  "bevy_rapier3d",
  "bitflags",
@@ -2019,7 +1998,7 @@ dependencies = [
  "image 0.24.5",
  "indexmap",
  "iyes_progress",
- "polyanya",
+ "oxidized_navigation",
  "regex",
  "ron 0.8.0",
  "serde",
@@ -2103,7 +2082,6 @@ version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12f597d56c1bd55a811a1be189459e8fad2bbc272616375602443bdfb37fa774"
 dependencies = [
- "approx",
  "bytemuck",
  "serde",
 ]
@@ -2200,7 +2178,7 @@ checksum = "0b0c02e1ba0bdb14e965058ca34e09c020f8e507a760df1121728e0aef68d57a"
 dependencies = [
  "bitflags",
  "gpu-descriptor-types",
- "hashbrown 0.12.3",
+ "hashbrown",
 ]
 
 [[package]]
@@ -2250,15 +2228,6 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 dependencies = [
  "ahash 0.7.6",
  "serde",
-]
-
-[[package]]
-name = "hashbrown"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a3c133739dddd0d2990f9a4bdf8eb4b21ef50e4851ca85ab661199821d510e"
-dependencies = [
- "ahash 0.8.3",
 ]
 
 [[package]]
@@ -2378,7 +2347,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885e79c1fc4b10f0e172c475f458b7f7b93061064d98c3293e98c5ba0c8b399"
 dependencies = [
  "autocfg",
- "hashbrown 0.12.3",
+ "hashbrown",
  "serde",
 ]
 
@@ -2418,15 +2387,6 @@ dependencies = [
  "js-sys",
  "wasm-bindgen",
  "web-sys",
-]
-
-[[package]]
-name = "itertools"
-version = "0.10.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-dependencies = [
- "either",
 ]
 
 [[package]]
@@ -3168,6 +3128,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "oxidized_navigation"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb3948284a9e1cfd232c2776e0fccff1245a750506f5ed9063c5dcc68e9af772"
+dependencies = [
+ "bevy",
+ "bevy_rapier3d",
+ "smallvec",
+]
+
+[[package]]
 name = "packed_simd_2"
 version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3290,18 +3261,6 @@ dependencies = [
  "crc32fast",
  "flate2",
  "miniz_oxide 0.6.2",
-]
-
-[[package]]
-name = "polyanya"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "733927a8ed2abf73a92a30605d50eb3dc0aebd9120949c1f8a3094e7cfd9c1c5"
-dependencies = [
- "bvh2d",
- "glam",
- "hashbrown 0.13.2",
- "smallvec",
 ]
 
 [[package]]

@@ -1,28 +1,27 @@
-use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::TAU;
 
 #[derive(Debug, Clone, Bundle)]
-pub struct KinematicCharacterBundle {
+pub struct CharacterControllerBundle {
     pub gravity_scale: GravityScale,
     pub mass: ColliderMassProperties,
     pub read_mass: ReadMassProperties,
     pub walking: Walking,
     pub jumping: Jumping,
     pub grounded: Grounded,
-    pub drag: Drag,
+    pub damping: Damping,
     pub rigid_body: RigidBody,
     pub locked_axes: LockedAxes,
     pub collider: Collider,
     pub force: ExternalForce,
     pub impulse: ExternalImpulse,
     pub velocity: Velocity,
+    pub dominance: Dominance,
     pub up: Up,
 }
 
-impl Default for KinematicCharacterBundle {
+impl Default for CharacterControllerBundle {
     fn default() -> Self {
         Self {
             read_mass: default(),
@@ -32,22 +31,22 @@ impl Default for KinematicCharacterBundle {
             walking: default(),
             jumping: default(),
             grounded: default(),
-            drag: default(),
+            damping: default(),
             collider: default(),
             rigid_body: RigidBody::Dynamic,
             locked_axes: LockedAxes::ROTATION_LOCKED,
             impulse: default(),
             velocity: default(),
+            dominance: default(),
             up: Up(Vec3::Y),
         }
     }
 }
 
-impl KinematicCharacterBundle {
+impl CharacterControllerBundle {
     pub fn capsule(height: f32, radius: f32) -> Self {
         Self {
             collider: Collider::capsule_y(height / 2., radius),
-            drag: Drag::for_capsule(height, radius),
             ..default()
         }
     }
@@ -105,58 +104,6 @@ impl Default for Walking {
             stopping_speed: 0.1,
             direction: None,
             sprinting: false,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Drag {
-    pub fluid_density: f32,
-    pub area: f32,
-    pub drag_coefficient: f32,
-}
-
-impl Drag {
-    pub fn for_capsule(height: f32, radius: f32) -> Self {
-        let cross_sectional_area = (height - radius) * height + TAU * radius * radius;
-        Self {
-            area: cross_sectional_area,
-            ..default()
-        }
-    }
-
-    pub fn calculate_force(&self, velocity: Vec3, up: Vec3) -> Vec3 {
-        velocity
-            .split(up)
-            .as_array()
-            .iter()
-            .map(|&v| self.calculate_force_for_component(v))
-            .sum()
-    }
-
-    fn calculate_force_for_component(&self, velocity: Vec3) -> Vec3 {
-        let speed_squared = velocity.length_squared();
-        if speed_squared < 1e-5 {
-            return Vec3::ZERO;
-        }
-        0.5 * self.fluid_density
-            * self.area
-            * self.drag_coefficient
-            * speed_squared
-            * -velocity.normalize()
-    }
-}
-
-impl Default for Drag {
-    fn default() -> Self {
-        Self {
-            // dry air at 20°C, see <https://en.wikipedia.org/wiki/Density_of_air#Dry_air>
-            fluid_density: 1.2041,
-            // Arbitrary
-            area: 1.0,
-            // Person, see <https://www.engineeringtoolbox.com/drag-coefficient-d_627.html>
-            drag_coefficient: 1.2,
         }
     }
 }

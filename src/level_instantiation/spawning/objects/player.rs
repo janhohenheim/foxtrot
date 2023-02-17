@@ -2,7 +2,7 @@ use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::player_control::player_embodiment::Player;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -35,7 +35,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                 },
                 Player,
                 Name::new("Player"),
-                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
+                CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),
                     walk: spawner.animations.character_walking.clone(),

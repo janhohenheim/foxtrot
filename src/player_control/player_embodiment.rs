@@ -1,6 +1,6 @@
 use crate::file_system_interaction::audio::AudioHandles;
 use crate::movement::general_movement::{
-    apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping, Walking,
+    apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping, Up, Walking,
 };
 use crate::player_control::actions::{set_actions, Actions};
 use crate::player_control::camera::{
@@ -180,24 +180,13 @@ fn rotate_to_speaker(
 }
 
 fn control_walking_sound(
-    character_query: Query<
-        (
-            &KinematicCharacterControllerOutput,
-            &KinematicCharacterController,
-            &Grounded,
-        ),
-        With<Player>,
-    >,
+    character_query: Query<(&Velocity, &Up, &Grounded), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) {
-    for (output, controller, grounded) in character_query.iter() {
+    for (velocity, up, grounded) in character_query.iter() {
         if let Some(instance) = audio_instances.get_mut(&audio.walking) {
-            let has_horizontal_movement = !output
-                .effective_translation
-                .split(controller.up)
-                .horizontal
-                .is_approx_zero();
+            let has_horizontal_movement = !velocity.linvel.split(up.0).horizontal.is_approx_zero();
             let is_moving_on_ground = has_horizontal_movement && grounded.is_grounded();
             if is_moving_on_ground {
                 instance.resume(default());

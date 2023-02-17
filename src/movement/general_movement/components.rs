@@ -6,36 +6,39 @@ use std::f32::consts::TAU;
 
 #[derive(Debug, Clone, Bundle)]
 pub struct KinematicCharacterBundle {
-    pub velocity: Velocity,
-    pub force: Force,
-    pub mass: Mass,
+    pub gravity_scale: GravityScale,
+    pub mass: ColliderMassProperties,
+    pub read_mass: ReadMassProperties,
     pub walking: Walking,
     pub jumping: Jumping,
     pub grounded: Grounded,
     pub drag: Drag,
     pub rigid_body: RigidBody,
+    pub locked_axes: LockedAxes,
     pub collider: Collider,
-    pub character_controller: KinematicCharacterController,
-    pub gravity: Gravity,
+    pub force: ExternalForce,
+    pub impulse: ExternalImpulse,
+    pub velocity: Velocity,
+    pub up: Up,
 }
 
 impl Default for KinematicCharacterBundle {
     fn default() -> Self {
         Self {
-            velocity: default(),
+            read_mass: default(),
+            gravity_scale: GravityScale(1.0),
             force: default(),
-            mass: default(),
+            mass: ColliderMassProperties::Mass(3.0),
             walking: default(),
             jumping: default(),
             grounded: default(),
             drag: default(),
             collider: default(),
-            gravity: default(),
-            rigid_body: RigidBody::KinematicVelocityBased,
-            character_controller: KinematicCharacterController {
-                offset: CharacterLength::Relative(0.05),
-                ..default()
-            },
+            rigid_body: RigidBody::Dynamic,
+            locked_axes: LockedAxes::ROTATION_LOCKED,
+            impulse: default(),
+            velocity: default(),
+            up: Up(Vec3::Y),
         }
     }
 }
@@ -54,23 +57,9 @@ impl KinematicCharacterBundle {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
 
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Velocity(pub Vect);
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Force(pub Vect);
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Mass(pub f32);
-
-impl Default for Mass {
-    fn default() -> Self {
-        Self(3.0)
-    }
-}
+pub struct Up(pub Vec3);
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -200,17 +189,6 @@ impl Grounded {
     pub fn force_set(&mut self, new_state: bool) {
         self.state = new_state;
         self.wants_change = false;
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-/// Gravity constant in m/s²
-pub struct Gravity(pub f32);
-
-impl Default for Gravity {
-    fn default() -> Self {
-        Self(9.81)
     }
 }
 

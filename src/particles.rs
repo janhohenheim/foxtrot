@@ -1,10 +1,11 @@
 use crate::level_instantiation::spawning::objects::player;
-use crate::movement::general_movement::{Grounded, Velocity};
+use crate::movement::general_movement::Grounded;
 use crate::particles::init::init_effects;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
+use bevy_rapier3d::prelude::*;
 
 mod init;
 
@@ -33,7 +34,7 @@ fn play_sprinting_effect(
     const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 6.;
     for (player_transform, grounded, velocity) in with_player.iter() {
         let horizontal_speed_squared = velocity
-            .0
+            .linvel
             .split(player_transform.up())
             .horizontal
             .length_squared();

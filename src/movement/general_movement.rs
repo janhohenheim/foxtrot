@@ -7,7 +7,7 @@ use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
-pub use components::{Velocity, *};
+pub use components::*;
 
 /// Handles movement of kinematic character controllers, i.e. entities with the [`KinematicCharacterBundle`]. A movement is done by applying forces to the objects.
 /// The default forces on a character going right are:  
@@ -41,24 +41,14 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<Velocity>()
             .register_type::<Drag>()
             .register_type::<Walking>()
-            .register_type::<Force>()
-            .register_type::<Mass>()
-            .register_type::<Gravity>()
             .register_type::<CharacterAnimations>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(update_grounded)
-                    .with_system(apply_gravity.after(update_grounded).before(apply_force))
-                    .with_system(apply_walking.after(update_grounded).before(apply_force))
-                    .with_system(apply_jumping.after(apply_gravity).before(apply_force))
-                    .with_system(
-                        apply_drag
-                            .after(apply_walking)
-                            .after(apply_jumping)
-                            .before(apply_force),
-                    )
-                    .with_system(apply_force)
-                    .with_system(reset_movement_components.after(apply_force))
+                    .with_system(apply_walking.after(update_grounded))
+                    .with_system(apply_jumping)
+                    .with_system(apply_drag.after(apply_walking).after(apply_jumping))
+                    .with_system(reset_movement_components)
                     .with_system(rotate_characters)
                     .with_system(play_animations.pipe(log_errors)),
             );
@@ -74,7 +64,7 @@ fn update_grounded(
     )>,
 ) {
     for (mut grounded, velocity, controller, output) in &mut query {
-        let falling = velocity.0.dot(controller.up) < -1e-5;
+        let falling = velocity.linvel.dot(controller.up) < -1e-5;
         if !falling {
             grounded.force_set(false)
         } else if let Some(output) = output {
@@ -83,41 +73,17 @@ fn update_grounded(
     }
 }
 
-fn apply_gravity(
-    mut character: Query<(&mut Force, &KinematicCharacterController, &Mass, &Gravity)>,
-) {
-    for (mut force, controller, mass, gravity) in &mut character {
-        let gravitational_force = -controller.up * gravity.0 * mass.0;
-        force.0 += gravitational_force;
-    }
-}
-
-/// Treat `Force` as readonly after this system.
-pub fn apply_force(
-    time: Res<Time>,
-    mut player_query: Query<(
-        &Force,
-        &mut Velocity,
-        &mut KinematicCharacterController,
-        &Mass,
-    )>,
-) {
-    let dt = time.delta_seconds();
-    for (force, mut velocity, mut controller, mass) in &mut player_query {
-        let acceleration = force.0 / mass.0;
-        let desired_translation = velocity.0 * dt + 0.5 * acceleration * dt * dt;
-        velocity.0 += acceleration * dt;
-        controller.translation = Some(desired_translation);
-    }
-}
-
 pub fn reset_movement_components(
-    mut forces: Query<&mut Force>,
+    mut forces: Query<&mut ExternalForce>,
+    mut impulses: Query<&mut ExternalImpulse>,
     mut walking: Query<&mut Walking>,
     mut jumpers: Query<&mut Jumping>,
 ) {
     for mut force in &mut forces {
-        force.0 = Vec3::ZERO;
+        *force = default();
+    }
+    for mut impulse in &mut impulses {
+        *impulse = default();
     }
     for mut walk in &mut walking {
         walk.direction = None;
@@ -131,22 +97,22 @@ pub fn apply_jumping(
     time: Res<Time>,
     mut character_query: Query<(
         &Grounded,
-        &mut Force,
+        &mut ExternalForce,
         &mut Velocity,
-        &KinematicCharacterController,
-        &Mass,
+        &ReadMassProperties,
         &Jumping,
+        &Up,
     )>,
 ) {
     let dt = time.delta_seconds();
-    for (grounded, mut force, mut velocity, controller, mass, jump) in &mut character_query {
+    for (grounded, mut force, mut velocity, mass, jump, up) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
-            force.0 += controller.up * mass.0 * jump.speed / dt;
+            force.force += up.0 * mass.0.mass * jump.speed / dt;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
             // Otherwise the falling velocity from the last tick would dampen the jump velocity.
-            let velocity_components = velocity.0.split(controller.up);
-            velocity.0 = velocity_components.horizontal;
+            let velocity_components = velocity.linvel.split(up.0);
+            velocity.linvel = velocity_components.horizontal;
         }
     }
 }
@@ -210,39 +176,45 @@ fn play_animations(
 }
 
 fn apply_drag(
-    mut character_query: Query<(&mut Force, &Velocity, &KinematicCharacterController, &Drag)>,
+    mut character_query: Query<(
+        &mut ExternalForce,
+        &Velocity,
+        &KinematicCharacterController,
+        &Drag,
+    )>,
 ) {
     for (mut force, velocity, controller, drag) in &mut character_query {
-        let drag_force = drag.calculate_force(velocity.0, controller.up);
-        force.0 += drag_force;
+        let drag_force = drag.calculate_force(velocity.linvel, controller.up);
+        force.force += drag_force;
     }
 }
 
 pub fn apply_walking(
     mut character_query: Query<(
-        &mut Force,
+        &mut ExternalForce,
         &Walking,
         &mut Velocity,
-        &KinematicCharacterController,
         &Grounded,
-        &Mass,
+        &ReadMassProperties,
+        &Up,
     )>,
 ) {
-    for (mut force, walking, mut velocity, controller, grounded, mass) in &mut character_query {
+    for (mut force, walking, mut velocity, grounded, mass, up) in &mut character_query {
+        let mass = mass.0.mass;
         if let Some(acceleration) = walking.get_acceleration(grounded.is_grounded()) {
-            let walking_force = acceleration * mass.0;
-            force.0 += walking_force;
+            let walking_force = acceleration * mass;
+            force.force += walking_force;
         } else if grounded.is_grounded() {
-            let velocity_components = velocity.0.split(controller.up);
+            let velocity_components = velocity.linvel.split(up.0);
             if velocity_components.horizontal.length_squared()
                 < walking.stopping_speed * walking.stopping_speed
             {
-                velocity.0 = velocity_components.vertical;
+                velocity.linvel = velocity_components.vertical;
             } else if let Some(braking_direction) =
                 velocity_components.horizontal.try_normalize().map(|v| -v)
             {
-                let braking_force = walking.braking_acceleration * braking_direction * mass.0;
-                force.0 += braking_force;
+                let braking_force = walking.braking_acceleration * braking_direction * mass;
+                force.force += braking_force;
             }
         }
     }

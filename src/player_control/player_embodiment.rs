@@ -1,7 +1,6 @@
 use crate::file_system_interaction::audio::AudioHandles;
 use crate::movement::general_movement::{
-    apply_force, apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping,
-    Velocity, Walking,
+    apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping, Walking,
 };
 use crate::player_control::actions::{set_actions, Actions};
 use crate::player_control::camera::{
@@ -46,16 +45,8 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .after(switch_camera_kind)
                             .before(apply_walking),
                     )
-                    .with_system(
-                        handle_speed_effects
-                            .after(apply_force)
-                            .before(reset_movement_components),
-                    )
-                    .with_system(
-                        rotate_to_speaker
-                            .after(apply_force)
-                            .before(reset_movement_components),
-                    )
+                    .with_system(handle_speed_effects.before(reset_movement_components))
+                    .with_system(rotate_to_speaker.before(reset_movement_components))
                     .with_system(control_walking_sound.after(set_actions)),
             );
     }
@@ -143,7 +134,7 @@ fn handle_speed_effects(
     mut projections: Query<&mut Projection, With<IngameCamera>>,
 ) {
     for velocity in velocities.iter() {
-        let speed_squared = velocity.0.length_squared();
+        let speed_squared = velocity.linvel.length_squared();
         for mut projection in projections.iter_mut() {
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
                 const MAX_SPEED_FOR_FOV: f32 = 12.;
@@ -174,7 +165,7 @@ fn rotate_to_speaker(
     let dt = time.delta_seconds();
 
     for (mut transform, velocity) in with_player.iter_mut() {
-        let horizontal_velocity = velocity.0.split(transform.up()).horizontal;
+        let horizontal_velocity = velocity.linvel.split(transform.up()).horizontal;
         if horizontal_velocity.is_approx_zero() {
             let up = transform.up();
             let target_rotation = transform

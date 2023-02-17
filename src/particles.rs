@@ -8,6 +8,8 @@ use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 
 mod init;
+
+/// Handles particle effects instantiation and playing.
 pub struct ParticlePlugin;
 
 impl Plugin for ParticlePlugin {
@@ -35,7 +37,7 @@ fn play_sprinting_effect(
         (Without<Player>, With<SprintingParticle>),
     >,
 ) {
-    const SPRINT_EFFECT_SPEED: f32 = 7.;
+    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 6.;
     for (player_transform, grounded, velocity) in with_player.iter() {
         let horizontal_speed_squared = velocity
             .0
@@ -43,7 +45,9 @@ fn play_sprinting_effect(
             .horizontal
             .length_squared();
         for (mut particle_transform, mut effect) in with_particle.iter_mut() {
-            if grounded.is_grounded() && horizontal_speed_squared > SPRINT_EFFECT_SPEED.squared() {
+            if grounded.is_grounded()
+                && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared()
+            {
                 let translation = player_transform.translation
                     - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);

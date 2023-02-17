@@ -42,53 +42,38 @@ pub struct Follower;
 #[allow(clippy::type_complexity)]
 fn query_mesh(
     mut with_follower: Query<
-        (
-            Entity,
-            &GlobalTransform,
-            &KinematicCharacterController,
-            &mut Walking,
-        ),
+        (&Transform, &KinematicCharacterController, &mut Walking),
         (With<Follower>, Without<Player>),
     >,
-    with_player: Query<(Entity, &GlobalTransform), (With<Player>, Without<Follower>)>,
+    with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     path_meshes: Res<Assets<PathMesh>>,
     nav_meshes: Query<&Handle<PathMesh>>,
-    rapier_context: Res<RapierContext>,
 ) -> Result<()> {
     for path_mesh_handle in nav_meshes.iter() {
-        for (follower_entity, follower_transform, controller, mut walking) in &mut with_follower {
-            for (player_entity, player_transform) in &with_player {
+        for (follower_transform, controller, mut walking) in &mut with_follower {
+            for player_transform in &with_player {
                 let path_mesh = path_meshes
                     .get(path_mesh_handle)
                     .context("Failed to get path mesh from handle")?;
-                let from = follower_transform.translation();
-                let to = player_transform.translation();
+                let from = follower_transform.translation;
+                let to = player_transform.translation;
                 if (to - from).length_squared() < 3.0f32.squared() {
+                    info!("Close enough");
                     continue;
                 }
-                let max_toi = 50.;
-                let solid = false;
-                let filter = QueryFilter::new()
-                    .exclude_sensors()
-                    .exclude_collider(follower_entity);
-                let path = if let
-                    Some((entity, _toi)) = rapier_context.cast_ray(from, to - from, max_toi, solid, filter)
-                    && entity == player_entity
-                {
-                    Some(to)
-                } else if let Some(path) = path_mesh.transformed_path(from, to) {
-                    Some(path.path[0])
-                } else {
-                    None
-                };
-                if let Some(path) = path {
-                    let dir = (path - from)
+
+                if let Some(path) = path_mesh.transformed_path(from, to) {
+                    info!("Path: {:?}", path);
+                    let next_point = path.path[0];
+                    let dir = (next_point - from)
                         .split(controller.up)
                         .horizontal
                         .try_normalize()
                         .context("Failed to normalize direction vector for navigation")?;
                     walking.direction = Some(dir);
-                }
+                } else {
+                    info!("nope");
+                };
             }
         }
     }

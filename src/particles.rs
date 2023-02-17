@@ -1,7 +1,6 @@
 use crate::level_instantiation::spawning::objects::player;
 use crate::movement::general_movement::{Grounded, Velocity};
 use crate::particles::init::init_effects;
-use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 use bevy::prelude::*;
@@ -28,14 +27,8 @@ impl Plugin for ParticlePlugin {
 struct SprintingParticle;
 
 fn play_sprinting_effect(
-    with_player: Query<
-        (&Transform, &Grounded, &Velocity),
-        (With<Player>, Without<SprintingParticle>),
-    >,
-    mut with_particle: Query<
-        (&mut Transform, &mut ParticleEffect),
-        (Without<Player>, With<SprintingParticle>),
-    >,
+    with_player: Query<(&Transform, &Grounded, &Velocity), Without<SprintingParticle>>,
+    mut with_particle: Query<(&mut Transform, &mut ParticleEffect), With<SprintingParticle>>,
 ) {
     const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 6.;
     for (player_transform, grounded, velocity) in with_player.iter() {

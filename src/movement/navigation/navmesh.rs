@@ -16,14 +16,15 @@ pub fn read_navmesh(
     for (parent, name, global_transform) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let transform = global_transform.compute_transform();
-            for (child, mesh) in Mesh::search_in_children(parent, &children, &meshes, &mesh_handles)
+            for (_child, mesh) in
+                Mesh::search_in_children(parent, &children, &meshes, &mesh_handles)
             {
                 let mesh = mesh.transformed(transform);
 
                 let path_mesh = PathMesh::from_bevy_mesh_and_then(&mesh, |mesh| {
-                    mesh.set_delta(10.);
+                    mesh.set_delta(5.);
                 });
-                commands.entity(child).insert((
+                commands.entity(parent).insert((
                     path_meshes.add(path_mesh),
                     #[cfg(feature = "dev")]
                     NavMesh,

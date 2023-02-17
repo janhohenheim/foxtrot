@@ -31,8 +31,8 @@ impl Default for SceneEditorState {
             save_name: default(),
             active: default(),
             spawn_item: default(),
-            collider_render_enabled: default(),
-            navmesh_render_enabled: true,
+            collider_render_enabled: false,
+            navmesh_render_enabled: false,
         }
     }
 }

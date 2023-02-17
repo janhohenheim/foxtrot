@@ -64,7 +64,7 @@ enum GameState {
 /// - [`ShaderPlugin`]: Handles the shaders.
 /// - [`DevPlugin`]: Handles the dev tools.
 /// - [`IngameMenuPlugin`]: Handles the ingame menu accessed via ESC.
-///
+/// - [`ParticlePlugin`]: Handles the particle system. Since [bevy_hanabi](https://github.com/djeedai/bevy_hanabi) does not support wasm, this plugin is only available on native.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {

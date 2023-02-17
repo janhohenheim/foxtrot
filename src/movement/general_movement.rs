@@ -3,13 +3,14 @@ use bevy::prelude::*;
 
 use bevy_rapier3d::prelude::*;
 mod components;
+use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
 
-/// Handles movement of kinematic character controllers, i.e. entities with the [`KinematicCharacterBundle`]. A movement is done by applying forces to the objects.
+/// Handles movement of kinematic character controllers, i.e. entities with the TODO A movement is done by applying forces to the objects.
 /// The default forces on a character going right are:  
 /// ```text
 /// ┌──────────────────────────────┐
@@ -30,7 +31,7 @@ pub use components::*;
 /// - A continuous force like walking: `force.0 += acceleration * mass.0`, with `force`: [`Force`], `mass`: [`Mass`], and a user-defined `acceleration`: [`f32`]
 /// - An instantaneous force (i.e. an impulse) like jumping: `force.0 += velocity * mass.0 / time.delta_seconds()`, with `force`: [`Force`], `mass`: [`Mass`], `time`: [`Res<Time>`](Time) and a user-defined `velocity`: [`f32`]
 ///
-/// Note: you might notice that the normal force is not included in the above diagram. This is because the underlying [`KinematicCharacterController`] takes care of the character not penetrating colliders, thus emulating this force.
+/// Note: you might notice that the normal force is not included in the above diagram. This is because the underlying TODO takes care of the character not penetrating colliders, thus emulating this force.
 pub struct GeneralMovementPlugin;
 
 impl Plugin for GeneralMovementPlugin {
@@ -39,7 +40,6 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<Grounded>()
             .register_type::<Jumping>()
             .register_type::<Velocity>()
-            .register_type::<Drag>()
             .register_type::<Walking>()
             .register_type::<CharacterAnimations>()
             .add_system_set(
@@ -47,28 +47,35 @@ impl Plugin for GeneralMovementPlugin {
                     .with_system(update_grounded)
                     .with_system(apply_walking.after(update_grounded))
                     .with_system(apply_jumping)
-                    .with_system(apply_drag.after(apply_walking).after(apply_jumping))
                     .with_system(reset_movement_components)
-                    .with_system(rotate_characters)
+                    //.with_system(rotate_characters)
                     .with_system(play_animations.pipe(log_errors)),
             );
     }
 }
 
 fn update_grounded(
-    mut query: Query<(
-        &mut Grounded,
-        &Velocity,
-        &KinematicCharacterController,
-        Option<&KinematicCharacterControllerOutput>,
-    )>,
+    mut query: Query<(Entity, &Transform, &Collider, &mut Grounded, &Velocity, &Up)>,
+    names: Query<&Name>,
+    rapier_context: Res<RapierContext>,
 ) {
-    for (mut grounded, velocity, controller, output) in &mut query {
-        let falling = velocity.linvel.dot(controller.up) < -1e-5;
-        if !falling {
+    for (entity, transform, collider, mut grounded, velocity, up) in &mut query {
+        let falling = velocity.linvel.dot(up.0) < -1e-5;
+        if !falling && false {
             grounded.force_set(false)
-        } else if let Some(output) = output {
-            grounded.try_set(output.grounded);
+        } else if let Some((entity, toi)) = rapier_context.cast_shape(
+            transform.translation,
+            transform.rotation.into(),
+            velocity.linvel,
+            collider,
+            player::HEIGHT / 2.0 + player::RADIUS,
+            QueryFilter::new()
+                .exclude_collider(entity)
+                .exclude_sensors(),
+        ) {
+            let name = names.get(entity).unwrap();
+            info!("{} hit by {:?}", name, toi);
+            grounded.force_set(true);
         }
     }
 }
@@ -117,22 +124,15 @@ pub fn apply_jumping(
     }
 }
 
-fn rotate_characters(
-    time: Res<Time>,
-    mut player_query: Query<(
-        &KinematicCharacterControllerOutput,
-        &KinematicCharacterController,
-        &mut Transform,
-    )>,
-) {
+fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Up, &Velocity, &mut Transform)>) {
     let dt = time.delta_seconds();
-    for (output, controller, mut transform) in player_query.iter_mut() {
-        let horizontal_movement = output.effective_translation.split(controller.up).horizontal;
+    for (up, velocity, mut transform) in player_query.iter_mut() {
+        let horizontal_movement = velocity.linvel.split(up.0).horizontal;
         if horizontal_movement.is_approx_zero() {
             continue;
         }
         let target_transform =
-            transform.looking_at(transform.translation + horizontal_movement, controller.up);
+            transform.looking_at(transform.translation + horizontal_movement, up.0);
         // Asymptotic averaging
         const SMOOTHNESS: f32 = 4.;
         let scale = (SMOOTHNESS * dt).min(1.);
@@ -144,23 +144,19 @@ fn rotate_characters(
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
-        &KinematicCharacterControllerOutput,
-        &KinematicCharacterController,
+        &Velocity,
+        &Up,
         &Grounded,
         &AnimationEntityLink,
         &CharacterAnimations,
     )>,
 ) -> Result<()> {
-    for (output, controller, grounded, animation_entity_link, animations) in characters.iter() {
+    for (velocity, up, grounded, animation_entity_link, animations) in characters.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
             .context("animation_entity_link held entity without animation player")?;
 
-        let has_horizontal_movement = !output
-            .effective_translation
-            .split(controller.up)
-            .horizontal
-            .is_approx_zero();
+        let has_horizontal_movement = !velocity.linvel.split(up.0).horizontal.is_approx_zero();
 
         if !grounded.is_grounded() {
             animation_player
@@ -173,20 +169,6 @@ fn play_animations(
         }
     }
     Ok(())
-}
-
-fn apply_drag(
-    mut character_query: Query<(
-        &mut ExternalForce,
-        &Velocity,
-        &KinematicCharacterController,
-        &Drag,
-    )>,
-) {
-    for (mut force, velocity, controller, drag) in &mut character_query {
-        let drag_force = drag.calculate_force(velocity.linvel, controller.up);
-        force.force += drag_force;
-    }
 }
 
 pub fn apply_walking(

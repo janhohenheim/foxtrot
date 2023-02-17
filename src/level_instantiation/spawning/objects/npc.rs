@@ -2,7 +2,7 @@ use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use anyhow::{Context, Result};
@@ -35,7 +35,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     ..default()
                 },
                 Name::new("NPC"),
-                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
+                CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 Follower,
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),

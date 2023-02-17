@@ -105,8 +105,7 @@ pub fn apply_force(
     let dt = time.delta_seconds();
     for (force, mut velocity, mut controller, mass) in &mut player_query {
         let acceleration = force.0 / mass.0;
-        let desired_translation =
-            (velocity.0 * dt + 0.5 * acceleration * dt * dt).collapse_approx_zero();
+        let desired_translation = velocity.0 * dt + 0.5 * acceleration * dt * dt;
         velocity.0 += acceleration * dt;
         controller.translation = Some(desired_translation);
     }
@@ -116,7 +115,6 @@ pub fn reset_movement_components(
     mut forces: Query<&mut Force>,
     mut walking: Query<&mut Walking>,
     mut jumpers: Query<&mut Jumping>,
-    mut velocities: Query<&mut Velocity>,
 ) {
     for mut force in &mut forces {
         force.0 = Vec3::ZERO;
@@ -126,9 +124,6 @@ pub fn reset_movement_components(
     }
     for mut jumper in &mut jumpers {
         jumper.requested = false;
-    }
-    for mut velocity in &mut velocities {
-        velocity.0 = velocity.0.collapse_approx_zero();
     }
 }
 

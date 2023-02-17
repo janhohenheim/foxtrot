@@ -52,8 +52,14 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
 
 impl From<&FixedAngleCamera> for ThirdPersonCamera {
     fn from(fixed_angle_camera: &FixedAngleCamera) -> Self {
+        let mut transform = fixed_angle_camera.transform;
+        let config = fixed_angle_camera.config.clone();
+        transform.rotate_axis(
+            transform.right(),
+            config.camera.third_person.most_acute_from_above,
+        );
         Self {
-            transform: fixed_angle_camera.transform,
+            transform,
             target: fixed_angle_camera.target,
             up: fixed_angle_camera.up,
             distance: fixed_angle_camera.distance,

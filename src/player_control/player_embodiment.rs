@@ -91,7 +91,15 @@ fn handle_horizontal_movement(
     let sideward = forward.perp();
     let forward_action = forward * movement.y;
     let sideward_action = sideward * movement.x;
-    let direction = (forward_action + sideward_action).x0y().normalize();
+
+    let is_looking_backward = forward.dot(forward_action) < 0.0;
+    let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
+    let modifier = if is_looking_backward && is_first_person {
+        0.5
+    } else {
+        1.
+    };
+    let direction = (forward_action + sideward_action).x0y().normalize() * modifier;
 
     for mut walk in &mut player_query {
         walk.direction = Some(direction);

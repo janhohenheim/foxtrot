@@ -19,6 +19,8 @@ pub mod ingame_menu;
 pub mod level_instantiation;
 pub mod menu;
 pub mod movement;
+#[cfg(feature = "native")]
+pub mod particles;
 pub mod player_control;
 pub mod shader;
 pub mod util;
@@ -32,6 +34,8 @@ use crate::ingame_menu::IngameMenuPlugin;
 use crate::level_instantiation::LevelInstantiationPlugin;
 use crate::menu::MenuPlugin;
 use crate::movement::MovementPlugin;
+#[cfg(feature = "native")]
+use crate::particles::ParticlePlugin;
 use crate::player_control::PlayerControlPlugin;
 use crate::shader::ShaderPlugin;
 use crate::world_interaction::WorldInteractionPlugin;
@@ -60,6 +64,7 @@ enum GameState {
 /// - [`ShaderPlugin`]: Handles the shaders.
 /// - [`DevPlugin`]: Handles the dev tools.
 /// - [`IngameMenuPlugin`]: Handles the ingame menu accessed via ESC.
+/// - [`ParticlePlugin`]: Handles the particle system. Since [bevy_hanabi](https://github.com/djeedai/bevy_hanabi) does not support wasm, this plugin is only available on native.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -76,5 +81,7 @@ impl Plugin for GamePlugin {
             .add_plugin(IngameMenuPlugin);
         #[cfg(feature = "dev")]
         app.add_plugin(DevPlugin);
+        #[cfg(feature = "native")]
+        app.add_plugin(ParticlePlugin);
     }
 }

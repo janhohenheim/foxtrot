@@ -5,7 +5,7 @@ use bevy_editor_pls::prelude::*;
 use bevy_prototype_debug_lines::DebugLinesPlugin;
 use bevy_rapier3d::prelude::*;
 
-mod scene_editor;
+pub mod scene_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Don't include this in a release build.

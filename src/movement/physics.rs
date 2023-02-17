@@ -4,6 +4,7 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use oxidized_navigation::NavMeshAffector;
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub struct PhysicsPlugin;
@@ -39,7 +40,9 @@ pub fn read_colliders(
                     Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh)
                         .context("Failed to create collider from mesh")?;
 
-                commands.entity(collider_entity).insert(rapier_collider);
+                commands
+                    .entity(collider_entity)
+                    .insert((rapier_collider, NavMeshAffector::default()));
             }
         }
     }

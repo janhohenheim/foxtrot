@@ -43,9 +43,9 @@ fn own_refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
 }
 
 /// Returns RGB vector
-fn get_texture_sample(direction: vec3<f32>) -> vec4<f32> {
+fn get_texture_sample(direction: vec3<f32>) -> vec3<f32> {
     let coords = dir_to_equirectangular(direction);
-    return textureSample(texture, texture_sampler, coords);
+    return textureSample(texture, texture_sampler, coords).rgb;
 }
 
 @fragment
@@ -87,9 +87,10 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     // refract image like a glass ball would
     let refraction = get_texture_sample(own_refract(-v, bumped_n, 1./1.52));
 
+    let alpha = textureSample(texture, texture_sampler, in.uv).a;
+
     /// The RGB of the refraction is multiplied with a gradient from center (orange) to edge (black)
     /// The RGB of the reflection is multiplied with a fresnel on the edge, making it only appear as a "sheen"
     let total = color * refraction + reflection * (fresnel + 0.05);
-
-    return total;
+    return vec4<f32>(total, alpha);
 }

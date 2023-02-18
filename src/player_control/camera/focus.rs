@@ -1,4 +1,3 @@
-use crate::movement::general_movement::Up;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::dialog::CurrentDialog;
@@ -8,7 +7,7 @@ use bevy::prelude::*;
 pub fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     current_dialog: Option<Res<CurrentDialog>>,
-    player_query: Query<(&Transform, &Up), With<Player>>,
+    player_query: Query<&Transform, With<Player>>,
     non_player_query: Query<&GlobalTransform, Without<Player>>,
 ) -> Result<()> {
     for mut camera in camera_query.iter_mut() {
@@ -19,10 +18,10 @@ pub fn set_camera_focus(
         } else {
             *camera.secondary_target_mut() = None;
         }
-        for (transform, up) in player_query.iter() {
+        for transform in player_query.iter() {
             let translation = transform.translation;
             camera.set_primary_target(translation);
-            *camera.up_mut() = up.0;
+            *camera.up_mut() = transform.up();
         }
     }
     Ok(())

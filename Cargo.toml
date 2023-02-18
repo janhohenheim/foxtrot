@@ -83,15 +83,5 @@ git = "https://github.com/jakobhellermann/bevy_editor_pls"
 rev = "6062b860aea87034081399369fd7ef5715f13256"
 optional = true
 
-[patch.crates-io.bevy_rapier3d]
-git = "https://github.com/janhohenheim/bevy_rapier"
-branch = "own-fork"
-
-
-[patch.crates-io.rapier3d]
-git = "https://github.com/janhohenheim/rapier"
-branch = "fix-kcc"
-
-
 [build-dependencies]
 embed-resource = "1.4"

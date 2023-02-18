@@ -51,7 +51,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
-                            translation: Vec3::new(0., -HEIGHT, 0.),
+                            translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             rotation: Quat::from_rotation_y(TAU / 2.),
                             scale: Vec3::splat(0.01),
                         },

@@ -30,12 +30,12 @@ struct FragmentInput {
 }
 
 
-fn get_texture_sample(coords: vec2<f32>) -> vec3<f32> {
+fn get_texture_sample(coords: vec2<f32>) -> vec4<f32> {
     let repeated_coords = vec2<f32>(
         (coords.x % (1. / f32(repeats.horizontal))) * f32(repeats.horizontal),
         (coords.y % (1. / f32(repeats.vertical))) * f32(repeats.vertical)
     );
-    return textureSample(texture, texture_sampler, repeated_coords).rgb;
+    return textureSample(texture, texture_sampler, repeated_coords);
 }
 
 /// Adapted from <https://github.com/bevyengine/bevy/blob/main/crates/bevy_pbr/src/render/pbr.wgsl#L30>
@@ -83,5 +83,5 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let pbr_output = get_pbr_output(in);
 
 
-    return vec4(texture, 0.) * pbr_output;
+    return texture * pbr_output;
 }

@@ -4,13 +4,12 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;
 
-/// Handles movement of kinematic character controllers, i.e. entities with the TODO A movement is done by applying forces to the objects.
+/// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].
 /// The default forces on a character going right are:  
 /// ```text
 /// ┌──────────────────────────────┐
@@ -54,39 +53,23 @@ impl Plugin for GeneralMovementPlugin {
     }
 }
 
-#[allow(clippy::type_complexity)]
 fn update_grounded(
-    mut query: Query<(
-        Entity,
-        &Transform,
-        &Collider,
-        &mut Grounded,
-        Option<&Player>,
-    )>,
-    names: Query<&Name>,
+    mut query: Query<(Entity, &Transform, &Collider, &mut Grounded)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (entity, transform, collider, mut grounded, player) in &mut query {
-        if let Some((entity, toi)) = rapier_context.cast_shape(
-            transform.translation,
-            transform.rotation,
-            transform.down(),
-            collider,
-            0.1,
-            QueryFilter::new()
-                .exclude_collider(entity)
-                .exclude_sensors(),
-        ) {
-            if toi.status == TOIStatus::Converged {
-                let name = names.get(entity).unwrap();
-                if player.is_some() {
-                    info!("{} hit by {:?}", name, toi);
-                }
-                grounded.force_set(true);
-            }
-        } else {
-            grounded.force_set(false);
-        }
+    for (entity, transform, collider, mut grounded) in &mut query {
+        let height = collider.raw.compute_local_aabb().maxs.y;
+        grounded.0 = rapier_context
+            .cast_ray(
+                transform.translation,
+                transform.down(),
+                height + 0.1,
+                true,
+                QueryFilter::new()
+                    .exclude_collider(entity)
+                    .exclude_sensors(),
+            )
+            .is_some();
     }
 }
 
@@ -121,7 +104,7 @@ pub fn apply_jumping(
     )>,
 ) {
     for (grounded, mut impulse, mut velocity, mass, jump, transform) in &mut character_query {
-        if jump.requested && grounded.is_grounded() {
+        if jump.requested && grounded.0 {
             let up = transform.up();
             impulse.impulse += up * mass.0.mass * jump.speed;
 
@@ -172,7 +155,7 @@ fn play_animations(
             .horizontal
             .is_approx_zero();
 
-        if !grounded.is_grounded() {
+        if !grounded.0 {
             animation_player
                 .play(animations.aerial.clone_weak())
                 .repeat();
@@ -197,10 +180,10 @@ pub fn apply_walking(
 ) {
     for (mut force, walking, mut velocity, grounded, mass, transform) in &mut character_query {
         let mass = mass.0.mass;
-        if let Some(acceleration) = walking.get_acceleration(grounded.is_grounded()) {
+        if let Some(acceleration) = walking.get_acceleration(grounded.0) {
             let walking_force = acceleration * mass;
             force.force += walking_force;
-        } else if grounded.is_grounded() {
+        } else if grounded.0 {
             let velocity_components = velocity.linvel.split(transform.up());
             if velocity_components.horizontal.length_squared()
                 < walking.stopping_speed * walking.stopping_speed

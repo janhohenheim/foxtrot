@@ -39,9 +39,7 @@ fn play_sprinting_effect(
             .horizontal
             .length_squared();
         for (mut particle_transform, mut effect) in with_particle.iter_mut() {
-            if grounded.is_grounded()
-                && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared()
-            {
+            if grounded.0 && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared() {
                 let translation = player_transform.translation
                     - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);

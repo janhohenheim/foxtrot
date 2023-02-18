@@ -192,7 +192,7 @@ fn control_walking_sound(
                 .split(transform.up())
                 .horizontal
                 .is_approx_zero();
-            let is_moving_on_ground = has_horizontal_movement && grounded.is_grounded();
+            let is_moving_on_ground = has_horizontal_movement && grounded.0;
             if is_moving_on_ground {
                 instance.resume(default());
             } else {

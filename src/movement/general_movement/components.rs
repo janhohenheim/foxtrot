@@ -107,34 +107,7 @@ impl Default for Walking {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Grounded {
-    state: bool,
-    wants_change: bool,
-}
-
-impl Grounded {
-    pub fn is_grounded(&self) -> bool {
-        self.state
-    }
-
-    /// Sets the grounded state to the given value after being requested to do so twice.
-    /// This is to combat both false negatives when walking on the ground and false positives when jumping up a wall.
-    pub fn try_set(&mut self, new_state: bool) {
-        if self.state == new_state {
-            self.wants_change = false
-        } else if self.wants_change {
-            self.state = new_state;
-            self.wants_change = false;
-        } else {
-            self.wants_change = true;
-        }
-    }
-
-    pub fn force_set(&mut self, new_state: bool) {
-        self.state = new_state;
-        self.wants_change = false;
-    }
-}
+pub struct Grounded(pub bool);
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]

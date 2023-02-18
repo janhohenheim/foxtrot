@@ -1,50 +1,53 @@
-use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::TAU;
 
 #[derive(Debug, Clone, Bundle)]
-pub struct KinematicCharacterBundle {
-    pub velocity: Velocity,
-    pub force: Force,
-    pub mass: Mass,
+pub struct CharacterControllerBundle {
+    pub gravity_scale: GravityScale,
+    pub mass: ColliderMassProperties,
+    pub read_mass: ReadMassProperties,
     pub walking: Walking,
     pub jumping: Jumping,
     pub grounded: Grounded,
-    pub drag: Drag,
+    pub damping: Damping,
     pub rigid_body: RigidBody,
+    pub locked_axes: LockedAxes,
     pub collider: Collider,
-    pub character_controller: KinematicCharacterController,
-    pub gravity: Gravity,
+    pub force: ExternalForce,
+    pub impulse: ExternalImpulse,
+    pub velocity: Velocity,
+    pub dominance: Dominance,
 }
 
-impl Default for KinematicCharacterBundle {
+impl Default for CharacterControllerBundle {
     fn default() -> Self {
         Self {
-            velocity: default(),
+            read_mass: default(),
+            gravity_scale: GravityScale(1.0),
             force: default(),
-            mass: default(),
+            mass: ColliderMassProperties::Mass(3.0),
             walking: default(),
             jumping: default(),
             grounded: default(),
-            drag: default(),
-            collider: default(),
-            gravity: default(),
-            rigid_body: RigidBody::KinematicVelocityBased,
-            character_controller: KinematicCharacterController {
-                offset: CharacterLength::Relative(0.05),
+            damping: Damping {
+                linear_damping: 1.5,
                 ..default()
             },
+            collider: default(),
+            rigid_body: RigidBody::Dynamic,
+            locked_axes: LockedAxes::ROTATION_LOCKED,
+            impulse: default(),
+            velocity: default(),
+            dominance: default(),
         }
     }
 }
 
-impl KinematicCharacterBundle {
+impl CharacterControllerBundle {
     pub fn capsule(height: f32, radius: f32) -> Self {
         Self {
             collider: Collider::capsule_y(height / 2., radius),
-            drag: Drag::for_capsule(height, radius),
             ..default()
         }
     }
@@ -53,24 +56,6 @@ impl KinematicCharacterBundle {
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Velocity(pub Vect);
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Force(pub Vect);
-
-#[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Mass(pub f32);
-
-impl Default for Mass {
-    fn default() -> Self {
-        Self(3.0)
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -109,9 +94,9 @@ impl Walking {
 impl Default for Walking {
     fn default() -> Self {
         Self {
-            ground_acceleration: 10.,
-            sprinting_acceleration: 20.,
-            aerial_acceleration: 7.,
+            ground_acceleration: 14.,
+            sprinting_acceleration: 19.,
+            aerial_acceleration: 9.,
             braking_acceleration: 5.,
             stopping_speed: 0.1,
             direction: None,
@@ -120,99 +105,9 @@ impl Default for Walking {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Drag {
-    pub fluid_density: f32,
-    pub area: f32,
-    pub drag_coefficient: f32,
-}
-
-impl Drag {
-    pub fn for_capsule(height: f32, radius: f32) -> Self {
-        let cross_sectional_area = (height - radius) * height + TAU * radius * radius;
-        Self {
-            area: cross_sectional_area,
-            ..default()
-        }
-    }
-
-    pub fn calculate_force(&self, velocity: Vec3, up: Vec3) -> Vec3 {
-        velocity
-            .split(up)
-            .as_array()
-            .iter()
-            .map(|&v| self.calculate_force_for_component(v))
-            .sum()
-    }
-
-    fn calculate_force_for_component(&self, velocity: Vec3) -> Vec3 {
-        let speed_squared = velocity.length_squared();
-        if speed_squared < 1e-5 {
-            return Vec3::ZERO;
-        }
-        0.5 * self.fluid_density
-            * self.area
-            * self.drag_coefficient
-            * speed_squared
-            * -velocity.normalize()
-    }
-}
-
-impl Default for Drag {
-    fn default() -> Self {
-        Self {
-            // dry air at 20°C, see <https://en.wikipedia.org/wiki/Density_of_air#Dry_air>
-            fluid_density: 1.2041,
-            // Arbitrary
-            area: 1.0,
-            // Person, see <https://www.engineeringtoolbox.com/drag-coefficient-d_627.html>
-            drag_coefficient: 1.2,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Grounded {
-    state: bool,
-    wants_change: bool,
-}
-
-impl Grounded {
-    pub fn is_grounded(&self) -> bool {
-        self.state
-    }
-
-    /// Sets the grounded state to the given value after being requested to do so twice.
-    /// This is to combat both false negatives when walking on the ground and false positives when jumping up a wall.
-    pub fn try_set(&mut self, new_state: bool) {
-        if self.state == new_state {
-            self.wants_change = false
-        } else if self.wants_change {
-            self.state = new_state;
-            self.wants_change = false;
-        } else {
-            self.wants_change = true;
-        }
-    }
-
-    pub fn force_set(&mut self, new_state: bool) {
-        self.state = new_state;
-        self.wants_change = false;
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-/// Gravity constant in m/s²
-pub struct Gravity(pub f32);
-
-impl Default for Gravity {
-    fn default() -> Self {
-        Self(9.81)
-    }
-}
+pub struct Grounded(pub bool);
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
@@ -226,7 +121,7 @@ pub struct Jumping {
 impl Default for Jumping {
     fn default() -> Self {
         Self {
-            speed: 4.,
+            speed: 4.5,
             requested: false,
         }
     }

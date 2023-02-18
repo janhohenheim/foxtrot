@@ -12,10 +12,7 @@ pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-            .insert_resource(RapierConfiguration {
-                gravity: Vect::new(0.0, -9.81, 0.0),
-                ..default()
-            })
+            .insert_resource(RapierConfiguration::default())
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders.pipe(log_errors)),

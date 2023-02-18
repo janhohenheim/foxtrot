@@ -1,10 +1,11 @@
 use crate::level_instantiation::spawning::objects::player;
-use crate::movement::general_movement::{Grounded, Velocity};
+use crate::movement::general_movement::Grounded;
 use crate::particles::init::init_effects;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
+use bevy_rapier3d::prelude::*;
 
 mod init;
 
@@ -30,17 +31,15 @@ fn play_sprinting_effect(
     with_player: Query<(&Transform, &Grounded, &Velocity), Without<SprintingParticle>>,
     mut with_particle: Query<(&mut Transform, &mut ParticleEffect), With<SprintingParticle>>,
 ) {
-    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 6.;
+    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 7.;
     for (player_transform, grounded, velocity) in with_player.iter() {
         let horizontal_speed_squared = velocity
-            .0
+            .linvel
             .split(player_transform.up())
             .horizontal
             .length_squared();
         for (mut particle_transform, mut effect) in with_particle.iter_mut() {
-            if grounded.is_grounded()
-                && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared()
-            {
+            if grounded.0 && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared() {
                 let translation = player_transform.translation
                     - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);

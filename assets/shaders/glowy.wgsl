@@ -43,9 +43,9 @@ fn own_refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
 }
 
 /// Returns RGB vector
-fn get_texture_sample(direction: vec3<f32>) -> vec3<f32> {
+fn get_texture_sample(direction: vec3<f32>) -> vec4<f32> {
     let coords = dir_to_equirectangular(direction);
-    return textureSample(texture, texture_sampler, coords).rgb;
+    return textureSample(texture, texture_sampler, coords);
 }
 
 @fragment
@@ -79,13 +79,13 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     let bump = get_texture_sample(n * vec3(1., -0.5, 1.) - vec3(0., 0.5, 0.))[0];
 
     // reflect image like a mirror
-    let reflection = get_texture_sample(reflect(-v, n));
+    let reflection = get_texture_sample(reflect(-v, n)).rgb;
 
 
     // This n is shifted a bit stochastically so that refraction is heterogenous
     let bumped_n = n + bump * 2.;
     // refract image like a glass ball would
-    let refraction = get_texture_sample(own_refract(-v, bumped_n, 1./1.52));
+    let refraction = get_texture_sample(own_refract(-v, bumped_n, 1./1.52)).rgb;
 
     let alpha = textureSample(texture, texture_sampler, in.uv).a;
 

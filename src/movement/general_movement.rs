@@ -16,7 +16,7 @@ pub use components::*;
 /// │            Gravity           │
 /// │               ↓              │
 /// │              ╔═╗             │
-/// │   Walking ─► ║ ║ ◄─ Drag     │
+/// │   Walking ─► ║ ║ ◄─ Damping  │
 /// │              ╚═╝             │  
 /// │                              │
 /// └──────────────────────────────┘
@@ -24,13 +24,13 @@ pub use components::*;
 /// All physics values are assumed to be in SI units, e.g. forces are measured in N and acceleration in m/s².
 ///
 /// The [`Walking`] and [`Jumping`] components are user friendly ways of influencing the corresponding forces.
-/// There is no explicit maximum speed since the [`Drag`] counteracts all other forces until reaching an equilibrium.
+/// There is no explicit maximum speed since the damping counteracts all other forces until reaching an equilibrium.
 /// The [`Grounded`] component is used to determine whether the character is on the ground or not.
-/// To influence movement, apply your force by adding it to the character's total [`Force`]. Common ways to do this are:
-/// - A continuous force like walking: `force.0 += acceleration * mass.0`, with `force`: [`Force`], `mass`: [`Mass`], and a user-defined `acceleration`: [`f32`]
-/// - An instantaneous force (i.e. an impulse) like jumping: `force.0 += velocity * mass.0 / time.delta_seconds()`, with `force`: [`Force`], `mass`: [`Mass`], `time`: [`Res<Time>`](Time) and a user-defined `velocity`: [`f32`]
+/// To influence movement, apply your force by adding it to the character's total [`ExternalForce`] or [`ExternalImpulse`]. This is usually done like this:
+/// - A continuous force like walking: `external_force.force += acceleration * read_mass_properties.0.mass`, with `external_force`: [`ExternalForce`], `read_mass_properties`: [`ReadMassProperties`], and a user-defined `acceleration`: [`Vec3`]
+/// - An instantaneous force (i.e. an impulse) like jumping: `external_impulse.impulse += velocity * read_mass_properties.0.mass`, with `external_impulse`: [`ExternalImpulse`], `read_mass_properties`: [`ReadMassProperties`], and a user-defined `velocity`: [`Vec3`]
 ///
-/// Note: you might notice that the normal force is not included in the above diagram. This is because the underlying TODO takes care of the character not penetrating colliders, thus emulating this force.
+/// Note: you might notice that the normal force is not included in the above diagram. This is because rapier emulates it by moving penetrating colliders out of each other.
 pub struct GeneralMovementPlugin;
 
 impl Plugin for GeneralMovementPlugin {

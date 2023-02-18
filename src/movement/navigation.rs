@@ -1,6 +1,6 @@
 #[cfg(feature = "dev")]
 use crate::dev::scene_editor::SceneEditorState;
-use crate::movement::general_movement::{Up, Walking};
+use crate::movement::general_movement::{apply_walking, reset_movement_components, Up, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
@@ -40,7 +40,12 @@ impl Plugin for NavigationPlugin {
             max_edge_length: 80,
         })
         .add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(query_mesh.pipe(log_errors)),
+            SystemSet::on_update(GameState::Playing).with_system(
+                query_mesh
+                    .pipe(log_errors)
+                    .after(reset_movement_components)
+                    .before(apply_walking),
+            ),
         );
     }
 }
@@ -100,8 +105,12 @@ fn query_mesh(
                     if editor_state.navmesh_render_enabled {
                         draw_path(&path, &mut lines, Color::RED);
                     }
-                    let next_point = path[1];
-                    let dir = (next_point - from).split(up.0).horizontal.try_normalize();
+                    let dir = path
+                        .into_iter()
+                        .filter_map(|next_point| {
+                            (next_point - from).split(up.0).horizontal.try_normalize()
+                        })
+                        .next();
                     walking.direction = dir;
                 }
             }

@@ -62,7 +62,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
-                            translation: Vec3::new(0., -HEIGHT, 0.),
+                            translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             scale: Vec3::splat(0.012),
                             rotation: Quat::from_rotation_y(TAU / 2.),
                         },

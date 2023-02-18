@@ -52,7 +52,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
-                    ActiveCollisionTypes::KINEMATIC_KINEMATIC,
+                    ActiveCollisionTypes::DYNAMIC_DYNAMIC,
                     CollisionGroups::new(
                         GameCollisionGroup::OTHER.into(),
                         GameCollisionGroup::PLAYER.into(),

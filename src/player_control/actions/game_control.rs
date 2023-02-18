@@ -67,14 +67,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 13,
             #[cfg(target_os = "windows")] 0x11,
             #[cfg(target_os = "linux")] 0x11,
-            #[cfg(target_arch = "wasm32")] 0x11,
+            #[cfg(target_arch = "wasm32")] 0x57,
         ),
         // Up arrow
         ScanCode(
             #[cfg(target_os = "macos")] 126,
             #[cfg(target_os = "windows")] 0x48,
             #[cfg(target_os = "linux")] 0x48,
-            #[cfg(target_arch = "wasm32")] 0x48,
+            #[cfg(target_arch = "wasm32")] 0x26,
         ),
     ],
     GameControl::Down => [
@@ -83,14 +83,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 1,
             #[cfg(target_os = "windows")] 0x1F,
             #[cfg(target_os = "linux")] 0x1F,
-            #[cfg(target_arch = "wasm32")] 0x1F,
+            #[cfg(target_arch = "wasm32")] 0x53,
         ),
         // Down arrow
         ScanCode(
             #[cfg(target_os = "macos")] 125,
             #[cfg(target_os = "windows")] 0x50,
             #[cfg(target_os = "linux")] 0x50,
-            #[cfg(target_arch = "wasm32")] 0x50,
+            #[cfg(target_arch = "wasm32")] 0x28,
         ),
     ],
     GameControl::Left => [
@@ -99,14 +99,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 0,
             #[cfg(target_os = "windows")] 0x1E,
             #[cfg(target_os = "linux")] 0x1E,
-            #[cfg(target_arch = "wasm32")] 0x1E,
+            #[cfg(target_arch = "wasm32")] 0x41,
         ),
         // Left arrow
         ScanCode(
             #[cfg(target_os = "macos")] 123,
             #[cfg(target_os = "windows")] 0x4B,
             #[cfg(target_os = "linux")] 0x4B,
-            #[cfg(target_arch = "wasm32")] 0x4B,
+            #[cfg(target_arch = "wasm32")] 0x25,
         ),
     ],
     GameControl::Right => [
@@ -115,14 +115,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 2,
             #[cfg(target_os = "windows")] 0x20,
             #[cfg(target_os = "linux")] 0x20,
-            #[cfg(target_arch = "wasm32")] 0x20,
+            #[cfg(target_arch = "wasm32")] 0x44,
         ),
         // Right arrow
         ScanCode(
             #[cfg(target_os = "macos")] 124,
             #[cfg(target_os = "windows")] 0x4D,
             #[cfg(target_os = "linux")] 0x4D,
-            #[cfg(target_arch = "wasm32")] 0x4D,
+            #[cfg(target_arch = "wasm32")] 0x27,
         ),
     ],
     GameControl::Sprint => [
@@ -131,7 +131,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 56,
             #[cfg(target_os = "windows")] 0x2A,
             #[cfg(target_os = "linux")] 0x2A,
-            #[cfg(target_arch = "wasm32")] 0x2A,
+            #[cfg(target_arch = "wasm32")] 0x10,
         ),
     ],
     GameControl::Jump => [
@@ -140,7 +140,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 49,
             #[cfg(target_os = "windows")] 0x39,
             #[cfg(target_os = "linux")] 0x39,
-            #[cfg(target_arch = "wasm32")] 0x39,
+            #[cfg(target_arch = "wasm32")] 0x20,
         ),
     ],
     GameControl::ToggleEditor => [
@@ -149,7 +149,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 12,
             #[cfg(target_os = "windows")] 0x10,
             #[cfg(target_os = "linux")] 0x10,
-            #[cfg(target_arch = "wasm32")] 0x10,
+            #[cfg(target_arch = "wasm32")] 0x51,
         ),
     ],
     GameControl::TogglePause => [
@@ -158,7 +158,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 53,
             #[cfg(target_os = "windows")] 0x01,
             #[cfg(target_os = "linux")] 0x01,
-            #[cfg(target_arch = "wasm32")] 0x01,
+            #[cfg(target_arch = "wasm32")] 0x1B,
         ),
     ],
     GameControl::Interact => [
@@ -167,7 +167,7 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 14,
             #[cfg(target_os = "windows")] 0x12,
             #[cfg(target_os = "linux")] 0x12,
-            #[cfg(target_arch = "wasm32")] 0x12,
+            #[cfg(target_arch = "wasm32")] 0x45,
         ),
     ],
     GameControl::SpeedUpDialog => [
@@ -176,14 +176,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 49,
             #[cfg(target_os = "windows")] 0x39,
             #[cfg(target_os = "linux")] 0x39,
-            #[cfg(target_arch = "wasm32")] 0x39,
+            #[cfg(target_arch = "wasm32")] 0x20,
         ),
         // Enter
         ScanCode(
             #[cfg(target_os = "macos")] 36,
             #[cfg(target_os = "windows")] 0x1C,
             #[cfg(target_os = "linux")] 0x1C,
-            #[cfg(target_arch = "wasm32")] 0x1C,
+            #[cfg(target_arch = "wasm32")] 0x0D,
         ),
     ],
     GameControl::NumberedChoice(1) => [
@@ -192,14 +192,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 18,
             #[cfg(target_os = "windows")] 0x02,
             #[cfg(target_os = "linux")] 0x02,
-            #[cfg(target_arch = "wasm32")] 0x02,
+            #[cfg(target_arch = "wasm32")] 0x31,
         ),
         // Numpad 1
         ScanCode(
             #[cfg(target_os = "macos")] 83,
             #[cfg(target_os = "windows")] 0x4F,
             #[cfg(target_os = "linux")] 0x4F,
-            #[cfg(target_arch = "wasm32")] 0x4F,
+            #[cfg(target_arch = "wasm32")] 0x61,
         ),
     ],
     GameControl::NumberedChoice(2) => [
@@ -208,14 +208,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 19,
             #[cfg(target_os = "windows")] 0x03,
             #[cfg(target_os = "linux")] 0x03,
-            #[cfg(target_arch = "wasm32")] 0x03,
+            #[cfg(target_arch = "wasm32")] 0x32,
         ),
         // Numpad 2
         ScanCode(
             #[cfg(target_os = "macos")] 84,
             #[cfg(target_os = "windows")] 0x50,
             #[cfg(target_os = "linux")] 0x50,
-            #[cfg(target_arch = "wasm32")] 0x50,
+            #[cfg(target_arch = "wasm32")] 0x62,
         ),
     ],
     GameControl::NumberedChoice(3) => [
@@ -224,14 +224,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 20,
             #[cfg(target_os = "windows")] 0x04,
             #[cfg(target_os = "linux")] 0x04,
-            #[cfg(target_arch = "wasm32")] 0x04,
+            #[cfg(target_arch = "wasm32")] 0x33,
         ),
         // Numpad 3
         ScanCode(
             #[cfg(target_os = "macos")] 85,
             #[cfg(target_os = "windows")] 0x51,
             #[cfg(target_os = "linux")] 0x51,
-            #[cfg(target_arch = "wasm32")] 0x51,
+            #[cfg(target_arch = "wasm32")] 0x63,
         ),
     ],
     GameControl::NumberedChoice(4) => [
@@ -240,14 +240,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 21,
             #[cfg(target_os = "windows")] 0x05,
             #[cfg(target_os = "linux")] 0x05,
-            #[cfg(target_arch = "wasm32")] 0x05,
+            #[cfg(target_arch = "wasm32")] 0x34,
         ),
         // Numpad 4
         ScanCode(
             #[cfg(target_os = "macos")] 86,
             #[cfg(target_os = "windows")] 0x4B,
             #[cfg(target_os = "linux")] 0x4B,
-            #[cfg(target_arch = "wasm32")] 0x4B,
+            #[cfg(target_arch = "wasm32")] 0x64,
         ),
     ],
     GameControl::NumberedChoice(5) => [
@@ -256,14 +256,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 23,
             #[cfg(target_os = "windows")] 0x06,
             #[cfg(target_os = "linux")] 0x06,
-            #[cfg(target_arch = "wasm32")] 0x06,
+            #[cfg(target_arch = "wasm32")] 0x35,
         ),
         // Numpad 5
         ScanCode(
             #[cfg(target_os = "macos")] 87,
             #[cfg(target_os = "windows")] 0x4C,
             #[cfg(target_os = "linux")] 0x4C,
-            #[cfg(target_arch = "wasm32")] 0x4C,
+            #[cfg(target_arch = "wasm32")] 0x65,
         ),
     ],
     GameControl::NumberedChoice(6) => [
@@ -272,14 +272,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 22,
             #[cfg(target_os = "windows")] 0x07,
             #[cfg(target_os = "linux")] 0x07,
-            #[cfg(target_arch = "wasm32")] 0x07,
+            #[cfg(target_arch = "wasm32")] 0x36,
         ),
         // Numpad 6
         ScanCode(
             #[cfg(target_os = "macos")] 88,
             #[cfg(target_os = "windows")] 0x4D,
             #[cfg(target_os = "linux")] 0x4D,
-            #[cfg(target_arch = "wasm32")] 0x4D,
+            #[cfg(target_arch = "wasm32")] 0x66,
         ),
     ],
     GameControl::NumberedChoice(7) => [
@@ -288,14 +288,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 26,
             #[cfg(target_os = "windows")] 0x08,
             #[cfg(target_os = "linux")] 0x08,
-            #[cfg(target_arch = "wasm32")] 0x08,
+            #[cfg(target_arch = "wasm32")] 0x37,
         ),
         // Numpad 7
         ScanCode(
             #[cfg(target_os = "macos")] 89,
             #[cfg(target_os = "windows")] 0x47,
             #[cfg(target_os = "linux")] 0x47,
-            #[cfg(target_arch = "wasm32")] 0x47,
+            #[cfg(target_arch = "wasm32")] 0x67,
         ),
     ],
     GameControl::NumberedChoice(8) => [
@@ -304,14 +304,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 28,
             #[cfg(target_os = "windows")] 0x09,
             #[cfg(target_os = "linux")] 0x09,
-            #[cfg(target_arch = "wasm32")] 0x09,
+            #[cfg(target_arch = "wasm32")] 0x38,
         ),
         // Numpad 8
         ScanCode(
             #[cfg(target_os = "macos")] 91,
             #[cfg(target_os = "windows")] 0x48,
             #[cfg(target_os = "linux")] 0x48,
-            #[cfg(target_arch = "wasm32")] 0x48,
+            #[cfg(target_arch = "wasm32")] 0x68,
         ),
     ],
     GameControl::NumberedChoice(9) => [
@@ -320,14 +320,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 25,
             #[cfg(target_os = "windows")] 0x0A,
             #[cfg(target_os = "linux")] 0x0A,
-            #[cfg(target_arch = "wasm32")] 0x0A,
+            #[cfg(target_arch = "wasm32")] 0x39,
         ),
         // Numpad 9
         ScanCode(
             #[cfg(target_os = "macos")] 92,
             #[cfg(target_os = "windows")] 0x49,
             #[cfg(target_os = "linux")] 0x49,
-            #[cfg(target_arch = "wasm32")] 0x49,
+            #[cfg(target_arch = "wasm32")] 0x69,
         ),
     ],
     GameControl::NumberedChoice(0) => [
@@ -336,14 +336,14 @@ generate_bindings! {
             #[cfg(target_os = "macos")] 29,
             #[cfg(target_os = "windows")] 0x0B,
             #[cfg(target_os = "linux")] 0x0B,
-            #[cfg(target_arch = "wasm32")] 0x0B,
+            #[cfg(target_arch = "wasm32")] 0x30,
         ),
         // Numpad 0
         ScanCode(
             #[cfg(target_os = "macos")] 82,
             #[cfg(target_os = "windows")] 0x52,
             #[cfg(target_os = "linux")] 0x52,
-            #[cfg(target_arch = "wasm32")] 0x52,
+            #[cfg(target_arch = "wasm32")] 0x60,
         ),
     ],
     GameControl::NumberedChoice(_) => [

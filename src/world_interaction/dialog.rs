@@ -112,6 +112,7 @@ fn show_dialog(
     egui::Window::new("Dialog")
         .anchor(egui::Align2::CENTER_BOTTOM, egui::Vec2::new(0., -30.))
         .collapsible(false)
+        .resizable(false)
         .title_bar(false)
         .frame(egui::Frame {
             fill: egui::Color32::from_black_alpha(230),

@@ -5,6 +5,7 @@ use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::AnimationEntityLink;
+use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
@@ -44,38 +45,55 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<CharacterAnimations>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(update_grounded)
-                    .with_system(apply_walking.after(update_grounded))
-                    .with_system(apply_jumping)
                     .with_system(reset_movement_components)
-                    //.with_system(rotate_characters)
-                    .with_system(play_animations.pipe(log_errors)),
+                    .with_system(update_grounded.after(reset_movement_components))
+                    .with_system(apply_walking.after(update_grounded))
+                    .with_system(apply_jumping.after(update_grounded))
+                    .with_system(rotate_characters.after(update_grounded))
+                    .with_system(play_animations.pipe(log_errors).after(update_grounded)),
             );
     }
 }
 
 fn update_grounded(
-    mut query: Query<(Entity, &Transform, &Collider, &mut Grounded, &Velocity, &Up)>,
+    mut query: Query<(
+        Entity,
+        &Transform,
+        &Collider,
+        &mut Grounded,
+        &Velocity,
+        &Up,
+        Option<&Player>,
+    )>,
     names: Query<&Name>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (entity, transform, collider, mut grounded, velocity, up) in &mut query {
+    for (entity, transform, collider, mut grounded, velocity, up, player) in &mut query {
         let falling = velocity.linvel.dot(up.0) < -1e-5;
         if !falling && false {
             grounded.force_set(false)
         } else if let Some((entity, toi)) = rapier_context.cast_shape(
             transform.translation,
             transform.rotation.into(),
-            velocity.linvel,
+            -up.0,
             collider,
-            player::HEIGHT / 2.0 + player::RADIUS,
+            0.1,
             QueryFilter::new()
                 .exclude_collider(entity)
                 .exclude_sensors(),
         ) {
-            let name = names.get(entity).unwrap();
-            info!("{} hit by {:?}", name, toi);
-            grounded.force_set(true);
+            if toi.status == TOIStatus::Converged {
+                let name = names.get(entity).unwrap();
+                if player.is_some() {
+                    info!("{} hit by {:?}", name, toi);
+                    info!("pos: {:?}", transform.translation);
+                    info!("vel: {:?}", velocity.linvel);
+                    info!("max_toi: {}", player::HEIGHT / 2.0 + player::RADIUS);
+                }
+                grounded.force_set(true);
+            }
+        } else {
+            grounded.force_set(false);
         }
     }
 }
@@ -101,20 +119,18 @@ pub fn reset_movement_components(
 }
 
 pub fn apply_jumping(
-    time: Res<Time>,
     mut character_query: Query<(
         &Grounded,
-        &mut ExternalForce,
+        &mut ExternalImpulse,
         &mut Velocity,
         &ReadMassProperties,
         &Jumping,
         &Up,
     )>,
 ) {
-    let dt = time.delta_seconds();
-    for (grounded, mut force, mut velocity, mass, jump, up) in &mut character_query {
+    for (grounded, mut impulse, mut velocity, mass, jump, up) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
-            force.force += up.0 * mass.0.mass * jump.speed / dt;
+            impulse.impulse += up.0 * mass.0.mass * jump.speed;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
             // Otherwise the falling velocity from the last tick would dampen the jump velocity.

@@ -31,7 +31,7 @@ fn play_sprinting_effect(
     with_player: Query<(&Transform, &Grounded, &Velocity), Without<SprintingParticle>>,
     mut with_particle: Query<(&mut Transform, &mut ParticleEffect), With<SprintingParticle>>,
 ) {
-    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 6.;
+    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 7.;
     for (player_transform, grounded, velocity) in with_player.iter() {
         let horizontal_speed_squared = velocity
             .linvel

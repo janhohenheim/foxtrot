@@ -32,6 +32,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                         handle_horizontal_movement
                             .after(set_actions)
                             .after(update_camera_transform)
+                            .after(reset_movement_components)
                             .before(apply_walking),
                     )
                     .with_system(
@@ -45,8 +46,8 @@ impl Plugin for PlayerEmbodimentPlugin {
                             .after(switch_camera_kind)
                             .before(apply_walking),
                     )
-                    .with_system(handle_speed_effects.before(reset_movement_components))
-                    .with_system(rotate_to_speaker.before(reset_movement_components))
+                    .with_system(handle_speed_effects)
+                    .with_system(rotate_to_speaker)
                     .with_system(control_walking_sound.after(set_actions)),
             );
     }
@@ -79,18 +80,18 @@ fn handle_horizontal_movement(
     };
 
     let forward = camera.forward().xz().normalize();
-    let sideward = forward.perp();
+    let sideways = forward.perp();
     let forward_action = forward * movement.y;
-    let sideward_action = sideward * movement.x;
+    let sideways_action = sideways * movement.x;
 
     let is_looking_backward = forward.dot(forward_action) < 0.0;
     let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
     let modifier = if is_looking_backward && is_first_person {
-        0.5
+        0.7
     } else {
         1.
     };
-    let direction = (forward_action + sideward_action).x0y().normalize() * modifier;
+    let direction = (forward_action + sideways_action).x0y().normalize() * modifier;
 
     for mut walk in &mut player_query {
         walk.direction = Some(direction);

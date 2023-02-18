@@ -31,7 +31,10 @@ impl Default for CharacterControllerBundle {
             walking: default(),
             jumping: default(),
             grounded: default(),
-            damping: default(),
+            damping: Damping {
+                linear_damping: 1.5,
+                ..default()
+            },
             collider: default(),
             rigid_body: RigidBody::Dynamic,
             locked_axes: LockedAxes::ROTATION_LOCKED,
@@ -97,9 +100,9 @@ impl Walking {
 impl Default for Walking {
     fn default() -> Self {
         Self {
-            ground_acceleration: 10.,
-            sprinting_acceleration: 20.,
-            aerial_acceleration: 7.,
+            ground_acceleration: 14.,
+            sprinting_acceleration: 19.,
+            aerial_acceleration: 9.,
             braking_acceleration: 5.,
             stopping_speed: 0.1,
             direction: None,
@@ -151,7 +154,7 @@ pub struct Jumping {
 impl Default for Jumping {
     fn default() -> Self {
         Self {
-            speed: 4.,
+            speed: 4.5,
             requested: false,
         }
     }

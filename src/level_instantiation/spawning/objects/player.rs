@@ -9,8 +9,8 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
 
-pub const HEIGHT: f32 = 1.;
-pub const RADIUS: f32 = 0.4;
+pub const HEIGHT: f32 = 0.4;
+pub const RADIUS: f32 = 0.3;
 
 pub struct PlayerSpawner;
 

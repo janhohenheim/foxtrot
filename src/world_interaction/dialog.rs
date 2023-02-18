@@ -148,7 +148,8 @@ fn show_dialog(
                 }
             });
         });
-    *elapsed_time += time.delta_seconds();
+    let dt_speed_multiplier = if actions.ui.speed_up_dialog { 4. } else { 1. };
+    *elapsed_time += time.delta_seconds() * dt_speed_multiplier;
     Ok(())
 }
 

@@ -10,6 +10,7 @@ pub enum GameControl {
     ToggleEditor,
     TogglePause,
     Interact,
+    SpeedUpDialog,
     NumberedChoice(u16),
 }
 
@@ -167,6 +168,22 @@ generate_bindings! {
             #[cfg(target_os = "windows")] 0x12,
             #[cfg(target_os = "linux")] 0x12,
             #[cfg(target_arch = "wasm32")] 0x12,
+        ),
+    ],
+    GameControl::SpeedUpDialog => [
+        // Space
+        ScanCode(
+            #[cfg(target_os = "macos")] 49,
+            #[cfg(target_os = "windows")] 0x39,
+            #[cfg(target_os = "linux")] 0x39,
+            #[cfg(target_arch = "wasm32")] 0x39,
+        ),
+        // Enter
+        ScanCode(
+            #[cfg(target_os = "macos")] 36,
+            #[cfg(target_os = "windows")] 0x1C,
+            #[cfg(target_os = "linux")] 0x1C,
+            #[cfg(target_arch = "wasm32")] 0x1C,
         ),
     ],
     GameControl::NumberedChoice(1) => [

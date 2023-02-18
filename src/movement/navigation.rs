@@ -1,6 +1,6 @@
 #[cfg(feature = "dev")]
 use crate::dev::scene_editor::SceneEditorState;
-use crate::movement::general_movement::{apply_walking, reset_movement_components, Up, Walking};
+use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
@@ -56,10 +56,7 @@ pub struct Follower;
 
 #[allow(clippy::type_complexity)]
 fn query_mesh(
-    mut with_follower: Query<
-        (Entity, &Transform, &Up, &mut Walking),
-        (With<Follower>, Without<Player>),
-    >,
+    mut with_follower: Query<(Entity, &Transform, &mut Walking), (With<Follower>, Without<Player>)>,
     with_player: Query<(Entity, &Transform), (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
@@ -68,7 +65,7 @@ fn query_mesh(
     #[cfg(feature = "dev")] editor_state: Res<SceneEditorState>,
 ) -> Result<()> {
     if let Ok(nav_mesh) = nav_mesh.get().read() {
-        for (follower_entity, follower_transform, up, mut walking) in &mut with_follower {
+        for (follower_entity, follower_transform, mut walking) in &mut with_follower {
             for (player_entity, player_transform) in &with_player {
                 let from = follower_transform.translation;
                 let to = player_transform.translation;
@@ -108,7 +105,10 @@ fn query_mesh(
                     let dir = path
                         .into_iter()
                         .filter_map(|next_point| {
-                            (next_point - from).split(up.0).horizontal.try_normalize()
+                            (next_point - from)
+                                .split(follower_transform.up())
+                                .horizontal
+                                .try_normalize()
                         })
                         .next();
                     walking.direction = dir;

@@ -3,7 +3,6 @@ use bevy::prelude::*;
 
 use bevy_rapier3d::prelude::*;
 mod components;
-use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
@@ -55,27 +54,23 @@ impl Plugin for GeneralMovementPlugin {
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn update_grounded(
     mut query: Query<(
         Entity,
         &Transform,
         &Collider,
         &mut Grounded,
-        &Velocity,
-        &Up,
         Option<&Player>,
     )>,
     names: Query<&Name>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (entity, transform, collider, mut grounded, velocity, up, player) in &mut query {
-        let falling = velocity.linvel.dot(up.0) < -1e-5;
-        if !falling && false {
-            grounded.force_set(false)
-        } else if let Some((entity, toi)) = rapier_context.cast_shape(
+    for (entity, transform, collider, mut grounded, player) in &mut query {
+        if let Some((entity, toi)) = rapier_context.cast_shape(
             transform.translation,
-            transform.rotation.into(),
-            -up.0,
+            transform.rotation,
+            transform.down(),
             collider,
             0.1,
             QueryFilter::new()
@@ -86,9 +81,6 @@ fn update_grounded(
                 let name = names.get(entity).unwrap();
                 if player.is_some() {
                     info!("{} hit by {:?}", name, toi);
-                    info!("pos: {:?}", transform.translation);
-                    info!("vel: {:?}", velocity.linvel);
-                    info!("max_toi: {}", player::HEIGHT / 2.0 + player::RADIUS);
                 }
                 grounded.force_set(true);
             }
@@ -125,30 +117,32 @@ pub fn apply_jumping(
         &mut Velocity,
         &ReadMassProperties,
         &Jumping,
-        &Up,
+        &Transform,
     )>,
 ) {
-    for (grounded, mut impulse, mut velocity, mass, jump, up) in &mut character_query {
+    for (grounded, mut impulse, mut velocity, mass, jump, transform) in &mut character_query {
         if jump.requested && grounded.is_grounded() {
-            impulse.impulse += up.0 * mass.0.mass * jump.speed;
+            let up = transform.up();
+            impulse.impulse += up * mass.0.mass * jump.speed;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
             // Otherwise the falling velocity from the last tick would dampen the jump velocity.
-            let velocity_components = velocity.linvel.split(up.0);
+            let velocity_components = velocity.linvel.split(up);
             velocity.linvel = velocity_components.horizontal;
         }
     }
 }
 
-fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Up, &Velocity, &mut Transform)>) {
+fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut Transform)>) {
     let dt = time.delta_seconds();
-    for (up, velocity, mut transform) in player_query.iter_mut() {
-        let horizontal_movement = velocity.linvel.split(up.0).horizontal;
+    for (velocity, mut transform) in player_query.iter_mut() {
+        let up = transform.up();
+        let horizontal_movement = velocity.linvel.split(up).horizontal;
         if horizontal_movement.is_approx_zero() {
             continue;
         }
         let target_transform =
-            transform.looking_at(transform.translation + horizontal_movement, up.0);
+            transform.looking_at(transform.translation + horizontal_movement, up);
         // Asymptotic averaging
         const SMOOTHNESS: f32 = 4.;
         let scale = (SMOOTHNESS * dt).min(1.);
@@ -161,18 +155,22 @@ fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
         &Velocity,
-        &Up,
+        &Transform,
         &Grounded,
         &AnimationEntityLink,
         &CharacterAnimations,
     )>,
 ) -> Result<()> {
-    for (velocity, up, grounded, animation_entity_link, animations) in characters.iter() {
+    for (velocity, transform, grounded, animation_entity_link, animations) in characters.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
             .context("animation_entity_link held entity without animation player")?;
 
-        let has_horizontal_movement = !velocity.linvel.split(up.0).horizontal.is_approx_zero();
+        let has_horizontal_movement = !velocity
+            .linvel
+            .split(transform.up())
+            .horizontal
+            .is_approx_zero();
 
         if !grounded.is_grounded() {
             animation_player
@@ -194,16 +192,16 @@ pub fn apply_walking(
         &mut Velocity,
         &Grounded,
         &ReadMassProperties,
-        &Up,
+        &Transform,
     )>,
 ) {
-    for (mut force, walking, mut velocity, grounded, mass, up) in &mut character_query {
+    for (mut force, walking, mut velocity, grounded, mass, transform) in &mut character_query {
         let mass = mass.0.mass;
         if let Some(acceleration) = walking.get_acceleration(grounded.is_grounded()) {
             let walking_force = acceleration * mass;
             force.force += walking_force;
         } else if grounded.is_grounded() {
-            let velocity_components = velocity.linvel.split(up.0);
+            let velocity_components = velocity.linvel.split(transform.up());
             if velocity_components.horizontal.length_squared()
                 < walking.stopping_speed * walking.stopping_speed
             {

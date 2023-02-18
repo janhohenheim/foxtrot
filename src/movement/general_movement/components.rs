@@ -18,7 +18,6 @@ pub struct CharacterControllerBundle {
     pub impulse: ExternalImpulse,
     pub velocity: Velocity,
     pub dominance: Dominance,
-    pub up: Up,
 }
 
 impl Default for CharacterControllerBundle {
@@ -41,7 +40,6 @@ impl Default for CharacterControllerBundle {
             impulse: default(),
             velocity: default(),
             dominance: default(),
-            up: Up(Vec3::Y),
         }
     }
 }
@@ -58,10 +56,6 @@ impl CharacterControllerBundle {
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Model;
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Up(pub Vec3);
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]

@@ -16,12 +16,25 @@ use oxidized_navigation::NavMesh;
 use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
-pub struct SceneEditorPlugin;
+pub struct DevEditorPlugin;
 
-pub struct FoxtrotDevWindow;
+impl Plugin for DevEditorPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<DevEditorState>()
+            .add_editor_window::<DevEditorWindow>()
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(handle_debug_render)
+                    .with_system(handle_navmesh_render)
+                    .with_system(set_cursor_grab_mode),
+            );
+    }
+}
 
-impl EditorWindow for FoxtrotDevWindow {
-    type State = SceneEditorState;
+pub struct DevEditorWindow;
+
+impl EditorWindow for DevEditorWindow {
+    type State = DevEditorState;
     const NAME: &'static str = "Foxtrot Dev";
     const DEFAULT_SIZE: (f32, f32) = (200., 150.);
     fn ui(
@@ -30,7 +43,7 @@ impl EditorWindow for FoxtrotDevWindow {
         ui: &mut egui::Ui,
     ) {
         let state = cx
-            .state_mut::<FoxtrotDevWindow>()
+            .state_mut::<DevEditorWindow>()
             .expect("Failed to get dev window state");
 
         state.open = true;
@@ -109,7 +122,7 @@ impl EditorWindow for FoxtrotDevWindow {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct SceneEditorState {
+pub struct DevEditorState {
     pub open: bool,
     pub level_name: String,
     pub save_name: String,
@@ -118,7 +131,7 @@ pub struct SceneEditorState {
     pub navmesh_render_enabled: bool,
 }
 
-impl Default for SceneEditorState {
+impl Default for DevEditorState {
     fn default() -> Self {
         Self {
             level_name: "old_town".to_owned(),
@@ -131,22 +144,9 @@ impl Default for SceneEditorState {
     }
 }
 
-impl Plugin for SceneEditorPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<SceneEditorState>()
-            .add_editor_window::<FoxtrotDevWindow>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render)
-                    .with_system(set_cursor_grab_mode),
-            );
-    }
-}
-
 fn handle_debug_render(state: Res<Editor>, mut debug_render_context: ResMut<DebugRenderContext>) {
     debug_render_context.enabled = state
-        .window_state::<FoxtrotDevWindow>()
+        .window_state::<DevEditorWindow>()
         .expect("Window State Loaded")
         .collider_render_enabled;
 }
@@ -172,7 +172,7 @@ fn handle_navmesh_render(
     mut lines: ResMut<DebugLines>,
 ) {
     if !state
-        .window_state::<FoxtrotDevWindow>()
+        .window_state::<DevEditorWindow>()
         .expect("Window State Loaded")
         .navmesh_render_enabled
     {

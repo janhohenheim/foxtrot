@@ -1,5 +1,5 @@
 #[cfg(feature = "dev")]
-use crate::dev::scene_editor::FoxtrotDevWindow;
+use crate::dev::dev_editor::DevEditorWindow;
 use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
@@ -100,7 +100,7 @@ fn query_mesh(
                 if let Some(path) = path {
                     #[cfg(feature = "dev")]
                     if editor_state
-                        .window_state::<FoxtrotDevWindow>()
+                        .window_state::<DevEditorWindow>()
                         .context("Failed to get dev window state")?
                         .navmesh_render_enabled
                     {

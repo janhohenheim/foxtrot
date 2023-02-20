@@ -60,7 +60,6 @@ pub fn set_color(
                 captures[3].parse().expect("Failed to parse color"),
                 captures[4].parse().expect("Failed to parse color"),
             );
-            info!("Got color: {:?}", color);
             let material_handle = children
                 .iter()
                 .filter_map(|entity| material_handles.get(*entity).ok())

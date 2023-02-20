@@ -87,6 +87,8 @@ pub struct DialogAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub glowy_interior: Handle<Image>,
+    #[asset(path = "textures/sky.jpg")]
+    pub sky: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]

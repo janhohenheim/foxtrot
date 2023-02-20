@@ -121,7 +121,7 @@ pub struct Jumping {
 impl Default for Jumping {
     fn default() -> Self {
         Self {
-            speed: 4.5,
+            speed: 3.5,
             requested: false,
         }
     }

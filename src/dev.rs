@@ -14,7 +14,8 @@ pub struct DevPlugin;
 impl Plugin for DevPlugin {
     fn build(&self, app: &mut App) {
         {
-            app.add_plugin(EditorPlugin)
+            app.insert_resource(default_editor_controls())
+                .add_plugin(EditorPlugin)
                 .add_plugin(FrameTimeDiagnosticsPlugin::default())
                 .add_plugin(DebugLinesPlugin::default())
                 .add_plugin(SceneEditorPlugin)
@@ -25,4 +26,18 @@ impl Plugin for DevPlugin {
                 });
         }
     }
+}
+
+fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
+    use bevy_editor_pls::controls::*;
+    let mut editor_controls = EditorControls::default_bindings();
+    editor_controls.unbind(Action::PlayPauseEditor);
+    editor_controls.insert(
+        Action::PlayPauseEditor,
+        Binding {
+            input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
+            conditions: vec![BindingCondition::ListeningForText(false)],
+        },
+    );
+    editor_controls
 }

@@ -183,6 +183,7 @@ fn rotate_to_speaker(
 }
 
 fn control_walking_sound(
+    time: Res<Time>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
@@ -197,7 +198,7 @@ fn control_walking_sound(
             .horizontal
             .is_approx_zero();
         let is_moving_on_ground = has_horizontal_movement && grounded.0;
-        if is_moving_on_ground {
+        if is_moving_on_ground && !time.is_paused() {
             audio_instance.resume(default());
         } else {
             audio_instance.pause(default());

@@ -1,11 +1,11 @@
-use crate::dev::scene_editor::SceneEditorPlugin;
+use crate::dev::dev_editor::DevEditorPlugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
 use bevy_prototype_debug_lines::DebugLinesPlugin;
 use bevy_rapier3d::prelude::*;
 
-pub mod scene_editor;
+pub mod dev_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Don't include this in a release build.
@@ -18,7 +18,7 @@ impl Plugin for DevPlugin {
                 .add_plugin(EditorPlugin)
                 .add_plugin(FrameTimeDiagnosticsPlugin::default())
                 .add_plugin(DebugLinesPlugin::default())
-                .add_plugin(SceneEditorPlugin)
+                .add_plugin(DevEditorPlugin)
                 .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
                 .add_plugin(RapierDebugRenderPlugin {
                     enabled: false,

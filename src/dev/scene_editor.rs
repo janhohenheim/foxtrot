@@ -135,7 +135,6 @@ impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SceneEditorState>()
             .add_editor_window::<FoxtrotDevWindow>()
-            .insert_resource(default_editor_controls())
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_debug_render)
@@ -205,18 +204,4 @@ fn handle_navmesh_render(
             }
         }
     }
-}
-
-fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
-    use bevy_editor_pls::controls::*;
-    let mut editor_controls = EditorControls::default_bindings();
-    editor_controls.unbind(Action::PlayPauseEditor);
-    editor_controls.insert(
-        Action::PlayPauseEditor,
-        Binding {
-            input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
-            conditions: vec![BindingCondition::ListeningForText(false)],
-        },
-    );
-    editor_controls
 }

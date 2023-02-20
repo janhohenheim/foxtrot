@@ -14,8 +14,8 @@ pub struct DevPlugin;
 impl Plugin for DevPlugin {
     fn build(&self, app: &mut App) {
         {
-            app.insert_resource(default_editor_controls())
-                .add_plugin(EditorPlugin)
+            app.add_plugin(EditorPlugin)
+                .insert_resource(default_editor_controls())
                 .add_plugin(FrameTimeDiagnosticsPlugin::default())
                 .add_plugin(DebugLinesPlugin::default())
                 .add_plugin(DevEditorPlugin)

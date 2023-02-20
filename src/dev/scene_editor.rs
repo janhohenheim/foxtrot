@@ -1,11 +1,12 @@
 use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
-use crate::player_control::actions::{Actions, ActionsFrozen};
 use crate::GameState;
 use bevy::prelude::*;
+use bevy_editor_pls::editor_window::EditorWindow;
+use bevy_editor_pls::{AddEditorWindow, Editor};
+use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
-use bevy_egui::{egui, EguiContext};
 use bevy_prototype_debug_lines::DebugLines;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMesh;
@@ -14,10 +15,96 @@ use strum::IntoEnumIterator;
 
 pub struct SceneEditorPlugin;
 
+pub struct FoxtrotDevWindow;
+
+impl EditorWindow for FoxtrotDevWindow {
+    const DEFAULT_SIZE: (f32, f32) = (200., 150.);
+    const NAME: &'static str = "Foxtrot Dev";
+    type State = SceneEditorState;
+    fn ui(
+        world: &mut World,
+        mut cx: bevy_editor_pls::editor_window::EditorWindowContext,
+        ui: &mut egui::Ui,
+    ) {
+        let state = cx
+            .state_mut::<FoxtrotDevWindow>()
+            .expect("Window State Loaded");
+        ui.heading("Debug Rendering");
+        ui.checkbox(&mut state.collider_render_enabled, "Colliders");
+        ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");
+        ui.separator();
+
+        ui.heading("Scene Control");
+        ui.horizontal(|ui| {
+            ui.label("Level name: ");
+            ui.text_edit_singleline(&mut state.level_name);
+        });
+
+        ui.add_enabled_ui(!state.level_name.is_empty(), |ui| {
+            ui.horizontal(|ui| {
+                if ui.button("Save").clicked() {
+                    world.send_event(WorldSaveRequest {
+                        filename: state.level_name.clone(),
+                    })
+                }
+                if ui.button("Load").clicked() {
+                    world.send_event(WorldLoadRequest {
+                        filename: state.level_name.clone(),
+                    });
+                    // Make sure the player is spawned after the level
+                    world.send_event(DelayedSpawnEvent {
+                        tick_delay: 2,
+                        event: SpawnEvent {
+                            object: GameObject::Player,
+                            transform: Transform::from_translation((0., 1.5, 0.).into()),
+                        },
+                    });
+                }
+            });
+        });
+        ui.horizontal(|ui| {
+            ui.label("Save name: ");
+            ui.text_edit_singleline(&mut state.save_name);
+        });
+
+        ui.horizontal(|ui| {
+            let filename = (!state.save_name.is_empty()).then(|| state.save_name.clone());
+            if ui.button("Save").clicked() {
+                world.send_event(GameSaveRequest {
+                    filename: filename.clone(),
+                })
+            }
+            if ui.button("Load").clicked() {
+                world.send_event(GameLoadRequest { filename });
+            }
+        });
+
+        ui.add_space(10.);
+        ui.label("Spawning");
+        if ui.button("Spawn").clicked() {
+            world.send_event(SpawnEvent {
+                object: state.spawn_item,
+                ..default()
+            });
+        }
+
+        ui.add_space(3.);
+
+        ScrollArea::vertical()
+            .auto_shrink([false; 2])
+            .show(ui, |ui| {
+                ui.vertical(|ui| {
+                    for item in GameObject::iter() {
+                        ui.radio_value(&mut state.spawn_item, item, format!("{item:?}"));
+                    }
+                });
+            });
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct SceneEditorState {
-    pub active: bool,
     pub level_name: String,
     pub save_name: String,
     pub spawn_item: GameObject,
@@ -30,7 +117,6 @@ impl Default for SceneEditorState {
         Self {
             level_name: "old_town".to_owned(),
             save_name: default(),
-            active: default(),
             spawn_item: default(),
             collider_render_enabled: false,
             navmesh_render_enabled: false,
@@ -40,46 +126,34 @@ impl Default for SceneEditorState {
 
 impl Plugin for SceneEditorPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<SceneEditorState>().add_system_set(
-            SystemSet::on_update(GameState::Playing)
-                .with_system(handle_toggle)
-                .with_system(show_editor)
-                .with_system(handle_debug_render)
-                .with_system(handle_navmesh_render),
-        );
+        app.init_resource::<SceneEditorState>()
+            .add_editor_window::<FoxtrotDevWindow>()
+            .insert_resource(default_editor_controls())
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(handle_debug_render)
+                    .with_system(handle_navmesh_render),
+            );
     }
 }
 
-fn handle_toggle(
-    actions: Res<Actions>,
-    mut scene_editor_state: ResMut<SceneEditorState>,
-    mut actions_frozen: ResMut<ActionsFrozen>,
-) {
-    if !actions.ui.toggle_editor {
-        return;
-    }
-    scene_editor_state.active = !scene_editor_state.active;
-
-    if scene_editor_state.active {
-        actions_frozen.freeze();
-    } else {
-        actions_frozen.unfreeze();
-    }
-}
-
-fn handle_debug_render(
-    state: Res<SceneEditorState>,
-    mut debug_render_context: ResMut<DebugRenderContext>,
-) {
-    debug_render_context.enabled = state.collider_render_enabled;
+fn handle_debug_render(state: Res<Editor>, mut debug_render_context: ResMut<DebugRenderContext>) {
+    debug_render_context.enabled = state
+        .window_state::<FoxtrotDevWindow>()
+        .expect("Window State Loaded")
+        .collider_render_enabled;
 }
 
 fn handle_navmesh_render(
-    state: Res<SceneEditorState>,
+    state: Res<Editor>,
     nav_mesh: Res<NavMesh>,
     mut lines: ResMut<DebugLines>,
 ) {
-    if !state.navmesh_render_enabled {
+    if !state
+        .window_state::<FoxtrotDevWindow>()
+        .expect("Window State Loaded")
+        .navmesh_render_enabled
+    {
         return;
     }
 
@@ -110,95 +184,16 @@ fn handle_navmesh_render(
     }
 }
 
-#[allow(clippy::too_many_arguments)]
-fn show_editor(
-    mut egui_context: ResMut<EguiContext>,
-    mut spawn_events: EventWriter<SpawnEvent>,
-    mut level_save_events: EventWriter<WorldSaveRequest>,
-    mut level_load_events: EventWriter<WorldLoadRequest>,
-    mut game_save_events: EventWriter<GameSaveRequest>,
-    mut game_load_events: EventWriter<GameLoadRequest>,
-    mut state: ResMut<SceneEditorState>,
-    mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
-) {
-    if !state.active {
-        return;
-    }
-    const HEIGHT: f32 = 200.;
-    const WIDTH: f32 = 150.;
-
-    egui::Window::new("Scene Editor")
-        .default_size(egui::Vec2::new(HEIGHT, WIDTH))
-        .show(egui_context.ctx_mut(), |ui| {
-            ui.heading("Debug Rendering");
-            ui.checkbox(&mut state.collider_render_enabled, "Colliders");
-            ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");
-            ui.separator();
-
-            ui.heading("Scene Control");
-            ui.horizontal(|ui| {
-                ui.label("Level name: ");
-                ui.text_edit_singleline(&mut state.level_name);
-            });
-
-            ui.add_enabled_ui(!state.level_name.is_empty(), |ui| {
-                ui.horizontal(|ui| {
-                    if ui.button("Save").clicked() {
-                        level_save_events.send(WorldSaveRequest {
-                            filename: state.level_name.clone(),
-                        })
-                    }
-                    if ui.button("Load").clicked() {
-                        level_load_events.send(WorldLoadRequest {
-                            filename: state.level_name.clone(),
-                        });
-                        // Make sure the player is spawned after the level
-                        delayed_spawner.send(DelayedSpawnEvent {
-                            tick_delay: 2,
-                            event: SpawnEvent {
-                                object: GameObject::Player,
-                                transform: Transform::from_translation((0., 1.5, 0.).into()),
-                            },
-                        });
-                    }
-                });
-            });
-            ui.horizontal(|ui| {
-                ui.label("Save name: ");
-                ui.text_edit_singleline(&mut state.save_name);
-            });
-
-            ui.horizontal(|ui| {
-                let filename = (!state.save_name.is_empty()).then(|| state.save_name.clone());
-                if ui.button("Save").clicked() {
-                    game_save_events.send(GameSaveRequest {
-                        filename: filename.clone(),
-                    })
-                }
-                if ui.button("Load").clicked() {
-                    game_load_events.send(GameLoadRequest { filename });
-                }
-            });
-
-            ui.add_space(10.);
-            ui.label("Spawning");
-            if ui.button("Spawn").clicked() {
-                spawn_events.send(SpawnEvent {
-                    object: state.spawn_item,
-                    ..default()
-                });
-            }
-
-            ui.add_space(3.);
-
-            ScrollArea::vertical()
-                .auto_shrink([false; 2])
-                .show(ui, |ui| {
-                    ui.vertical(|ui| {
-                        for item in GameObject::iter() {
-                            ui.radio_value(&mut state.spawn_item, item, format!("{item:?}"));
-                        }
-                    });
-                });
-        });
+fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
+    use bevy_editor_pls::controls::*;
+    let mut start = EditorControls::default_bindings();
+    start.unbind(Action::PlayPauseEditor);
+    start.insert(
+        Action::PlayPauseEditor,
+        Binding {
+            input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
+            conditions: vec![BindingCondition::ListeningForText(false)],
+        },
+    );
+    start
 }

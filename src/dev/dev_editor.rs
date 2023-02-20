@@ -1,10 +1,13 @@
 use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::player_control::camera::ForceCursorGrabMode;
 use crate::GameState;
+use anyhow::Result;
 use bevy::prelude::*;
+use bevy::window::CursorGrabMode;
 use bevy_editor_pls::editor_window::EditorWindow;
-use bevy_editor_pls::{AddEditorWindow, Editor};
+use bevy_editor_pls::{AddEditorWindow, Editor, EditorEvent};
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
 use bevy_prototype_debug_lines::DebugLines;
@@ -13,22 +16,37 @@ use oxidized_navigation::NavMesh;
 use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
-pub struct SceneEditorPlugin;
+pub struct DevEditorPlugin;
 
-pub struct FoxtrotDevWindow;
+impl Plugin for DevEditorPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<DevEditorState>()
+            .add_editor_window::<DevEditorWindow>()
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing)
+                    .with_system(handle_debug_render)
+                    .with_system(handle_navmesh_render)
+                    .with_system(set_cursor_grab_mode),
+            );
+    }
+}
 
-impl EditorWindow for FoxtrotDevWindow {
-    const DEFAULT_SIZE: (f32, f32) = (200., 150.);
+pub struct DevEditorWindow;
+
+impl EditorWindow for DevEditorWindow {
+    type State = DevEditorState;
     const NAME: &'static str = "Foxtrot Dev";
-    type State = SceneEditorState;
+    const DEFAULT_SIZE: (f32, f32) = (200., 150.);
     fn ui(
         world: &mut World,
         mut cx: bevy_editor_pls::editor_window::EditorWindowContext,
         ui: &mut egui::Ui,
     ) {
         let state = cx
-            .state_mut::<FoxtrotDevWindow>()
-            .expect("Window State Loaded");
+            .state_mut::<DevEditorWindow>()
+            .expect("Failed to get dev window state");
+
+        state.open = true;
         ui.heading("Debug Rendering");
         ui.checkbox(&mut state.collider_render_enabled, "Colliders");
         ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");
@@ -104,7 +122,8 @@ impl EditorWindow for FoxtrotDevWindow {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct SceneEditorState {
+pub struct DevEditorState {
+    pub open: bool,
     pub level_name: String,
     pub save_name: String,
     pub spawn_item: GameObject,
@@ -112,7 +131,7 @@ pub struct SceneEditorState {
     pub navmesh_render_enabled: bool,
 }
 
-impl Default for SceneEditorState {
+impl Default for DevEditorState {
     fn default() -> Self {
         Self {
             level_name: "old_town".to_owned(),
@@ -120,28 +139,31 @@ impl Default for SceneEditorState {
             spawn_item: default(),
             collider_render_enabled: false,
             navmesh_render_enabled: false,
+            open: false,
         }
-    }
-}
-
-impl Plugin for SceneEditorPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<SceneEditorState>()
-            .add_editor_window::<FoxtrotDevWindow>()
-            .insert_resource(default_editor_controls())
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render),
-            );
     }
 }
 
 fn handle_debug_render(state: Res<Editor>, mut debug_render_context: ResMut<DebugRenderContext>) {
     debug_render_context.enabled = state
-        .window_state::<FoxtrotDevWindow>()
+        .window_state::<DevEditorWindow>()
         .expect("Window State Loaded")
         .collider_render_enabled;
+}
+
+fn set_cursor_grab_mode(
+    mut events: EventReader<EditorEvent>,
+    mut force_cursor_grab: ResMut<ForceCursorGrabMode>,
+) {
+    for event in events.iter() {
+        if let EditorEvent::Toggle { now_active } = event {
+            if *now_active {
+                force_cursor_grab.0 = Some(CursorGrabMode::None);
+            } else {
+                force_cursor_grab.0 = None;
+            }
+        }
+    }
 }
 
 fn handle_navmesh_render(
@@ -150,7 +172,7 @@ fn handle_navmesh_render(
     mut lines: ResMut<DebugLines>,
 ) {
     if !state
-        .window_state::<FoxtrotDevWindow>()
+        .window_state::<DevEditorWindow>()
         .expect("Window State Loaded")
         .navmesh_render_enabled
     {
@@ -182,18 +204,4 @@ fn handle_navmesh_render(
             }
         }
     }
-}
-
-fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
-    use bevy_editor_pls::controls::*;
-    let mut start = EditorControls::default_bindings();
-    start.unbind(Action::PlayPauseEditor);
-    start.insert(
-        Action::PlayPauseEditor,
-        Binding {
-            input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
-            conditions: vec![BindingCondition::ListeningForText(false)],
-        },
-    );
-    start
 }

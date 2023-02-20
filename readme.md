@@ -13,16 +13,16 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - A 3D character controller
 - Physics via `bevy_rapier`
 - Audio via `bevy_kira_audio`
-- Pathfinding via `bevy_pathmesh`
-- bevy_editor_pls from the `dev` feature
-- Custom editor that can be opened with 'Q' from the `dev` feature
+- Pathfinding via `oxidized_navigation`
+- `bevy_editor_pls` in the `dev` feature, bound to 'Q'
+- Custom editor for the game state found in the windows for `bevy_editor_pls`.
 - Saving / loading levels
 - Saving / loading the game state
 - Animations
 - A custom dialog system
 - Shaders
 - GLTF imports, including colliders and navmeshes
-- dynamic builds via the `dynamic` feature
+- dynamic builds in the `native-dev` feature
 
 ## Usage
 

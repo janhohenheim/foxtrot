@@ -1,5 +1,5 @@
 #[cfg(feature = "dev")]
-use crate::dev::scene_editor::SceneEditorState;
+use crate::dev::scene_editor::FoxtrotDevWindow;
 use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
@@ -62,7 +62,7 @@ fn query_mesh(
     nav_mesh: Res<NavMesh>,
     mut lines: ResMut<DebugLines>,
     rapier_context: Res<RapierContext>,
-    #[cfg(feature = "dev")] editor_state: Res<SceneEditorState>,
+    #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::Editor>,
 ) -> Result<()> {
     if let Ok(nav_mesh) = nav_mesh.get().read() {
         for (follower_entity, follower_transform, mut walking) in &mut with_follower {
@@ -99,7 +99,7 @@ fn query_mesh(
                 };
                 if let Some(path) = path {
                     #[cfg(feature = "dev")]
-                    if editor_state.navmesh_render_enabled {
+                    if editor_state.window_state::<FoxtrotDevWindow>().expect("Window Is Loaded").navmesh_render_enabled {
                         draw_path(&path, &mut lines, Color::RED);
                     }
                     let dir = path

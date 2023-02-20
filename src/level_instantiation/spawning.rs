@@ -9,6 +9,7 @@ use crate::level_instantiation::spawning::objects::point_light::PointLightSpawne
 use crate::level_instantiation::spawning::objects::primitives::{
     BoxSpawner, CapsuleSpawner, EmptySpawner, SphereSpawner, TriangleSpawner,
 };
+use crate::level_instantiation::spawning::objects::skydome::SkydomeSpawner;
 use crate::level_instantiation::spawning::objects::sunlight::SunlightSpawner;
 use crate::level_instantiation::spawning::post_spawn_modification::{despawn_removed, set_hidden};
 use crate::level_instantiation::spawning::spawn::{
@@ -24,6 +25,7 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 pub use event::*;
 use serde::{Deserialize, Serialize};
+use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 pub mod objects;
@@ -75,21 +77,22 @@ fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Asset
     let mut implementors = HashMap::new();
 
     for game_object in GameObject::iter() {
-        let implementor: Box<dyn PrimedGameObjectSpawnerImplementor + Send + Sync> = match game_object {
-            GameObject::Box => Box::new(BoxSpawner),
-            GameObject::Orb => Box::new(OrbSpawner),
-            GameObject::Player => Box::new(PlayerSpawner),
-            GameObject::Sphere => Box::new(SphereSpawner),
-            GameObject::Capsule => Box::new(CapsuleSpawner),
-            GameObject::Npc => Box::new(NpcSpawner),
-            GameObject::Sunlight => Box::new(SunlightSpawner),
-            GameObject::PointLight => Box::new(PointLightSpawner),
-            GameObject::Triangle => Box::new(TriangleSpawner),
-            GameObject::Empty => Box::new(EmptySpawner),
-            GameObject::Camera => Box::new(CameraSpawner),
-            GameObject::Level => Box::new(LevelSpawner),
-            GameObject::Skydome => Box::new(SkydomeSpawner),
-        };
+        let implementor: Box<dyn PrimedGameObjectSpawnerImplementor + Send + Sync> =
+            match game_object {
+                GameObject::Box => Box::new(BoxSpawner),
+                GameObject::Orb => Box::new(OrbSpawner),
+                GameObject::Player => Box::new(PlayerSpawner),
+                GameObject::Sphere => Box::new(SphereSpawner),
+                GameObject::Capsule => Box::new(CapsuleSpawner),
+                GameObject::Npc => Box::new(NpcSpawner),
+                GameObject::Sunlight => Box::new(SunlightSpawner),
+                GameObject::PointLight => Box::new(PointLightSpawner),
+                GameObject::Triangle => Box::new(TriangleSpawner),
+                GameObject::Empty => Box::new(EmptySpawner),
+                GameObject::Camera => Box::new(CameraSpawner),
+                GameObject::Level => Box::new(LevelSpawner),
+                GameObject::Skydome => Box::new(SkydomeSpawner),
+            };
         implementors.insert(game_object, implementor);
     }
     implementors.insert(
@@ -152,7 +155,7 @@ pub enum GameObject {
     Level,
     Orb,
     Camera,
-    Skydome
+    Skydome,
 }
 
 impl Default for GameObject {

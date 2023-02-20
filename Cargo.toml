@@ -40,6 +40,7 @@ native-dev = [
 native = [
     "bevy_rapier3d/parallel",
     "bevy_rapier3d/simd-nightly",
+    "bevy_hanabi",
 ]
 
 wasm = [
@@ -49,8 +50,8 @@ wasm = [
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7" }
-bevy_common_assets = { version = "0.4.0", features = ["ron"] }
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7", features = ["progress_tracking"] }
+bevy_common_assets = { version = "0.4.0", features = ["ron", "toml"] }
 bevy_egui = "0.19"
 serde = { version = "1", features = ["derive"] }
 indexmap = { version = "1", features = ["serde-1"] }
@@ -60,14 +61,17 @@ ron = "0.8.0"
 regex = "1"
 chrono = "0.4.23"
 glob = "0.3.1"
-polyanya = "0.2.0"
-bevy_pathmesh = "0.3.0"
+oxidized_navigation = "0.2.0"
 bitflags = "1.3.2"
+iyes_progress = "0.7.1"
+unicode-segmentation = "1.10.1"
+bevy_hanabi = { version = "0.5", optional = true }
+anyhow = "1.0.69"
+bevy_rapier3d = { version = "0.20", features = ["serde-serialize"] }
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
 image = { version = "0.24", default-features = false }
-anyhow = "1.0.69"
 
 [dependencies.bevy_prototype_debug_lines]
 version = "0.9.0"
@@ -78,13 +82,6 @@ features = ["3d"]
 git = "https://github.com/jakobhellermann/bevy_editor_pls"
 rev = "6062b860aea87034081399369fd7ef5715f13256"
 optional = true
-
-[dependencies.bevy_rapier3d]
-git = "https://github.com/janhohenheim/bevy_rapier"
-branch = "own-fork"
-features = [
-    "serde-serialize",
-]
 
 [build-dependencies]
 embed-resource = "1.4"

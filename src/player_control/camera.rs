@@ -1,3 +1,6 @@
+use crate::file_system_interaction::asset_loading::ConfigAssets;
+use crate::file_system_interaction::config::GameConfig;
+use crate::level_instantiation::spawning::objects::skydome::Skydome;
 use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
 use crate::player_control::player_embodiment::set_camera_actions;
@@ -20,7 +23,9 @@ mod third_person;
 mod ui;
 mod util;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[derive(
+    Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect, Default,
+)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
     pub kind: IngameCameraKind,
@@ -108,7 +113,7 @@ impl Plugin for CameraPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(cursor_grab_system.pipe(log_errors))
-                    .with_system(init_camera)
+                    .with_system(init_camera.pipe(log_errors))
                     .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
                     .with_system(
                         switch_kind
@@ -116,19 +121,38 @@ impl Plugin for CameraPlugin {
                             .after(SetCameraFocusLabel),
                     )
                     .with_system(update_transform.after(switch_kind))
-                    .with_system(reset_actions.after(update_transform)),
+                    .with_system(reset_actions.after(update_transform))
+                    .with_system(update_config.pipe(log_errors))
+                    .with_system(move_skydome.after(update_transform)),
             );
     }
 }
 
-fn init_camera(mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>) {
+fn init_camera(
+    mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>,
+    config_handles: Res<ConfigAssets>,
+    config: Res<Assets<GameConfig>>,
+) -> Result<()> {
     for (transform, mut camera) in camera.iter_mut() {
+        let game_config = config
+            .get(&config_handles.game)
+            .context("Failed to get game config from handle")?;
         match &mut camera.kind {
-            IngameCameraKind::ThirdPerson(camera) => camera.init_transform(*transform),
-            IngameCameraKind::FirstPerson(camera) => camera.init_transform(*transform),
-            IngameCameraKind::FixedAngle(camera) => camera.init_transform(*transform),
+            IngameCameraKind::ThirdPerson(camera) => {
+                camera.transform = *transform;
+                camera.config = game_config.clone();
+            }
+            IngameCameraKind::FirstPerson(camera) => {
+                camera.transform = *transform;
+                camera.config = game_config.clone();
+            }
+            IngameCameraKind::FixedAngle(camera) => {
+                camera.transform = *transform;
+                camera.config = game_config.clone();
+            }
         }
     }
+    Ok(())
 }
 
 pub fn update_transform(
@@ -156,9 +180,46 @@ pub fn update_transform(
     }
 }
 
+fn update_config(
+    config: Res<Assets<GameConfig>>,
+    mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
+    mut camera_query: Query<&mut IngameCamera>,
+) -> Result<()> {
+    for event in config_asset_events.iter() {
+        match event {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+                // Guaranteed by Bevy to not fail
+                let config = config
+                    .get(handle)
+                    .context("Failed to get config even though it was just created")?;
+                for mut camera in camera_query.iter_mut() {
+                    *match camera.kind {
+                        IngameCameraKind::ThirdPerson(ref mut camera) => &mut camera.config,
+                        IngameCameraKind::FirstPerson(ref mut camera) => &mut camera.config,
+                        IngameCameraKind::FixedAngle(ref mut camera) => &mut camera.config,
+                    } = config.clone();
+                }
+            }
+            AssetEvent::Removed { .. } => {}
+        }
+    }
+    Ok(())
+}
+
 fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     for mut camera in camera.iter_mut() {
         camera.actions = default();
+    }
+}
+
+fn move_skydome(
+    camera_query: Query<&Transform, (With<IngameCamera>, Without<Skydome>)>,
+    mut skydome_query: Query<&mut Transform, (Without<IngameCamera>, With<Skydome>)>,
+) {
+    for camera_transform in camera_query.iter() {
+        for mut skydome_transform in skydome_query.iter_mut() {
+            skydome_transform.translation = camera_transform.translation;
+        }
     }
 }
 

@@ -12,62 +12,123 @@
     ],
     pages: {
         "page:main-choice": (
-            text: "What is your will?",
+            text: "A giant fox stands before you. The light shimmers on its fur.\n\"What is your will?\"",
             next_page: Choice({
                 "choice:who": (
-                    text: "Who are you?",
+                    text: "\"Who are you?\"",
                     next_page_id: "page:me",
                 ),
-                "choice:nest": (
-                    text: "Give me a moment to think more on this",
-                    next_page_id: "page:nested",
+                "choice:possibilities": (
+                    text: "\"Tell me about the possibilities this world offers.\"",
+                    next_page_id: "page:possibilities",
+                ),
+                "choice:commands": (
+                    text: "\"I command you to do something for me.\"",
+                    next_page_id: "page:commands",
                 ),
                 "choice:exhaust": (
-                    text: "Did we talk about everything?",
+                    text: "\"Did we talk about everything?\"",
                     next_page_id: "page:exhaust",
                     positive_requirements: [
                         "choice:who",
-                        "choice:nest",
+                        "choice:possibilities",
+                        "choice:commands",
                     ],
                 ),
                 "choice:bye": (
-                    text: "You may go now.",
+                    text: "\"You may go now.\"",
                     next_page_id: "page:exit",
                 ),
             }),
         ),
         "page:again": (
-            text: "Greetings, player. Do you wish some further testing?",
+            text: "\"Greetings, master. Do you wish some further testing?\"",
             next_page: SameAs("page:greet"),
         ),
         "page:me": (
-            text: "I am a testing character, player.\nMy sole purpose is to fill the air with diverse, but ultimately meaningless conversation.",
+            text: "\"I am a testing character.\nMy sole purpose is to fill the air with diverse, but ultimately meaningless conversation.\nYou are my master; I am your servant\"",
             next_page: SameAs("page:main-choice"),
         ),
         "page:exhaust": (
-            text: "I have exhausted my repertoire. We can only treat old ground now.",
+            text: "\"I have exhausted my repertoire. We can only treat old ground now.\"",
             next_page: SameAs("page:main-choice"),
         ),
         "page:greet": (
-            text: "Greetings, player.",
+            text: "\"Greetings, master.\"",
             next_page: Continue("page:main-choice"),
         ),
         "page:exit": (
-            text: "Goodbye.\n*The creature\'s gaze shifts ever so slightly. It now looks just past you into the void.*",
+            text: "\"Goodbye.\"\nThe fox's gaze shifts ever so slightly. It now looks just past you into the void.",
+            talking_speed: 2.,
             next_page: Exit,
         ),
         "page:main-choice-unnest": (
-            text: "*The creature does not answer. It seems as if it did not even register your words.*",
+            text: "\"May you use this knowledge to live more\"",
             next_page: SameAs("page:main-choice"),
         ),
-        "page:nested": (
-            text: "*The creature looks right through you, its expression completely devoid of any trace of emotion.*",
+        "page:possibilities": (
+            text: "The fox perches its ears. \"Certainly, master. What do you wish to learn about?\"",
             next_page: Choice({
+                "choice:movement": (
+                    text: "\"What can my body do?\"",
+                    next_page_id: "page:movement",
+                ),
+                "choice:camera": (
+                    text: "\"Can I change the way I view the world?\"",
+                    next_page_id: "page:camera",
+                ),
+                "choice:editor": (
+                    text: "\"Can I change the structure of this world?\"",
+                    next_page_id: "page:editor",
+                ),
                 "choice:unnest": (
-                    text: "I have thought enough, yet I have nothing to say",
+                    text: "\"Enough. Let us talk about different things.\"",
                     next_page_id: "page:main-choice-unnest",
                 ),
             }),
+        ),
+        "page:movement": (
+            text: "\"You can move your limbs with WASD. Holding shift will shiften your pace. Pressing space will free you from gravity's shackles, if only for a moment.\"",
+            next_page: SameAs("page:possibilities")
+        ),
+        "page:camera": (
+            text: "\"Scrolling moves your mind's eye across vast distances. Go far, and you shall see the world as a bird does. Go near and the bonds between your body and vision will vanish.\"",
+            next_page: SameAs("page:possibilities")
+        ),
+        "page:editor": (
+            text: "\"That depends. If you entered this world as a developer, press Q to gaze into the beating heart of the world. In any case, Esc will pause the flow of time and free your mouse.\"",
+            next_page: SameAs("page:possibilities")
+        ),
+       "page:commands": (
+            text: "The fox stiffs its back. \"Yes, master. Where your will goes I shall follow.\"",
+            next_page: Choice({
+                "choice:slow": (
+                    text: "\"Talk slowly to me\"",
+                    next_page_id: "page:slow",
+                ),
+                "choice:fast": (
+                    text: "\"Talk fast to me\"",
+                    next_page_id: "page:fast",
+                ),
+                "choice:commands-back": (
+                    text: "\"You may relax again. Let us talk about different things.\"",
+                    next_page_id: "page:commands-back",
+                ),
+            }),
+        ),
+        "page:slow": (
+            text: "\"My... mind... as... slow... as...  ...\"",
+            talking_speed: 0.1,
+            next_page: SameAs("page:commands")
+        ),
+        "page:fast": (
+            text: "\"Yes, master! My thoughts race as though I was running from death itself. I shall serve you as you want, master. I am nothing the moment you are done with me, master. My existence ceases upon the push of a button, master.\"",
+            talking_speed: 3.,
+            next_page: SameAs("page:commands")
+        ),
+        "page:commands-back": (
+            text: "The fox looks visibly more calm, although there is still a shadow of exhaustion in its face. \"Thank you, master.\"",
+            next_page: SameAs("page:main-choice"),
         ),
     },
 )

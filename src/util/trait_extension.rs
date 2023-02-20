@@ -4,7 +4,6 @@ use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttribu
 pub trait Vec3Ext {
     #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn is_approx_zero(self) -> bool;
-    fn collapse_approx_zero(self) -> Vec3;
     #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn split(self, up: Vec3) -> SplitVec3;
 }
@@ -12,11 +11,6 @@ impl Vec3Ext for Vec3 {
     #[inline]
     fn is_approx_zero(self) -> bool {
         self.length_squared() < 1e-5
-    }
-
-    fn collapse_approx_zero(self) -> Vec3 {
-        let collapse = |x: f32| if x.abs() < 1e-5 { 0. } else { x };
-        Vec3::new(collapse(self.x), collapse(self.y), collapse(self.z))
     }
 
     fn split(self, up: Vec3) -> SplitVec3 {

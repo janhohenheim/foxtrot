@@ -72,8 +72,11 @@ pub struct CameraActions {
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct UiActions {
+    #[cfg(feature = "dev")]
     pub toggle_editor: bool,
+    pub toggle_pause: bool,
     pub numbered_choice: [bool; 10],
+    pub speed_up_dialog: bool,
 }
 
 pub fn set_actions(
@@ -85,6 +88,8 @@ pub fn set_actions(
 ) {
     *actions = default();
     actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    actions.ui.toggle_pause = GameControl::TogglePause.just_pressed(&keyboard_input);
+    actions.ui.speed_up_dialog = GameControl::SpeedUpDialog.pressed(&keyboard_input);
     for i in 0..=9 {
         actions.ui.numbered_choice[i] =
             GameControl::NumberedChoice(i as u16).just_pressed(&keyboard_input);

@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
@@ -6,7 +7,11 @@ use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
+use bevy_common_assets::toml::TomlAssetPlugin;
+use bevy_egui::egui::ProgressBar;
+use bevy_egui::{egui, EguiContext};
 use bevy_kira_audio::AudioSource;
+use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub struct LoadingPlugin;
 
@@ -14,6 +19,8 @@ impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
             .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
+            .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
+            .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
             .add_loading_state(
                 LoadingState::new(GameState::Loading)
                     .with_collection::<FontAssets>()
@@ -23,8 +30,9 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
                     .with_collection::<TextureAssets>()
-                    .continue_to_state(GameState::Menu),
-            );
+                    .with_collection::<ConfigAssets>(),
+            )
+            .add_system_set(SystemSet::on_update(GameState::Loading).with_system(show_progress));
     }
 }
 
@@ -79,4 +87,34 @@ pub struct DialogAssets {
 pub struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub glowy_interior: Handle<Image>,
+    #[asset(path = "textures/sky.jpg")]
+    pub sky: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct ConfigAssets {
+    #[asset(path = "config/config.game.toml")]
+    pub game: Handle<GameConfig>,
+}
+
+fn show_progress(
+    progress: Option<Res<ProgressCounter>>,
+    mut egui_context: ResMut<EguiContext>,
+    mut last_done: Local<u32>,
+) {
+    if let Some(progress) = progress.map(|counter| counter.progress()) {
+        if progress.done > *last_done {
+            *last_done = progress.done;
+        }
+
+        egui::CentralPanel::default().show(egui_context.ctx_mut(), |ui| {
+            ui.vertical_centered_justified(|ui| {
+                ui.add_space(100.0);
+                ui.heading("Loading...");
+                ui.add(
+                    ProgressBar::new(progress.done as f32 / progress.total as f32).animate(true),
+                );
+            });
+        });
+    }
 }

@@ -1,12 +1,12 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::player_control::camera::IngameCamera;
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
+use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug,Component, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Reflect, FromReflect)]
+#[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, FromReflect, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Skydome;
 
@@ -34,6 +34,7 @@ impl PrimedGameObjectSpawnerImplementor for SkydomeSpawner {
                 MaterialMeshBundle {
                     mesh: spawner.outer_spawner.meshes[&object].clone(),
                     material: spawner.materials.skydome.clone(),
+                    transform,
                     ..default()
                 },
             ))

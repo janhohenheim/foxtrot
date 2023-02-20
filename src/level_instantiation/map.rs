@@ -1,10 +1,7 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
-use crate::shader::Materials;
 use crate::GameState;
-use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
-use bevy::render::mesh::VertexAttributeValues;
 
 pub struct MapPlugin;
 

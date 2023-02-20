@@ -28,7 +28,7 @@ impl EditorWindow for FoxtrotDevWindow {
     ) {
         let state = cx
             .state_mut::<FoxtrotDevWindow>()
-            .expect("Window State Loaded");
+            .expect("Failed to get dev window state");
         ui.heading("Debug Rendering");
         ui.checkbox(&mut state.collider_render_enabled, "Colliders");
         ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");

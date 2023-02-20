@@ -108,6 +108,9 @@ impl Plugin for CameraPlugin {
             .register_type::<ThirdPersonCamera>()
             .register_type::<IngameCamera>()
             .register_type::<IngameCameraKind>()
+            .register_type::<FirstPersonCamera>()
+            .register_type::<FixedAngleCamera>()
+            .init_resource::<ForceCursorGrabMode>()
             .add_startup_system(spawn_ui_camera)
             .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
             .add_system_set(
@@ -223,13 +226,22 @@ fn move_skydome(
     }
 }
 
+#[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
+pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
+
 fn cursor_grab_system(
     mut windows: ResMut<Windows>,
     actions_frozen: Res<ActionsFrozen>,
+    force_cursor_grab: Res<ForceCursorGrabMode>,
 ) -> Result<()> {
     let window = windows
         .get_primary_mut()
         .context("Failed to get primary window")?;
+    if let Some(mode) = force_cursor_grab.0 {
+        window.set_cursor_grab_mode(mode);
+        window.set_cursor_visibility(mode != CursorGrabMode::Locked);
+        return Ok(());
+    }
     if actions_frozen.is_frozen() {
         window.set_cursor_grab_mode(CursorGrabMode::None);
         window.set_cursor_visibility(true);

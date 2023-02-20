@@ -1,10 +1,13 @@
 use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::player_control::camera::ForceCursorGrabMode;
 use crate::GameState;
+use anyhow::Result;
 use bevy::prelude::*;
+use bevy::window::CursorGrabMode;
 use bevy_editor_pls::editor_window::EditorWindow;
-use bevy_editor_pls::{AddEditorWindow, Editor};
+use bevy_editor_pls::{AddEditorWindow, Editor, EditorEvent};
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
 use bevy_prototype_debug_lines::DebugLines;
@@ -29,6 +32,8 @@ impl EditorWindow for FoxtrotDevWindow {
         let state = cx
             .state_mut::<FoxtrotDevWindow>()
             .expect("Failed to get dev window state");
+
+        state.open = true;
         ui.heading("Debug Rendering");
         ui.checkbox(&mut state.collider_render_enabled, "Colliders");
         ui.checkbox(&mut state.navmesh_render_enabled, "Navmeshes");
@@ -105,6 +110,7 @@ impl EditorWindow for FoxtrotDevWindow {
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct SceneEditorState {
+    pub open: bool,
     pub level_name: String,
     pub save_name: String,
     pub spawn_item: GameObject,
@@ -120,6 +126,7 @@ impl Default for SceneEditorState {
             spawn_item: default(),
             collider_render_enabled: false,
             navmesh_render_enabled: false,
+            open: false,
         }
     }
 }
@@ -132,7 +139,8 @@ impl Plugin for SceneEditorPlugin {
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render),
+                    .with_system(handle_navmesh_render)
+                    .with_system(set_cursor_grab_mode),
             );
     }
 }
@@ -142,6 +150,21 @@ fn handle_debug_render(state: Res<Editor>, mut debug_render_context: ResMut<Debu
         .window_state::<FoxtrotDevWindow>()
         .expect("Window State Loaded")
         .collider_render_enabled;
+}
+
+fn set_cursor_grab_mode(
+    mut events: EventReader<EditorEvent>,
+    mut force_cursor_grab: ResMut<ForceCursorGrabMode>,
+) {
+    for event in events.iter() {
+        if let EditorEvent::Toggle { now_active } = event {
+            if *now_active {
+                force_cursor_grab.0 = Some(CursorGrabMode::None);
+            } else {
+                force_cursor_grab.0 = None;
+            }
+        }
+    }
 }
 
 fn handle_navmesh_render(
@@ -186,14 +209,14 @@ fn handle_navmesh_render(
 
 fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
     use bevy_editor_pls::controls::*;
-    let mut start = EditorControls::default_bindings();
-    start.unbind(Action::PlayPauseEditor);
-    start.insert(
+    let mut editor_controls = EditorControls::default_bindings();
+    editor_controls.unbind(Action::PlayPauseEditor);
+    editor_controls.insert(
         Action::PlayPauseEditor,
         Binding {
             input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
             conditions: vec![BindingCondition::ListeningForText(false)],
         },
     );
-    start
+    editor_controls
 }

@@ -10,6 +10,7 @@ pub mod point_light;
 pub mod primitives;
 pub mod sunlight;
 pub mod util;
+pub mod skydome;
 
 bitflags! {
     pub struct GameCollisionGroup: u32 {

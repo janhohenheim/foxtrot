@@ -18,9 +18,9 @@ pub struct SceneEditorPlugin;
 pub struct FoxtrotDevWindow;
 
 impl EditorWindow for FoxtrotDevWindow {
-    const DEFAULT_SIZE: (f32, f32) = (200., 150.);
-    const NAME: &'static str = "Foxtrot Dev";
     type State = SceneEditorState;
+    const NAME: &'static str = "Foxtrot Dev";
+    const DEFAULT_SIZE: (f32, f32) = (200., 150.);
     fn ui(
         world: &mut World,
         mut cx: bevy_editor_pls::editor_window::EditorWindowContext,

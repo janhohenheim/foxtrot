@@ -19,8 +19,6 @@ fn setup(
     mut loader: EventWriter<WorldLoadRequest>,
     mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
     current_level: Option<Res<CurrentLevel>>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<Materials>,
 ) {
     if current_level.is_some() {
         return;
@@ -43,24 +41,4 @@ fn setup(
             transform: Transform::from_xyz(0., 1.5, 0.),
         },
     });
-    let mut mesh = Mesh::from(shape::UVSphere {
-        radius: 100.,
-        ..default()
-    });
-    let normals = match mesh.attribute_mut(Mesh::ATTRIBUTE_NORMAL).unwrap() {
-        VertexAttributeValues::Float32x3(values) => values,
-        _ => unreachable!(),
-    };
-    for normal in normals.iter_mut() {
-        *normal = normal.map(|n| -n);
-    }
-    commands.spawn((
-        Name::new("Skydome"),
-        NotShadowCaster,
-        MaterialMeshBundle {
-            mesh: meshes.add(mesh),
-            material: materials.skydome.clone(),
-            ..default()
-        },
-    ));
 }

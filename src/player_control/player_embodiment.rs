@@ -16,7 +16,6 @@ use bevy_kira_audio::AudioInstance;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;
-use crate::level_instantiation::spawning::object::skydome::Skydome;
 
 pub struct PlayerEmbodimentPlugin;
 
@@ -50,7 +49,6 @@ impl Plugin for PlayerEmbodimentPlugin {
                     .with_system(handle_speed_effects)
                     .with_system(rotate_to_speaker)
                     .with_system(control_walking_sound.after(set_actions)),
-                .with_system(move_skydome),
             );
     }
 }
@@ -200,17 +198,6 @@ fn control_walking_sound(
             } else {
                 instance.pause(default());
             }
-        }
-    }
-}
-
-fn move_skydome(
-    player_query: Query<&Transform, (With<Player>, Without<Skydome>)>,
-    mut skydome_query: Query<&mut Transform, (Without<Player>, With<Skydome>)>,
-){
-    for player_transform in player_query.iter() {
-        for mut skydome_transform in skydome_query.iter_mut() {
-            skydome_transform.translation = player_transform.translation;
         }
     }
 }

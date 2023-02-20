@@ -14,6 +14,7 @@ pub use fixed_angle::FixedAngleCamera;
 use serde::{Deserialize, Serialize};
 pub use third_person::ThirdPersonCamera;
 use ui::*;
+use crate::level_instantiation::spawning::object::skydome::Skydome;
 
 mod first_person;
 mod fixed_angle;
@@ -121,7 +122,8 @@ impl Plugin for CameraPlugin {
                     )
                     .with_system(update_transform.after(switch_kind))
                     .with_system(reset_actions.after(update_transform))
-                    .with_system(update_config.pipe(log_errors)),
+                    .with_system(update_config.pipe(log_errors))
+                    .with_system(move_skydome.after(update_transform)),,
             );
     }
 }
@@ -210,6 +212,17 @@ fn reset_actions(mut camera: Query<&mut IngameCamera>) {
     }
 }
 
+fn move_skydome(
+    camera_query: Query<&Transform, (With<IngameCamera>, Without<Skydome>)>,
+    mut skydome_query: Query<&mut Transform, (Without<IngameCamera>, With<Skydome>)>,
+){
+    for camera_transform in camera_query.iter() {
+        for mut skydome_transform in skydome_query.iter_mut() {
+            skydome_transform.translation = camera_transform.translation;
+        }
+    }
+}
+
 fn cursor_grab_system(
     mut windows: ResMut<Windows>,
     actions_frozen: Res<ActionsFrozen>,
@@ -226,3 +239,4 @@ fn cursor_grab_system(
     }
     Ok(())
 }
+

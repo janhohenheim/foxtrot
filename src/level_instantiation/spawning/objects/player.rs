@@ -2,15 +2,15 @@ use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::player_control::player_embodiment::Player;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
 
-pub const HEIGHT: f32 = 1.;
-pub const RADIUS: f32 = 0.4;
+pub const HEIGHT: f32 = 0.4;
+pub const RADIUS: f32 = 0.3;
 
 pub struct PlayerSpawner;
 
@@ -35,7 +35,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                 },
                 Player,
                 Name::new("Player"),
-                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
+                CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),
                     walk: spawner.animations.character_walking.clone(),
@@ -51,7 +51,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
-                            translation: Vec3::new(0., -HEIGHT, 0.),
+                            translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             rotation: Quat::from_rotation_y(TAU / 2.),
                             scale: Vec3::splat(0.01),
                         },

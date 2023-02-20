@@ -1,10 +1,8 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::ThirdPersonCamera;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
-
-const MIN_DISTANCE: f32 = 5.;
-const MAX_DISTANCE: f32 = 20.0;
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
@@ -14,6 +12,7 @@ pub struct FixedAngleCamera {
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
     pub distance: f32,
+    pub config: GameConfig,
 }
 
 impl Default for FixedAngleCamera {
@@ -21,9 +20,10 @@ impl Default for FixedAngleCamera {
         Self {
             up: Vec3::Y,
             transform: default(),
-            distance: MAX_DISTANCE / 2.,
+            distance: 1.,
             target: default(),
             secondary_target: default(),
+            config: default(),
         }
     }
 }
@@ -36,6 +36,7 @@ impl From<&ThirdPersonCamera> for FixedAngleCamera {
             up: third_person_camera.up,
             distance: third_person_camera.distance,
             secondary_target: third_person_camera.secondary_target,
+            config: third_person_camera.config.clone(),
         }
     }
 }
@@ -45,10 +46,6 @@ impl FixedAngleCamera {
         // The camera is rotated to always look down,
         // so the forward vector for the player is actually the camera's up vector
         self.transform.up()
-    }
-
-    pub fn init_transform(&mut self, transform: Transform) {
-        self.transform = transform;
     }
 
     pub fn update_transform(
@@ -76,19 +73,21 @@ impl FixedAngleCamera {
     }
 
     fn zoom(&mut self, zoom: f32) {
-        let zoom_speed = 0.5;
+        let zoom_speed = self.config.camera.fixed_angle.zoom_speed;
         let zoom = zoom * zoom_speed;
-        self.distance = (self.distance - zoom).clamp(MIN_DISTANCE, MAX_DISTANCE);
+        let min_distance = self.config.camera.fixed_angle.min_distance;
+        let max_distance = self.config.camera.fixed_angle.max_distance;
+        self.distance = (self.distance - zoom).clamp(min_distance, max_distance);
     }
 
     fn get_camera_transform(&self, dt: f32, mut transform: Transform) -> Transform {
-        let translation_smoothing = 50.;
+        let translation_smoothing = self.config.camera.fixed_angle.translation_smoothing;
         let scale = (translation_smoothing * dt).min(1.);
         transform.translation = transform
             .translation
             .lerp(self.transform.translation, scale);
 
-        let rotation_smoothing = 45.;
+        let rotation_smoothing = self.config.camera.fixed_angle.rotation_smoothing;
         let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
 

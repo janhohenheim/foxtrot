@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraActions;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::ThirdPersonCamera;
@@ -11,6 +12,7 @@ pub struct FirstPersonCamera {
     pub transform: Transform,
     pub look_target: Option<Vec3>,
     pub up: Vec3,
+    pub config: GameConfig,
 }
 
 impl Default for FirstPersonCamera {
@@ -19,16 +21,19 @@ impl Default for FirstPersonCamera {
             transform: default(),
             look_target: default(),
             up: Vec3::Y,
+            config: default(),
         }
     }
 }
 
 impl From<&ThirdPersonCamera> for FirstPersonCamera {
     fn from(camera: &ThirdPersonCamera) -> Self {
+        let transform = camera.transform.with_translation(camera.target);
         Self {
-            transform: camera.transform,
+            transform,
             look_target: camera.secondary_target,
             up: camera.up,
+            config: camera.config.clone(),
         }
     }
 }
@@ -36,10 +41,6 @@ impl From<&ThirdPersonCamera> for FirstPersonCamera {
 impl FirstPersonCamera {
     pub fn forward(&self) -> Vec3 {
         self.transform.forward()
-    }
-
-    pub fn init_transform(&mut self, transform: Transform) {
-        self.transform = transform;
     }
 
     pub fn update_transform(
@@ -57,13 +58,13 @@ impl FirstPersonCamera {
     }
 
     fn get_camera_transform(&self, dt: f32, mut transform: Transform) -> Transform {
-        let translation_smoothing = 50.;
+        let translation_smoothing = self.config.camera.first_person.translation_smoothing;
         let scale = (translation_smoothing * dt).min(1.);
         transform.translation = transform
             .translation
             .lerp(self.transform.translation, scale);
 
-        let rotation_smoothing = 45.;
+        let rotation_smoothing = self.config.camera.first_person.rotation_smoothing;
         let scale = (rotation_smoothing * dt).min(1.);
         transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
 
@@ -71,7 +72,7 @@ impl FirstPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = 1e-3;
+        let mouse_sensitivity = self.config.camera.mouse_sensitivity;
         let camera_movement = camera_movement * mouse_sensitivity;
 
         let yaw = -camera_movement.x.clamp(-PI, PI);
@@ -93,6 +94,12 @@ impl FirstPersonCamera {
     }
 
     fn clamp_pitch(&self, angle: f32) -> f32 {
-        clamp_pitch(self.up, self.forward(), angle)
+        clamp_pitch(
+            self.up,
+            self.forward(),
+            angle,
+            self.config.camera.first_person.most_acute_from_above,
+            self.config.camera.first_person.most_acute_from_below,
+        )
     }
 }

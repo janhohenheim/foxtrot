@@ -1,5 +1,6 @@
 pub mod asset_loading;
 pub mod audio;
+pub mod config;
 pub mod game_state_serialization;
 pub mod level_serialization;
 

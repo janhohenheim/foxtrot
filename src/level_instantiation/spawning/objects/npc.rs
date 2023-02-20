@@ -2,7 +2,7 @@ use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
-use crate::movement::general_movement::{CharacterAnimations, KinematicCharacterBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
 use anyhow::{Context, Result};
@@ -10,7 +10,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
 
-pub const HEIGHT: f32 = 1.;
+pub const HEIGHT: f32 = 0.4;
 pub const RADIUS: f32 = 0.4;
 
 pub struct NpcSpawner;
@@ -35,7 +35,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     ..default()
                 },
                 Name::new("NPC"),
-                KinematicCharacterBundle::capsule(HEIGHT, RADIUS),
+                CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 Follower,
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),
@@ -52,7 +52,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                     Sensor,
                     ActiveEvents::COLLISION_EVENTS,
-                    ActiveCollisionTypes::KINEMATIC_KINEMATIC,
+                    ActiveCollisionTypes::DYNAMIC_DYNAMIC,
                     CollisionGroups::new(
                         GameCollisionGroup::OTHER.into(),
                         GameCollisionGroup::PLAYER.into(),
@@ -62,7 +62,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                     SceneBundle {
                         scene: gltf.scenes[0].clone(),
                         transform: Transform {
-                            translation: Vec3::new(0., -HEIGHT, 0.),
+                            translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             scale: Vec3::splat(0.012),
                             rotation: Quat::from_rotation_y(TAU / 2.),
                         },

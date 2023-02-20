@@ -4,9 +4,14 @@ use crate::util::log_error::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::asset::HandleId;
+use bevy::pbr::{MaterialPipeline, MaterialPipelineKey};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::render_resource::{AsBindGroup, ShaderRef, ShaderType};
+use bevy::render::mesh::MeshVertexBufferLayout;
+use bevy::render::render_resource::Face::Front;
+use bevy::render::render_resource::{
+    AsBindGroup, RenderPipelineDescriptor, ShaderRef, ShaderType, SpecializedMeshPipelineError,
+};
 use bevy::utils::HashMap;
 use regex::Regex;
 use std::sync::LazyLock;
@@ -20,6 +25,7 @@ impl Plugin for ShaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
+            .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())
             .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
@@ -33,20 +39,26 @@ pub struct Materials {
     pub glowy: Handle<GlowyMaterial>,
     /// (Texture asset ID, Repeats) -> RepeatedMaterial
     pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
+    pub skydome: Handle<SkydomeMaterial>,
 }
 
 fn setup_shader(
     mut commands: Commands,
     mut glow_materials: ResMut<Assets<GlowyMaterial>>,
+    mut skydome_materials: ResMut<Assets<SkydomeMaterial>>,
     texture_assets: Res<TextureAssets>,
 ) {
-    let glowy_material = glow_materials.add(GlowyMaterial {
+    let glowy = glow_materials.add(GlowyMaterial {
         env_texture: texture_assets.glowy_interior.clone(),
+    });
+    let skydome = skydome_materials.add(SkydomeMaterial {
+        env_texture: texture_assets.sky.clone(),
     });
 
     commands.insert_resource(Materials {
-        glowy: glowy_material,
         repeated: HashMap::new(),
+        glowy,
+        skydome,
     });
 }
 
@@ -62,6 +74,31 @@ pub struct GlowyMaterial {
 impl Material for GlowyMaterial {
     fn fragment_shader() -> ShaderRef {
         "shaders/glowy.wgsl".into()
+    }
+}
+
+#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
+#[uuid = "8ca95d76-91d6-44c0-a67b-8a4d22cd59b1"]
+/// Material for [`skydome.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/skydome.wgsl).
+pub struct SkydomeMaterial {
+    #[texture(0)]
+    #[sampler(1)]
+    pub env_texture: Handle<Image>,
+}
+
+impl Material for SkydomeMaterial {
+    fn fragment_shader() -> ShaderRef {
+        "shaders/skydome.wgsl".into()
+    }
+
+    fn specialize(
+        _pipeline: &MaterialPipeline<Self>,
+        descriptor: &mut RenderPipelineDescriptor,
+        _layout: &MeshVertexBufferLayout,
+        _key: MaterialPipelineKey<Self>,
+    ) -> Result<(), SpecializedMeshPipelineError> {
+        descriptor.primitive.cull_mode = Some(Front);
+        Ok(())
     }
 }
 

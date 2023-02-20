@@ -7,9 +7,11 @@ use crate::player_control::camera::{
     focus::switch_kind as switch_camera_kind, update_transform as update_camera_transform,
     IngameCamera, IngameCameraKind,
 };
+use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
@@ -48,7 +50,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     )
                     .with_system(handle_speed_effects)
                     .with_system(rotate_to_speaker)
-                    .with_system(control_walking_sound.after(set_actions)),
+                    .with_system(control_walking_sound.pipe(log_errors).after(set_actions)),
             );
     }
 }
@@ -181,23 +183,26 @@ fn rotate_to_speaker(
 }
 
 fn control_walking_sound(
+    time: Res<Time>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
-) {
+) -> Result<()> {
     for (velocity, transform, grounded) in character_query.iter() {
-        if let Some(instance) = audio_instances.get_mut(&audio.walking) {
-            let has_horizontal_movement = !velocity
-                .linvel
-                .split(transform.up())
-                .horizontal
-                .is_approx_zero();
-            let is_moving_on_ground = has_horizontal_movement && grounded.0;
-            if is_moving_on_ground {
-                instance.resume(default());
-            } else {
-                instance.pause(default());
-            }
+        let audio_instance = audio_instances
+            .get_mut(&audio.walking)
+            .context("Failed to get audio instance from handle")?;
+        let has_horizontal_movement = !velocity
+            .linvel
+            .split(transform.up())
+            .horizontal
+            .is_approx_zero();
+        let is_moving_on_ground = has_horizontal_movement && grounded.0;
+        if is_moving_on_ground && !time.is_paused() {
+            audio_instance.resume(default());
+        } else {
+            audio_instance.pause(default());
         }
     }
+    Ok(())
 }

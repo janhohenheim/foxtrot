@@ -1,8 +1,10 @@
 use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::actions::CameraActions;
+use crate::player_control::actions::CameraAction;
+use crate::player_control::actions::DualAxisDataExt;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::ThirdPersonCamera;
 use bevy::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::PI;
 
@@ -46,12 +48,16 @@ impl FirstPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        camera_actions: CameraActions,
+        camera_actions: &ActionState<CameraAction>,
         transform: Transform,
     ) -> Transform {
         if let Some(look_target) = self.look_target {
             self.look_at(look_target);
-        } else if let Some(camera_movement) = camera_actions.movement {
+        } else if let Some(camera_movement) = camera_actions
+            .clamped_axis_pair(CameraAction::Pan)
+            .expect("Camera movement is not an axis pair")
+            .max_normalized()
+        {
             self.handle_camera_controls(camera_movement);
         }
         self.get_camera_transform(dt, transform)

@@ -133,7 +133,7 @@ fn show_dialog(
                         &active_conditions,
                         &mut condition_writer,
                         &mut actions_frozen,
-                        &actions,
+                        actions,
                         current_page.next_page,
                         &mut elapsed_time,
                     )

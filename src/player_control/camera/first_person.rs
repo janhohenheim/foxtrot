@@ -1,12 +1,10 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
-use crate::player_control::actions::DualAxisDataExt;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::ThirdPersonCamera;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::PI;
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
@@ -53,11 +51,11 @@ impl FirstPersonCamera {
     ) -> Transform {
         if let Some(look_target) = self.look_target {
             self.look_at(look_target);
-        } else if let Some(camera_movement) = camera_actions
-            .clamped_axis_pair(CameraAction::Pan)
-            .expect("Camera movement is not an axis pair")
-            .max_normalized()
-        {
+        } else {
+            let camera_movement = camera_actions
+                .axis_pair(CameraAction::Pan)
+                .expect("Camera movement is not an axis pair")
+                .xy();
             self.handle_camera_controls(camera_movement);
         }
         self.get_camera_transform(dt, transform)
@@ -78,11 +76,9 @@ impl FirstPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = self.config.camera.mouse_sensitivity;
-        let camera_movement = camera_movement * mouse_sensitivity;
-
-        let yaw = -camera_movement.x.clamp(-PI, PI);
-        let pitch = self.clamp_pitch(-camera_movement.y);
+        let yaw = -camera_movement.x * self.config.camera.mouse_sensitivity_x;
+        let pitch = -camera_movement.y * self.config.camera.mouse_sensitivity_y;
+        let pitch = self.clamp_pitch(pitch);
         self.rotate(yaw, pitch);
     }
 

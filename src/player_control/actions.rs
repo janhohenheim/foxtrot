@@ -124,14 +124,14 @@ pub trait DualAxisDataExt {
 
 impl DualAxisDataExt for DualAxisData {
     fn max_normalized(self) -> Option<Vec2> {
-        let vect = self.xy();
-        let len_squared = vect.length_squared();
+        let vector = self.xy();
+        let len_squared = vector.length_squared();
         if len_squared > 1.0 {
-            Some(vect.normalize())
+            Some(vector.normalize())
         } else if len_squared < 1e-5 {
             None
         } else {
-            Some(vect)
+            Some(vector)
         }
     }
 }

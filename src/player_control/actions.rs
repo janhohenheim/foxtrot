@@ -126,7 +126,7 @@ pub fn set_actions(
 
     let mut zoom = 0.0;
     for event in mouse_wheel.iter() {
-        zoom += event.y;
+        zoom += event.y.signum();
     }
     if !zoom.is_approx_zero() {
         actions.camera.zoom = Some(zoom);

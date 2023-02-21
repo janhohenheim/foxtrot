@@ -47,7 +47,7 @@ impl Default for FixedAngle {
         Self {
             min_distance: 5.0,
             max_distance: 20.0,
-            zoom_speed: 0.5,
+            zoom_speed: 0.7,
             rotation_smoothing: 45.0,
             translation_smoothing: 50.0,
         }
@@ -98,7 +98,7 @@ impl Default for ThirdPerson {
             most_acute_from_below: TAU / 7.,
             min_distance: 1e-2,
             max_distance: 10.0,
-            zoom_speed: 0.5,
+            zoom_speed: 0.7,
             min_distance_to_objects: 1e-2,
         }
     }

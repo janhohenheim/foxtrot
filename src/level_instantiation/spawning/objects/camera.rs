@@ -1,6 +1,7 @@
 use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
+use crate::player_control::actions::create_camera_action_input_manager_bundle;
 use crate::player_control::camera::IngameCamera;
 use anyhow::Result;
 use bevy::prelude::*;
@@ -22,6 +23,7 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                     transform,
                     ..default()
                 },
+                create_camera_action_input_manager_bundle(),
                 Name::new("Main Camera"),
             ))
             .id())

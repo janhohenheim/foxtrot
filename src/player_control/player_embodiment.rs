@@ -8,11 +8,10 @@ use crate::player_control::camera::{
     IngameCamera, IngameCameraKind,
 };
 use crate::util::log_error::log_errors;
-use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
+use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
 use anyhow::{Context, Result};
-use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_rapier3d::prelude::*;
@@ -60,6 +59,8 @@ impl Plugin for PlayerEmbodimentPlugin {
 pub struct Player;
 
 fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With<Player>>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_jump").entered();
     for mut jump in &mut player_query {
         if actions.player.jump {
             jump.requested = true;
@@ -69,9 +70,11 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With
 
 fn handle_horizontal_movement(
     actions: Res<Actions>,
-    mut player_query: Query<&mut Walking, With<Player>>,
+    mut player_query: Query<(&mut Walking, &Transform), With<Player>>,
     camera_query: Query<&IngameCamera>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_horizontal_movement").entered();
     let camera = match camera_query.iter().next() {
         Some(camera) => camera,
         None => return,
@@ -81,27 +84,33 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = camera.forward().xz().normalize();
-    let sideways = forward.perp();
-    let forward_action = forward * movement.y;
-    let sideways_action = sideways * movement.x;
+    for (mut walk, transform) in &mut player_query {
+        let forward = camera
+            .forward()
+            .split(transform.up())
+            .horizontal
+            .normalize();
+        let sideways = forward.cross(transform.up());
+        let forward_action = forward * movement.y;
+        let sideways_action = sideways * movement.x;
 
-    let is_looking_backward = forward.dot(forward_action) < 0.0;
-    let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
-    let modifier = if is_looking_backward && is_first_person {
-        0.7
-    } else {
-        1.
-    };
-    let direction = (forward_action + sideways_action).x0y().normalize() * modifier;
+        let is_looking_backward = forward.dot(forward_action) < 0.0;
+        let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
+        let modifier = if is_looking_backward && is_first_person {
+            0.7
+        } else {
+            1.
+        };
+        let direction = forward_action * modifier + sideways_action;
 
-    for mut walk in &mut player_query {
         walk.direction = Some(direction);
         walk.sprinting = actions.player.sprint;
     }
 }
 
 pub fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_camera_actions").entered();
     let mut camera = match camera_query.iter_mut().next() {
         Some(camera) => camera,
         None => return,
@@ -114,6 +123,8 @@ fn handle_camera_kind(
     mut with_player: Query<(&mut Transform, &mut Visibility), With<Player>>,
     camera_query: Query<(&Transform, &IngameCamera), Without<Player>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_camera_kind").entered();
     for (camera_transform, camera) in camera_query.iter() {
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
@@ -136,6 +147,8 @@ fn handle_speed_effects(
     velocities: Query<&Velocity, With<Player>>,
     mut projections: Query<&mut Projection, With<IngameCamera>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_speed_effects").entered();
     for velocity in velocities.iter() {
         let speed_squared = velocity.linvel.length_squared();
         for mut projection in projections.iter_mut() {
@@ -158,6 +171,8 @@ fn rotate_to_speaker(
     without_player: Query<&Transform, Without<Player>>,
     current_dialog: Option<Res<CurrentDialog>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("rotate_to_speaker").entered();
     let speaker_entity = current_dialog
         .map(|current_dialog| current_dialog.source)
         .and_then(|source| without_player.get(source).ok());
@@ -188,6 +203,8 @@ fn control_walking_sound(
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("control_walking_sound").entered();
     for (velocity, transform, grounded) in character_query.iter() {
         let audio_instance = audio_instances
             .get_mut(&audio.walking)

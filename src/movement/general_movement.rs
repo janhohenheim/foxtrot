@@ -57,6 +57,8 @@ fn update_grounded(
     mut query: Query<(Entity, &Transform, &Collider, &mut Grounded)>,
     rapier_context: Res<RapierContext>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("update_grounded").entered();
     for (entity, transform, collider, mut grounded) in &mut query {
         let height = collider.raw.compute_local_aabb().maxs.y;
         grounded.0 = rapier_context
@@ -79,6 +81,8 @@ pub fn reset_movement_components(
     mut walking: Query<&mut Walking>,
     mut jumpers: Query<&mut Jumping>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("reset_movement_components").entered();
     for mut force in &mut forces {
         *force = default();
     }
@@ -103,6 +107,8 @@ pub fn apply_jumping(
         &Transform,
     )>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("apply_jumping").entered();
     for (grounded, mut impulse, mut velocity, mass, jump, transform) in &mut character_query {
         if jump.requested && grounded.0 {
             let up = transform.up();
@@ -117,6 +123,8 @@ pub fn apply_jumping(
 }
 
 fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut Transform)>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("rotate_characters").entered();
     let dt = time.delta_seconds();
     for (velocity, mut transform) in player_query.iter_mut() {
         let up = transform.up();
@@ -144,6 +152,8 @@ fn play_animations(
         &CharacterAnimations,
     )>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("play_animations").entered();
     for (velocity, transform, grounded, animation_entity_link, animations) in characters.iter() {
         let mut animation_player = animation_player
             .get_mut(animation_entity_link.0)
@@ -178,6 +188,8 @@ pub fn apply_walking(
         &Transform,
     )>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("apply_walking").entered();
     for (mut force, walking, mut velocity, grounded, mass, transform) in &mut character_query {
         let mass = mass.0.mass;
         if let Some(acceleration) = walking.get_acceleration(grounded.0) {

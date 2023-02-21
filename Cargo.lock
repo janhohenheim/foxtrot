@@ -715,6 +715,8 @@ dependencies = [
  "bevy_ecs",
  "bevy_utils",
  "console_error_panic_hook",
+ "tracing-chrome",
+ "tracing-error",
  "tracing-log",
  "tracing-subscriber",
  "tracing-wasm",
@@ -960,6 +962,7 @@ dependencies = [
  "naga",
  "once_cell",
  "parking_lot",
+ "profiling",
  "regex",
  "serde",
  "smallvec",
@@ -2471,6 +2474,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "json"
+version = "0.12.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "078e285eafdfb6c4b434e0d31e8cfcb5115b651496faca5749b88fafd4f23bfd"
+
+[[package]]
 name = "khronos-egl"
 version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3309,6 +3318,20 @@ name = "profiling"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "74605f360ce573babfe43964cbe520294dcb081afbf8c108fc6e23036b4da2df"
+dependencies = [
+ "profiling-procmacros",
+ "tracing",
+]
+
+[[package]]
+name = "profiling-procmacros"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a1e2417ef905b8ad94215f8a607bd2d0f5d13d416d18dca4a530811e8a0674c"
+dependencies = [
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "quote"
@@ -4086,6 +4109,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "tracing-chrome"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1ac1f6a3a47e9c755e65ef974653c978da2246487a16044a8ee1d9a0a67257c"
+dependencies = [
+ "crossbeam",
+ "json",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "tracing-core"
 version = "0.1.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4093,6 +4128,16 @@ checksum = "24eb03ba0eab1fd845050058ce5e616558e8f8d8fca633e6b163fe25c797213a"
 dependencies = [
  "once_cell",
  "valuable",
+]
+
+[[package]]
+name = "tracing-error"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d686ec1c0f384b1277f097b2f279a2ecc11afe8c133c1aabf036a27cb4cd206e"
+dependencies = [
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

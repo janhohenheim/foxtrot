@@ -129,7 +129,7 @@ impl Material for RepeatedMaterial {
 }
 
 static REPEAT_REGEX: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"\[repeat:(\d+),(\d+)\]").expect("Failed to compile repeat regex")
+    Regex::new(r"\[repeat:\s*(\d+),\s*(\d+)\]").expect("Failed to compile repeat regex")
 });
 
 pub fn set_texture_to_repeat(

@@ -73,11 +73,15 @@ impl Plugin for SpawningPlugin {
 
 impl<'w, 's, 'a> PrimedGameObjectSpawner<'w, 's, 'a> {
     pub fn spawn<'c: 'a>(&'c mut self, object: GameObject, transform: Transform) -> Result<Entity> {
+        #[cfg(feature = "tracing")]
+        let _span = info_span!("spawn").entered();
         self.outer_spawner.implementors[&object].spawn(self, object, transform)
     }
 }
 
 fn load_assets_for_spawner(mut commands: Commands, mut mesh_assets: ResMut<Assets<Mesh>>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("load_assets_for_spawner").entered();
     let mut implementors = HashMap::new();
 
     for game_object in GameObject::iter() {

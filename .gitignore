@@ -11,3 +11,5 @@ blender_assets.cats.txt*
 
 installer/
 Trunk.toml
+
+trace-*.json

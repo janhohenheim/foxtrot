@@ -8,11 +8,10 @@ use crate::player_control::camera::{
     IngameCamera, IngameCameraKind,
 };
 use crate::util::log_error::log_errors;
-use crate::util::trait_extension::{F32Ext, TransformExt, Vec2Ext, Vec3Ext};
+use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
 use anyhow::{Context, Result};
-use bevy::math::Vec3Swizzles;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_rapier3d::prelude::*;
@@ -71,7 +70,7 @@ fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With
 
 fn handle_horizontal_movement(
     actions: Res<Actions>,
-    mut player_query: Query<&mut Walking, With<Player>>,
+    mut player_query: Query<(&mut Walking, &Transform), With<Player>>,
     camera_query: Query<&IngameCamera>,
 ) {
     #[cfg(feature = "tracing")]
@@ -85,21 +84,25 @@ fn handle_horizontal_movement(
         None => return,
     };
 
-    let forward = camera.forward().xz().normalize();
-    let sideways = forward.perp();
-    let forward_action = forward * movement.y;
-    let sideways_action = sideways * movement.x;
+    for (mut walk, transform) in &mut player_query {
+        let forward = camera
+            .forward()
+            .split(transform.up())
+            .horizontal
+            .normalize();
+        let sideways = forward.cross(transform.up());
+        let forward_action = forward * movement.y;
+        let sideways_action = sideways * movement.x;
 
-    let is_looking_backward = forward.dot(forward_action) < 0.0;
-    let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
-    let modifier = if is_looking_backward && is_first_person {
-        0.7
-    } else {
-        1.
-    };
-    let direction = (forward_action + sideways_action).x0y().normalize() * modifier;
+        let is_looking_backward = forward.dot(forward_action) < 0.0;
+        let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
+        let modifier = if is_looking_backward && is_first_person {
+            0.7
+        } else {
+            1.
+        };
+        let direction = forward_action * modifier + sideways_action;
 
-    for mut walk in &mut player_query {
         walk.direction = Some(direction);
         walk.sprinting = actions.player.sprint;
     }

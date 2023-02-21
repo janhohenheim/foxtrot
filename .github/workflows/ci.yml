@@ -55,8 +55,8 @@ jobs:
           override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run doc tests with all features (this also compiles README examples)
-        run: cargo test --doc --all-features
+      - name: Run doc tests
+        run: cargo test --doc
   test-wasm:
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +84,7 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
       - name: Build wasm
-        run: trunk build --no-default-features --features core,dev,wasm
+        run: trunk build --no-default-features --features wasm-dev
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -107,5 +107,7 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Check format
         run: cargo fmt --all -- --check
-      - name: Run clippy
-        run: cargo clippy --workspace --all-targets --all-features -- --deny warnings
+      - name: Run clippy dev
+        run: cargo clippy --workspace --all-targets -- --deny warnings
+      - name: Run clippy release
+        run: cargo clippy --workspace --all-targets --no-default-features --features native-core -- --deny warnings

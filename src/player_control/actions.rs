@@ -59,8 +59,6 @@ pub enum CameraAction {
 
 #[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
 pub enum UiAction {
-    #[cfg(feature = "dev")]
-    ToggleEditor,
     #[default]
     TogglePause,
 }
@@ -109,11 +107,7 @@ pub fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraA
 
 pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
-        input_map: InputMap::new([
-            #[cfg(feature = "dev")]
-            (QwertyScanCode::Q, UiAction::ToggleEditor),
-            (QwertyScanCode::Escape, UiAction::TogglePause),
-        ]),
+        input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
         ..default()
     }
 }

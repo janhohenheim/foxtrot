@@ -1,5 +1,5 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
-use crate::player_control::actions::{Actions, ActionsFrozen, UiActions};
+use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
@@ -13,6 +13,7 @@ use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContext, EguiPlugin};
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -96,7 +97,7 @@ fn show_dialog(
     mut condition_writer: EventWriter<ConditionAddEvent>,
     mut egui_context: ResMut<EguiContext>,
     mut actions_frozen: ResMut<ActionsFrozen>,
-    actions: Res<Actions>,
+    actions: Query<&ActionState<PlayerAction>>,
     time: Res<Time>,
     mut elapsed_time: Local<f32>,
 ) -> Result<()> {
@@ -107,40 +108,46 @@ fn show_dialog(
             return Ok(());
         }
     };
-    let current_page = current_dialog.fetch_current_page()?;
 
-    get_dialog_window().show(egui_context.ctx_mut(), |ui| {
-        // Get current context style
-        set_dialog_style(ui.style_mut());
-        let dialog_size = egui::Vec2::new(500., 150.);
-        ui.set_width(dialog_size.x);
-        ui.set_height(dialog_size.y);
+    for actions in actions.iter() {
+        let current_page = current_dialog.fetch_current_page()?;
+        get_dialog_window().show(egui_context.ctx_mut(), |ui| {
+            // Get current context style
+            set_dialog_style(ui.style_mut());
+            let dialog_size = egui::Vec2::new(500., 150.);
+            ui.set_width(dialog_size.x);
+            ui.set_height(dialog_size.y);
 
-        let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
-        ui.vertical(|ui| {
-            ui.add_space(5.);
-            ui.label(&dialog_text);
-            if dialog_text == current_page.text {
-                ui.add_space(3.);
-                ui.separator();
-                ui.add_space(8.);
-                present_choices(
-                    ui,
-                    &mut commands,
-                    &mut current_dialog,
-                    &active_conditions,
-                    &mut condition_writer,
-                    &mut actions_frozen,
-                    &actions.ui,
-                    current_page.next_page,
-                    &mut elapsed_time,
-                )
-                .expect("Failed to present dialog choices");
-            }
+            let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
+            ui.vertical(|ui| {
+                ui.add_space(5.);
+                ui.label(&dialog_text);
+                if dialog_text == current_page.text {
+                    ui.add_space(3.);
+                    ui.separator();
+                    ui.add_space(8.);
+                    present_choices(
+                        ui,
+                        &mut commands,
+                        &mut current_dialog,
+                        &active_conditions,
+                        &mut condition_writer,
+                        &mut actions_frozen,
+                        &actions,
+                        current_page.next_page,
+                        &mut elapsed_time,
+                    )
+                    .expect("Failed to present dialog choices");
+                }
+            });
         });
-    });
-    let dt_speed_multiplier = if actions.ui.speed_up_dialog { 4. } else { 1. };
-    *elapsed_time += time.delta_seconds() * dt_speed_multiplier;
+        let dt_speed_multiplier = if actions.pressed(PlayerAction::SpeedUpDialog) {
+            4.
+        } else {
+            1.
+        };
+        *elapsed_time += time.delta_seconds() * dt_speed_multiplier;
+    }
     Ok(())
 }
 
@@ -151,14 +158,14 @@ fn present_choices(
     active_conditions: &ActiveConditions,
     condition_writer: &mut EventWriter<ConditionAddEvent>,
     actions_frozen: &mut ActionsFrozen,
-    actions: &UiActions,
+    actions: &ActionState<PlayerAction>,
     next_page: NextPage,
     elapsed_time: &mut f32,
 ) -> Result<()> {
     match next_page {
         NextPage::Continue(next_page_id) => {
             let text = create_choice_rich_text(0, "Continue");
-            if ui.button(text).clicked() || actions.numbered_choice[1] {
+            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::NumberedChoice(1)) {
                 current_dialog.current_page = next_page_id;
                 *elapsed_time = 0.0;
             }
@@ -174,7 +181,9 @@ fn present_choices(
                 .enumerate()
             {
                 let text = create_choice_rich_text(index, &choice.text);
-                if ui.button(text).clicked() || actions.numbered_choice[index + 1] {
+                if ui.button(text).clicked()
+                    || actions.just_pressed(PlayerAction::NumberedChoice(index as u16 + 1))
+                {
                     picked_choice = Some((choice_id.clone(), choice.clone()));
                 }
             }
@@ -201,7 +210,7 @@ fn present_choices(
         }
         NextPage::Exit => {
             let text = create_choice_rich_text(0, "Exit");
-            if ui.button(text).clicked() || actions.numbered_choice[1] {
+            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::NumberedChoice(1)) {
                 commands.remove_resource::<CurrentDialog>();
                 actions_frozen.unfreeze();
             }

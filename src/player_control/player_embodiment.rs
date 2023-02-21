@@ -2,7 +2,7 @@ use crate::file_system_interaction::audio::AudioHandles;
 use crate::movement::general_movement::{
     apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping, Walking,
 };
-use crate::player_control::actions::{set_actions, Actions};
+use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{
     focus::switch_kind as switch_camera_kind, update_transform as update_camera_transform,
     IngameCamera, IngameCameraKind,
@@ -15,6 +15,7 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_rapier3d::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;
 
@@ -28,18 +29,11 @@ impl Plugin for PlayerEmbodimentPlugin {
             .register_type::<Player>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_jump.after(set_actions).before(apply_jumping))
+                    .with_system(handle_jump.before(apply_jumping))
                     .with_system(
                         handle_horizontal_movement
-                            .after(set_actions)
                             .after(update_camera_transform)
                             .after(reset_movement_components)
-                            .before(apply_walking),
-                    )
-                    .with_system(
-                        set_camera_actions
-                            .after(set_actions)
-                            .before(update_camera_transform)
                             .before(apply_walking),
                     )
                     .with_system(
@@ -49,7 +43,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     )
                     .with_system(handle_speed_effects)
                     .with_system(rotate_to_speaker)
-                    .with_system(control_walking_sound.pipe(log_errors).after(set_actions)),
+                    .with_system(control_walking_sound.pipe(log_errors)),
             );
     }
 }
@@ -58,19 +52,16 @@ impl Plugin for PlayerEmbodimentPlugin {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Player;
 
-fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With<Player>>) {
+fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping), With<Player>>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_jump").entered();
-    for mut jump in &mut player_query {
-        if actions.player.jump {
-            jump.requested = true;
-        }
+    for (actions, mut jump) in &mut player_query {
+        jump.requested |= actions.pressed(PlayerAction::Jump);
     }
 }
 
 fn handle_horizontal_movement(
-    actions: Res<Actions>,
-    mut player_query: Query<(&mut Walking, &Transform), With<Player>>,
+    mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
     camera_query: Query<&IngameCamera>,
 ) {
     #[cfg(feature = "tracing")]
@@ -79,44 +70,35 @@ fn handle_horizontal_movement(
         Some(camera) => camera,
         None => return,
     };
-    let movement = match actions.player.movement {
-        Some(movement) => movement,
-        None => return,
-    };
 
-    for (mut walk, transform) in &mut player_query {
-        let forward = camera
-            .forward()
-            .split(transform.up())
-            .horizontal
-            .normalize();
-        let sideways = forward.cross(transform.up());
-        let forward_action = forward * movement.y;
-        let sideways_action = sideways * movement.x;
+    for (actions, mut walk, transform) in &mut player_query {
+        if let Some(movement) = actions
+            .axis_pair(PlayerAction::Move)
+            .expect("Player movement is not an axis pair")
+            .max_normalized()
+        {
+            let forward = camera
+                .forward()
+                .split(transform.up())
+                .horizontal
+                .normalize();
+            let sideways = forward.cross(transform.up());
+            let forward_action = forward * movement.y;
+            let sideways_action = sideways * movement.x;
 
-        let is_looking_backward = forward.dot(forward_action) < 0.0;
-        let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
-        let modifier = if is_looking_backward && is_first_person {
-            0.7
-        } else {
-            1.
-        };
-        let direction = forward_action * modifier + sideways_action;
+            let is_looking_backward = forward.dot(forward_action) < 0.0;
+            let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
+            let modifier = if is_looking_backward && is_first_person {
+                0.7
+            } else {
+                1.
+            };
+            let direction = forward_action * modifier + sideways_action;
 
-        walk.direction = Some(direction);
-        walk.sprinting = actions.player.sprint;
+            walk.direction = Some(direction);
+            walk.sprinting = actions.pressed(PlayerAction::Sprint);
+        }
     }
-}
-
-pub fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("set_camera_actions").entered();
-    let mut camera = match camera_query.iter_mut().next() {
-        Some(camera) => camera,
-        None => return,
-    };
-
-    camera.actions = actions.camera.clone();
 }
 
 fn handle_camera_kind(

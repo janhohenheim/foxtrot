@@ -1,10 +1,11 @@
 use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::actions::CameraActions;
+use crate::player_control::actions::{CameraAction, DualAxisDataExt};
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::Vec3Ext;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::PI;
 
@@ -86,7 +87,7 @@ impl ThirdPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        camera_actions: CameraActions,
+        camera_actions: &ActionState<CameraAction>,
         rapier_context: &RapierContext,
         transform: Transform,
     ) -> Transform {
@@ -95,7 +96,11 @@ impl ThirdPersonCamera {
         if let Some(secondary_target) = self.secondary_target {
             self.move_eye_to_align_target_with(secondary_target);
         }
-        if let Some(camera_movement) = camera_actions.movement {
+        if let Some(camera_movement) = camera_actions
+            .clamped_axis_pair(CameraAction::Pan)
+            .expect("Camera movement is not an axis pair")
+            .max_normalized()
+        {
             let camera_movement = if self.secondary_target.is_some() {
                 Vec2::new(0.0, camera_movement.y)
             } else {
@@ -103,9 +108,8 @@ impl ThirdPersonCamera {
             };
             self.handle_camera_controls(camera_movement);
         }
-        if let Some(zoom) = camera_actions.zoom {
-            self.zoom(zoom);
-        }
+        let zoom = camera_actions.clamped_value(CameraAction::Zoom);
+        self.zoom(zoom);
         let los_correction = self.place_eye_in_valid_position(rapier_context);
         self.get_camera_transform(dt, transform, los_correction)
     }

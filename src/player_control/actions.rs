@@ -1,8 +1,5 @@
-use crate::player_control::actions::game_control::{get_movement, Action};
-use crate::util::trait_extension::{F32Ext, Vec2Ext};
-use crate::GameState;
-use bevy::input::mouse::{MouseMotion, MouseWheel};
 use bevy::prelude::*;
+use leafwing_input_manager::axislike::DualAxisData;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -31,22 +28,20 @@ impl ActionsFrozen {
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Actions>()
-            .register_type::<PlayerActions>()
-            .register_type::<CameraActions>()
-            .register_type::<UiActions>()
+        app.register_type::<PlayerAction>()
+            .register_type::<CameraAction>()
+            .register_type::<UiAction>()
             .register_type::<ActionsFrozen>()
-            .init_resource::<Actions>()
             .init_resource::<ActionsFrozen>()
             .add_plugin(InputManagerPlugin::<PlayerAction>::default())
             .add_plugin(InputManagerPlugin::<CameraAction>::default())
-            .add_plugin(InputManagerPlugin::<UiAction>::default())
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
+            .add_plugin(InputManagerPlugin::<UiAction>::default());
     }
 }
 
-#[derive(Debug, Clone, Actionlike)]
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
 pub enum PlayerAction {
+    #[default]
     Move,
     Sprint,
     Jump,
@@ -55,16 +50,18 @@ pub enum PlayerAction {
     NumberedChoice(u16),
 }
 
-#[derive(Debug, Clone, Actionlike)]
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
 pub enum CameraAction {
+    #[default]
     Pan,
     Zoom,
 }
 
-#[derive(Debug, Clone, Actionlike)]
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
 pub enum UiAction {
     #[cfg(feature = "dev")]
     ToggleEditor,
+    #[default]
     TogglePause,
 }
 
@@ -72,29 +69,30 @@ pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerA
     InputManagerBundle {
         input_map: InputMap::new([
             (QwertyScanCode::Space, PlayerAction::Jump),
-            (
-                VirtualDPad {
-                    up: QwertyScanCode::W,
-                    down: QwertyScanCode::S,
-                    left: QwertyScanCode::A,
-                    right: QwertyScanCode::D,
-                },
-                PlayerAction::Move,
-            ),
             (QwertyScanCode::LShift, PlayerAction::Sprint),
             (QwertyScanCode::E, PlayerAction::Interact),
-            (QwertyScanCode::Space, UiAction::SpeedUpDialog),
-            (QwertyScanCode::Key1, UiAction::NumberedChoice(1)),
-            (QwertyScanCode::Key2, UiAction::NumberedChoice(2)),
-            (QwertyScanCode::Key3, UiAction::NumberedChoice(3)),
-            (QwertyScanCode::Key4, UiAction::NumberedChoice(4)),
-            (QwertyScanCode::Key5, UiAction::NumberedChoice(5)),
-            (QwertyScanCode::Key6, UiAction::NumberedChoice(6)),
-            (QwertyScanCode::Key7, UiAction::NumberedChoice(7)),
-            (QwertyScanCode::Key8, UiAction::NumberedChoice(8)),
-            (QwertyScanCode::Key9, UiAction::NumberedChoice(9)),
-            (QwertyScanCode::Key0, UiAction::NumberedChoice(0)),
-        ]),
+            (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
+            (QwertyScanCode::Key1, PlayerAction::NumberedChoice(1)),
+            (QwertyScanCode::Key2, PlayerAction::NumberedChoice(2)),
+            (QwertyScanCode::Key3, PlayerAction::NumberedChoice(3)),
+            (QwertyScanCode::Key4, PlayerAction::NumberedChoice(4)),
+            (QwertyScanCode::Key5, PlayerAction::NumberedChoice(5)),
+            (QwertyScanCode::Key6, PlayerAction::NumberedChoice(6)),
+            (QwertyScanCode::Key7, PlayerAction::NumberedChoice(7)),
+            (QwertyScanCode::Key8, PlayerAction::NumberedChoice(8)),
+            (QwertyScanCode::Key9, PlayerAction::NumberedChoice(9)),
+            (QwertyScanCode::Key0, PlayerAction::NumberedChoice(0)),
+        ])
+        .insert(
+            VirtualDPad {
+                up: QwertyScanCode::W.into(),
+                down: QwertyScanCode::S.into(),
+                left: QwertyScanCode::A.into(),
+                right: QwertyScanCode::D.into(),
+            },
+            PlayerAction::Move,
+        )
+        .build(),
         ..default()
     }
 }
@@ -103,7 +101,8 @@ pub fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraA
     InputManagerBundle {
         input_map: InputMap::default()
             .insert(DualAxis::mouse_motion(), CameraAction::Pan)
-            .insert(DualAxis::mouse_wheel(), CameraAction::Zoom),
+            .insert(SingleAxis::mouse_wheel_y(), CameraAction::Zoom)
+            .build(),
         ..default()
     }
 }
@@ -119,54 +118,20 @@ pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     }
 }
 
-pub fn set_actions(
-    mut actions: ResMut<Actions>,
-    keyboard_input: Res<Input<ScanCode>>,
-    mut mouse_motion: EventReader<MouseMotion>,
-    mut mouse_wheel: EventReader<MouseWheel>,
-    actions_frozen: Res<ActionsFrozen>,
-) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("set_actions").entered();
-    *actions = default();
-    #[cfg(feature = "dev")]
-    {
-        actions.ui.toggle_editor = Action::ToggleEditor.just_pressed(&keyboard_input);
-    }
-    actions.ui.toggle_pause = Action::TogglePause.just_pressed(&keyboard_input);
-    actions.ui.speed_up_dialog = Action::SpeedUpDialog.pressed(&keyboard_input);
-    for i in 0..=9 {
-        actions.ui.numbered_choice[i] =
-            Action::NumberedChoice(i as u16).just_pressed(&keyboard_input);
-    }
-    if actions_frozen.is_frozen() {
-        return;
-    }
+pub trait DualAxisDataExt {
+    fn max_normalized(self) -> Option<Vec2>;
+}
 
-    let player_movement = Vec2::new(
-        get_movement(Action::Right, &keyboard_input) - get_movement(Action::Left, &keyboard_input),
-        get_movement(Action::Up, &keyboard_input) - get_movement(Action::Down, &keyboard_input),
-    );
-
-    actions.player.movement =
-        (!player_movement.is_approx_zero()).then(|| player_movement.normalize());
-    actions.player.jump = get_movement(Action::Jump, &keyboard_input) > 0.5;
-    actions.player.sprint = get_movement(Action::Sprint, &keyboard_input) > 0.5;
-    actions.player.interact = Action::Interact.just_pressed(&keyboard_input);
-
-    let mut camera_movement = Vec2::ZERO;
-    for event in mouse_motion.iter() {
-        camera_movement += event.delta;
-    }
-    if !camera_movement.is_approx_zero() {
-        actions.camera.movement = Some(camera_movement);
-    }
-
-    let mut zoom = 0.0;
-    for event in mouse_wheel.iter() {
-        zoom += event.y.signum();
-    }
-    if !zoom.is_approx_zero() {
-        actions.camera.zoom = Some(zoom);
+impl DualAxisDataExt for DualAxisData {
+    fn max_normalized(self) -> Option<Vec2> {
+        let vect = self.xy();
+        let len_squared = vect.length_squared();
+        if len_squared > 1.0 {
+            Some(vect.normalize())
+        } else if len_squared < 1e-5 {
+            None
+        } else {
+            Some(vect)
+        }
     }
 }

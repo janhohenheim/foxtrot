@@ -46,7 +46,7 @@ jobs:
           brew install michaeleisel/zld/zld
       - name: Build release for Apple Silicon
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features core,native --target=aarch64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features native --target=aarch64-apple-darwin
       - name: Install rust toolchain for Apple x86
         uses: actions-rs/toolchain@v1
         with:
@@ -55,7 +55,7 @@ jobs:
           override: true
       - name: Build release for x86 Apple
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features core,native --target=x86_64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features native --target=x86_64-apple-darwin
       - name: Create Universal Binary
         run: |
           lipo -create -output target/release/${{ env.GAME_EXECUTABLE_NAME }} target/aarch64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }} target/x86_64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }}
@@ -101,7 +101,7 @@ jobs:
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
         run: |
-          cargo build --release --no-default-features --features core,native
+          cargo build --release --no-default-features --features native
       - name: Prepare release
         run: |
           strip target/release/${{ env.GAME_EXECUTABLE_NAME }}
@@ -144,7 +144,7 @@ jobs:
           global-json-file: build/windows/installer/global.json
       - name: Build release
         run: |
-          cargo build --release --no-default-features --features core,native
+          cargo build --release --no-default-features --features native
       - name: Prepare release
         run: |
           mkdir target/release/assets && cp -r assets target/release/assets
@@ -199,7 +199,7 @@ jobs:
           rustup target add wasm32-unknown-unknown
       - name: Build Release
         run: |
-          trunk build --release --public-url "${GITHUB_REPOSITORY#*/}" --no-default-features --features core,wasm
+          trunk build --release --public-url "${GITHUB_REPOSITORY#*/}" --no-default-features --features wasm
       - name: Optimize Wasm
         uses: NiklasEi/wasm-opt-action@v2
         with:

@@ -60,6 +60,8 @@ impl Plugin for PlayerEmbodimentPlugin {
 pub struct Player;
 
 fn handle_jump(actions: Res<Actions>, mut player_query: Query<&mut Jumping, With<Player>>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_jump").entered();
     for mut jump in &mut player_query {
         if actions.player.jump {
             jump.requested = true;
@@ -72,6 +74,8 @@ fn handle_horizontal_movement(
     mut player_query: Query<&mut Walking, With<Player>>,
     camera_query: Query<&IngameCamera>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_horizontal_movement").entered();
     let camera = match camera_query.iter().next() {
         Some(camera) => camera,
         None => return,
@@ -102,6 +106,8 @@ fn handle_horizontal_movement(
 }
 
 pub fn set_camera_actions(actions: Res<Actions>, mut camera_query: Query<&mut IngameCamera>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_camera_actions").entered();
     let mut camera = match camera_query.iter_mut().next() {
         Some(camera) => camera,
         None => return,
@@ -114,6 +120,8 @@ fn handle_camera_kind(
     mut with_player: Query<(&mut Transform, &mut Visibility), With<Player>>,
     camera_query: Query<(&Transform, &IngameCamera), Without<Player>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_camera_kind").entered();
     for (camera_transform, camera) in camera_query.iter() {
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
@@ -136,6 +144,8 @@ fn handle_speed_effects(
     velocities: Query<&Velocity, With<Player>>,
     mut projections: Query<&mut Projection, With<IngameCamera>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("handle_speed_effects").entered();
     for velocity in velocities.iter() {
         let speed_squared = velocity.linvel.length_squared();
         for mut projection in projections.iter_mut() {
@@ -158,6 +168,8 @@ fn rotate_to_speaker(
     without_player: Query<&Transform, Without<Player>>,
     current_dialog: Option<Res<CurrentDialog>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("rotate_to_speaker").entered();
     let speaker_entity = current_dialog
         .map(|current_dialog| current_dialog.source)
         .and_then(|source| without_player.get(source).ok());
@@ -188,6 +200,8 @@ fn control_walking_sound(
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("control_walking_sound").entered();
     for (velocity, transform, grounded) in character_query.iter() {
         let audio_instance = audio_instances
             .get_mut(&audio.walking)

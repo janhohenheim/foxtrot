@@ -17,6 +17,8 @@ pub fn link_animations(
     animations_entity_link_query: Query<&AnimationEntityLink>,
     mut commands: Commands,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("link_animations").entered();
     for entity in player_query.iter() {
         let top_entity = get_top_parent(entity, &parent_query);
         if animations_entity_link_query.get(top_entity).is_ok() {

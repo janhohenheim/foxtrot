@@ -47,6 +47,10 @@ wasm = [
     "bevy_rapier3d/wasm-bindgen"
 ]
 
+tracing = [
+    "bevy/trace_chrome"
+]
+
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"

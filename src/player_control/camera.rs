@@ -5,6 +5,7 @@ use crate::player_control::actions::{ActionsFrozen, CameraActions};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
 use crate::player_control::player_embodiment::set_camera_actions;
 use crate::util::log_error::log_errors;
+use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;

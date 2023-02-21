@@ -23,5 +23,4 @@ most_acute_from_below = 0.8975979 # TAU / 7.
 min_distance = 0.01
 max_distance = 10.0
 zoom_speed = 0.7
-min_distance_to_objects = 1e-2
-
+min_distance_to_objects = 5e-1

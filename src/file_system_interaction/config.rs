@@ -99,7 +99,7 @@ impl Default for ThirdPerson {
             min_distance: 1e-2,
             max_distance: 10.0,
             zoom_speed: 0.7,
-            min_distance_to_objects: 1e-2,
+            min_distance_to_objects: 5e-1,
         }
     }
 }

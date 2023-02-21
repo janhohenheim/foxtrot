@@ -5,6 +5,7 @@ use crate::level_instantiation::spawning::{
 use crate::util::log_error::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
+use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
@@ -131,6 +132,7 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
+        commands.init_resource::<InteractionOpportunities>();
         commands.init_resource::<ActiveConditions>();
         commands.remove_resource::<CurrentDialog>();
 

@@ -86,8 +86,13 @@ pub fn set_actions(
     mut mouse_wheel: EventReader<MouseWheel>,
     actions_frozen: Res<ActionsFrozen>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_actions").entered();
     *actions = default();
-    actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    #[cfg(feature = "dev")]
+    {
+        actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    }
     actions.ui.toggle_pause = GameControl::TogglePause.just_pressed(&keyboard_input);
     actions.ui.speed_up_dialog = GameControl::SpeedUpDialog.pressed(&keyboard_input);
     for i in 0..=9 {

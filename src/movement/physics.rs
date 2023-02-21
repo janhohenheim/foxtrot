@@ -28,6 +28,8 @@ pub fn read_colliders(
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("read_colliders").entered();
     for (entity, name) in &added_name {
         if name.to_lowercase().contains("[collider]") {
             for (collider_entity, collider_mesh) in

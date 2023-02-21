@@ -13,6 +13,8 @@ pub fn read_navmesh(
     mesh_handles: Query<&Handle<Mesh>>,
     mut path_meshes: ResMut<Assets<PathMesh>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("read_navmesh").entered();
     for (parent, name, global_transform) in &added_name {
         if name.to_lowercase().contains("[navmesh]") {
             let transform = global_transform.compute_transform();

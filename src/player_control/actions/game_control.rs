@@ -7,6 +7,7 @@ pub enum GameControl {
     Right,
     Sprint,
     Jump,
+    #[cfg_attr(not(feature = "dev"), allow(dead_code))]
     ToggleEditor,
     TogglePause,
     Interact,

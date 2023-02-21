@@ -6,8 +6,11 @@ use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
-use anyhow::{Context, Result};
+#[cfg(feature = "dev")]
+use anyhow::Context;
+use anyhow::Result;
 use bevy::prelude::*;
+#[cfg(feature = "dev")]
 use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{
     query::{find_path, perform_string_pulling_on_path},
@@ -19,7 +22,7 @@ use serde::{Deserialize, Serialize};
 /// Currently only one navmesh is supported. It is loaded automagically from any entity whose name contains `"[navmesh]"`.
 pub struct NavigationPlugin;
 
-const CELL_WIDTH: f32 = 0.5 * npc::RADIUS * 2.;
+const CELL_WIDTH: f32 = 0.5 * npc::RADIUS;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
@@ -34,7 +37,7 @@ impl Plugin for NavigationPlugin {
             world_bottom_bound: -100.0,
             max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
             walkable_height: 25,
-            walkable_radius: 2,
+            walkable_radius: 3,
             step_height: 3,
             min_region_area: 50,
             merge_region_area: 500,
@@ -62,9 +65,11 @@ fn query_mesh(
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
-    mut lines: ResMut<DebugLines>,
+    #[cfg(feature = "dev")] mut lines: ResMut<DebugLines>,
     #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::Editor>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("query_mesh").entered();
     if let Ok(nav_mesh) = nav_mesh.get().read() {
         for (follower_transform, mut walking) in &mut with_follower {
             for player_transform in &with_player {

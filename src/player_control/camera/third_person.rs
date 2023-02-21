@@ -150,11 +150,9 @@ impl ThirdPersonCamera {
         if target_to_secondary_target.is_approx_zero() {
             return;
         }
-        let target_to_secondary_target = target_to_secondary_target.normalize();
         let eye_to_target = (self.target - self.transform.translation)
             .split(self.up)
-            .horizontal
-            .normalize();
+            .horizontal;
         let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
         let pivot = self.target;
         self.transform.rotate_around(pivot, rotation);
@@ -201,12 +199,13 @@ impl ThirdPersonCamera {
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
         let origin = self.target;
-        let desired_direction = self.transform.translation - self.target;
-        let norm_direction = desired_direction.try_normalize().unwrap_or(Vec3::Z);
+        let direction = -self.forward();
 
-        let distance = self.get_raycast_distance(origin, norm_direction, rapier_context);
-        let location = origin + norm_direction * distance;
-        let correction = if distance * distance < desired_direction.length_squared() - 1e-3 {
+        let distance = self.get_raycast_distance(origin, direction, rapier_context);
+        let location = origin + direction * distance;
+
+        let original_distance = self.target - self.transform.translation;
+        let correction = if distance * distance < original_distance.length_squared() - 1e-3 {
             LineOfSightCorrection::Closer
         } else {
             LineOfSightCorrection::Further

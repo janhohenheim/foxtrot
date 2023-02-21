@@ -86,8 +86,13 @@ pub fn set_actions(
     mut mouse_wheel: EventReader<MouseWheel>,
     actions_frozen: Res<ActionsFrozen>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_actions").entered();
     *actions = default();
-    actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    #[cfg(feature = "dev")]
+    {
+        actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
+    }
     actions.ui.toggle_pause = GameControl::TogglePause.just_pressed(&keyboard_input);
     actions.ui.speed_up_dialog = GameControl::SpeedUpDialog.pressed(&keyboard_input);
     for i in 0..=9 {
@@ -105,7 +110,8 @@ pub fn set_actions(
             - get_movement(GameControl::Down, &keyboard_input),
     );
 
-    actions.player.movement = (player_movement != Vec2::ZERO).then(|| player_movement.normalize());
+    actions.player.movement =
+        (!player_movement.is_approx_zero()).then(|| player_movement.normalize());
     actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
     actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);

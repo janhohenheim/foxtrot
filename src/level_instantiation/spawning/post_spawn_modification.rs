@@ -5,6 +5,8 @@ use regex::Regex;
 use std::sync::LazyLock;
 
 pub fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_hidden").entered();
     for (name, mut visibility) in added_name.iter_mut() {
         if name.to_lowercase().contains("[hidden]") {
             visibility.is_visible = false;
@@ -16,6 +18,8 @@ pub fn despawn_removed(
     mut commands: Commands,
     mut added_name: Query<(Entity, &Name), Added<Name>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("despawn_removed").entered();
     for (entity, name) in added_name.iter_mut() {
         if name.to_lowercase().contains("[remove]") {
             commands.entity(entity).insert(Despawn { recursive: true });
@@ -29,6 +33,8 @@ pub fn generate_tangents(
     mut mesh_asset_events: EventReader<AssetEvent<Mesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("generate_tangents").entered();
     for event in mesh_asset_events.iter() {
         if let AssetEvent::Created { handle } = event {
             // Guaranteed to work because we just created the mesh
@@ -52,6 +58,8 @@ pub fn set_color(
     material_handles: Query<&Handle<StandardMaterial>>,
     mut standard_materials: ResMut<Assets<StandardMaterial>>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("set_color").entered();
     for (name, children) in added_name.iter() {
         if let Some(captures) = COLOR_REGEX.captures(&name.to_lowercase()) {
             let color = Color::rgba_u8(

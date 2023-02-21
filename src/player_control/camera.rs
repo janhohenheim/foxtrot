@@ -136,6 +136,8 @@ fn init_camera(
     config_handles: Res<ConfigAssets>,
     config: Res<Assets<GameConfig>>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("init_camera").entered();
     for (transform, mut camera) in camera.iter_mut() {
         let game_config = config
             .get(&config_handles.game)
@@ -163,6 +165,8 @@ pub fn update_transform(
     rapier_context: Res<RapierContext>,
     mut camera: Query<(&mut IngameCamera, &mut Transform)>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("update_transform").entered();
     for (mut camera, mut transform) in camera.iter_mut() {
         let actions = camera.actions.clone();
         let dt = time.delta_seconds();
@@ -188,6 +192,8 @@ fn update_config(
     mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
     mut camera_query: Query<&mut IngameCamera>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("update_config").entered();
     for event in config_asset_events.iter() {
         match event {
             AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
@@ -210,6 +216,8 @@ fn update_config(
 }
 
 fn reset_actions(mut camera: Query<&mut IngameCamera>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("reset_actions").entered();
     for mut camera in camera.iter_mut() {
         camera.actions = default();
     }
@@ -219,6 +227,8 @@ fn move_skydome(
     camera_query: Query<&Transform, (With<IngameCamera>, Without<Skydome>)>,
     mut skydome_query: Query<&mut Transform, (Without<IngameCamera>, With<Skydome>)>,
 ) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("move_skydome").entered();
     for camera_transform in camera_query.iter() {
         for mut skydome_transform in skydome_query.iter_mut() {
             skydome_transform.translation = camera_transform.translation;
@@ -234,6 +244,8 @@ fn cursor_grab_system(
     actions_frozen: Res<ActionsFrozen>,
     force_cursor_grab: Res<ForceCursorGrabMode>,
 ) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("cursor_grab_system").entered();
     let window = windows
         .get_primary_mut()
         .context("Failed to get primary window")?;

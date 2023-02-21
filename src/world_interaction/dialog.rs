@@ -9,6 +9,9 @@ pub use crate::world_interaction::dialog::resources::{
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
+use bevy_egui::egui::FontFamily::Proportional;
+use bevy_egui::egui::FontId;
+use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use serde::{Deserialize, Serialize};
 use unicode_segmentation::UnicodeSegmentation;
@@ -106,48 +109,37 @@ fn show_dialog(
         }
     };
     let current_page = current_dialog.fetch_current_page()?;
-    let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
 
-    let dialog_size = egui::Vec2::new(500., 150.);
-    egui::Window::new("Dialog")
-        .anchor(egui::Align2::CENTER_BOTTOM, egui::Vec2::new(0., -30.))
-        .collapsible(false)
-        .resizable(false)
-        .title_bar(false)
-        .frame(egui::Frame {
-            fill: egui::Color32::from_black_alpha(230),
-            inner_margin: egui::style::Margin::same(25.),
-            rounding: egui::Rounding::same(30.0),
-            ..default()
-        })
-        .show(egui_context.ctx_mut(), |ui| {
-            ui.set_width(dialog_size.x);
-            ui.set_height(dialog_size.y);
+    get_dialog_window().show(egui_context.ctx_mut(), |ui| {
+        // Get current context style
+        set_dialog_style(ui.style_mut());
+        let dialog_size = egui::Vec2::new(500., 150.);
+        ui.set_width(dialog_size.x);
+        ui.set_height(dialog_size.y);
 
-            let style = ui.style_mut();
-            style.visuals.button_frame = false;
-            ui.vertical(|ui| {
-                ui.add_space(5.);
-                ui.label(dialog_text.clone());
-                if dialog_text.text() == current_page.text {
-                    ui.add_space(3.);
-                    ui.separator();
-                    ui.add_space(8.);
-                    present_choices(
-                        ui,
-                        &mut commands,
-                        &mut current_dialog,
-                        &active_conditions,
-                        &mut condition_writer,
-                        &mut actions_frozen,
-                        &actions.ui,
-                        current_page.next_page,
-                        &mut elapsed_time,
-                    )
-                    .expect("Failed to present dialog choices");
-                }
-            });
+        let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
+        ui.vertical(|ui| {
+            ui.add_space(5.);
+            ui.label(&dialog_text);
+            if dialog_text == current_page.text {
+                ui.add_space(3.);
+                ui.separator();
+                ui.add_space(8.);
+                present_choices(
+                    ui,
+                    &mut commands,
+                    &mut current_dialog,
+                    &active_conditions,
+                    &mut condition_writer,
+                    &mut actions_frozen,
+                    &actions.ui,
+                    current_page.next_page,
+                    &mut elapsed_time,
+                )
+                .expect("Failed to present dialog choices");
+            }
         });
+    });
     let dt_speed_multiplier = if actions.ui.speed_up_dialog { 4. } else { 1. };
     *elapsed_time += time.delta_seconds() * dt_speed_multiplier;
     Ok(())
@@ -220,18 +212,38 @@ fn present_choices(
     Ok(())
 }
 
-fn create_dialog_rich_text(page: &Page, elapsed_time: f32) -> egui::RichText {
-    const BASE_LETTERS_PER_SECOND: f32 = 60.;
-    let letters_to_display = (BASE_LETTERS_PER_SECOND * page.talking_speed * elapsed_time) as usize;
-    let text: String = page.text.graphemes(true).take(letters_to_display).collect();
-    egui::RichText::new(text)
-        .color(egui::Color32::from_gray(250))
-        .size(16.)
+fn get_dialog_window() -> egui::Window<'static> {
+    egui::Window::new("Dialog")
+        .anchor(egui::Align2::CENTER_BOTTOM, egui::Vec2::new(0., -30.))
+        .collapsible(false)
+        .resizable(false)
+        .title_bar(false)
+        .frame(egui::Frame {
+            fill: egui::Color32::from_black_alpha(230),
+            inner_margin: egui::style::Margin::same(25.),
+            rounding: egui::Rounding::same(30.0),
+            ..default()
+        })
 }
 
-fn create_choice_rich_text(index: usize, text: &str) -> egui::RichText {
-    let text = format!("{}. {}", index + 1, text);
-    egui::RichText::new(text).size(14.)
+fn set_dialog_style(style: &mut egui::Style) {
+    style.text_styles = [
+        (Body, FontId::new(16.0, Proportional)),
+        (Button, FontId::new(14.0, Proportional)),
+    ]
+    .into();
+    style.visuals.button_frame = false;
+    style.visuals.widgets.noninteractive.fg_stroke.color = egui::Color32::from_gray(250);
+}
+
+fn create_dialog_rich_text(page: &Page, elapsed_time: f32) -> String {
+    const BASE_LETTERS_PER_SECOND: f32 = 60.;
+    let letters_to_display = (BASE_LETTERS_PER_SECOND * page.talking_speed * elapsed_time) as usize;
+    page.text.graphemes(true).take(letters_to_display).collect()
+}
+
+fn create_choice_rich_text(index: usize, text: &str) -> String {
+    format!("{}. {}", index + 1, text)
 }
 
 fn was_just_picked(current_dialog: &CurrentDialog, choice_id: &ConditionId) -> bool {

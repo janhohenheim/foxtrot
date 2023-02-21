@@ -4,6 +4,9 @@
 #![feature(never_type)]
 #![feature(if_let_guard)]
 #![feature(once_cell)]
+// These two generate a lot of false positives for Bevy systems
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::type_complexity)]
 
 //! Foxtrot is split into many plugins with their own set of responsibilities.
 //! This is an organizational measure and not meant to be imply that you can turn them on or off at will,
@@ -69,6 +72,15 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        #[cfg(not(feature = "core"))]
+        compile_error!("You need to compile with the core feature.");
+        #[cfg(all(feature = "wasm", feature = "native"))]
+        compile_error!(
+            "You can only compile with the wasm or native features, not both at the same time."
+        );
+        #[cfg(all(feature = "native-dev", not(feature = "native")))]
+        compile_error!("You can only compile with the native-dev feature if you compile with the native feature.");
+
         app.add_state(GameState::Loading)
             .add_plugin(BevyConfigPlugin)
             .add_plugin(MenuPlugin)

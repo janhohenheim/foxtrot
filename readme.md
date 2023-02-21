@@ -1,4 +1,6 @@
 # Foxtrot
+[![Live Demo](https://img.shields.io/badge/live%20demo-v0.1.8-blue)](https://janhohenheim.github.io/foxtrot/)
+
 The all-in-one Bevy 3D game template.  
 
 
@@ -37,7 +39,7 @@ cargo run
 ```
 WASM (runs best on Chromium based browsers):
 ```bash
-trunk serve --no-default-features --features core,dev,wasm
+trunk serve --no-default-features --features wasm_dev
 ```
 
 Building in general requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).

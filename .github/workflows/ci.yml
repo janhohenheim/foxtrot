@@ -11,8 +11,8 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -39,8 +39,8 @@ jobs:
   test-native-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -55,13 +55,13 @@ jobs:
           override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run doc tests with all features (this also compiles README examples)
-        run: cargo test --doc --all-features
+      - name: Run doc tests
+        run: cargo test --doc
   test-wasm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -84,12 +84,12 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
       - name: Build wasm
-        run: trunk build --no-default-features --features core,dev,wasm
+        run: trunk build --no-default-features --features wasm_dev
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -107,5 +107,11 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Check format
         run: cargo fmt --all -- --check
-      - name: Run clippy
-        run: cargo clippy --workspace --all-targets --all-features -- --deny warnings
+      - name: Run clippy with native dev features
+        run: cargo clippy --workspace --all-targets -- --deny warnings
+      - name: Run clippy with native release features
+        run: cargo clippy --workspace --all-targets --no-default-features --features native -- --deny warnings
+      - name: Run clippy with wasm dev features
+        run: cargo clippy --workspace --all-targets --no-default-features --features wasm_dev -- --deny warnings
+      - name: Run clippy with wasm release features
+        run: cargo clippy --workspace --all-targets --no-default-features --features wasm -- --deny warnings

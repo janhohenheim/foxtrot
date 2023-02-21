@@ -12,7 +12,14 @@ pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-            .insert_resource(RapierConfiguration::default())
+            .insert_resource(RapierConfiguration {
+                timestep_mode: TimestepMode::Variable {
+                    max_dt: 1.0 / 30.0,
+                    time_scale: 1.0,
+                    substeps: 1,
+                },
+                ..default()
+            })
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
                     .with_system(read_colliders.pipe(log_errors)),

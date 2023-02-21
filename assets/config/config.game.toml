@@ -1,5 +1,6 @@
 [camera]
-mouse_sensitivity = 1e-3
+mouse_sensitivity_x = 8e-4
+mouse_sensitivity_y = 5e-4
 
 [camera.fixed_angle]
 min_distance = 5.0

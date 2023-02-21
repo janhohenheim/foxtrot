@@ -100,11 +100,6 @@ impl ThirdPersonCamera {
             .axis_pair(CameraAction::Pan)
             .expect("Camera movement is not an axis pair")
             .xy();
-        let camera_movement = if self.secondary_target.is_some() {
-            Vec2::new(0.0, camera_movement.y)
-        } else {
-            camera_movement
-        };
         self.handle_camera_controls(camera_movement);
 
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);

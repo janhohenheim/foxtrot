@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use leafwing_input_manager::axislike::DualAxisData;
+use leafwing_input_manager::plugin::InputManagerSystem;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -35,7 +36,11 @@ impl Plugin for ActionsPlugin {
             .init_resource::<ActionsFrozen>()
             .add_plugin(InputManagerPlugin::<PlayerAction>::default())
             .add_plugin(InputManagerPlugin::<CameraAction>::default())
-            .add_plugin(InputManagerPlugin::<UiAction>::default());
+            .add_plugin(InputManagerPlugin::<UiAction>::default())
+            .add_system_to_stage(
+                CoreStage::PreUpdate,
+                remove_actions_when_frozen.after(InputManagerSystem::ManualControl),
+            );
     }
 }
 
@@ -109,6 +114,25 @@ pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
         input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
         ..default()
+    }
+}
+
+pub fn remove_actions_when_frozen(
+    actions_frozen: Res<ActionsFrozen>,
+    mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
+    mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
+) {
+    if actions_frozen.is_frozen() {
+        for mut player_actions in player_actions_query.iter_mut() {
+            player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
+            player_actions.set_action_data(PlayerAction::Jump, default());
+            player_actions.set_action_data(PlayerAction::Interact, default());
+            player_actions.set_action_data(PlayerAction::Sprint, default());
+        }
+        for mut camera_actions in camera_actions_query.iter_mut() {
+            camera_actions.action_data_mut(CameraAction::Pan).axis_pair = Some(default());
+            camera_actions.set_action_data(CameraAction::Zoom, default());
+        }
     }
 }
 

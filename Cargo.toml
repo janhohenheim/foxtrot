@@ -9,10 +9,7 @@ exclude = ["dist", "build", "assets", "credits", "saves", "resources"]
 
 [features]
 default = [
-    "core",
     "native-dev",
-    "dev",
-    "native",
 ]
 
 core = [
@@ -30,20 +27,30 @@ core = [
 dev = [
     "dep:bevy_editor_pls",
     "dep:bevy_prototype_debug_lines",
+    "core"
 ]
 
 native-dev = [
     "bevy/dynamic",
     "bevy/filesystem_watcher",
+    "dev",
+    "native"
 ]
 
 native = [
     "bevy_rapier3d/parallel",
     "bevy_hanabi",
+    "core"
 ]
 
 wasm = [
-    "bevy_rapier3d/wasm-bindgen"
+    "bevy_rapier3d/wasm-bindgen",
+    "core"
+]
+
+wasm_dev = [
+    "wasm",
+    "dev"
 ]
 
 tracing = [

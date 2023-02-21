@@ -90,6 +90,7 @@ pub struct ConfigAssets {
     pub game: Handle<GameConfig>,
 }
 
+#[allow(clippy::too_many_lines)]
 fn show_progress(
     progress: Option<Res<ProgressCounter>>,
     mut egui_context: ResMut<EguiContext>,

@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 /// Currently only one navmesh is supported. It is loaded automagically from any entity whose name contains `"[navmesh]"`.
 pub struct NavigationPlugin;
 
-const CELL_WIDTH: f32 = 0.5 * npc::RADIUS * 2.;
+const CELL_WIDTH: f32 = 0.5 * npc::RADIUS;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
@@ -37,7 +37,7 @@ impl Plugin for NavigationPlugin {
             world_bottom_bound: -100.0,
             max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
             walkable_height: 25,
-            walkable_radius: 2,
+            walkable_radius: 3,
             step_height: 3,
             min_region_area: 50,
             merge_region_area: 500,

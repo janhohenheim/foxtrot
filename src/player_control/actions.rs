@@ -110,7 +110,8 @@ pub fn set_actions(
             - get_movement(GameControl::Down, &keyboard_input),
     );
 
-    actions.player.movement = (player_movement != Vec2::ZERO).then(|| player_movement.normalize());
+    actions.player.movement =
+        (!player_movement.is_approx_zero()).then(|| player_movement.normalize());
     actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
     actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
     actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);

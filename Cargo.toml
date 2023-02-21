@@ -39,7 +39,6 @@ native-dev = [
 
 native = [
     "bevy_rapier3d/parallel",
-    "bevy_rapier3d/simd-nightly",
     "bevy_hanabi",
 ]
 
@@ -71,7 +70,7 @@ iyes_progress = "0.7.1"
 unicode-segmentation = "1.10.1"
 bevy_hanabi = { version = "0.5", optional = true }
 anyhow = "1.0.69"
-bevy_rapier3d = { version = "0.20", features = ["serde-serialize"] }
+bevy_rapier3d = { version = "0.20", features = ["serde-serialize", "simd-nightly"] }
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }

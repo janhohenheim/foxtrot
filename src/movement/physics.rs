@@ -14,7 +14,7 @@ impl Plugin for PhysicsPlugin {
         app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
             .insert_resource(RapierConfiguration {
                 timestep_mode: TimestepMode::Variable {
-                    max_dt: 1.0 / 30.0,
+                    max_dt: 1.0 / 20.0,
                     time_scale: 1.0,
                     substeps: 1,
                 },

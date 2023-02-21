@@ -4,6 +4,9 @@
 #![feature(never_type)]
 #![feature(if_let_guard)]
 #![feature(once_cell)]
+// These two generate a lot of false positives for Bevy systems
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::type_complexity)]
 
 //! Foxtrot is split into many plugins with their own set of responsibilities.
 //! This is an organizational measure and not meant to be imply that you can turn them on or off at will,

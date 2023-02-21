@@ -39,7 +39,7 @@ cargo run
 ```
 WASM (runs best on Chromium based browsers):
 ```bash
-trunk serve --no-default-features --features wasm-dev
+trunk serve --no-default-features --features wasm_dev
 ```
 
 Building in general requires setting up LLD or ZLD as described in the [Bevy book](https://bevyengine.org/learn/book/getting-started/setup/#enable-fast-compiles-optional).

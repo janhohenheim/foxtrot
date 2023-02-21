@@ -150,9 +150,11 @@ impl ThirdPersonCamera {
         if target_to_secondary_target.is_approx_zero() {
             return;
         }
+        let target_to_secondary_target = target_to_secondary_target.normalize();
         let eye_to_target = (self.target - self.transform.translation)
             .split(self.up)
-            .horizontal;
+            .horizontal
+            .normalize();
         let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
         let pivot = self.target;
         self.transform.rotate_around(pivot, rotation);

@@ -23,7 +23,6 @@ impl Plugin for LoadingPlugin {
             .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
             .add_loading_state(
                 LoadingState::new(GameState::Loading)
-                    .with_collection::<FontAssets>()
                     .with_collection::<AudioAssets>()
                     .with_collection::<SceneAssets>()
                     .with_collection::<AnimationAssets>()
@@ -38,12 +37,6 @@ impl Plugin for LoadingPlugin {
 
 // the following asset collections will be loaded during the State `GameState::InitialLoading`
 // when done loading, they will be inserted as resources (see <https://github.com/NiklasEi/bevy_asset_loader>)
-
-#[derive(AssetCollection, Resource)]
-pub struct FontAssets {
-    #[asset(path = "fonts/FiraSans-Bold.ttf")]
-    pub fira_sans: Handle<Font>,
-}
 
 #[derive(AssetCollection, Resource)]
 pub struct AudioAssets {

@@ -131,6 +131,7 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
+        commands.init_resource::<InteractionOpportunity>();
         commands.init_resource::<ActiveConditions>();
         commands.remove_resource::<CurrentDialog>();
 

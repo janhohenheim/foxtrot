@@ -4,7 +4,6 @@ use bevy_pathmesh::PathMesh;
 #[cfg(feature = "dev")]
 use serde::{Deserialize, Serialize};
 
-#[allow(clippy::too_many_arguments)]
 pub fn read_navmesh(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &GlobalTransform), Added<Name>>,

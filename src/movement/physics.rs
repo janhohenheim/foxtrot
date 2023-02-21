@@ -27,7 +27,6 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-#[allow(clippy::type_complexity)]
 pub fn read_colliders(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,

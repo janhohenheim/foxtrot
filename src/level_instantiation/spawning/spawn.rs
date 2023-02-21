@@ -7,7 +7,6 @@ use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[allow(clippy::too_many_arguments)]
 pub fn spawn_requested(
     mut commands: Commands,
     gltf: Res<Assets<Gltf>>,

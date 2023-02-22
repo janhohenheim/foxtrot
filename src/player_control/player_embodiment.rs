@@ -4,8 +4,8 @@ use crate::movement::general_movement::{
 };
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{
-    focus::switch_kind as switch_camera_kind, update_transform as update_camera_transform,
-    IngameCamera, IngameCameraKind,
+    focus::switch_kind as switch_camera_kind, IngameCamera, IngameCameraKind,
+    UpdateCameraTransformLabel,
 };
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
@@ -33,7 +33,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     .with_system(
                         handle_horizontal_movement
                             .pipe(log_errors)
-                            .after(update_camera_transform)
+                            .after(UpdateCameraTransformLabel)
                             .after(reset_movement_components)
                             .before(apply_walking),
                     )

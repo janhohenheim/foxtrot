@@ -55,6 +55,8 @@ fn show_loading_screen(player_query: Query<&Player>, mut egui_context: ResMut<Eg
                 ui.heading("Loading");
                 ui.label("Spawning level...");
                 ui.add_space(10.0);
+                #[cfg(feature = "wasm")]
+                ui.label("This may take a while. Don't worry, your browser did not crash!");
             });
         });
     }

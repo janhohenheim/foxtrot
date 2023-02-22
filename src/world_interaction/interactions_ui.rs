@@ -1,4 +1,4 @@
-use crate::player_control::actions::{Actions, ActionsFrozen};
+use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::log_error::log_errors;
@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use bevy_egui::{egui, EguiContext};
 use bevy_rapier3d::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
@@ -151,7 +152,7 @@ fn display_interaction_prompt(
     interaction_ui: Option<Res<InteractionUi>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
     mut egui_context: ResMut<EguiContext>,
-    actions: Res<Actions>,
+    actions: Query<&ActionState<PlayerAction>>,
     windows: Res<Windows>,
     actions_frozen: Res<ActionsFrozen>,
     dialog_target_query: Query<&DialogTarget>,
@@ -164,24 +165,26 @@ fn display_interaction_prompt(
         None => return Ok(()),
     };
 
-    let window = windows
-        .get_primary()
-        .context("Failed to get primary window")?;
-    egui::Window::new("Interaction")
-        .collapsible(false)
-        .title_bar(false)
-        .auto_sized()
-        .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
-        .show(egui_context.ctx_mut(), |ui| {
-            ui.label("E: Talk");
-        });
-    if actions.player.interact {
-        if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
-            dialog_event_writer.send(DialogEvent {
-                source: interaction_ui.source,
-                dialog: dialog_target.dialog_id.clone(),
-                page: None,
+    for actions in actions.iter() {
+        let window = windows
+            .get_primary()
+            .context("Failed to get primary window")?;
+        egui::Window::new("Interaction")
+            .collapsible(false)
+            .title_bar(false)
+            .auto_sized()
+            .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
+            .show(egui_context.ctx_mut(), |ui| {
+                ui.label("E: Talk");
             });
+        if actions.just_pressed(PlayerAction::Interact) {
+            if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
+                dialog_event_writer.send(DialogEvent {
+                    source: interaction_ui.source,
+                    dialog: dialog_target.dialog_id.clone(),
+                    page: None,
+                });
+            }
         }
     }
     Ok(())

@@ -18,7 +18,8 @@ pub struct Camera {
     pub fixed_angle: FixedAngle,
     pub first_person: FirstPerson,
     pub third_person: ThirdPerson,
-    pub mouse_sensitivity: f32,
+    pub mouse_sensitivity_x: f32,
+    pub mouse_sensitivity_y: f32,
 }
 
 impl Default for Camera {
@@ -27,7 +28,8 @@ impl Default for Camera {
             fixed_angle: FixedAngle::default(),
             first_person: FirstPerson::default(),
             third_person: ThirdPerson::default(),
-            mouse_sensitivity: 1e-3,
+            mouse_sensitivity_x: 8e-4,
+            mouse_sensitivity_y: 5e-4,
         }
     }
 }

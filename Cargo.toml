@@ -78,6 +78,7 @@ unicode-segmentation = "1.10.1"
 bevy_hanabi = { version = "0.5", optional = true }
 anyhow = "1.0.69"
 bevy_rapier3d = { version = "0.20", features = ["serde-serialize", "simd-nightly"] }
+leafwing-input-manager = { version = "0.8.0", features = [ "egui" ] }
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
@@ -95,3 +96,7 @@ optional = true
 
 [build-dependencies]
 embed-resource = "1.4"
+
+[patch.crates-io.leafwing-input-manager]
+git = "https://github.com/TimJentzsch/leafwing-input-manager.git"
+rev = "439f2fca8151316cff2e7209aaed980def139b7f"

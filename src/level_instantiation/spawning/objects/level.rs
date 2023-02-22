@@ -15,6 +15,10 @@ impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
     ) -> Result<Entity> {
         Ok(spawner
             .spawn_gltf(object, &spawner.scenes.level, transform)?
+            .insert(Imported)
             .id())
     }
 }
+
+#[derive(Component)]
+pub struct Imported;

@@ -12,7 +12,7 @@ use crate::level_instantiation::spawning::objects::primitives::{
 use crate::level_instantiation::spawning::objects::skydome::SkydomeSpawner;
 use crate::level_instantiation::spawning::objects::sunlight::SunlightSpawner;
 use crate::level_instantiation::spawning::post_spawn_modification::{
-    despawn_removed, generate_tangents, set_color, set_hidden, set_shadows,
+    despawn_removed, set_color, set_hidden, set_shadows,
 };
 use crate::level_instantiation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
@@ -65,7 +65,6 @@ impl Plugin for SpawningPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(set_hidden)
                     .with_system(despawn_removed)
-                    .with_system(generate_tangents.pipe(log_errors))
                     .with_system(set_color.pipe(log_errors))
                     .with_system(set_shadows.pipe(log_errors)),
             );

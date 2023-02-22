@@ -1,5 +1,6 @@
 use crate::level_instantiation::spawning::objects::player;
 use crate::particles::SprintingParticle;
+use bevy::pbr::NotShadowReceiver;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 
@@ -12,6 +13,7 @@ pub fn init_effects(mut commands: Commands, mut effects: ResMut<Assets<EffectAss
             effect: sprinting,
             ..default()
         },
+        NotShadowReceiver,
     ));
 }
 

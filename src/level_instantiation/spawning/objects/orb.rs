@@ -2,7 +2,7 @@ use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use anyhow::Result;
-use bevy::pbr::NotShadowCaster;
+use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
 
 pub struct OrbSpawner;
@@ -31,6 +31,7 @@ impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
                 },
                 Name::new("Orb"),
                 NotShadowCaster,
+                NotShadowReceiver,
             ))
             .with_children(|parent| {
                 parent.spawn((PointLightBundle {

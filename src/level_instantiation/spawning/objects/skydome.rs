@@ -2,7 +2,7 @@ use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use anyhow::Result;
-use bevy::pbr::NotShadowCaster;
+use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -31,6 +31,7 @@ impl PrimedGameObjectSpawnerImplementor for SkydomeSpawner {
             .spawn((
                 Name::new("Skydome"),
                 NotShadowCaster,
+                NotShadowReceiver,
                 MaterialMeshBundle {
                     mesh: spawner.outer_spawner.meshes[&object].clone(),
                     material: spawner.materials.skydome.clone(),

@@ -32,6 +32,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                     .with_system(handle_jump.before(apply_jumping))
                     .with_system(
                         handle_horizontal_movement
+                            .pipe(log_errors)
                             .after(update_camera_transform)
                             .after(reset_movement_components)
                             .before(apply_walking),
@@ -63,18 +64,18 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
     camera_query: Query<&IngameCamera>,
-) {
+) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
     let camera = match camera_query.iter().next() {
         Some(camera) => camera,
-        None => return,
+        None => return Ok(()),
     };
 
     for (actions, mut walk, transform) in &mut player_query {
         if let Some(movement) = actions
             .axis_pair(PlayerAction::Move)
-            .expect("Player movement is not an axis pair")
+            .context("Player movement is not an axis pair")?
             .max_normalized()
         {
             let forward = camera
@@ -99,6 +100,7 @@ fn handle_horizontal_movement(
             walk.sprinting = actions.pressed(PlayerAction::Sprint);
         }
     }
+    Ok(())
 }
 
 fn handle_camera_kind(

@@ -1,6 +1,7 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::ThirdPersonCamera;
+use anyhow::Result;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -54,11 +55,11 @@ impl FixedAngleCamera {
         dt: f32,
         camera_actions: &ActionState<CameraAction>,
         transform: Transform,
-    ) -> Transform {
+    ) -> Result<Transform> {
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);
         self.zoom(zoom);
         self.follow_target();
-        self.get_camera_transform(dt, transform)
+        Ok(self.get_camera_transform(dt, transform))
     }
 
     fn follow_target(&mut self) {

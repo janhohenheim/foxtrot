@@ -32,7 +32,7 @@ pub fn despawn_removed(
 pub fn generate_tangents(
     mut mesh_asset_events: EventReader<AssetEvent<Mesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
-) {
+) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("generate_tangents").entered();
     for event in mesh_asset_events.iter() {
@@ -40,12 +40,13 @@ pub fn generate_tangents(
             // Guaranteed to work because we just created the mesh
             let mesh = meshes
                 .get_mut(handle)
-                .expect("Failed to get mesh even though it was just created");
+                .context("Failed to get mesh even though it was just created")?;
             if let Err(e) = mesh.generate_tangents() {
                 warn!("Failed to generate tangents for mesh: {}", e);
             }
         }
     }
+    Ok(())
 }
 
 static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {

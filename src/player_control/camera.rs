@@ -118,12 +118,20 @@ impl Plugin for CameraPlugin {
                     .with_system(init_camera.pipe(log_errors))
                     .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
                     .with_system(switch_kind.after(SetCameraFocusLabel))
-                    .with_system(update_transform.after(switch_kind))
+                    .with_system(
+                        update_transform
+                            .pipe(log_errors)
+                            .label(UpdateCameraTransformLabel)
+                            .after(switch_kind),
+                    )
                     .with_system(update_config.pipe(log_errors))
-                    .with_system(move_skydome.after(update_transform)),
+                    .with_system(move_skydome.after(UpdateCameraTransformLabel)),
             );
     }
 }
+
+#[derive(SystemLabel)]
+pub struct UpdateCameraTransformLabel;
 
 fn init_camera(
     mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>,
@@ -162,7 +170,7 @@ pub fn update_transform(
         &mut IngameCamera,
         &mut Transform,
     )>,
-) {
+) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("update_transform").entered();
     for (actions, mut camera, mut transform) in camera.iter_mut() {
@@ -179,9 +187,10 @@ pub fn update_transform(
                     camera.update_transform(dt, actions, *transform)
                 }
             }
-        };
+        }?;
         *transform = new_transform;
     }
+    Ok(())
 }
 
 fn update_config(

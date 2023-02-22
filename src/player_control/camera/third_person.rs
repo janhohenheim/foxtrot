@@ -3,6 +3,7 @@ use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::Vec3Ext;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
@@ -89,7 +90,7 @@ impl ThirdPersonCamera {
         camera_actions: &ActionState<CameraAction>,
         rapier_context: &RapierContext,
         transform: Transform,
-    ) -> Transform {
+    ) -> Result<Transform> {
         self.follow_target();
 
         if let Some(secondary_target) = self.secondary_target {
@@ -98,14 +99,14 @@ impl ThirdPersonCamera {
 
         let camera_movement = camera_actions
             .axis_pair(CameraAction::Pan)
-            .expect("Camera movement is not an axis pair")
+            .context("Camera movement is not an axis pair")?
             .xy();
         self.handle_camera_controls(camera_movement);
 
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);
         self.zoom(zoom);
         let los_correction = self.place_eye_in_valid_position(rapier_context);
-        self.get_camera_transform(dt, transform, los_correction)
+        Ok(self.get_camera_transform(dt, transform, los_correction))
     }
 
     fn follow_target(&mut self) {

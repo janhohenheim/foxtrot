@@ -125,13 +125,13 @@ pub fn remove_actions_when_frozen(
     if actions_frozen.is_frozen() {
         for mut player_actions in player_actions_query.iter_mut() {
             player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
-            player_actions.set_action_data(PlayerAction::Jump, default());
-            player_actions.set_action_data(PlayerAction::Interact, default());
-            player_actions.set_action_data(PlayerAction::Sprint, default());
+            player_actions.release(PlayerAction::Jump);
+            player_actions.release(PlayerAction::Interact);
+            player_actions.release(PlayerAction::Sprint);
         }
         for mut camera_actions in camera_actions_query.iter_mut() {
             camera_actions.action_data_mut(CameraAction::Pan).axis_pair = Some(default());
-            camera_actions.set_action_data(CameraAction::Zoom, default());
+            camera_actions.action_data_mut(CameraAction::Zoom).value = default();
         }
     }
 }

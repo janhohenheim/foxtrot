@@ -29,28 +29,6 @@ pub fn despawn_removed(
     }
 }
 
-/// Needed for normal mapping,
-/// see [`StandardMaterial::normal_map_texture`](https://docs.rs/bevy/latest/bevy/pbr/struct.StandardMaterial.html#structfield.normal_map_texture).
-pub fn generate_tangents(
-    mut mesh_asset_events: EventReader<AssetEvent<Mesh>>,
-    mut meshes: ResMut<Assets<Mesh>>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("generate_tangents").entered();
-    for event in mesh_asset_events.iter() {
-        if let AssetEvent::Created { handle } = event {
-            // Guaranteed to work because we just created the mesh
-            let mesh = meshes
-                .get_mut(handle)
-                .context("Failed to get mesh even though it was just created")?;
-            if let Err(e) = mesh.generate_tangents() {
-                warn!("Failed to generate tangents for mesh: {}", e);
-            }
-        }
-    }
-    Ok(())
-}
-
 static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"\[color:\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]")
         .expect("Failed to compile color regex")

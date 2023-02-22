@@ -56,6 +56,8 @@ fn show_loading_screen(player_query: Query<&Player>, mut egui_context: ResMut<Eg
                 ui.label("Spawning level...");
                 ui.add_space(10.0);
                 #[cfg(feature = "wasm")]
+                ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
+                #[cfg(feature = "wasm")]
                 ui.label("This may take a while. Don't worry, your browser did not crash!");
             });
         });

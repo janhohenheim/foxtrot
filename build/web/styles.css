@@ -31,7 +31,7 @@ body {
     --loader-size: 32px;
     position: fixed;
     left: calc(50% - var(--loader-size) / 2);
-    top: calc(50% - 250px + var(--loader-size) / 2);
+    top: calc(50% - 120px + var(--loader-size) / 2);
     width: var(--loader-size);
     height: var(--loader-size);
     border: 3px solid #005c80;

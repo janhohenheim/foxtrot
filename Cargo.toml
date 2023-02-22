@@ -2,7 +2,6 @@
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
-publish = false
 version = "0.1.8"
 license = "MIT or Apache-2.0"
 exclude = ["dist", "build", "assets", "credits", "saves", "resources"]
@@ -60,7 +59,7 @@ tracing = [
 [dependencies]
 bevy = { version = "^0.9.1", default-features = false }
 bevy_kira_audio = "0.13"
-bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7", features = ["progress_tracking"] }
+bevy_asset_loader = { version = "0.14.1", features = ["progress_tracking"] }
 bevy_common_assets = { version = "0.4.0", features = ["ron", "toml"] }
 bevy_egui = "0.19"
 serde = { version = "1", features = ["derive"] }
@@ -79,24 +78,17 @@ bevy_hanabi = { version = "0.5", optional = true }
 anyhow = "1.0.69"
 bevy_rapier3d = { version = "0.20", features = ["serde-serialize", "simd-nightly"] }
 leafwing-input-manager = { version = "0.8.0", features = [ "egui" ] }
+bevy_editor_pls = { version = "0.2", optional = true}
+bevy_prototype_debug_lines = { version = "0.9.0", optional = true, features = ["3d"] }
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.27", default-features = false }
 image = { version = "0.24", default-features = false }
 
-[dependencies.bevy_prototype_debug_lines]
-version = "0.9.0"
-optional = true
-features = ["3d"]
-
-[dependencies.bevy_editor_pls]
-git = "https://github.com/jakobhellermann/bevy_editor_pls"
-rev = "6062b860aea87034081399369fd7ef5715f13256"
-optional = true
-
 [build-dependencies]
 embed-resource = "1.4"
 
-[patch.crates-io.leafwing-input-manager]
-git = "https://github.com/TimJentzsch/leafwing-input-manager.git"
-rev = "439f2fca8151316cff2e7209aaed980def139b7f"
+[patch.crates-io]
+leafwing-input-manager = { git = "https://github.com/TimJentzsch/leafwing-input-manager.git", rev = "439f2fca8151316cff2e7209aaed980def139b7f" } # https://github.com/Leafwing-Studios/leafwing-input-manager/pull/312
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7" } # Collections as maps feature
+bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", rev = "6062b860aea87034081399369fd7ef5715f13256" } # Smaller bug fixes

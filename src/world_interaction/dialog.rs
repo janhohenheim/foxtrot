@@ -7,7 +7,7 @@ pub use crate::world_interaction::dialog::resources::{
     CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
 };
 use crate::GameState;
-use anyhow::{Context, Result};
+use anyhow::{Context, Ok, Result};
 use bevy::prelude::*;
 use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
@@ -23,7 +23,6 @@ pub struct DialogPlugin;
 impl Plugin for DialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
-            .register_type::<DialogTarget>()
             .register_type::<DialogId>()
             .add_event::<DialogEvent>()
             .add_system_set(
@@ -34,8 +33,7 @@ impl Plugin for DialogPlugin {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize, Default)]
 pub struct DialogTarget {
     pub dialog_id: DialogId,
 }
@@ -111,36 +109,42 @@ fn show_dialog(
 
     for actions in actions.iter() {
         let current_page = current_dialog.fetch_current_page()?;
-        get_dialog_window().show(egui_context.ctx_mut(), |ui| {
-            // Get current context style
-            set_dialog_style(ui.style_mut());
-            let dialog_size = egui::Vec2::new(500., 150.);
-            ui.set_width(dialog_size.x);
-            ui.set_height(dialog_size.y);
+        get_dialog_window()
+            .show(egui_context.ctx_mut(), |ui| {
+                // Get current context style
+                set_dialog_style(ui.style_mut());
+                let dialog_size = egui::Vec2::new(500., 150.);
+                ui.set_width(dialog_size.x);
+                ui.set_height(dialog_size.y);
 
-            let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
-            ui.vertical(|ui| {
-                ui.add_space(5.);
-                ui.label(&dialog_text);
-                if dialog_text == current_page.text {
-                    ui.add_space(3.);
-                    ui.separator();
-                    ui.add_space(8.);
-                    present_choices(
-                        ui,
-                        &mut commands,
-                        &mut current_dialog,
-                        &active_conditions,
-                        &mut condition_writer,
-                        &mut actions_frozen,
-                        actions,
-                        current_page.next_page,
-                        &mut elapsed_time,
-                    )
-                    .expect("Failed to present dialog choices");
-                }
-            });
-        });
+                let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
+                ui.vertical(|ui| {
+                    ui.add_space(5.);
+                    ui.label(&dialog_text);
+                    if dialog_text == current_page.text {
+                        ui.add_space(3.);
+                        ui.separator();
+                        ui.add_space(8.);
+                        present_choices(
+                            ui,
+                            &mut commands,
+                            &mut current_dialog,
+                            &active_conditions,
+                            &mut condition_writer,
+                            &mut actions_frozen,
+                            actions,
+                            current_page.next_page,
+                            &mut elapsed_time,
+                        )
+                        .context("Failed to present dialog choices")?;
+                    }
+                    Ok(())
+                })
+                .inner
+            })
+            .context("Failed to show dialog window")?
+            .inner
+            .context("Failed to fetch inner result when showing dialog window")??;
         let dt_speed_multiplier = if actions.pressed(PlayerAction::SpeedUpDialog) {
             4.
         } else {

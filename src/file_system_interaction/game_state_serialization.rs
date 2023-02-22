@@ -20,28 +20,31 @@ impl Plugin for GameStateSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GameSaveRequest>()
             .add_event::<GameLoadRequest>()
-            .register_type::<GameSaveRequest>()
-            .register_type::<GameLoadRequest>()
             .add_system_set(
                 SystemSet::on_in_stack_update(GameState::Playing)
-                    .with_system(handle_load_requests)
+                    .with_system(
+                        handle_load_requests
+                            .pipe(log_errors)
+                            .label(HandleLoadRequestsLabel),
+                    )
                     .with_system(
                         handle_save_requests
                             .pipe(log_errors)
-                            .after(handle_load_requests),
+                            .after(HandleLoadRequestsLabel),
                     ),
             );
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Resource, Serialize, Deserialize)]
+#[derive(SystemLabel)]
+pub struct HandleLoadRequestsLabel;
+
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct GameSaveRequest {
     pub filename: Option<String>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Resource, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct GameLoadRequest {
     pub filename: Option<String>,
 }
@@ -62,15 +65,15 @@ fn handle_load_requests(
     mut loader: EventWriter<WorldLoadRequest>,
     mut spawner: EventWriter<DelayedSpawnEvent>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
-) {
+) -> Result<()> {
     for load in load_events.iter() {
         let path = match load
             .filename
             .as_ref()
-            .map(|filename| Some(get_save_path(filename.clone())))
+            .map(|filename| anyhow::Ok(Some(get_save_path(filename.clone()))))
             .unwrap_or_else(|| {
                 let mut saves: Vec<_> = glob("./saves/*.sav.ron")
-                    .expect("Failed to read glob pattern")
+                    .context("Failed to read glob pattern")?
                     .filter_map(|entry| entry.ok())
                     .filter(|entry| entry.is_file())
                     .collect();
@@ -80,8 +83,8 @@ fn handle_load_requests(
                         .modified()
                         .expect("Failed to read file modified time")
                 });
-                saves.last().map(|entry| entry.to_owned())
-            }) {
+                Ok(saves.last().map(|entry| entry.to_owned()))
+            })? {
             Some(path) => path,
             None => {
                 error!("Failed to load save: No filename provided and no saves found on disk");
@@ -129,6 +132,7 @@ fn handle_load_requests(
             },
         });
     }
+    Ok(())
 }
 
 fn handle_save_requests(

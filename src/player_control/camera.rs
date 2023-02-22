@@ -1,11 +1,9 @@
 use crate::file_system_interaction::asset_loading::ConfigAssets;
 use crate::file_system_interaction::config::GameConfig;
 use crate::level_instantiation::spawning::objects::skydome::Skydome;
-use crate::player_control::actions::{ActionsFrozen, CameraActions};
+use crate::player_control::actions::{ActionsFrozen, CameraAction};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
-use crate::player_control::player_embodiment::set_camera_actions;
 use crate::util::log_error::log_errors;
-use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -13,6 +11,7 @@ use bevy::window::CursorGrabMode;
 use bevy_rapier3d::prelude::*;
 pub use first_person::FirstPersonCamera;
 pub use fixed_angle::FixedAngleCamera;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 pub use third_person::ThirdPersonCamera;
 use ui::*;
@@ -30,7 +29,6 @@ mod util;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
     pub kind: IngameCameraKind,
-    pub actions: CameraActions,
 }
 
 impl IngameCamera {
@@ -119,18 +117,21 @@ impl Plugin for CameraPlugin {
                     .with_system(cursor_grab_system.pipe(log_errors))
                     .with_system(init_camera.pipe(log_errors))
                     .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
+                    .with_system(switch_kind.after(SetCameraFocusLabel))
                     .with_system(
-                        switch_kind
-                            .after(set_camera_actions)
-                            .after(SetCameraFocusLabel),
+                        update_transform
+                            .pipe(log_errors)
+                            .label(UpdateCameraTransformLabel)
+                            .after(switch_kind),
                     )
-                    .with_system(update_transform.after(switch_kind))
-                    .with_system(reset_actions.after(update_transform))
                     .with_system(update_config.pipe(log_errors))
-                    .with_system(move_skydome.after(update_transform)),
+                    .with_system(move_skydome.after(UpdateCameraTransformLabel)),
             );
     }
 }
+
+#[derive(SystemLabel)]
+pub struct UpdateCameraTransformLabel;
 
 fn init_camera(
     mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>,
@@ -164,12 +165,15 @@ fn init_camera(
 pub fn update_transform(
     time: Res<Time>,
     rapier_context: Res<RapierContext>,
-    mut camera: Query<(&mut IngameCamera, &mut Transform)>,
-) {
+    mut camera: Query<(
+        &ActionState<CameraAction>,
+        &mut IngameCamera,
+        &mut Transform,
+    )>,
+) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("update_transform").entered();
-    for (mut camera, mut transform) in camera.iter_mut() {
-        let actions = camera.actions.clone();
+    for (actions, mut camera, mut transform) in camera.iter_mut() {
         let dt = time.delta_seconds();
         let new_transform = {
             match &mut camera.kind {
@@ -183,9 +187,10 @@ pub fn update_transform(
                     camera.update_transform(dt, actions, *transform)
                 }
             }
-        };
+        }?;
         *transform = new_transform;
     }
+    Ok(())
 }
 
 fn update_config(
@@ -214,14 +219,6 @@ fn update_config(
         }
     }
     Ok(())
-}
-
-fn reset_actions(mut camera: Query<&mut IngameCamera>) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("reset_actions").entered();
-    for mut camera in camera.iter_mut() {
-        camera.actions = default();
-    }
 }
 
 fn move_skydome(

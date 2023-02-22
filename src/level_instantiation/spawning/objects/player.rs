@@ -3,6 +3,9 @@ use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
+use crate::player_control::actions::{
+    create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+};
 use crate::player_control::player_embodiment::Player;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -45,6 +48,8 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     GameCollisionGroup::PLAYER.into(),
                     GameCollisionGroup::ALL.into(),
                 ),
+                create_player_action_input_manager_bundle(),
+                create_ui_action_input_manager_bundle(),
             ))
             .with_children(|parent| {
                 parent.spawn((

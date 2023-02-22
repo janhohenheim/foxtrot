@@ -65,7 +65,7 @@ impl Plugin for SpawningPlugin {
                 SystemSet::on_update(GameState::Playing)
                     .with_system(set_hidden)
                     .with_system(despawn_removed)
-                    .with_system(generate_tangents)
+                    .with_system(generate_tangents.pipe(log_errors))
                     .with_system(set_color.pipe(log_errors)),
             );
     }

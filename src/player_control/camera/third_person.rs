@@ -1,12 +1,13 @@
 use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::actions::CameraActions;
+use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::Vec3Ext;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::PI;
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
@@ -86,28 +87,26 @@ impl ThirdPersonCamera {
     pub fn update_transform(
         &mut self,
         dt: f32,
-        camera_actions: CameraActions,
+        camera_actions: &ActionState<CameraAction>,
         rapier_context: &RapierContext,
         transform: Transform,
-    ) -> Transform {
+    ) -> Result<Transform> {
         self.follow_target();
 
         if let Some(secondary_target) = self.secondary_target {
             self.move_eye_to_align_target_with(secondary_target);
         }
-        if let Some(camera_movement) = camera_actions.movement {
-            let camera_movement = if self.secondary_target.is_some() {
-                Vec2::new(0.0, camera_movement.y)
-            } else {
-                camera_movement
-            };
-            self.handle_camera_controls(camera_movement);
-        }
-        if let Some(zoom) = camera_actions.zoom {
-            self.zoom(zoom);
-        }
+
+        let camera_movement = camera_actions
+            .axis_pair(CameraAction::Pan)
+            .context("Camera movement is not an axis pair")?
+            .xy();
+        self.handle_camera_controls(camera_movement);
+
+        let zoom = camera_actions.clamped_value(CameraAction::Zoom);
+        self.zoom(zoom);
         let los_correction = self.place_eye_in_valid_position(rapier_context);
-        self.get_camera_transform(dt, transform, los_correction)
+        Ok(self.get_camera_transform(dt, transform, los_correction))
     }
 
     fn follow_target(&mut self) {
@@ -119,11 +118,9 @@ impl ThirdPersonCamera {
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
-        let mouse_sensitivity = self.config.camera.mouse_sensitivity;
-        let camera_movement = camera_movement * mouse_sensitivity;
-
-        let yaw = -camera_movement.x.clamp(-PI, PI);
-        let pitch = self.clamp_pitch(-camera_movement.y);
+        let yaw = -camera_movement.x * self.config.camera.mouse_sensitivity_x;
+        let pitch = -camera_movement.y * self.config.camera.mouse_sensitivity_y;
+        let pitch = self.clamp_pitch(pitch);
         self.rotate_around_target(yaw, pitch);
     }
 

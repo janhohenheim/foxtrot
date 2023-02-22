@@ -32,7 +32,7 @@ pub fn despawn_removed(
 pub fn generate_tangents(
     mut mesh_asset_events: EventReader<AssetEvent<Mesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
-) {
+) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("generate_tangents").entered();
     for event in mesh_asset_events.iter() {
@@ -40,12 +40,13 @@ pub fn generate_tangents(
             // Guaranteed to work because we just created the mesh
             let mesh = meshes
                 .get_mut(handle)
-                .expect("Failed to get mesh even though it was just created");
+                .context("Failed to get mesh even though it was just created")?;
             if let Err(e) = mesh.generate_tangents() {
                 warn!("Failed to generate tangents for mesh: {}", e);
             }
         }
     }
+    Ok(())
 }
 
 static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {
@@ -63,10 +64,18 @@ pub fn set_color(
     for (name, children) in added_name.iter() {
         if let Some(captures) = COLOR_REGEX.captures(&name.to_lowercase()) {
             let color = Color::rgba_u8(
-                captures[1].parse().expect("Failed to parse color"),
-                captures[2].parse().expect("Failed to parse color"),
-                captures[3].parse().expect("Failed to parse color"),
-                captures[4].parse().expect("Failed to parse color"),
+                captures[1]
+                    .parse()
+                    .with_context(|| format!("Failed to parse r component in color: {}", name))?,
+                captures[2]
+                    .parse()
+                    .with_context(|| format!("Failed to parse g component in color: {}", name))?,
+                captures[3]
+                    .parse()
+                    .with_context(|| format!("Failed to parse b component in color: {}", name))?,
+                captures[4]
+                    .parse()
+                    .with_context(|| format!("Failed to parse a component in color: {}", name))?,
             );
             let material_handle = children
                 .iter()

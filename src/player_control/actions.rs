@@ -1,11 +1,8 @@
-use crate::player_control::actions::game_control::{get_movement, GameControl};
-use crate::util::trait_extension::{F32Ext, Vec2Ext};
-use crate::GameState;
-use bevy::input::mouse::{MouseMotion, MouseWheel};
 use bevy::prelude::*;
+use leafwing_input_manager::axislike::DualAxisData;
+use leafwing_input_manager::plugin::InputManagerSystem;
+use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
-
-mod game_control;
 
 /// Configures [`Actions`], the resource that holds all player input.
 /// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
@@ -32,103 +29,127 @@ impl ActionsFrozen {
 // Actions can then be used as a resource in other systems to act on the player input.
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Actions>()
-            .register_type::<PlayerActions>()
-            .register_type::<CameraActions>()
-            .register_type::<UiActions>()
+        app.register_type::<PlayerAction>()
+            .register_type::<CameraAction>()
+            .register_type::<UiAction>()
             .register_type::<ActionsFrozen>()
-            .init_resource::<Actions>()
             .init_resource::<ActionsFrozen>()
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(set_actions));
+            .add_plugin(InputManagerPlugin::<PlayerAction>::default())
+            .add_plugin(InputManagerPlugin::<CameraAction>::default())
+            .add_plugin(InputManagerPlugin::<UiAction>::default())
+            .add_system_to_stage(
+                CoreStage::PreUpdate,
+                remove_actions_when_frozen.after(InputManagerSystem::ManualControl),
+            );
     }
 }
 
-#[derive(
-    Debug, Clone, PartialEq, Reflect, FromReflect, Default, Resource, Serialize, Deserialize,
-)]
-#[reflect(Resource, Serialize, Deserialize)]
-pub struct Actions {
-    pub player: PlayerActions,
-    pub camera: CameraActions,
-    pub ui: UiActions,
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+pub enum PlayerAction {
+    #[default]
+    Move,
+    Sprint,
+    Jump,
+    Interact,
+    SpeedUpDialog,
+    NumberedChoice(u16),
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
-pub struct PlayerActions {
-    pub movement: Option<Vec2>,
-    pub interact: bool,
-    pub jump: bool,
-    pub sprint: bool,
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+pub enum CameraAction {
+    #[default]
+    Pan,
+    Zoom,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
-pub struct CameraActions {
-    pub movement: Option<Vec2>,
-    pub zoom: Option<f32>,
+#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+pub enum UiAction {
+    #[default]
+    TogglePause,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Default, Serialize, Deserialize)]
-#[reflect(Serialize, Deserialize)]
-pub struct UiActions {
-    #[cfg(feature = "dev")]
-    pub toggle_editor: bool,
-    pub toggle_pause: bool,
-    pub numbered_choice: [bool; 10],
-    pub speed_up_dialog: bool,
+pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
+    InputManagerBundle {
+        input_map: InputMap::new([
+            (QwertyScanCode::Space, PlayerAction::Jump),
+            (QwertyScanCode::LShift, PlayerAction::Sprint),
+            (QwertyScanCode::E, PlayerAction::Interact),
+            (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
+            (QwertyScanCode::Key1, PlayerAction::NumberedChoice(1)),
+            (QwertyScanCode::Key2, PlayerAction::NumberedChoice(2)),
+            (QwertyScanCode::Key3, PlayerAction::NumberedChoice(3)),
+            (QwertyScanCode::Key4, PlayerAction::NumberedChoice(4)),
+            (QwertyScanCode::Key5, PlayerAction::NumberedChoice(5)),
+            (QwertyScanCode::Key6, PlayerAction::NumberedChoice(6)),
+            (QwertyScanCode::Key7, PlayerAction::NumberedChoice(7)),
+            (QwertyScanCode::Key8, PlayerAction::NumberedChoice(8)),
+            (QwertyScanCode::Key9, PlayerAction::NumberedChoice(9)),
+            (QwertyScanCode::Key0, PlayerAction::NumberedChoice(0)),
+        ])
+        .insert(
+            VirtualDPad {
+                up: QwertyScanCode::W.into(),
+                down: QwertyScanCode::S.into(),
+                left: QwertyScanCode::A.into(),
+                right: QwertyScanCode::D.into(),
+            },
+            PlayerAction::Move,
+        )
+        .build(),
+        ..default()
+    }
 }
 
-pub fn set_actions(
-    mut actions: ResMut<Actions>,
-    keyboard_input: Res<Input<ScanCode>>,
-    mut mouse_motion: EventReader<MouseMotion>,
-    mut mouse_wheel: EventReader<MouseWheel>,
+pub fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraAction> {
+    InputManagerBundle {
+        input_map: InputMap::default()
+            .insert(DualAxis::mouse_motion(), CameraAction::Pan)
+            .insert(SingleAxis::mouse_wheel_y(), CameraAction::Zoom)
+            .build(),
+        ..default()
+    }
+}
+
+pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
+    InputManagerBundle {
+        input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
+        ..default()
+    }
+}
+
+pub fn remove_actions_when_frozen(
     actions_frozen: Res<ActionsFrozen>,
+    mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
+    mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("set_actions").entered();
-    *actions = default();
-    #[cfg(feature = "dev")]
-    {
-        actions.ui.toggle_editor = GameControl::ToggleEditor.just_pressed(&keyboard_input);
-    }
-    actions.ui.toggle_pause = GameControl::TogglePause.just_pressed(&keyboard_input);
-    actions.ui.speed_up_dialog = GameControl::SpeedUpDialog.pressed(&keyboard_input);
-    for i in 0..=9 {
-        actions.ui.numbered_choice[i] =
-            GameControl::NumberedChoice(i as u16).just_pressed(&keyboard_input);
-    }
     if actions_frozen.is_frozen() {
-        return;
+        for mut player_actions in player_actions_query.iter_mut() {
+            player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
+            player_actions.release(PlayerAction::Jump);
+            player_actions.release(PlayerAction::Interact);
+            player_actions.release(PlayerAction::Sprint);
+        }
+        for mut camera_actions in camera_actions_query.iter_mut() {
+            camera_actions.action_data_mut(CameraAction::Pan).axis_pair = Some(default());
+            camera_actions.action_data_mut(CameraAction::Zoom).value = default();
+        }
     }
+}
 
-    let player_movement = Vec2::new(
-        get_movement(GameControl::Right, &keyboard_input)
-            - get_movement(GameControl::Left, &keyboard_input),
-        get_movement(GameControl::Up, &keyboard_input)
-            - get_movement(GameControl::Down, &keyboard_input),
-    );
+pub trait DualAxisDataExt {
+    fn max_normalized(self) -> Option<Vec2>;
+}
 
-    actions.player.movement =
-        (!player_movement.is_approx_zero()).then(|| player_movement.normalize());
-    actions.player.jump = get_movement(GameControl::Jump, &keyboard_input) > 0.5;
-    actions.player.sprint = get_movement(GameControl::Sprint, &keyboard_input) > 0.5;
-    actions.player.interact = GameControl::Interact.just_pressed(&keyboard_input);
-
-    let mut camera_movement = Vec2::ZERO;
-    for event in mouse_motion.iter() {
-        camera_movement += event.delta;
-    }
-    if !camera_movement.is_approx_zero() {
-        actions.camera.movement = Some(camera_movement);
-    }
-
-    let mut zoom = 0.0;
-    for event in mouse_wheel.iter() {
-        zoom += event.y.signum();
-    }
-    if !zoom.is_approx_zero() {
-        actions.camera.zoom = Some(zoom);
+impl DualAxisDataExt for DualAxisData {
+    fn max_normalized(self) -> Option<Vec2> {
+        let vector = self.xy();
+        let len_squared = vector.length_squared();
+        if len_squared > 1.0 {
+            Some(vector.normalize())
+        } else if len_squared < 1e-5 {
+            None
+        } else {
+            Some(vector)
+        }
     }
 }

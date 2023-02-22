@@ -2,8 +2,9 @@ use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, 
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
 use crate::player_control::camera::ForceCursorGrabMode;
+use crate::util::log_error::log_errors;
 use crate::GameState;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_editor_pls::editor_window::EditorWindow;
@@ -24,8 +25,8 @@ impl Plugin for DevEditorPlugin {
             .add_editor_window::<DevEditorWindow>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_debug_render)
-                    .with_system(handle_navmesh_render)
+                    .with_system(handle_debug_render.pipe(log_errors))
+                    .with_system(handle_navmesh_render.pipe(log_errors))
                     .with_system(set_cursor_grab_mode),
             );
     }
@@ -144,11 +145,15 @@ impl Default for DevEditorState {
     }
 }
 
-fn handle_debug_render(state: Res<Editor>, mut debug_render_context: ResMut<DebugRenderContext>) {
+fn handle_debug_render(
+    state: Res<Editor>,
+    mut debug_render_context: ResMut<DebugRenderContext>,
+) -> Result<()> {
     debug_render_context.enabled = state
         .window_state::<DevEditorWindow>()
-        .expect("Window State Loaded")
+        .context("Failed to read dev window state")?
         .collider_render_enabled;
+    Ok(())
 }
 
 fn set_cursor_grab_mode(
@@ -170,13 +175,13 @@ fn handle_navmesh_render(
     state: Res<Editor>,
     nav_mesh: Res<NavMesh>,
     mut lines: ResMut<DebugLines>,
-) {
+) -> Result<()> {
     if !state
         .window_state::<DevEditorWindow>()
-        .expect("Window State Loaded")
+        .context("Failed to read dev window state")?
         .navmesh_render_enabled
     {
-        return;
+        return Ok(());
     }
 
     if let Ok(nav_mesh) = nav_mesh.get().read() {
@@ -204,4 +209,5 @@ fn handle_navmesh_render(
             }
         }
     }
+    Ok(())
 }

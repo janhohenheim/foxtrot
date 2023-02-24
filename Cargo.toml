@@ -97,5 +97,5 @@ embed-resource = "1.4"
 
 [patch.crates-io]
 leafwing-input-manager = { git = "https://github.com/TimJentzsch/leafwing-input-manager.git", rev = "439f2fca8151316cff2e7209aaed980def139b7f" } # https://github.com/Leafwing-Studios/leafwing-input-manager/pull/312
-bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "9a7966c9e7a44026a2192292390b315d28c88ca7" } # Collections as maps feature
+bevy_asset_loader = { git = "https://github.com/NiklasEi/bevy_asset_loader.git", rev = "be7f9005db76224912a06742ed521557262b50fe" } # Collections as maps feature
 bevy_editor_pls = { git = "https://github.com/jakobhellermann/bevy_editor_pls", rev = "6062b860aea87034081399369fd7ef5715f13256" } # Smaller bug fixes

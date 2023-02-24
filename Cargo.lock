@@ -362,7 +362,7 @@ dependencies = [
 [[package]]
 name = "bevy_asset_loader"
 version = "0.14.1"
-source = "git+https://github.com/NiklasEi/bevy_asset_loader.git?rev=9a7966c9e7a44026a2192292390b315d28c88ca7#9a7966c9e7a44026a2192292390b315d28c88ca7"
+source = "git+https://github.com/NiklasEi/bevy_asset_loader.git?rev=be7f9005db76224912a06742ed521557262b50fe#be7f9005db76224912a06742ed521557262b50fe"
 dependencies = [
  "anyhow",
  "bevy",
@@ -373,7 +373,7 @@ dependencies = [
 [[package]]
 name = "bevy_asset_loader_derive"
 version = "0.14.0"
-source = "git+https://github.com/NiklasEi/bevy_asset_loader.git?rev=9a7966c9e7a44026a2192292390b315d28c88ca7#9a7966c9e7a44026a2192292390b315d28c88ca7"
+source = "git+https://github.com/NiklasEi/bevy_asset_loader.git?rev=be7f9005db76224912a06742ed521557262b50fe#be7f9005db76224912a06742ed521557262b50fe"
 dependencies = [
  "proc-macro2",
  "quote",

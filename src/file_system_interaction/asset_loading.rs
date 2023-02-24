@@ -64,15 +64,21 @@ pub struct AnimationAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct LevelAssets {
-    // Not simply linking to "levels/" because of <https://github.com/NiklasEi/bevy_asset_loader/issues/104>
-    #[asset(paths("levels/old_town.lvl.ron"), collection(typed, mapped))]
+    #[cfg_attr(feature = "native", asset(path = "levels", collection(typed, mapped)))]
+    #[cfg_attr(
+        feature = "wasm",
+        asset(paths("levels/old_town.lvl.ron"), collection(typed, mapped))
+    )]
     pub levels: HashMap<String, Handle<SerializedLevel>>,
 }
 
 #[derive(AssetCollection, Resource)]
 pub struct DialogAssets {
-    // Not simply linking to "levels/" because of <https://github.com/NiklasEi/bevy_asset_loader/issues/104>
-    #[asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))]
+    #[cfg_attr(feature = "native", asset(path = "dialogs", collection(typed, mapped)))]
+    #[cfg_attr(
+        feature = "wasm",
+        asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))
+    )]
     pub dialogs: HashMap<String, Handle<Dialog>>,
 }
 

@@ -86,15 +86,7 @@ pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerA
             (QwertyScanCode::Key9, PlayerAction::NumberedChoice(9)),
             (QwertyScanCode::Key0, PlayerAction::NumberedChoice(0)),
         ])
-        .insert(
-            VirtualDPad {
-                up: QwertyScanCode::W.into(),
-                down: QwertyScanCode::S.into(),
-                left: QwertyScanCode::A.into(),
-                right: QwertyScanCode::D.into(),
-            },
-            PlayerAction::Move,
-        )
+        .insert(VirtualDPad::wasd(), PlayerAction::Move)
         .build(),
         ..default()
     }
@@ -123,7 +115,6 @@ pub fn remove_actions_when_frozen(
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     if actions_frozen.is_frozen() {
-        info!("frozen");
         for mut player_actions in player_actions_query.iter_mut() {
             player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
             player_actions.release(PlayerAction::Jump);

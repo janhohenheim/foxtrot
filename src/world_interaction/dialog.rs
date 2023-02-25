@@ -49,10 +49,16 @@ fn set_current_dialog(
 ) -> Result<()> {
     for dialog_event in dialog_events.iter() {
         let path = Path::new("dialogs")
-            .join(&dialog_event.dialog.0)
+            .join(&dialog_event.dialog.0.clone())
             .with_extension("dlg.ron")
-            .to_string_lossy()
-            .to_string();
+            .to_str()
+            .with_context(|| {
+                format!(
+                    "Failed to convert dialog path to string for dialog: {:?}",
+                    dialog_event.dialog
+                )
+            })?
+            .to_owned();
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
             Some(handle) => handle,
             None => {

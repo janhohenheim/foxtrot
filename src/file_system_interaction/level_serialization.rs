@@ -52,7 +52,8 @@ fn save_world(
             .map(|filename| {
                 Path::new("assets")
                     .join("levels")
-                    .join(format!("{filename}.lvl.ron"))
+                    .join(filename)
+                    .with_extension("lvl.ron")
             })
             .map(|path| (path.clone(), fs::try_exists(path).ok()))
             .take(10)
@@ -105,7 +106,8 @@ fn load_world(
     };
     for load in load_requests.iter() {
         let path = Path::new("levels")
-            .join(format!("{}.lvl.ron", load.filename))
+            .join(load.filename.clone())
+            .with_extension("lvl.ron")
             .to_str()
             .with_context(|| {
                 format!(

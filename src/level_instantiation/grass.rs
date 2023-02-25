@@ -44,18 +44,17 @@ pub fn add_grass(
                 let rng = SmallRng::from_entropy();
                 const BLADES_PER_SQUARE_METER: f32 = 10.0;
                 let blades = triangles
-                    .map(|triangle| {
+                    .flat_map(|triangle| {
                         let area = area_of_triangle(&triangle);
                         let blade_count = (area * BLADES_PER_SQUARE_METER) as usize;
                         let mut rng = rng.clone();
-                        (0..blade_count).into_iter().map(move |_| {
+                        (0..blade_count).map(move |_| {
                             let position =
                                 pick_uniform_random_point_in_triangle(&mut rng, &triangle);
                             let height = 0.4 + rng.gen::<f32>() * 0.25;
                             GrassBlade { position, height }
                         })
                     })
-                    .flatten()
                     .collect();
                 commands.spawn((
                     Name::new("Grass"),

@@ -189,5 +189,6 @@ fn handle_save_requests(
 }
 
 fn get_save_path(filename: impl Into<Cow<'static, str>>) -> PathBuf {
-    Path::new("saves").join(format!("{}.sav.ron", filename.into()))
+    let filename = filename.into().to_string();
+    Path::new("saves").join(filename).with_extension("sav.ron")
 }

@@ -28,7 +28,6 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
                     .with_collection::<TextureAssets>()
-                    .with_collection::<MeshAssets>()
                     .with_collection::<ConfigAssets>(),
             )
             .add_system_set(SystemSet::on_update(GameState::Loading).with_system(show_progress));
@@ -88,12 +87,6 @@ pub struct TextureAssets {
 pub struct ConfigAssets {
     #[asset(path = "config/config.game.toml")]
     pub game: Handle<GameConfig>,
-}
-
-#[derive(AssetCollection, Resource)]
-pub struct MeshAssets {
-    #[asset(path = "scenes/grass_blade.glb#Mesh0/Primitive0")]
-    pub grass_blade: Handle<Mesh>,
 }
 
 fn show_progress(

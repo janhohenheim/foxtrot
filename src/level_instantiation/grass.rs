@@ -1,4 +1,3 @@
-use crate::file_system_interaction::asset_loading::MeshAssets;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::MeshExt;
 use anyhow::{bail, Context, Result};
@@ -28,12 +27,7 @@ pub fn add_grass(
     children_query: Query<&Children>,
     mesh_handles: Query<&Handle<Mesh>>,
     global_transforms: Query<&GlobalTransform>,
-    mesh_assets: Option<Res<MeshAssets>>,
 ) -> Result<()> {
-    let mesh_assets = match mesh_assets {
-        Some(mesh_assets) => mesh_assets,
-        None => return Ok(()),
-    };
     for (parent_entity, name) in added_name.iter() {
         if name.contains("[grass]") {
             for (child_entity, mesh) in
@@ -57,7 +51,7 @@ pub fn add_grass(
                         (0..blade_count).into_iter().map(move |_| {
                             let position =
                                 pick_uniform_random_point_in_triangle(&mut rng, &triangle);
-                            let height = 0.5;
+                            let height = 0.4 + rng.gen::<f32>() * 0.25;
                             GrassBlade { position, height }
                         })
                     })
@@ -67,7 +61,6 @@ pub fn add_grass(
                     Name::new("Grass"),
                     WarblersBundle {
                         grass: Grass::new(blades),
-                        grass_mesh: mesh_assets.grass_blade.clone(),
                         ..default()
                     },
                 ));
@@ -103,9 +96,9 @@ fn read_triangles(mesh: &Mesh) -> Result<impl Iterator<Item = [Vec3; 3]> + '_> {
 
 /// Source: <https://math.stackexchange.com/questions/18686/uniform-random-point-in-triangle-in-3d>
 fn pick_uniform_random_point_in_triangle(rng: &mut SmallRng, &[a, b, c]: &[Vec3; 3]) -> Vec3 {
-    let r1 = rng.gen::<f32>();
+    let r1: f32 = rng.gen();
     let root_r1 = r1.sqrt();
-    let r2 = rng.gen::<f32>();
+    let r2: f32 = rng.gen();
     (1.0 - root_r1) * a + (root_r1 * (1.0 - r2)) * b + (root_r1 * r2) * c
 }
 

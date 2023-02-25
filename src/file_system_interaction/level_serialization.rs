@@ -104,7 +104,16 @@ fn load_world(
         }
     };
     for load in load_requests.iter() {
-        let path = format!("levels/{}.lvl.ron", load.filename);
+        let path = Path::new("levels")
+            .join(format!("{}.lvl.ron", load.filename))
+            .to_str()
+            .with_context(|| {
+                format!(
+                    "Failed to convert path to string for filename: {}",
+                    load.filename
+                )
+            })?
+            .to_string();
         let handle = match level_handles.levels.get(&path) {
             Some(handle) => handle,
             None => {

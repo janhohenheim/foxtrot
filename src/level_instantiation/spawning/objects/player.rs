@@ -43,6 +43,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                     GameCollisionGroup::PLAYER.into(),
                     GameCollisionGroup::ALL.into(),
                 ),
+                Ccd::enabled(),
                 create_player_action_input_manager_bundle(),
                 create_ui_action_input_manager_bundle(),
             ))

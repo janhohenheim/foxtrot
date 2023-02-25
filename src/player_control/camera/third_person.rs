@@ -2,7 +2,7 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
-use crate::util::trait_extension::Vec3Ext;
+use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -91,8 +91,6 @@ impl ThirdPersonCamera {
         rapier_context: &RapierContext,
         transform: Transform,
     ) -> Result<Transform> {
-        self.follow_target();
-
         if let Some(secondary_target) = self.secondary_target {
             self.move_eye_to_align_target_with(secondary_target);
         }
@@ -101,20 +99,14 @@ impl ThirdPersonCamera {
             .axis_pair(CameraAction::Pan)
             .context("Camera movement is not an axis pair")?
             .xy();
-        self.handle_camera_controls(camera_movement);
+        if !camera_movement.is_approx_zero() {
+            self.handle_camera_controls(camera_movement);
+        }
 
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);
         self.zoom(zoom);
         let los_correction = self.place_eye_in_valid_position(rapier_context);
         Ok(self.get_camera_transform(dt, transform, los_correction))
-    }
-
-    fn follow_target(&mut self) {
-        self.transform.translation = self.target - self.forward() * self.distance;
-
-        if !(self.target - self.transform.translation).is_approx_zero() {
-            self.transform.look_at(self.target, self.transform.up());
-        }
     }
 
     fn handle_camera_controls(&mut self, camera_movement: Vec2) {
@@ -307,7 +299,6 @@ mod test {
         camera.transform = camera_transform.looking_at(primary_target, Vec3::Y);
         camera.target = primary_target;
         camera.distance = camera.target.distance(camera.transform.translation);
-        camera.follow_target();
 
         camera
     }

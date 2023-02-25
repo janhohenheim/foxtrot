@@ -2635,7 +2635,7 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 [[package]]
 name = "leafwing-input-manager"
 version = "0.8.0"
-source = "git+https://github.com/TimJentzsch/leafwing-input-manager.git?rev=439f2fca8151316cff2e7209aaed980def139b7f#439f2fca8151316cff2e7209aaed980def139b7f"
+source = "git+https://github.com/TimJentzsch/leafwing-input-manager.git?branch=307-scancode-support#ffb303730392f0d1623c5a09c68e335fdcc221ea"
 dependencies = [
  "bevy",
  "bevy_egui 0.19.0",
@@ -2650,7 +2650,7 @@ dependencies = [
 [[package]]
 name = "leafwing_input_manager_macros"
 version = "0.7.0"
-source = "git+https://github.com/TimJentzsch/leafwing-input-manager.git?rev=439f2fca8151316cff2e7209aaed980def139b7f#439f2fca8151316cff2e7209aaed980def139b7f"
+source = "git+https://github.com/TimJentzsch/leafwing-input-manager.git?branch=307-scancode-support#ffb303730392f0d1623c5a09c68e335fdcc221ea"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",

@@ -4501,7 +4501,7 @@ dependencies = [
 [[package]]
 name = "warblersneeds"
 version = "0.1.0"
-source = "git+https://github.com/janhohenheim/warblersneeds.git?rev=eea6d74395d673cad59abd7ef7f7d023d75b151f#eea6d74395d673cad59abd7ef7f7d023d75b151f"
+source = "git+https://github.com/janhohenheim/warblersneeds.git#a4dddf59b963765300281d46672fa07940360b3a"
 dependencies = [
  "bevy",
  "bevy-inspector-egui",

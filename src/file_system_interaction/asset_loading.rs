@@ -2,7 +2,6 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
-use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -29,6 +28,7 @@ impl Plugin for LoadingPlugin {
                     .with_collection::<LevelAssets>()
                     .with_collection::<DialogAssets>()
                     .with_collection::<TextureAssets>()
+                    .with_collection::<MeshAssets>()
                     .with_collection::<ConfigAssets>(),
             )
             .add_system_set(SystemSet::on_update(GameState::Loading).with_system(show_progress));
@@ -46,10 +46,10 @@ pub struct AudioAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct SceneAssets {
-    #[asset(path = "scenes/Fox.glb")]
-    pub character: Handle<Gltf>,
-    #[asset(path = "scenes/old_town.glb")]
-    pub level: Handle<Gltf>,
+    #[asset(path = "scenes/Fox.glb#Scene0")]
+    pub character: Handle<Scene>,
+    #[asset(path = "scenes/old_town.glb#Scene0")]
+    pub level: Handle<Scene>,
 }
 
 #[derive(AssetCollection, Resource)]
@@ -88,6 +88,12 @@ pub struct TextureAssets {
 pub struct ConfigAssets {
     #[asset(path = "config/config.game.toml")]
     pub game: Handle<GameConfig>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct MeshAssets {
+    #[asset(path = "scenes/grass_blade.glb#Mesh0/Primitive0")]
+    pub grass_blade: Handle<Mesh>,
 }
 
 fn show_progress(

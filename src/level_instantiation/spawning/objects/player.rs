@@ -7,7 +7,7 @@ use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
 use crate::player_control::player_embodiment::Player;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -24,11 +24,6 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
         _object: GameObject,
         transform: Transform,
     ) -> Result<Entity> {
-        let gltf = spawner
-            .gltf
-            .get(&spawner.scenes.character)
-            .context("Failed to load scene for player")?;
-
         Ok(spawner
             .commands
             .spawn((
@@ -54,7 +49,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
             .with_children(|parent| {
                 parent.spawn((
                     SceneBundle {
-                        scene: gltf.scenes[0].clone(),
+                        scene: spawner.scene_handles.character.clone(),
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             rotation: Quat::from_rotation_y(TAU / 2.),

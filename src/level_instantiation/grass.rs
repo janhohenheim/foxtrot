@@ -33,7 +33,7 @@ pub fn add_grass(
 
                 let rng = SmallRng::from_entropy();
                 const BLADES_PER_SQUARE_METER: f32 = 10.0;
-                let blades: Vec<_> = triangles
+                let blades = triangles
                     .map(|triangle| {
                         let area = area_of_triangle(&triangle);
                         let blade_count = (area * BLADES_PER_SQUARE_METER) as usize;
@@ -46,14 +46,6 @@ pub fn add_grass(
                         })
                     })
                     .flatten()
-                    .collect();
-                let blades = (0..10000)
-                    .into_iter()
-                    .map(|i| GrassBlade {
-                        // making a grid
-                        position: Vec3::new((i / 100) as f32, 0., (i % 100) as f32),
-                        height: (i as f32).ln(),
-                    })
                     .collect();
 
                 commands.entity(child_entity).insert(WarblersBundle {

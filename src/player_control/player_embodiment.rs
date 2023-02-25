@@ -29,7 +29,11 @@ impl Plugin for PlayerEmbodimentPlugin {
             .register_type::<Player>()
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_jump.before(apply_jumping))
+                    .with_system(
+                        handle_jump
+                            .after(reset_movement_components)
+                            .before(apply_jumping),
+                    )
                     .with_system(
                         handle_horizontal_movement
                             .pipe(log_errors)
@@ -58,6 +62,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
         jump.requested |= actions.pressed(PlayerAction::Jump);
+        info!("jump.requested = {}", jump.requested);
     }
 }
 

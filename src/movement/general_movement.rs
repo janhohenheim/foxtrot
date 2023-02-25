@@ -110,6 +110,10 @@ pub fn apply_jumping(
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_jumping").entered();
     for (grounded, mut impulse, mut velocity, mass, jump, transform) in &mut character_query {
+        info!(
+            "jump.requested = {}, grounded = {}",
+            jump.requested, grounded.0
+        );
         if jump.requested && grounded.0 {
             let up = transform.up();
             impulse.impulse += up * mass.0.mass * jump.speed;

@@ -15,6 +15,7 @@ use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContext, EguiPlugin};
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
+use std::path::Path;
 use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
@@ -47,7 +48,11 @@ fn set_current_dialog(
     mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     for dialog_event in dialog_events.iter() {
-        let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0);
+        let path = Path::new("dialogs")
+            .join(&dialog_event.dialog.0)
+            .with_extension("dlg.ron")
+            .to_string_lossy()
+            .to_string();
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
             Some(handle) => handle,
             None => {

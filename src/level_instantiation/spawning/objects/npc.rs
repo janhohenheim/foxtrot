@@ -5,7 +5,7 @@ use crate::level_instantiation::spawning::{
 use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::{DialogId, DialogTarget};
-use anyhow::{Context, Result};
+use anyhow::Result;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -22,11 +22,6 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
         _object: GameObject,
         transform: Transform,
     ) -> Result<Entity> {
-        let gltf = spawner
-            .gltf
-            .get(&spawner.scenes.character)
-            .context("Failed to load scene for NPC")?;
-
         Ok(spawner
             .commands
             .spawn((
@@ -60,7 +55,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                 ));
                 parent.spawn((
                     SceneBundle {
-                        scene: gltf.scenes[0].clone(),
+                        scene: spawner.scene_handles.character.clone(),
                         transform: Transform {
                             translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                             scale: Vec3::splat(0.012),

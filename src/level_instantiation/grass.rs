@@ -1,9 +1,10 @@
+use crate::file_system_interaction::asset_loading::MeshAssets;
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::MeshExt;
-use crate::GameState;
 use anyhow::{bail, Context, Result};
 use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
+use bevy::transform::TransformSystem;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warblersneeds::prelude::*;
 
@@ -11,8 +12,11 @@ pub struct GrassPlugin;
 
 impl Plugin for GrassPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(WarblersPlugin).add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(add_grass.pipe(log_errors)),
+        app.add_plugin(WarblersPlugin).add_system_to_stage(
+            CoreStage::PostUpdate,
+            add_grass
+                .pipe(log_errors)
+                .after(TransformSystem::TransformPropagate),
         );
     }
 }
@@ -23,13 +27,25 @@ pub fn add_grass(
     meshes: Res<Assets<Mesh>>,
     children_query: Query<&Children>,
     mesh_handles: Query<&Handle<Mesh>>,
+    global_transforms: Query<&GlobalTransform>,
+    mesh_assets: Option<Res<MeshAssets>>,
 ) -> Result<()> {
+    let mesh_assets = match mesh_assets {
+        Some(mesh_assets) => mesh_assets,
+        None => return Ok(()),
+    };
     for (parent_entity, name) in added_name.iter() {
         if name.contains("[grass]") {
             for (child_entity, mesh) in
                 Mesh::search_in_children(parent_entity, &children_query, &meshes, &mesh_handles)
             {
+                let transform = global_transforms
+                    .get(child_entity)
+                    .context("Could not get global transform of grass mesh")?
+                    .compute_transform();
                 let triangles = read_triangles(mesh)?;
+                let triangles = triangles
+                    .map(|triangle| triangle.map(|position| transform.transform_point(position)));
 
                 let rng = SmallRng::from_entropy();
                 const BLADES_PER_SQUARE_METER: f32 = 10.0;
@@ -41,17 +57,20 @@ pub fn add_grass(
                         (0..blade_count).into_iter().map(move |_| {
                             let position =
                                 pick_uniform_random_point_in_triangle(&mut rng, &triangle);
-                            let height = 0.3;
+                            let height = 0.5;
                             GrassBlade { position, height }
                         })
                     })
                     .flatten()
                     .collect();
-
-                commands.entity(child_entity).insert(WarblersBundle {
-                    grass: Grass::new(blades),
-                    ..default()
-                });
+                commands.spawn((
+                    Name::new("Grass"),
+                    WarblersBundle {
+                        grass: Grass::new(blades),
+                        grass_mesh: mesh_assets.grass_blade.clone(),
+                        ..default()
+                    },
+                ));
             }
         }
     }

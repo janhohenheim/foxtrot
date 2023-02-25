@@ -22,7 +22,6 @@ use crate::util::log_error::log_errors;
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
 use anyhow::Result;
-use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 pub use event::*;
@@ -193,11 +192,11 @@ pub struct GameObjectSpawner {
 #[derive(Resource)]
 pub struct PrimedGameObjectSpawner<'w, 's, 'a> {
     pub outer_spawner: &'a GameObjectSpawner,
-    pub gltf: &'a Res<'a, Assets<Gltf>>,
+    pub scenes: &'a Res<'a, Assets<Scene>>,
     pub materials: &'a Res<'a, Materials>,
     pub commands: &'a mut Commands<'w, 's>,
     pub animations: &'a Res<'a, AnimationAssets>,
-    pub scenes: &'a Res<'a, SceneAssets>,
+    pub scene_handles: &'a Res<'a, SceneAssets>,
 }
 
 impl<'a, 'c, 'w, 's> GameObjectSpawner
@@ -207,18 +206,18 @@ where
     pub fn attach(
         &'c self,
         commands: &'a mut Commands<'w, 's>,
-        gltf: &'a Res<'a, Assets<Gltf>>,
+        scenes: &'a Res<'a, Assets<Scene>>,
         materials: &'a Res<'a, Materials>,
         animations: &'a Res<'a, AnimationAssets>,
-        scenes: &'a Res<'a, SceneAssets>,
+        scene_handles: &'a Res<'a, SceneAssets>,
     ) -> PrimedGameObjectSpawner<'w, 's, 'a> {
         PrimedGameObjectSpawner {
             outer_spawner: self,
-            gltf,
+            scenes,
             materials,
             commands,
             animations,
-            scenes,
+            scene_handles,
         }
     }
 }

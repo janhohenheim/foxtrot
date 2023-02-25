@@ -86,15 +86,7 @@ pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerA
             (QwertyScanCode::Key9, PlayerAction::NumberedChoice(9)),
             (QwertyScanCode::Key0, PlayerAction::NumberedChoice(0)),
         ])
-        .insert(
-            VirtualDPad {
-                up: QwertyScanCode::W.into(),
-                down: QwertyScanCode::S.into(),
-                left: QwertyScanCode::A.into(),
-                right: QwertyScanCode::D.into(),
-            },
-            PlayerAction::Move,
-        )
+        .insert(VirtualDPad::wasd(), PlayerAction::Move)
         .build(),
         ..default()
     }

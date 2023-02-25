@@ -14,8 +14,16 @@ impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
         transform: Transform,
     ) -> Result<Entity> {
         Ok(spawner
-            .spawn_gltf(object, &spawner.scenes.level, transform)?
-            .insert(Imported)
+            .commands
+            .spawn((
+                SceneBundle {
+                    scene: spawner.scene_handles.level.clone(),
+                    transform,
+                    ..default()
+                },
+                Name::new(format!("{object:?}")),
+                Imported,
+            ))
             .id())
     }
 }

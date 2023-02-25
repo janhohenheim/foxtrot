@@ -2,7 +2,6 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
-use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -46,10 +45,10 @@ pub struct AudioAssets {
 
 #[derive(AssetCollection, Resource)]
 pub struct SceneAssets {
-    #[asset(path = "scenes/Fox.glb")]
-    pub character: Handle<Gltf>,
-    #[asset(path = "scenes/old_town.glb")]
-    pub level: Handle<Gltf>,
+    #[asset(path = "scenes/Fox.glb#Scene0")]
+    pub character: Handle<Scene>,
+    #[asset(path = "scenes/old_town.glb#Scene0")]
+    pub level: Handle<Scene>,
 }
 
 #[derive(AssetCollection, Resource)]

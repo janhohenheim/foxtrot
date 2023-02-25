@@ -4,6 +4,7 @@
 #![feature(never_type)]
 #![feature(if_let_guard)]
 #![feature(once_cell)]
+#![feature(iter_array_chunks)]
 // These two generate a lot of false positives for Bevy systems
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::type_complexity)]

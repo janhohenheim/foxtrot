@@ -123,7 +123,6 @@ pub fn remove_actions_when_frozen(
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     if actions_frozen.is_frozen() {
-        info!("frozen");
         for mut player_actions in player_actions_query.iter_mut() {
             player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
             player_actions.release(PlayerAction::Jump);

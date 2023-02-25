@@ -62,7 +62,6 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
         jump.requested |= actions.pressed(PlayerAction::Jump);
-        info!("jump.requested = {}", jump.requested);
     }
 }
 

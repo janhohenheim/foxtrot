@@ -143,8 +143,8 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
-        commands.init_resource::<InteractionOpportunities>();
-        commands.init_resource::<ActiveConditions>();
+        commands.insert_resource(InteractionOpportunities::default());
+        commands.insert_resource(ActiveConditions::default());
         commands.remove_resource::<CurrentDialog>();
 
         info!("Successfully loaded scene \"{}\"", load.filename,)

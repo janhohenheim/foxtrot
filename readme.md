@@ -1,5 +1,5 @@
 # Foxtrot
-[![Live Demo](https://img.shields.io/badge/live%20demo-v0.1.9-blue)](https://janhohenheim.github.io/foxtrot/)
+[![Live Demo](https://img.shields.io/badge/live%20demo-v0.1.10-blue)](https://janhohenheim.github.io/foxtrot/)
 
 The all-in-one Bevy 3D game template.  
 

@@ -15,7 +15,7 @@ pub struct SkydomeSpawner;
 impl PrimedGameObjectSpawnerImplementor for SkydomeSpawner {
     fn create_mesh(&self, mesh_assets: &mut ResMut<Assets<Mesh>>) -> Option<Handle<Mesh>> {
         Some(mesh_assets.add(Mesh::from(shape::UVSphere {
-            radius: 100.0,
+            radius: 150.0,
             ..default()
         })))
     }
@@ -32,6 +32,7 @@ impl PrimedGameObjectSpawnerImplementor for SkydomeSpawner {
                 Name::new("Skydome"),
                 NotShadowCaster,
                 NotShadowReceiver,
+                Skydome,
                 MaterialMeshBundle {
                     mesh: spawner.outer_spawner.meshes[&object].clone(),
                     material: spawner.materials.skydome.clone(),

@@ -33,6 +33,6 @@ fn get_texture_sample(uv: vec2<f32>) -> vec4<f32> {
 @fragment
 fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     var n = normalize(in.world_normal);
-    let uv = dir_to_equirectangular(-n);
+    let uv = dir_to_equirectangular(n);
     return get_texture_sample(uv);
 }

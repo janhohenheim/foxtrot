@@ -51,7 +51,7 @@ pub fn add_grass(
                         (0..blade_count).map(move |_| {
                             let position =
                                 pick_uniform_random_point_in_triangle(&mut rng, &triangle);
-                            let height = 0.4 + rng.gen::<f32>() * 0.25;
+                            let height = 0.6 + rng.gen::<f32>() * 0.25;
                             GrassBlade { position, height }
                         })
                     })

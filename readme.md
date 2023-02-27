@@ -25,19 +25,16 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - Shaders
 - GLTF imports, including colliders and navmeshes
 - dynamic builds in the `native-dev` feature
+- Grass blades using `warblersneeds`
 
 ## Usage
-
-### Cloning the repo
-
-Make sure you have [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage) installed before cloning the repo, otherwise most runtime resources will be missing!
 
 ### Running the game
 Native:
 ```bash
 cargo run
 ```
-WASM (runs best on Chromium based browsers):
+WASM:
 ```bash
 trunk serve --no-default-features --features wasm_dev
 ```
@@ -54,7 +51,6 @@ Don't worry, it's super easy:
     ```
 
 - **MacOS**: Modern LLD does not yet support MacOS, but we can use zld instead: `brew install michaeleisel/zld/zld`
-
 
 Building WASM requires `trunk`:
 

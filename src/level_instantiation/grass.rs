@@ -5,7 +5,9 @@ use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy::transform::TransformSystem;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
-use warblersneeds::prelude::*;
+use warbler_grass::grass::GrassBlade;
+use warbler_grass::grass_spawner::GrassSpawner;
+use warbler_grass::prelude::*;
 
 pub struct GrassPlugin;
 
@@ -59,7 +61,7 @@ pub fn add_grass(
                 commands.spawn((
                     Name::new("Grass"),
                     WarblersBundle {
-                        grass: Grass::new(blades),
+                        grass_spawner: GrassSpawner::new().from_grass_blades(blades),
                         ..default()
                     },
                 ));

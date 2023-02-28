@@ -2053,7 +2053,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "unicode-segmentation",
- "warblersneeds",
+ "warbler_grass",
  "wasm-bindgen",
  "winit",
 ]
@@ -4499,12 +4499,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "warblersneeds"
+name = "warbler_grass"
 version = "0.1.0"
-source = "git+https://github.com/janhohenheim/warblersneeds.git#b50802473033b012071ae180bffa887c4887c800"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b5ca571fc51ece12a533f51c3f97dcba045dc2900d74744658da9184b82836d"
 dependencies = [
  "bevy",
  "bevy-inspector-egui",
+ "bitflags",
  "bytemuck",
  "rand",
  "ron 0.8.0",

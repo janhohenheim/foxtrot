@@ -44,7 +44,7 @@ impl Plugin for ActionsPlugin {
     }
 }
 
-#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, Copy, Actionlike, Reflect, FromReflect, Default)]
 pub enum PlayerAction {
     #[default]
     Move,
@@ -52,7 +52,37 @@ pub enum PlayerAction {
     Jump,
     Interact,
     SpeedUpDialog,
-    NumberedChoice(u16),
+    NumberedChoice1,
+    NumberedChoice2,
+    NumberedChoice3,
+    NumberedChoice4,
+    NumberedChoice5,
+    NumberedChoice6,
+    NumberedChoice7,
+    NumberedChoice8,
+    NumberedChoice9,
+    NumberedChoice0,
+}
+
+impl PlayerAction {
+    pub fn numbered_choice(index: u8) -> Self {
+        match index {
+            0 => PlayerAction::NumberedChoice0,
+            1 => PlayerAction::NumberedChoice1,
+            2 => PlayerAction::NumberedChoice2,
+            3 => PlayerAction::NumberedChoice3,
+            4 => PlayerAction::NumberedChoice4,
+            5 => PlayerAction::NumberedChoice5,
+            6 => PlayerAction::NumberedChoice6,
+            7 => PlayerAction::NumberedChoice7,
+            8 => PlayerAction::NumberedChoice8,
+            9 => PlayerAction::NumberedChoice9,
+            _ => panic!(
+                "Numbered choice index out of range: got {}, expected 0-9",
+                index
+            ),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
@@ -75,16 +105,16 @@ pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerA
             (QwertyScanCode::LShift, PlayerAction::Sprint),
             (QwertyScanCode::E, PlayerAction::Interact),
             (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
-            (QwertyScanCode::Key1, PlayerAction::NumberedChoice(1)),
-            (QwertyScanCode::Key2, PlayerAction::NumberedChoice(2)),
-            (QwertyScanCode::Key3, PlayerAction::NumberedChoice(3)),
-            (QwertyScanCode::Key4, PlayerAction::NumberedChoice(4)),
-            (QwertyScanCode::Key5, PlayerAction::NumberedChoice(5)),
-            (QwertyScanCode::Key6, PlayerAction::NumberedChoice(6)),
-            (QwertyScanCode::Key7, PlayerAction::NumberedChoice(7)),
-            (QwertyScanCode::Key8, PlayerAction::NumberedChoice(8)),
-            (QwertyScanCode::Key9, PlayerAction::NumberedChoice(9)),
-            (QwertyScanCode::Key0, PlayerAction::NumberedChoice(0)),
+            (QwertyScanCode::Key1, PlayerAction::NumberedChoice1),
+            (QwertyScanCode::Key2, PlayerAction::NumberedChoice2),
+            (QwertyScanCode::Key3, PlayerAction::NumberedChoice3),
+            (QwertyScanCode::Key4, PlayerAction::NumberedChoice4),
+            (QwertyScanCode::Key5, PlayerAction::NumberedChoice5),
+            (QwertyScanCode::Key6, PlayerAction::NumberedChoice6),
+            (QwertyScanCode::Key7, PlayerAction::NumberedChoice7),
+            (QwertyScanCode::Key8, PlayerAction::NumberedChoice8),
+            (QwertyScanCode::Key9, PlayerAction::NumberedChoice9),
+            (QwertyScanCode::Key0, PlayerAction::NumberedChoice0),
         ])
         .insert(VirtualDPad::wasd(), PlayerAction::Move)
         .build(),

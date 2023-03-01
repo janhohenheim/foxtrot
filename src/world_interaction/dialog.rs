@@ -180,7 +180,7 @@ fn present_choices(
     match next_page {
         NextPage::Continue(next_page_id) => {
             let text = create_choice_rich_text(0, "Continue");
-            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::NumberedChoice(1)) {
+            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::numbered_choice(1)) {
                 current_dialog.current_page = next_page_id;
                 *elapsed_time = 0.0;
             }
@@ -196,9 +196,13 @@ fn present_choices(
                 .enumerate()
             {
                 let text = create_choice_rich_text(index, &choice.text);
-                if ui.button(text).clicked()
-                    || actions.just_pressed(PlayerAction::NumberedChoice(index as u16 + 1))
+                if ui.button(&text).clicked()
+                    || actions.just_pressed(PlayerAction::numbered_choice(index as u8 + 1))
                 {
+                    info!("Picked choice: {:?}", choice_id);
+                    info!("Text: {:?}", text);
+                    info!("Choice: {:?}", choice);
+                    info!("Index: {:?}", index);
                     picked_choice = Some((choice_id.clone(), choice.clone()));
                 }
             }
@@ -225,7 +229,7 @@ fn present_choices(
         }
         NextPage::Exit => {
             let text = create_choice_rich_text(0, "Exit");
-            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::NumberedChoice(1)) {
+            if ui.button(text).clicked() || actions.just_pressed(PlayerAction::numbered_choice(1)) {
                 commands.remove_resource::<CurrentDialog>();
                 actions_frozen.unfreeze();
             }

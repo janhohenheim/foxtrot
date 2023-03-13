@@ -45,7 +45,7 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect 
                 center: Vec3::ZERO,
                 axis: Vec3::Y,
             })
-            .init(ParticleLifetimeModifier { lifetime: 0.8 })
+            .init(InitLifetimeModifier { lifetime: 0.8 })
             .update(LinearDragModifier { drag: 5. })
             .render(BillboardModifier {})
             .update(AccelModifier {

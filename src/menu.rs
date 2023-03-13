@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Button, Heading};
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 
 /// This plugin is responsible for the game menu
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
@@ -20,12 +20,9 @@ impl Plugin for MenuPlugin {
     }
 }
 
-fn setup_menu(
-    mut egui_context: ResMut<EguiContext>,
-    mut state: ResMut<State<GameState>>,
-) -> Result<()> {
+fn setup_menu(mut egui_contexts: EguiContexts, mut state: ResMut<State<GameState>>) -> Result<()> {
     get_menu_panel()
-        .show(egui_context.ctx_mut(), |ui| {
+        .show(egui_contexts.ctx_mut(), |ui| {
             set_menu_style(ui.style_mut());
             ui.vertical_centered_justified(|ui| {
                 ui.add_space(50.);

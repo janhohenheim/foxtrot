@@ -1,8 +1,8 @@
 use crate::util::log_error::log_errors;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::window::{PresentMode, WindowId};
-use bevy::winit::WinitWindows;
+use bevy::window::PresentMode;
+use bevy::window::PrimaryWindow;
 use std::io::Cursor;
 use winit::window::Icon;
 
@@ -12,14 +12,13 @@ pub struct BevyConfigPlugin;
 impl Plugin for BevyConfigPlugin {
     fn build(&self, app: &mut App) {
         let default_plugins = DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
-                width: 800.,
-                height: 600.,
+            primary_window: Some(Window {
+                resolution: (800, 600).into(),
                 title: "Foxtrot".to_string(),
                 canvas: Some("#bevy".to_owned()),
                 present_mode: PresentMode::AutoVsync,
                 ..default()
-            },
+            }),
             ..default()
         });
         #[cfg(feature = "native-dev")]
@@ -27,7 +26,7 @@ impl Plugin for BevyConfigPlugin {
             watch_for_changes: true,
             ..default()
         });
-        app.insert_resource(Msaa { samples: 4 })
+        app.insert_resource(Msaa::Sample4)
             .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
             .add_plugins(default_plugins)
             .add_startup_system(set_window_icon.pipe(log_errors));
@@ -35,9 +34,9 @@ impl Plugin for BevyConfigPlugin {
 }
 
 // Sets the icon on Windows and X11
-fn set_window_icon(windows: NonSend<WinitWindows>) -> Result<()> {
-    let primary = windows
-        .get_window(WindowId::primary())
+fn set_window_icon(primary_windows: Query<&Window, With<PrimaryWindow>>) -> Result<()> {
+    let primary = primary_windows
+        .get_single()
         .context("Failed to get primary window")?;
     let icon_buf = Cursor::new(include_bytes!(
         "../build/macos/AppIcon.iconset/icon_256x256.png"

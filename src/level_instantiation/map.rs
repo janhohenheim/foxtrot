@@ -3,7 +3,7 @@ use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnE
 use crate::player_control::player_embodiment::Player;
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 
 pub struct MapPlugin;
 
@@ -47,9 +47,9 @@ fn setup(
     });
 }
 
-fn show_loading_screen(player_query: Query<&Player>, mut egui_context: ResMut<EguiContext>) {
+fn show_loading_screen(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
     if player_query.iter().next().is_none() {
-        egui::CentralPanel::default().show(egui_context.ctx_mut(), |ui| {
+        egui::CentralPanel::default().show(egui_contexts.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
                 ui.add_space(100.0);
                 ui.heading("Loading");
@@ -65,9 +65,9 @@ fn show_loading_screen(player_query: Query<&Player>, mut egui_context: ResMut<Eg
 }
 
 #[cfg(feature = "wasm")]
-fn show_wasm_loader(player_query: Query<&Player>, mut egui_context: ResMut<EguiContext>) {
+fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
     let id = egui::Id::new("loading-screen-shown");
-    let memory = &mut egui_context.ctx_mut().memory().data;
+    let memory = &mut egui_contexts.ctx_mut().memory().data;
     match (memory.get_temp::<()>(id), player_query.iter().next()) {
         (None, None) => {
             loader::show_loader();

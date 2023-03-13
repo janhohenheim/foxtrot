@@ -12,7 +12,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
-use bevy_egui::{egui, EguiContext, EguiPlugin};
+use bevy_egui::{egui, EguiContexts, EguiPlugin};
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -104,7 +104,7 @@ fn show_dialog(
     current_dialog: Option<ResMut<CurrentDialog>>,
     active_conditions: Res<ActiveConditions>,
     mut condition_writer: EventWriter<ConditionAddEvent>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     mut actions_frozen: ResMut<ActionsFrozen>,
     actions: Query<&ActionState<PlayerAction>>,
     time: Res<Time>,
@@ -121,7 +121,7 @@ fn show_dialog(
     for actions in actions.iter() {
         let current_page = current_dialog.fetch_current_page()?;
         get_dialog_window()
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_contexts.ctx_mut(), |ui| {
                 // Get current context style
                 set_dialog_style(ui.style_mut());
                 let dialog_size = egui::Vec2::new(500., 150.);

@@ -8,7 +8,7 @@ use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::egui::ProgressBar;
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 use bevy_kira_audio::AudioSource;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
@@ -97,7 +97,7 @@ pub struct ConfigAssets {
 
 fn show_progress(
     progress: Option<Res<ProgressCounter>>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     mut last_done: Local<u32>,
     audio_assets: Option<Res<AudioAssets>>,
     scene_assets: Option<Res<SceneAssets>>,
@@ -112,7 +112,7 @@ fn show_progress(
             *last_done = progress.done;
         }
 
-        egui::CentralPanel::default().show(egui_context.ctx_mut(), |ui| {
+        egui::CentralPanel::default().show(egui_contexts.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
                 ui.add_space(100.0);
                 ui.heading("Loading");

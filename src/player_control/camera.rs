@@ -8,6 +8,7 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
+use bevy::window::PrimaryWindow;
 use bevy_rapier3d::prelude::*;
 pub use first_person::FirstPersonCamera;
 pub use fixed_angle::FixedAngleCamera;
@@ -238,14 +239,14 @@ fn move_skydome(
 pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
 
 fn cursor_grab_system(
-    mut windows: ResMut<Windows>,
+    mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,
     force_cursor_grab: Res<ForceCursorGrabMode>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("cursor_grab_system").entered();
-    let window = windows
-        .get_primary_mut()
+    let mut window = primary_windows
+        .get_single_mut()
         .context("Failed to get primary window")?;
     if let Some(mode) = force_cursor_grab.0 {
         window.set_cursor_grab_mode(mode);

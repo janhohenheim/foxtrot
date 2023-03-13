@@ -5,8 +5,6 @@ use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy::transform::TransformSystem;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
-use warbler_grass::grass::GrassBlade;
-use warbler_grass::grass_spawner::GrassSpawner;
 use warbler_grass::prelude::*;
 
 pub struct GrassPlugin;
@@ -45,23 +43,21 @@ pub fn add_grass(
 
                 let rng = SmallRng::from_entropy();
                 const BLADES_PER_SQUARE_METER: f32 = 10.0;
-                let blades = triangles
+                let positions = triangles
                     .flat_map(|triangle| {
                         let area = area_of_triangle(&triangle);
                         let blade_count = (area * BLADES_PER_SQUARE_METER) as usize;
                         let mut rng = rng.clone();
                         (0..blade_count).map(move |_| {
-                            let position =
-                                pick_uniform_random_point_in_triangle(&mut rng, &triangle);
-                            let height = 0.6 + rng.gen::<f32>() * 0.25;
-                            GrassBlade { position, height }
+                            pick_uniform_random_point_in_triangle(&mut rng, &triangle)
                         })
                     })
                     .collect();
+                let height = 0.7;
                 commands.spawn((
                     Name::new("Grass"),
-                    WarblersBundle {
-                        grass_spawner: GrassSpawner::new().from_grass_blades(blades),
+                    WarblersExplicitBundle {
+                        grass: Grass { positions, height },
                         ..default()
                     },
                 ));

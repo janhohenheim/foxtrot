@@ -7,7 +7,8 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::utils::HashSet;
-use bevy_egui::{egui, EguiContext};
+use bevy::window::PrimaryWindow;
+use bevy_egui::{egui, EguiContexts};
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -151,9 +152,9 @@ fn is_facing_target(
 fn display_interaction_prompt(
     interaction_ui: Option<Res<InteractionUi>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
-    windows: Res<Windows>,
+    primary_windows: Query<&Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,
     dialog_target_query: Query<&DialogTarget>,
 ) -> Result<()> {
@@ -166,15 +167,15 @@ fn display_interaction_prompt(
     };
 
     for actions in actions.iter() {
-        let window = windows
-            .get_primary()
+        let window = primary_windows
+            .get_single()
             .context("Failed to get primary window")?;
         egui::Window::new("Interaction")
             .collapsible(false)
             .title_bar(false)
             .auto_sized()
             .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_contexts.ctx_mut(), |ui| {
                 ui.label("E: Talk");
             });
         if actions.just_pressed(PlayerAction::Interact) {

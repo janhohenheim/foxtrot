@@ -14,7 +14,7 @@ use bevy::prelude::*;
 use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{
     query::{find_path, perform_string_pulling_on_path},
-    NavMesh, NavMeshGenerationState, NavMeshSettings, OxidizedNavigationPlugin,
+    NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
 };
 use serde::{Deserialize, Serialize};
 
@@ -26,32 +26,30 @@ const CELL_WIDTH: f32 = 0.5 * npc::RADIUS;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(OxidizedNavigationPlugin {
-            starting_state: NavMeshGenerationState::Running, // Generate tile updates.
-        })
-        .insert_resource(NavMeshSettings {
-            cell_width: CELL_WIDTH,
-            cell_height: 0.5 * CELL_WIDTH,
-            tile_width: 150,
-            world_half_extents: 250.0,
-            world_bottom_bound: -100.0,
-            max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
-            walkable_height: 25,
-            walkable_radius: 3,
-            step_height: 3,
-            min_region_area: 50,
-            merge_region_area: 500,
-            max_contour_simplification_error: 1.1,
-            max_edge_length: 70,
-        })
-        .add_system_set(
-            SystemSet::on_update(GameState::Playing).with_system(
-                query_mesh
-                    .pipe(log_errors)
-                    .after(reset_movement_components)
-                    .before(apply_walking),
-            ),
-        );
+        app.add_plugin(OxidizedNavigationPlugin)
+            .insert_resource(NavMeshSettings {
+                cell_width: CELL_WIDTH,
+                cell_height: 0.5 * CELL_WIDTH,
+                tile_width: 150,
+                world_half_extents: 250.0,
+                world_bottom_bound: -100.0,
+                max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
+                walkable_height: 25,
+                walkable_radius: 3,
+                step_height: 3,
+                min_region_area: 50,
+                merge_region_area: 500,
+                max_contour_simplification_error: 1.1,
+                max_edge_length: 70,
+            })
+            .add_system_set(
+                SystemSet::on_update(GameState::Playing).with_system(
+                    query_mesh
+                        .pipe(log_errors)
+                        .after(reset_movement_components)
+                        .before(apply_walking),
+                ),
+            );
     }
 }
 

@@ -3,6 +3,7 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy::window::PrimaryWindow;
+use bevy::winit::WinitWindows;
 use std::io::Cursor;
 use winit::window::Icon;
 
@@ -13,7 +14,7 @@ impl Plugin for BevyConfigPlugin {
     fn build(&self, app: &mut App) {
         let default_plugins = DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                resolution: (800, 600).into(),
+                resolution: (800., 600.).into(),
                 title: "Foxtrot".to_string(),
                 canvas: Some("#bevy".to_owned()),
                 present_mode: PresentMode::AutoVsync,
@@ -34,9 +35,13 @@ impl Plugin for BevyConfigPlugin {
 }
 
 // Sets the icon on Windows and X11
-fn set_window_icon(primary_windows: Query<&Window, With<PrimaryWindow>>) -> Result<()> {
-    let primary = primary_windows
-        .get_single()
+fn set_window_icon(
+    windows: NonSend<WinitWindows>,
+    primary_windows: Query<Entity, With<PrimaryWindow>>,
+) -> Result<()> {
+    let primary_entity = primary_windows.single();
+    let primary = windows
+        .get_window(primary_entity)
         .context("Failed to get primary window")?;
     let icon_buf = Cursor::new(include_bytes!(
         "../build/macos/AppIcon.iconset/icon_256x256.png"

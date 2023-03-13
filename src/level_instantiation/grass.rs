@@ -11,11 +11,11 @@ pub struct GrassPlugin;
 
 impl Plugin for GrassPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(WarblersPlugin).add_system_to_stage(
-            CoreStage::PostUpdate,
+        app.add_plugin(WarblersPlugin).add_system(
             add_grass
                 .pipe(log_errors)
-                .after(TransformSystem::TransformPropagate),
+                .after(TransformSystem::TransformPropagate)
+                .in_base_set(CoreSet::PostUpdate),
         );
     }
 }

@@ -16,10 +16,8 @@ impl Plugin for ParticlePlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<SprintingParticle>()
             .add_plugin(HanabiPlugin)
-            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(init_effects))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(play_sprinting_effect),
-            );
+            .add_system(init_effects.in_schedule(OnExit(GameState::Loading)))
+            .add_system(play_sprinting_effect.in_set(OnUpdate(GameState::Playing)));
     }
 }
 

@@ -9,7 +9,7 @@ impl Plugin for ConditionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ActiveConditions>()
             .add_event::<ConditionAddEvent>()
-            .add_system_set(SystemSet::on_update(GameState::Playing).with_system(add_conditions));
+            .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
     }
 }
 

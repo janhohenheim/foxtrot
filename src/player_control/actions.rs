@@ -37,9 +37,10 @@ impl Plugin for ActionsPlugin {
             .add_plugin(InputManagerPlugin::<PlayerAction>::default())
             .add_plugin(InputManagerPlugin::<CameraAction>::default())
             .add_plugin(InputManagerPlugin::<UiAction>::default())
-            .add_system_to_stage(
-                CoreStage::PreUpdate,
-                remove_actions_when_frozen.after(InputManagerSystem::ManualControl),
+            .add_system(
+                remove_actions_when_frozen
+                    .after(InputManagerSystem::ManualControl)
+                    .in_base_set(CoreSet::PreUpdate),
             );
     }
 }

@@ -38,19 +38,22 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect 
                 spawner: Spawner::rate(10.0.into()).with_active(false),
                 ..Default::default()
             }
-            .init(PositionCircleModifier {
+            .init(InitPositionCircleModifier {
                 dimension: ShapeDimension::Volume,
                 radius: player::RADIUS * 0.5,
-                speed: 1_f32.into(),
                 center: Vec3::ZERO,
                 axis: Vec3::Y,
             })
-            .init(InitLifetimeModifier { lifetime: 0.8 })
+            .init(InitVelocitySphereModifier {
+                speed: 1_f32.into(),
+                center: Vec3::ZERO,
+            })
+            .init(InitLifetimeModifier {
+                lifetime: 0.8.into(),
+            })
             .update(LinearDragModifier { drag: 5. })
             .render(BillboardModifier {})
-            .update(AccelModifier {
-                accel: Vec3::new(0., 1., 0.),
-            })
+            .update(AccelModifier::constant(Vec3::new(0., 1., 0.)))
             .render(ColorOverLifetimeModifier {
                 gradient: color_gradient,
             })

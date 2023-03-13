@@ -20,24 +20,16 @@ impl Plugin for GameStateSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GameSaveRequest>()
             .add_event::<GameLoadRequest>()
-            .add_system_set(
-                SystemSet::on_in_stack_update(GameState::Playing)
-                    .with_system(
-                        handle_load_requests
-                            .pipe(log_errors)
-                            .label(HandleLoadRequestsLabel),
-                    )
-                    .with_system(
-                        handle_save_requests
-                            .pipe(log_errors)
-                            .after(HandleLoadRequestsLabel),
-                    ),
+            .add_systems(
+                (
+                    handle_load_requests.pipe(log_errors),
+                    handle_save_requests.pipe(log_errors),
+                )
+                    .chain()
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
-
-#[derive(SystemLabel)]
-pub struct HandleLoadRequestsLabel;
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct GameSaveRequest {

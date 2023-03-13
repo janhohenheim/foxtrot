@@ -10,7 +10,7 @@ pub struct IngameMenuPlugin;
 impl Plugin for IngameMenuPlugin {
     fn build(&self, app: &mut App) {
         {
-            app.add_system_set(SystemSet::on_update(GameState::Playing).with_system(handle_pause));
+            app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
         }
     }
 }

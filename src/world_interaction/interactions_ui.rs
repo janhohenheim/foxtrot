@@ -20,15 +20,18 @@ impl Plugin for InteractionsUiPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<InteractionOpportunities>()
             .init_resource::<InteractionOpportunities>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(update_interaction_opportunities)
-                    .with_system(
-                        update_interaction_ui
-                            .pipe(log_errors)
-                            .after(update_interaction_opportunities),
-                    )
-                    .with_system(display_interaction_prompt.pipe(log_errors)),
+            .add_systems(
+                (
+                    update_interaction_opportunities,
+                    update_interaction_ui.pipe(log_errors),
+                )
+                    .chain()
+                    .in_set(OnUpdate(GameState::Playing)),
+            )
+            .add_system(
+                display_interaction_prompt
+                    .pipe(log_errors)
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

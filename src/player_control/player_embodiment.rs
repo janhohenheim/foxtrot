@@ -27,28 +27,24 @@ impl Plugin for PlayerEmbodimentPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Timer>()
             .register_type::<Player>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(
-                        handle_jump
-                            .after(reset_movement_components)
-                            .before(apply_jumping),
-                    )
-                    .with_system(
-                        handle_horizontal_movement
-                            .pipe(log_errors)
-                            .after(UpdateCameraTransformLabel)
-                            .after(reset_movement_components)
-                            .before(apply_walking),
-                    )
-                    .with_system(
-                        handle_camera_kind
-                            .after(switch_camera_kind)
-                            .before(apply_walking),
-                    )
-                    .with_system(handle_speed_effects)
-                    .with_system(rotate_to_speaker)
-                    .with_system(control_walking_sound.pipe(log_errors)),
+            .add_systems(
+                (
+                    handle_jump
+                        .after(reset_movement_components)
+                        .before(apply_jumping),
+                    handle_horizontal_movement
+                        .pipe(log_errors)
+                        .after(UpdateCameraTransformLabel)
+                        .after(reset_movement_components)
+                        .before(apply_walking),
+                    handle_camera_kind
+                        .after(switch_camera_kind)
+                        .before(apply_walking),
+                    handle_speed_effects,
+                    rotate_to_speaker,
+                    control_walking_sound.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
@@ -121,10 +117,10 @@ fn handle_camera_kind(
                     let horizontal_direction = camera_transform.forward().split(up).horizontal;
                     let looking_target = player_transform.translation + horizontal_direction;
                     player_transform.look_at(looking_target, up);
-                    visibility.is_visible = false;
+                    *visibility = Visibility::Hidden;
                 }
                 IngameCameraKind::ThirdPerson(_) | IngameCameraKind::FixedAngle(_) => {
-                    visibility.is_visible = true
+                    *visibility = Visibility::Inherited;
                 }
             }
         }

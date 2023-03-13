@@ -42,13 +42,12 @@ impl Plugin for NavigationPlugin {
                 max_contour_simplification_error: 1.1,
                 max_edge_length: 70,
             })
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(
-                    query_mesh
-                        .pipe(log_errors)
-                        .after(reset_movement_components)
-                        .before(apply_walking),
-                ),
+            .add_system(
+                query_mesh
+                    .pipe(log_errors)
+                    .after(reset_movement_components)
+                    .before(apply_walking)
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

@@ -20,9 +20,10 @@ impl Plugin for PhysicsPlugin {
                 },
                 ..default()
             })
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(read_colliders.pipe(log_errors)),
+            .add_system(
+                read_colliders
+                    .pipe(log_errors)
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

@@ -26,10 +26,12 @@ impl Plugin for DialogPlugin {
         app.add_plugin(EguiPlugin)
             .register_type::<DialogId>()
             .add_event::<DialogEvent>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_current_dialog.pipe(log_errors))
-                    .with_system(show_dialog.pipe(log_errors)),
+            .add_systems(
+                (
+                    set_current_dialog.pipe(log_errors),
+                    show_dialog.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

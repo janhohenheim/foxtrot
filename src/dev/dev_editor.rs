@@ -23,11 +23,13 @@ impl Plugin for DevEditorPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DevEditorState>()
             .add_editor_window::<DevEditorWindow>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(handle_debug_render.pipe(log_errors))
-                    .with_system(handle_navmesh_render.pipe(log_errors))
-                    .with_system(set_cursor_grab_mode),
+            .add_systems(
+                (
+                    handle_debug_render.pipe(log_errors),
+                    handle_navmesh_render.pipe(log_errors),
+                    set_cursor_grab_mode,
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

@@ -21,16 +21,16 @@ impl Plugin for LoadingPlugin {
             .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
             .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
             .add_loading_state(
-                LoadingState::new(GameState::Loading)
-                    .with_collection::<AudioAssets>()
-                    .with_collection::<SceneAssets>()
-                    .with_collection::<AnimationAssets>()
-                    .with_collection::<LevelAssets>()
-                    .with_collection::<DialogAssets>()
-                    .with_collection::<TextureAssets>()
-                    .with_collection::<ConfigAssets>(),
+                LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu),
             )
-            .add_system_set(SystemSet::on_update(GameState::Loading).with_system(show_progress));
+            .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, AnimationAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, LevelAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
+            .add_system(show_progress.in_set(OnUpdate(GameState::Loading)));
     }
 }
 

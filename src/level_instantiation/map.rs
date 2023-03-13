@@ -9,12 +9,10 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(show_loading_screen),
-            );
+        app.add_system(setup.in_schedule(OnEnter(GameState::Playing)))
+            .add_system(show_loading_screen.in_set(OnUpdate(GameState::Playing)));
         #[cfg(feature = "wasm")]
-        app.add_system_set(SystemSet::on_update(GameState::Playing).with_system(show_wasm_loader));
+        app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
     }
 }
 

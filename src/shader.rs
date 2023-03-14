@@ -26,10 +26,11 @@ impl Plugin for ShaderPlugin {
         app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
             .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())
-            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(setup_shader))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_texture_to_repeat.pipe(log_errors)),
+            .add_system(setup_shader.in_schedule(OnExit(GameState::Loading)))
+            .add_system(
+                set_texture_to_repeat
+                    .pipe(log_errors)
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

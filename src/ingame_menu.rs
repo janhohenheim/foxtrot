@@ -1,7 +1,7 @@
 use crate::player_control::actions::{ActionsFrozen, UiAction};
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
@@ -10,7 +10,7 @@ pub struct IngameMenuPlugin;
 impl Plugin for IngameMenuPlugin {
     fn build(&self, app: &mut App) {
         {
-            app.add_system_set(SystemSet::on_update(GameState::Playing).with_system(handle_pause));
+            app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
         }
     }
 }
@@ -19,7 +19,7 @@ fn handle_pause(
     mut time: ResMut<Time>,
     actions: Query<&ActionState<UiAction>>,
     mut actions_frozen: ResMut<ActionsFrozen>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     mut paused: Local<bool>,
 ) {
     for action in actions.iter() {
@@ -35,7 +35,7 @@ fn handle_pause(
                         fill: egui::Color32::from_black_alpha(240),
                         ..default()
                     })
-                    .show(egui_context.ctx_mut(), |ui| {
+                    .show(egui_contexts.ctx_mut(), |ui| {
                         ui.vertical_centered_justified(|ui| {
                             ui.visuals_mut().override_text_color =
                                 Some(egui::Color32::from_gray(240));

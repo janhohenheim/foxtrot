@@ -41,14 +41,16 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<Velocity>()
             .register_type::<Walking>()
             .register_type::<CharacterAnimations>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(reset_movement_components)
-                    .with_system(update_grounded.after(reset_movement_components))
-                    .with_system(apply_walking.after(update_grounded))
-                    .with_system(apply_jumping.after(update_grounded))
-                    .with_system(rotate_characters.after(update_grounded))
-                    .with_system(play_animations.pipe(log_errors).after(update_grounded)),
+            .add_systems(
+                (
+                    reset_movement_components,
+                    update_grounded.after(reset_movement_components),
+                    apply_walking.after(update_grounded),
+                    apply_jumping.after(update_grounded),
+                    rotate_characters.after(update_grounded),
+                    play_animations.pipe(log_errors).after(update_grounded),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

@@ -23,9 +23,10 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - Animations
 - A custom dialog system
 - Shaders
-- GLTF imports, including colliders and navmeshes
-- dynamic builds in the `native-dev` feature
-- Grass blades using `warblersneeds`
+- GLTF imports, including auto-detection of colliders
+- Dynamic builds in the `native-dev` feature
+- Grass blades using `warbler_grass`
+- A skydome that follows the camera
 
 ## Usage
 

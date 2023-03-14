@@ -20,24 +20,18 @@ impl Plugin for GameStateSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<GameSaveRequest>()
             .add_event::<GameLoadRequest>()
-            .add_system_set(
-                SystemSet::on_in_stack_update(GameState::Playing)
-                    .with_system(
-                        handle_load_requests
-                            .pipe(log_errors)
-                            .label(HandleLoadRequestsLabel),
-                    )
-                    .with_system(
-                        handle_save_requests
-                            .pipe(log_errors)
-                            .after(HandleLoadRequestsLabel),
-                    ),
+            .add_systems(
+                (
+                    handle_load_requests.pipe(log_errors),
+                    handle_save_requests
+                        .pipe(log_errors)
+                        .run_if(resource_exists::<CurrentLevel>()),
+                )
+                    .chain()
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
-
-#[derive(SystemLabel)]
-pub struct HandleLoadRequestsLabel;
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
 pub struct GameSaveRequest {
@@ -140,18 +134,9 @@ fn handle_save_requests(
     conditions: Res<ActiveConditions>,
     dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&GlobalTransform, With<Player>>,
-    current_level: Option<Res<CurrentLevel>>,
+    current_level: Res<CurrentLevel>,
 ) -> Result<()> {
-    let dialog = if let Some(ref dialog) = dialog {
-        let dialog: CurrentDialog = dialog.as_ref().clone();
-        Some(dialog)
-    } else {
-        None
-    };
-    let current_level = match current_level {
-        Some(level) => level,
-        None => return Ok(()),
-    };
+    let dialog = dialog.map(|dialog| dialog.clone());
     for save in save_events.iter() {
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {

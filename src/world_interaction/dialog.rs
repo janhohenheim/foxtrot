@@ -12,7 +12,7 @@ use bevy::prelude::*;
 use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
-use bevy_egui::{egui, EguiContext, EguiPlugin};
+use bevy_egui::{egui, EguiContexts, EguiPlugin};
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -26,10 +26,12 @@ impl Plugin for DialogPlugin {
         app.add_plugin(EguiPlugin)
             .register_type::<DialogId>()
             .add_event::<DialogEvent>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_current_dialog.pipe(log_errors))
-                    .with_system(show_dialog.pipe(log_errors)),
+            .add_systems(
+                (
+                    set_current_dialog.pipe(log_errors),
+                    show_dialog.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
@@ -104,24 +106,21 @@ fn show_dialog(
     current_dialog: Option<ResMut<CurrentDialog>>,
     active_conditions: Res<ActiveConditions>,
     mut condition_writer: EventWriter<ConditionAddEvent>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     mut actions_frozen: ResMut<ActionsFrozen>,
     actions: Query<&ActionState<PlayerAction>>,
     time: Res<Time>,
     mut elapsed_time: Local<f32>,
 ) -> Result<()> {
-    let mut current_dialog = match current_dialog {
-        Some(current_dialog) => current_dialog,
-        None => {
+    let Some(mut current_dialog) = current_dialog else {
             *elapsed_time = 0.0;
             return Ok(());
-        }
     };
 
     for actions in actions.iter() {
         let current_page = current_dialog.fetch_current_page()?;
         get_dialog_window()
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_contexts.ctx_mut(), |ui| {
                 // Get current context style
                 set_dialog_style(ui.style_mut());
                 let dialog_size = egui::Vec2::new(500., 150.);

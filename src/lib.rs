@@ -45,9 +45,10 @@ use crate::shader::ShaderPlugin;
 use crate::world_interaction::WorldInteractionPlugin;
 use bevy::prelude::*;
 
-#[derive(Clone, Eq, PartialEq, Debug, Hash)]
+#[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
     /// During the loading State the LoadingPlugin will load our assets
+    #[default]
     Loading,
     /// During this State the actual game logic is executed
     Playing,
@@ -82,7 +83,7 @@ impl Plugin for GamePlugin {
         #[cfg(all(feature = "native-dev", not(feature = "native")))]
         compile_error!("You can only compile with the native-dev feature if you compile with the native feature.");
 
-        app.add_state(GameState::Loading)
+        app.add_state::<GameState>()
             .add_plugin(BevyConfigPlugin)
             .add_plugin(MenuPlugin)
             .add_plugin(MovementPlugin)

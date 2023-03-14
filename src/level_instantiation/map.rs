@@ -3,18 +3,24 @@ use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnE
 use crate::player_control::player_embodiment::Player;
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 
 pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::Playing).with_system(setup))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing).with_system(show_loading_screen),
-            );
+        app.add_system(
+            setup
+                .run_if(not(resource_exists::<CurrentLevel>()))
+                .in_schedule(OnEnter(GameState::Playing)),
+        )
+        .add_system(
+            show_loading_screen
+                .run_if(not(any_with_component::<Player>()))
+                .in_set(OnUpdate(GameState::Playing)),
+        );
         #[cfg(feature = "wasm")]
-        app.add_system_set(SystemSet::on_update(GameState::Playing).with_system(show_wasm_loader));
+        app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
     }
 }
 
@@ -22,12 +28,7 @@ fn setup(
     mut commands: Commands,
     mut loader: EventWriter<WorldLoadRequest>,
     mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
-    current_level: Option<Res<CurrentLevel>>,
 ) {
-    if current_level.is_some() {
-        return;
-    }
-
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.3,
@@ -47,38 +48,38 @@ fn setup(
     });
 }
 
-fn show_loading_screen(player_query: Query<&Player>, mut egui_context: ResMut<EguiContext>) {
-    if player_query.iter().next().is_none() {
-        egui::CentralPanel::default().show(egui_context.ctx_mut(), |ui| {
-            ui.vertical_centered(|ui| {
-                ui.add_space(100.0);
-                ui.heading("Loading");
-                ui.label("Spawning level...");
-                ui.add_space(10.0);
-                #[cfg(feature = "wasm")]
-                ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
-                #[cfg(feature = "wasm")]
-                ui.label("This may take a while. Don't worry, your browser did not crash!");
-            });
+fn show_loading_screen(mut egui_contexts: EguiContexts) {
+    egui::CentralPanel::default().show(egui_contexts.ctx_mut(), |ui| {
+        ui.vertical_centered(|ui| {
+            ui.add_space(100.0);
+            ui.heading("Loading");
+            ui.label("Spawning level...");
+            ui.add_space(10.0);
+            #[cfg(feature = "wasm")]
+            ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
+            #[cfg(feature = "wasm")]
+            ui.label("This may take a while. Don't worry, your browser did not crash!");
         });
-    }
+    });
 }
 
 #[cfg(feature = "wasm")]
-fn show_wasm_loader(player_query: Query<&Player>, mut egui_context: ResMut<EguiContext>) {
+fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
     let id = egui::Id::new("loading-screen-shown");
-    let memory = &mut egui_context.ctx_mut().memory().data;
-    match (memory.get_temp::<()>(id), player_query.iter().next()) {
-        (None, None) => {
-            loader::show_loader();
-            memory.insert_temp(id, ());
+    egui_contexts.ctx_mut().memory_mut(|memory| {
+        let memory = &mut memory.data;
+        match (memory.get_temp::<()>(id), player_query.iter().next()) {
+            (None, None) => {
+                loader::show_loader();
+                memory.insert_temp(id, ());
+            }
+            (Some(_), Some(_)) => {
+                loader::hide_loader();
+                memory.remove::<()>(id);
+            }
+            _ => {}
         }
-        (Some(_), Some(_)) => {
-            loader::hide_loader();
-            memory.remove::<()>(id);
-        }
-        _ => {}
-    }
+    });
 }
 
 #[cfg(feature = "wasm")]

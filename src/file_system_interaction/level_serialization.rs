@@ -20,7 +20,12 @@ impl Plugin for LevelSerializationPlugin {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
             .add_system(save_world.pipe(log_errors).after(SpawnRequestedLabel))
-            .add_system_to_stage(CoreStage::PostUpdate, load_world.pipe(log_errors));
+            .add_system(
+                load_world
+                    .pipe(log_errors)
+                    .run_if(resource_exists::<LevelAssets>())
+                    .in_base_set(CoreSet::PostUpdate),
+            );
     }
 }
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
@@ -96,14 +101,8 @@ fn load_world(
     current_spawn_query: Query<Entity, With<SpawnTracker>>,
     mut spawn_requests: EventWriter<SpawnEvent>,
     levels: Res<Assets<SerializedLevel>>,
-    level_handles: Option<Res<LevelAssets>>,
+    level_handles: Res<LevelAssets>,
 ) -> Result<()> {
-    let level_handles = match level_handles {
-        Some(level_handles) => level_handles,
-        None => {
-            return Ok(());
-        }
-    };
     for load in load_requests.iter() {
         let path = Path::new("levels")
             .join(load.filename.clone())

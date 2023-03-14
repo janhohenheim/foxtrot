@@ -65,18 +65,20 @@ fn show_loading_screen(player_query: Query<&Player>, mut egui_contexts: EguiCont
 #[cfg(feature = "wasm")]
 fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
     let id = egui::Id::new("loading-screen-shown");
-    let memory = &mut egui_contexts.ctx_mut().memory().data;
-    match (memory.get_temp::<()>(id), player_query.iter().next()) {
-        (None, None) => {
-            loader::show_loader();
-            memory.insert_temp(id, ());
+    egui_contexts.ctx_mut().memory_mut(|memory| {
+        let memory = &mut memory.data;
+        match (memory.get_temp::<()>(id), player_query.iter().next()) {
+            (None, None) => {
+                loader::show_loader();
+                memory.insert_temp(id, ());
+            }
+            (Some(_), Some(_)) => {
+                loader::hide_loader();
+                memory.remove::<()>(id);
+            }
+            _ => {}
         }
-        (Some(_), Some(_)) => {
-            loader::hide_loader();
-            memory.remove::<()>(id);
-        }
-        _ => {}
-    }
+    });
 }
 
 #[cfg(feature = "wasm")]

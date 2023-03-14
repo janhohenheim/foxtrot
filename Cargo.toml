@@ -106,3 +106,7 @@ image = { version = "0.24", default-features = false }
 
 [build-dependencies]
 embed-resource = "1.4"
+
+[patch.crates-io]
+# Fix https://github.com/EmiOnGit/warbler_grass/issues/52
+warbler_grass = { git = "https://github.com/EmiOnGit/warbler_grass", rev = "3fd85a393eee3c1bdeef5d8290a072befe3bd35f" }

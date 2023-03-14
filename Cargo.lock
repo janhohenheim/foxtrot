@@ -537,7 +537,7 @@ dependencies = [
 [[package]]
 name = "bevy_dolly"
 version = "0.0.1"
-source = "git+https://github.com/BlackPhlox/bevy_dolly#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
+source = "git+https://github.com/BlackPhlox/bevy_dolly?rev=4b13f07bb78adacd8ec14eedd05c2e09508216d5#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
 dependencies = [
  "bevy",
  "dolly",
@@ -1740,7 +1740,7 @@ checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
 [[package]]
 name = "dolly"
 version = "0.4.1"
-source = "git+https://github.com/BlackPhlox/bevy_dolly#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
+source = "git+https://github.com/BlackPhlox/bevy_dolly?rev=4b13f07bb78adacd8ec14eedd05c2e09508216d5#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
 dependencies = [
  "bevy_math",
  "bevy_transform",

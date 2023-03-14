@@ -1,6 +1,7 @@
-use crate::player_control::actions::{ActionsFrozen, PlayerAction};
+use crate::player_control::actions::PlayerAction;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
+use crate::util::criteria::is_frozen;
 use crate::util::log_error::log_errors;
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use crate::GameState;
@@ -31,6 +32,7 @@ impl Plugin for InteractionsUiPlugin {
             .add_system(
                 display_interaction_prompt
                     .pipe(log_errors)
+                    .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }
@@ -153,22 +155,13 @@ fn is_facing_target(
 }
 
 fn display_interaction_prompt(
-    interaction_ui: Option<Res<InteractionUi>>,
+    interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
     mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
-    actions_frozen: Res<ActionsFrozen>,
     dialog_target_query: Query<&DialogTarget>,
 ) -> Result<()> {
-    if actions_frozen.is_frozen() {
-        return Ok(());
-    }
-    let interaction_ui = match interaction_ui {
-        Some(interaction_ui) => interaction_ui,
-        None => return Ok(()),
-    };
-
     for actions in actions.iter() {
         let window = primary_windows
             .get_single()

@@ -41,7 +41,7 @@ impl Plugin for PlayerEmbodimentPlugin {
                         .after(switch_camera_kind)
                         .before(apply_walking),
                     handle_speed_effects,
-                    rotate_to_speaker,
+                    rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
                     control_walking_sound.pipe(log_errors),
                 )
                     .in_set(OnUpdate(GameState::Playing)),
@@ -67,9 +67,8 @@ fn handle_horizontal_movement(
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
-    let camera = match camera_query.iter().next() {
-        Some(camera) => camera,
-        None => return Ok(()),
+    let Some(camera) = camera_query.iter().next() else {
+        return Ok(());
     };
 
     for (actions, mut walk, transform) in &mut player_query {
@@ -153,16 +152,12 @@ fn rotate_to_speaker(
     time: Res<Time>,
     mut with_player: Query<(&mut Transform, &Velocity), With<Player>>,
     without_player: Query<&Transform, Without<Player>>,
-    current_dialog: Option<Res<CurrentDialog>>,
+    current_dialog: Res<CurrentDialog>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    let speaker_entity = current_dialog
-        .map(|current_dialog| current_dialog.source)
-        .and_then(|source| without_player.get(source).ok());
-    let speaker_transform = match speaker_entity {
-        Some(speaker_transform) => speaker_transform,
-        None => return,
+    let Ok(speaker_transform) = without_player.get(current_dialog.source) else {
+         return;
     };
     let dt = time.delta_seconds();
 

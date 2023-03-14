@@ -11,7 +11,7 @@ pub fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) 
     let _span = info_span!("set_hidden").entered();
     for (name, mut visibility) in added_name.iter_mut() {
         if name.to_lowercase().contains("[hidden]") {
-            visibility.is_visible = false;
+            *visibility = Visibility::Hidden;
         }
     }
 }

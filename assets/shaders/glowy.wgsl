@@ -9,6 +9,8 @@
 #import bevy_pbr::clustered_forward
 #import bevy_pbr::lighting
 #import bevy_pbr::shadows
+#import bevy_pbr::pbr_ambient
+#import bevy_pbr::fog
 #import bevy_pbr::pbr_functions
 
 
@@ -38,8 +40,8 @@ fn dir_to_equirectangular(dir: vec3<f32>) -> vec2<f32> {
 /// Is prefixed with "own_" because the built-in refract function is only available in WASM for some reason.
 fn own_refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
     let k = 1.0 - eta * eta * (1.0 - dot(n, i) * dot(n, i));
-    let k = max(k, 0.0);
-    return eta * i - (eta * dot(n, i) + sqrt(k)) * n;
+    let relu_k = max(k, 0.0);
+    return eta * i - (eta * dot(n, i) + sqrt(relu_k)) * n;
 }
 
 /// Returns RGB vector
@@ -61,8 +63,8 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     // See <https://en.wikipedia.org/wiki/Fresnel_equations>
     // This will make sure we have a kind of "halo" of light around our reflection, which the eye expects
     // since reflections are usually much brigther around the edges
-    let fresnel = clamp(1. - n_dot_v, 0.0, 1.0);
-    let fresnel = pow(fresnel, 5.) * 2.;
+    var fresnel = clamp(1. - n_dot_v, 0.0, 1.0);
+    fresnel = pow(fresnel, 5.) * 2.;
 
     // Increase contrast
     // => Face in the center of the sphere have normals pointing to the camera, which makes them brighter

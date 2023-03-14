@@ -10,7 +10,7 @@ pub struct InternalAudioPlugin;
 impl Plugin for InternalAudioPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(AudioPlugin)
-            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(init_audio));
+            .add_system(init_audio.in_schedule(OnExit(GameState::Loading)));
     }
 }
 

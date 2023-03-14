@@ -36,7 +36,7 @@ mod event;
 mod post_spawn_modification;
 pub mod spawn;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemLabel)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub struct SpawnRequestedLabel;
 
 impl Plugin for SpawningPlugin {
@@ -50,22 +50,24 @@ impl Plugin for SpawningPlugin {
             .register_type::<Despawn>()
             .register_type::<DelayedSpawnEvents>()
             .register_type::<AnimationEntityLink>()
-            .add_system_set(
-                SystemSet::on_exit(GameState::Loading).with_system(load_assets_for_spawner),
+            .add_system(load_assets_for_spawner.in_schedule(OnExit(GameState::Loading)))
+            .add_systems(
+                (
+                    spawn_requested.pipe(log_errors).in_set(SpawnRequestedLabel),
+                    spawn_delayed,
+                    despawn,
+                    link_animations.after(SpawnRequestedLabel),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             )
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(spawn_requested.pipe(log_errors).label(SpawnRequestedLabel))
-                    .with_system(spawn_delayed)
-                    .with_system(despawn)
-                    .with_system(link_animations.after(SpawnRequestedLabel)),
-            )
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(set_hidden)
-                    .with_system(despawn_removed)
-                    .with_system(set_color.pipe(log_errors))
-                    .with_system(set_shadows.pipe(log_errors)),
+            .add_systems(
+                (
+                    set_hidden,
+                    despawn_removed,
+                    set_color.pipe(log_errors),
+                    set_shadows.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }

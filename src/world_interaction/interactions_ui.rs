@@ -1,13 +1,15 @@
-use crate::player_control::actions::{ActionsFrozen, PlayerAction};
+use crate::player_control::actions::PlayerAction;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
+use crate::util::criteria::is_frozen;
 use crate::util::log_error::log_errors;
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::utils::HashSet;
-use bevy_egui::{egui, EguiContext};
+use bevy::window::PrimaryWindow;
+use bevy_egui::{egui, EguiContexts};
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -19,15 +21,19 @@ impl Plugin for InteractionsUiPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<InteractionOpportunities>()
             .init_resource::<InteractionOpportunities>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(update_interaction_opportunities)
-                    .with_system(
-                        update_interaction_ui
-                            .pipe(log_errors)
-                            .after(update_interaction_opportunities),
-                    )
-                    .with_system(display_interaction_prompt.pipe(log_errors)),
+            .add_systems(
+                (
+                    update_interaction_opportunities,
+                    update_interaction_ui.pipe(log_errors),
+                )
+                    .chain()
+                    .in_set(OnUpdate(GameState::Playing)),
+            )
+            .add_system(
+                display_interaction_prompt
+                    .pipe(log_errors)
+                    .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
@@ -149,32 +155,23 @@ fn is_facing_target(
 }
 
 fn display_interaction_prompt(
-    interaction_ui: Option<Res<InteractionUi>>,
+    interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
-    windows: Res<Windows>,
-    actions_frozen: Res<ActionsFrozen>,
+    primary_windows: Query<&Window, With<PrimaryWindow>>,
     dialog_target_query: Query<&DialogTarget>,
 ) -> Result<()> {
-    if actions_frozen.is_frozen() {
-        return Ok(());
-    }
-    let interaction_ui = match interaction_ui {
-        Some(interaction_ui) => interaction_ui,
-        None => return Ok(()),
-    };
-
     for actions in actions.iter() {
-        let window = windows
-            .get_primary()
+        let window = primary_windows
+            .get_single()
             .context("Failed to get primary window")?;
         egui::Window::new("Interaction")
             .collapsible(false)
             .title_bar(false)
             .auto_sized()
             .fixed_pos(egui::Pos2::new(window.width() / 2., window.height() / 2.))
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_contexts.ctx_mut(), |ui| {
                 ui.label("E: Talk");
             });
         if actions.just_pressed(PlayerAction::Interact) {

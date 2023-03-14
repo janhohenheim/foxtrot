@@ -27,28 +27,24 @@ impl Plugin for PlayerEmbodimentPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Timer>()
             .register_type::<Player>()
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(
-                        handle_jump
-                            .after(reset_movement_components)
-                            .before(apply_jumping),
-                    )
-                    .with_system(
-                        handle_horizontal_movement
-                            .pipe(log_errors)
-                            .after(UpdateCameraTransformLabel)
-                            .after(reset_movement_components)
-                            .before(apply_walking),
-                    )
-                    .with_system(
-                        handle_camera_kind
-                            .after(switch_camera_kind)
-                            .before(apply_walking),
-                    )
-                    .with_system(handle_speed_effects)
-                    .with_system(rotate_to_speaker)
-                    .with_system(control_walking_sound.pipe(log_errors)),
+            .add_systems(
+                (
+                    handle_jump
+                        .after(reset_movement_components)
+                        .before(apply_jumping),
+                    handle_horizontal_movement
+                        .pipe(log_errors)
+                        .after(UpdateCameraTransformLabel)
+                        .after(reset_movement_components)
+                        .before(apply_walking),
+                    handle_camera_kind
+                        .after(switch_camera_kind)
+                        .before(apply_walking),
+                    handle_speed_effects,
+                    rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
+                    control_walking_sound.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
@@ -71,9 +67,8 @@ fn handle_horizontal_movement(
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
-    let camera = match camera_query.iter().next() {
-        Some(camera) => camera,
-        None => return Ok(()),
+    let Some(camera) = camera_query.iter().next() else {
+        return Ok(());
     };
 
     for (actions, mut walk, transform) in &mut player_query {
@@ -121,10 +116,10 @@ fn handle_camera_kind(
                     let horizontal_direction = camera_transform.forward().split(up).horizontal;
                     let looking_target = player_transform.translation + horizontal_direction;
                     player_transform.look_at(looking_target, up);
-                    visibility.is_visible = false;
+                    *visibility = Visibility::Hidden;
                 }
                 IngameCameraKind::ThirdPerson(_) | IngameCameraKind::FixedAngle(_) => {
-                    visibility.is_visible = true
+                    *visibility = Visibility::Inherited;
                 }
             }
         }
@@ -157,16 +152,12 @@ fn rotate_to_speaker(
     time: Res<Time>,
     mut with_player: Query<(&mut Transform, &Velocity), With<Player>>,
     without_player: Query<&Transform, Without<Player>>,
-    current_dialog: Option<Res<CurrentDialog>>,
+    current_dialog: Res<CurrentDialog>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    let speaker_entity = current_dialog
-        .map(|current_dialog| current_dialog.source)
-        .and_then(|source| without_player.get(source).ok());
-    let speaker_transform = match speaker_entity {
-        Some(speaker_transform) => speaker_transform,
-        None => return,
+    let Ok(speaker_transform) = without_player.get(current_dialog.source) else {
+         return;
     };
     let dt = time.delta_seconds();
 

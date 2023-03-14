@@ -8,7 +8,7 @@ use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::egui::ProgressBar;
-use bevy_egui::{egui, EguiContext};
+use bevy_egui::{egui, EguiContexts};
 use bevy_kira_audio::AudioSource;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
@@ -21,16 +21,16 @@ impl Plugin for LoadingPlugin {
             .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
             .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
             .add_loading_state(
-                LoadingState::new(GameState::Loading)
-                    .with_collection::<AudioAssets>()
-                    .with_collection::<SceneAssets>()
-                    .with_collection::<AnimationAssets>()
-                    .with_collection::<LevelAssets>()
-                    .with_collection::<DialogAssets>()
-                    .with_collection::<TextureAssets>()
-                    .with_collection::<ConfigAssets>(),
+                LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu),
             )
-            .add_system_set(SystemSet::on_update(GameState::Loading).with_system(show_progress));
+            .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, AnimationAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, LevelAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
+            .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
+            .add_system(show_progress.in_set(OnUpdate(GameState::Loading)));
     }
 }
 
@@ -97,7 +97,7 @@ pub struct ConfigAssets {
 
 fn show_progress(
     progress: Option<Res<ProgressCounter>>,
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_contexts: EguiContexts,
     mut last_done: Local<u32>,
     audio_assets: Option<Res<AudioAssets>>,
     scene_assets: Option<Res<SceneAssets>>,
@@ -112,7 +112,7 @@ fn show_progress(
             *last_done = progress.done;
         }
 
-        egui::CentralPanel::default().show(egui_context.ctx_mut(), |ui| {
+        egui::CentralPanel::default().show(egui_contexts.ctx_mut(), |ui| {
             ui.vertical_centered(|ui| {
                 ui.add_space(100.0);
                 ui.heading("Loading");

@@ -8,6 +8,7 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
+use bevy::window::PrimaryWindow;
 use bevy_rapier3d::prelude::*;
 pub use first_person::FirstPersonCamera;
 pub use fixed_angle::FixedAngleCamera;
@@ -98,7 +99,7 @@ impl Default for IngameCameraKind {
 /// third person or fixed angle camera is used.
 pub struct CameraPlugin;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, SystemLabel)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub struct SetCameraFocusLabel;
 
 impl Plugin for CameraPlugin {
@@ -110,27 +111,29 @@ impl Plugin for CameraPlugin {
             .register_type::<FirstPersonCamera>()
             .register_type::<FixedAngleCamera>()
             .init_resource::<ForceCursorGrabMode>()
-            .add_startup_system(spawn_ui_camera)
-            .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(despawn_ui_camera))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(cursor_grab_system.pipe(log_errors))
-                    .with_system(init_camera.pipe(log_errors))
-                    .with_system(set_camera_focus.pipe(log_errors).label(SetCameraFocusLabel))
-                    .with_system(switch_kind.after(SetCameraFocusLabel))
-                    .with_system(
-                        update_transform
-                            .pipe(log_errors)
-                            .label(UpdateCameraTransformLabel)
-                            .after(switch_kind),
-                    )
-                    .with_system(update_config.pipe(log_errors))
-                    .with_system(move_skydome.after(UpdateCameraTransformLabel)),
+            .add_system(spawn_ui_camera.on_startup())
+            .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
+            .add_systems(
+                (
+                    cursor_grab_system.pipe(log_errors),
+                    init_camera.pipe(log_errors),
+                    set_camera_focus
+                        .pipe(log_errors)
+                        .in_set(SetCameraFocusLabel),
+                    switch_kind.after(SetCameraFocusLabel),
+                    update_transform
+                        .pipe(log_errors)
+                        .in_set(UpdateCameraTransformLabel)
+                        .after(switch_kind),
+                    update_config.pipe(log_errors),
+                    move_skydome.after(UpdateCameraTransformLabel),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
 
-#[derive(SystemLabel)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub struct UpdateCameraTransformLabel;
 
 fn init_camera(
@@ -238,26 +241,25 @@ fn move_skydome(
 pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
 
 fn cursor_grab_system(
-    mut windows: ResMut<Windows>,
+    mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,
     force_cursor_grab: Res<ForceCursorGrabMode>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("cursor_grab_system").entered();
-    let window = windows
-        .get_primary_mut()
+    let mut window = primary_windows
+        .get_single_mut()
         .context("Failed to get primary window")?;
+    let cursor = &mut window.cursor;
     if let Some(mode) = force_cursor_grab.0 {
-        window.set_cursor_grab_mode(mode);
-        window.set_cursor_visibility(mode != CursorGrabMode::Locked);
-        return Ok(());
-    }
-    if actions_frozen.is_frozen() {
-        window.set_cursor_grab_mode(CursorGrabMode::None);
-        window.set_cursor_visibility(true);
+        cursor.grab_mode = mode;
+        cursor.visible = mode != CursorGrabMode::Locked;
+    } else if actions_frozen.is_frozen() {
+        cursor.grab_mode = CursorGrabMode::None;
+        cursor.visible = true;
     } else {
-        window.set_cursor_grab_mode(CursorGrabMode::Locked);
-        window.set_cursor_visibility(false);
+        cursor.grab_mode = CursorGrabMode::Locked;
+        cursor.visible = false;
     }
     Ok(())
 }

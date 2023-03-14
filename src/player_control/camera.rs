@@ -111,7 +111,7 @@ impl Plugin for CameraPlugin {
             .register_type::<FirstPersonCamera>()
             .register_type::<FixedAngleCamera>()
             .init_resource::<ForceCursorGrabMode>()
-            .add_startup_system(spawn_ui_camera)
+            .add_system(spawn_ui_camera.on_startup())
             .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
             .add_systems(
                 (

@@ -136,7 +136,7 @@ fn handle_save_requests(
     player_query: Query<&GlobalTransform, With<Player>>,
     current_level: Res<CurrentLevel>,
 ) -> Result<()> {
-    let dialog = dialog.map(|ref dialog| dialog.as_ref().clone());
+    let dialog = dialog.map(|dialog| dialog.clone());
     for save in save_events.iter() {
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {

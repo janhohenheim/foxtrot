@@ -112,12 +112,9 @@ fn show_dialog(
     time: Res<Time>,
     mut elapsed_time: Local<f32>,
 ) -> Result<()> {
-    let mut current_dialog = match current_dialog {
-        Some(current_dialog) => current_dialog,
-        None => {
+    let Some(mut current_dialog) = current_dialog else {
             *elapsed_time = 0.0;
             return Ok(());
-        }
     };
 
     for actions in actions.iter() {

@@ -1,3 +1,4 @@
+use crate::util::criteria::is_frozen;
 use bevy::prelude::*;
 use leafwing_input_manager::axislike::DualAxisData;
 use leafwing_input_manager::plugin::InputManagerSystem;
@@ -39,6 +40,7 @@ impl Plugin for ActionsPlugin {
             .add_plugin(InputManagerPlugin::<UiAction>::default())
             .add_system(
                 remove_actions_when_frozen
+                    .run_if(is_frozen)
                     .after(InputManagerSystem::ManualControl)
                     .in_base_set(CoreSet::PreUpdate),
             );
@@ -141,21 +143,18 @@ pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
 }
 
 pub fn remove_actions_when_frozen(
-    actions_frozen: Res<ActionsFrozen>,
     mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
-    if actions_frozen.is_frozen() {
-        for mut player_actions in player_actions_query.iter_mut() {
-            player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
-            player_actions.release(PlayerAction::Jump);
-            player_actions.release(PlayerAction::Interact);
-            player_actions.release(PlayerAction::Sprint);
-        }
-        for mut camera_actions in camera_actions_query.iter_mut() {
-            camera_actions.action_data_mut(CameraAction::Pan).axis_pair = Some(default());
-            camera_actions.action_data_mut(CameraAction::Zoom).value = default();
-        }
+    for mut player_actions in player_actions_query.iter_mut() {
+        player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
+        player_actions.release(PlayerAction::Jump);
+        player_actions.release(PlayerAction::Interact);
+        player_actions.release(PlayerAction::Sprint);
+    }
+    for mut camera_actions in camera_actions_query.iter_mut() {
+        camera_actions.action_data_mut(CameraAction::Pan).axis_pair = Some(default());
+        camera_actions.action_data_mut(CameraAction::Zoom).value = default();
     }
 }
 

@@ -254,9 +254,7 @@ fn cursor_grab_system(
     if let Some(mode) = force_cursor_grab.0 {
         cursor.grab_mode = mode;
         cursor.visible = mode != CursorGrabMode::Locked;
-        return Ok(());
-    }
-    if actions_frozen.is_frozen() {
+    } else if actions_frozen.is_frozen() {
         cursor.grab_mode = CursorGrabMode::None;
         cursor.visible = true;
     } else {

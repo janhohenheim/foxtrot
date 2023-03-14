@@ -23,7 +23,9 @@ impl Plugin for GameStateSerializationPlugin {
             .add_systems(
                 (
                     handle_load_requests.pipe(log_errors),
-                    handle_save_requests.pipe(log_errors),
+                    handle_save_requests
+                        .pipe(log_errors)
+                        .run_if(resource_exists::<CurrentLevel>()),
                 )
                     .chain()
                     .in_set(OnUpdate(GameState::Playing)),
@@ -132,18 +134,9 @@ fn handle_save_requests(
     conditions: Res<ActiveConditions>,
     dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&GlobalTransform, With<Player>>,
-    current_level: Option<Res<CurrentLevel>>,
+    current_level: Res<CurrentLevel>,
 ) -> Result<()> {
-    let dialog = if let Some(ref dialog) = dialog {
-        let dialog: CurrentDialog = dialog.as_ref().clone();
-        Some(dialog)
-    } else {
-        None
-    };
-    let current_level = match current_level {
-        Some(level) => level,
-        None => return Ok(()),
-    };
+    let dialog = dialog.map(|ref dialog| dialog.as_ref().clone());
     for save in save_events.iter() {
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {

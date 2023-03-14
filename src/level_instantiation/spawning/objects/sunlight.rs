@@ -2,6 +2,7 @@ use crate::level_instantiation::spawning::{
     GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
 };
 use anyhow::Result;
+use bevy::pbr::CascadeShadowConfigBuilder;
 use bevy::prelude::*;
 
 pub struct SunlightSpawner;
@@ -22,6 +23,12 @@ impl PrimedGameObjectSpawnerImplementor for SunlightSpawner {
                         shadows_enabled: true,
                         ..default()
                     },
+                    cascade_shadow_config: CascadeShadowConfigBuilder {
+                        first_cascade_far_bound: 7.0,
+                        maximum_distance: 100.0,
+                        ..default()
+                    }
+                    .into(),
                     transform,
                     ..default()
                 },

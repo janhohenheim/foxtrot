@@ -30,7 +30,7 @@ impl Plugin for BevyConfigPlugin {
         app.insert_resource(Msaa::Sample4)
             .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
             .add_plugins(default_plugins)
-            .add_startup_system(set_window_icon.pipe(log_errors));
+            .add_system(set_window_icon.pipe(log_errors).on_startup());
     }
 }
 

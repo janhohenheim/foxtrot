@@ -38,8 +38,8 @@ fn dir_to_equirectangular(dir: vec3<f32>) -> vec2<f32> {
 /// Is prefixed with "own_" because the built-in refract function is only available in WASM for some reason.
 fn own_refract(i: vec3<f32>, n: vec3<f32>, eta: f32) -> vec3<f32> {
     let k = 1.0 - eta * eta * (1.0 - dot(n, i) * dot(n, i));
-    let k = max(k, 0.0);
-    return eta * i - (eta * dot(n, i) + sqrt(k)) * n;
+    let relu_k = max(k, 0.0);
+    return eta * i - (eta * dot(n, i) + sqrt(relu_k)) * n;
 }
 
 /// Returns RGB vector

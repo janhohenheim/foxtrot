@@ -535,6 +535,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_dolly"
+version = "0.0.1"
+source = "git+https://github.com/BlackPhlox/bevy_dolly#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
+dependencies = [
+ "bevy",
+ "dolly",
+ "leafwing-input-manager",
+]
+
+[[package]]
 name = "bevy_dylib"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1728,6 +1738,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
 
 [[package]]
+name = "dolly"
+version = "0.4.1"
+source = "git+https://github.com/BlackPhlox/bevy_dolly#4b13f07bb78adacd8ec14eedd05c2e09508216d5"
+dependencies = [
+ "bevy_math",
+ "bevy_transform",
+]
+
+[[package]]
 name = "downcast-rs"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1956,6 +1975,7 @@ dependencies = [
  "bevy",
  "bevy_asset_loader",
  "bevy_common_assets",
+ "bevy_dolly",
  "bevy_editor_pls",
  "bevy_egui",
  "bevy_hanabi",

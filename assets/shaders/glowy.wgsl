@@ -9,6 +9,8 @@
 #import bevy_pbr::clustered_forward
 #import bevy_pbr::lighting
 #import bevy_pbr::shadows
+#import bevy_pbr::pbr_ambient
+#import bevy_pbr::fog
 #import bevy_pbr::pbr_functions
 
 
@@ -61,8 +63,8 @@ fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
     // See <https://en.wikipedia.org/wiki/Fresnel_equations>
     // This will make sure we have a kind of "halo" of light around our reflection, which the eye expects
     // since reflections are usually much brigther around the edges
-    let fresnel = clamp(1. - n_dot_v, 0.0, 1.0);
-    let fresnel = pow(fresnel, 5.) * 2.;
+    var fresnel = clamp(1. - n_dot_v, 0.0, 1.0);
+    fresnel = pow(fresnel, 5.) * 2.;
 
     // Increase contrast
     // => Face in the center of the sphere have normals pointing to the camera, which makes them brighter

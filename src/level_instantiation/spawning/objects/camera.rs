@@ -5,6 +5,7 @@ use crate::player_control::actions::create_camera_action_input_manager_bundle;
 use crate::player_control::camera::IngameCamera;
 use anyhow::Result;
 use bevy::prelude::*;
+use bevy_dolly::prelude::*;
 
 pub struct CameraSpawner;
 
@@ -23,6 +24,18 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                     transform,
                     ..default()
                 },
+                Rig::builder()
+                    .with(Position::new(Vec3::ZERO))
+                    .with(Rotation::new(Quat::IDENTITY))
+                    .with(YawPitch::new().yaw_degrees(45.0).pitch_degrees(-30.0))
+                    .with(Smooth::new_position_rotation(0.3, 0.3))
+                    .with(Arm::new(Vec3::Z * 4.0))
+                    .with(
+                        LookAt::new(Vec3::ZERO)
+                            .tracking_smoothness(1.25)
+                            .tracking_predictive(true),
+                    )
+                    .build(),
                 create_camera_action_input_manager_bundle(),
                 Name::new("Main Camera"),
             ))

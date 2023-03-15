@@ -3,12 +3,14 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::level_instantiation::spawning::objects::skydome::Skydome;
 use crate::player_control::actions::{ActionsFrozen, CameraAction};
 use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
+use crate::util::criteria::never;
 use crate::util::log_error::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy::window::PrimaryWindow;
+use bevy_dolly::prelude::*;
 use bevy_rapier3d::prelude::*;
 pub use first_person::FirstPersonCamera;
 pub use fixed_angle::FixedAngleCamera;
@@ -111,6 +113,7 @@ impl Plugin for CameraPlugin {
             .register_type::<FirstPersonCamera>()
             .register_type::<FixedAngleCamera>()
             .init_resource::<ForceCursorGrabMode>()
+            .add_system(Dolly::<IngameCamera>::update_active)
             .add_system(spawn_ui_camera.on_startup())
             .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
             .add_systems(
@@ -120,7 +123,7 @@ impl Plugin for CameraPlugin {
                     set_camera_focus
                         .pipe(log_errors)
                         .in_set(SetCameraFocusLabel),
-                    switch_kind.after(SetCameraFocusLabel),
+                    switch_kind.run_if(never).after(SetCameraFocusLabel),
                     update_transform
                         .pipe(log_errors)
                         .in_set(UpdateCameraTransformLabel)
@@ -171,27 +174,27 @@ pub fn update_transform(
     mut camera: Query<(
         &ActionState<CameraAction>,
         &mut IngameCamera,
-        &mut Transform,
+        &Transform,
+        &mut Rig,
     )>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("update_transform").entered();
-    for (actions, mut camera, mut transform) in camera.iter_mut() {
+    for (actions, mut camera, transform, mut rig) in camera.iter_mut() {
         let dt = time.delta_seconds();
-        let new_transform = {
+        {
             match &mut camera.kind {
                 IngameCameraKind::ThirdPerson(camera) => {
-                    camera.update_transform(dt, actions, &rapier_context, *transform)
+                    camera.update_transform(actions, &rapier_context, &mut rig)?
                 }
                 IngameCameraKind::FirstPerson(camera) => {
-                    camera.update_transform(dt, actions, *transform)
+                    camera.update_transform(dt, actions, *transform)?;
                 }
                 IngameCameraKind::FixedAngle(camera) => {
-                    camera.update_transform(dt, actions, *transform)
+                    camera.update_transform(dt, actions, *transform)?;
                 }
             }
-        }?;
-        *transform = new_transform;
+        };
     }
     Ok(())
 }

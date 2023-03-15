@@ -1,10 +1,10 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
-use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
 use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
+use bevy_dolly::prelude::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -75,24 +75,14 @@ impl ThirdPersonCamera {
         self.transform.forward()
     }
 
-    fn rotate_around_target(&mut self, yaw: f32, pitch: f32) {
-        let yaw_rotation = Quat::from_axis_angle(self.up, yaw);
-        let pitch_rotation = Quat::from_axis_angle(self.transform.local_x(), pitch);
-
-        let pivot = self.target;
-        let rotation = yaw_rotation * pitch_rotation;
-        self.transform.rotate_around(pivot, rotation);
-    }
-
     pub fn update_transform(
         &mut self,
-        dt: f32,
         camera_actions: &ActionState<CameraAction>,
         rapier_context: &RapierContext,
-        transform: Transform,
-    ) -> Result<Transform> {
+        rig: &mut Rig,
+    ) -> Result<()> {
         if let Some(secondary_target) = self.secondary_target {
-            self.move_eye_to_align_target_with(secondary_target);
+            self.align_with_primary_and_secondary_target(secondary_target, rig);
         }
 
         let camera_movement = camera_actions
@@ -100,33 +90,28 @@ impl ThirdPersonCamera {
             .context("Camera movement is not an axis pair")?
             .xy();
         if !camera_movement.is_approx_zero() {
-            self.handle_camera_controls(camera_movement);
+            self.set_yaw_pitch(camera_movement, rig);
         }
 
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);
-        self.zoom(zoom);
-        let los_correction = self.place_eye_in_valid_position(rapier_context);
-        Ok(self.get_camera_transform(dt, transform, los_correction))
+        self.update_desired_distance(zoom);
+        self.set_arm(rapier_context, rig);
+        rig.driver_mut::<LookAt>().target = self.target;
+        rig.driver_mut::<Position>().position = self.target;
+        self.transform.translation = self.target + rig.driver::<Arm>().offset;
+        self.transform.rotation = rig.driver_mut::<Rotation>().rotation;
+
+        Ok(())
     }
 
-    fn handle_camera_controls(&mut self, camera_movement: Vec2) {
+    fn set_yaw_pitch(&mut self, camera_movement: Vec2, rig: &mut Rig) {
         let yaw = -camera_movement.x * self.config.camera.mouse_sensitivity_x;
         let pitch = -camera_movement.y * self.config.camera.mouse_sensitivity_y;
-        let pitch = self.clamp_pitch(pitch);
-        self.rotate_around_target(yaw, pitch);
+        let yaw_pitch = rig.driver_mut::<YawPitch>();
+        yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
     }
 
-    fn clamp_pitch(&self, angle: f32) -> f32 {
-        clamp_pitch(
-            self.up,
-            self.forward(),
-            angle,
-            self.config.camera.third_person.most_acute_from_above,
-            self.config.camera.third_person.most_acute_from_below,
-        )
-    }
-
-    fn zoom(&mut self, zoom: f32) {
+    fn update_desired_distance(&mut self, zoom: f32) {
         let zoom_speed = self.config.camera.third_person.zoom_speed;
         let zoom = zoom * zoom_speed;
         let min_distance = self.config.camera.third_person.min_distance;
@@ -134,58 +119,38 @@ impl ThirdPersonCamera {
         self.distance = (self.distance - zoom).clamp(min_distance, max_distance);
     }
 
-    fn move_eye_to_align_target_with(&mut self, secondary_target: Vec3) {
+    fn align_with_primary_and_secondary_target(&mut self, secondary_target: Vec3, rig: &mut Rig) {
         let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
         if target_to_secondary_target.is_approx_zero() {
             return;
         }
-        let target_to_secondary_target = target_to_secondary_target.normalize();
+        let target_to_secondary_target = target_to_secondary_target;
         let eye_to_target = (self.target - self.transform.translation)
             .split(self.up)
-            .horizontal
-            .normalize();
-        let rotation = Quat::from_rotation_arc(eye_to_target, target_to_secondary_target);
-        let pivot = self.target;
-        self.transform.rotate_around(pivot, rotation);
+            .horizontal;
+        let yaw = eye_to_target
+            .angle_between(target_to_secondary_target)
+            .to_degrees();
+        let yaw_pitch = rig.driver_mut::<YawPitch>();
+        yaw_pitch.rotate_yaw_pitch(yaw, 0.);
     }
 
-    fn place_eye_in_valid_position(
-        &mut self,
-        rapier_context: &RapierContext,
-    ) -> LineOfSightCorrection {
+    fn set_arm(&mut self, rapier_context: &RapierContext, rig: &mut Rig) {
         let line_of_sight_result = self.keep_line_of_sight(rapier_context);
-        self.transform.translation = line_of_sight_result.location;
-        line_of_sight_result.correction
-    }
-
-    fn get_camera_transform(
-        &self,
-        dt: f32,
-        mut transform: Transform,
-        line_of_sight_correction: LineOfSightCorrection,
-    ) -> Transform {
-        let translation_smoothing = if line_of_sight_correction == LineOfSightCorrection::Further {
-            self.config
-                .camera
-                .third_person
-                .translation_smoothing_going_further
-        } else {
-            self.config
-                .camera
-                .third_person
-                .translation_smoothing_going_closer
-        };
-
-        let scale = (translation_smoothing * dt).min(1.);
-        transform.translation = transform
-            .translation
-            .lerp(self.transform.translation, scale);
-
-        let rotation_smoothing = self.config.camera.first_person.rotation_smoothing;
-        let scale = (rotation_smoothing * dt).min(1.);
-        transform.rotation = transform.rotation.slerp(self.transform.rotation, scale);
-
-        transform
+        let translation_smoothing =
+            if line_of_sight_result.correction == LineOfSightCorrection::Further {
+                self.config
+                    .camera
+                    .third_person
+                    .translation_smoothing_going_further
+            } else {
+                self.config
+                    .camera
+                    .third_person
+                    .translation_smoothing_going_closer
+            };
+        rig.driver_mut::<Arm>().offset = line_of_sight_result.offset;
+        //rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
     }
 
     pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
@@ -193,7 +158,7 @@ impl ThirdPersonCamera {
         let direction = -self.forward();
 
         let distance = self.get_raycast_distance(origin, direction, rapier_context);
-        let location = origin + direction * distance;
+        let offset = direction * distance;
 
         let original_distance = self.target - self.transform.translation;
         let correction = if distance * distance < original_distance.length_squared() - 1e-3 {
@@ -201,10 +166,7 @@ impl ThirdPersonCamera {
         } else {
             LineOfSightCorrection::Further
         };
-        LineOfSightResult {
-            location,
-            correction,
-        }
+        LineOfSightResult { offset, correction }
     }
 
     pub fn get_raycast_distance(
@@ -228,7 +190,7 @@ impl ThirdPersonCamera {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LineOfSightResult {
-    pub location: Vec3,
+    pub offset: Vec3,
     pub correction: LineOfSightCorrection,
 }
 
@@ -236,79 +198,4 @@ pub struct LineOfSightResult {
 pub enum LineOfSightCorrection {
     Closer,
     Further,
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn facing_secondary_target_that_is_primary_changes_nothing() {
-        let camera_translation = Vec3::new(2., 0., 0.);
-        let primary_target = Vec3::new(-2., 0., 0.);
-        let secondary_target = Vec3::new(-2., 0., 0.);
-
-        let mut camera = build_camera(camera_translation, primary_target);
-        camera.move_eye_to_align_target_with(secondary_target);
-
-        assert_nearly_eq(camera.transform.translation, camera_translation);
-    }
-
-    #[test]
-    fn facing_secondary_target_that_is_aligned_with_primary_changes_nothing() {
-        let camera_translation = Vec3::new(2., 0., 0.);
-        let primary_target = Vec3::new(-2., 0., 0.);
-        let secondary_target = Vec3::new(-3., 0., 0.);
-
-        let mut camera = build_camera(camera_translation, primary_target);
-        camera.move_eye_to_align_target_with(secondary_target);
-
-        assert_nearly_eq(camera.transform.translation, camera_translation);
-    }
-
-    #[test]
-    fn faces_secondary_target_that_is_at_right_angle_with_primary() {
-        let camera_translation = Vec3::new(2., 0., 0.);
-        let primary_target = Vec3::new(-2., 0., 0.);
-        let secondary_target = Vec3::new(-2., 0., -2.);
-
-        let mut camera = build_camera(camera_translation, primary_target);
-        camera.move_eye_to_align_target_with(secondary_target);
-
-        let expected_position = Vec3::new(-2., 0., 4.);
-        assert_nearly_eq(camera.transform.translation, expected_position);
-    }
-
-    #[test]
-    fn faces_secondary_target_that_is_at_right_angle_with_primary_ignoring_y() {
-        let camera_translation = Vec3::new(2., 2., 0.);
-        let primary_target = Vec3::new(-2., -3., 0.);
-        let secondary_target = Vec3::new(-2., -1., -2.);
-
-        let mut camera = build_camera(camera_translation, primary_target);
-        camera.move_eye_to_align_target_with(secondary_target);
-
-        let expected_position = Vec3::new(-2., 2., 4.);
-        assert_nearly_eq(camera.transform.translation, expected_position);
-    }
-
-    fn build_camera(camera_translation: Vec3, primary_target: Vec3) -> ThirdPersonCamera {
-        let mut camera = ThirdPersonCamera::default();
-        let camera_transform = Transform::from_translation(camera_translation);
-
-        camera.transform = camera_transform.looking_at(primary_target, Vec3::Y);
-        camera.target = primary_target;
-        camera.distance = camera.target.distance(camera.transform.translation);
-
-        camera
-    }
-
-    fn assert_nearly_eq(actual: Vec3, expected: Vec3) {
-        assert!(
-            (actual - expected).length_squared() < 1e-5,
-            "expected: {:?}, actual: {:?}",
-            expected,
-            actual
-        );
-    }
 }

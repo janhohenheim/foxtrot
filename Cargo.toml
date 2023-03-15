@@ -99,7 +99,7 @@ bevy_prototype_debug_lines = { version = "0.10", optional = true, features = ["3
 wasm-bindgen = { version = "0.2", optional = true }
 warbler_grass = "0.3"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
-bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "4b13f07bb78adacd8ec14eedd05c2e09508216d5" }
+bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "b2f5dc787664cb8c3d92f792cbd437886fc090c6" }
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.28", default-features = false }

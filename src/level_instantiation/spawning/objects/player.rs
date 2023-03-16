@@ -33,6 +33,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                 },
                 Player,
                 Name::new("Player"),
+                Ccd::enabled(),
                 CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 CharacterAnimations {
                     idle: spawner.animations.character_idle.clone(),

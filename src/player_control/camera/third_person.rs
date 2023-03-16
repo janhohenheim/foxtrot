@@ -46,8 +46,8 @@ pub fn update_rig(
 
         set_desired_distance(&config, &mut camera, actions);
 
-        let offset = get_unbroken_line_of_sight(&rapier_context, &config, &mut camera, &rig);
-        set_arm(&config, &mut rig, offset);
+        let distance = get_distance_to_collision(&rapier_context, &config, &mut camera, transform);
+        set_arm(&config, &mut rig, distance);
     }
     Ok(())
 }
@@ -65,10 +65,9 @@ fn set_desired_distance(
     );
 }
 
-fn set_arm(config: &GameConfig, rig: &mut Rig, offset: Vec3) {
-    let current_offset = rig.driver::<Arm>().offset;
-    let original_distance_squared = current_offset.length_squared();
-    let translation_smoothing = if offset.length_squared() < original_distance_squared - 1e-3 {
+fn set_arm(config: &GameConfig, rig: &mut Rig, distance: f32) {
+    let current_distance = rig.driver::<Arm>().offset.z;
+    let translation_smoothing = if distance < current_distance - 1e-3 {
         config
             .camera
             .third_person
@@ -79,19 +78,18 @@ fn set_arm(config: &GameConfig, rig: &mut Rig, offset: Vec3) {
             .third_person
             .translation_smoothing_going_further
     };
-    rig.driver_mut::<Arm>().offset = offset;
+    rig.driver_mut::<Arm>().offset.z = distance;
     rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
 }
 
-fn get_unbroken_line_of_sight(
+fn get_distance_to_collision(
     rapier_context: &RapierContext,
     config: &GameConfig,
     camera: &IngameCamera,
-    rig: &Rig,
-) -> Vec3 {
-    let current_offset = rig.driver::<Arm>().offset;
+    camera_transform: &Transform,
+) -> f32 {
     let origin = camera.target.translation;
-    let direction = current_offset.normalize();
+    let direction = camera_transform.back();
 
     let max_toi = camera.desired_distance;
     let solid = true;
@@ -99,10 +97,8 @@ fn get_unbroken_line_of_sight(
     filter.flags |= QueryFilterFlags::EXCLUDE_SENSORS;
 
     let min_distance_to_objects = config.camera.third_person.min_distance_to_objects;
-    let distance = rapier_context
+    rapier_context
         .cast_ray(origin, direction, max_toi, solid, filter)
         .map(|(_entity, toi)| toi - min_distance_to_objects)
-        .unwrap_or(max_toi);
-
-    direction * distance
+        .unwrap_or(max_toi)
 }

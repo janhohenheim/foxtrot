@@ -23,4 +23,4 @@ min_degrees_looking_up = 50.0
 min_distance = 0.01
 max_distance = 10.0
 zoom_speed = 0.7
-min_distance_to_objects = 5e-1
+min_distance_to_objects = 1e-1

@@ -12,15 +12,15 @@ translation_smoothing = 50.0
 [camera.first_person]
 translation_smoothing = 50.0
 rotation_smoothing = 45.0
-most_acute_from_above = 0.62831855 # TAU / 10.
-most_acute_from_below = 0.8975979 # TAU / 7.
+most_acute_from_above = 36.0
+most_acute_from_below = 50.0
 
 [camera.third_person]
 translation_smoothing_going_closer = 1.0
 translation_smoothing_going_further = 0.3
 rotation_smoothing = 45.0
-most_acute_from_above = 0.62831855 # TAU / 10.
-most_acute_from_below = 0.8975979 # TAU / 7.
+most_acute_from_above = 36.0
+most_acute_from_below = 50.0
 min_distance = 0.01
 max_distance = 10.0
 zoom_speed = 0.7

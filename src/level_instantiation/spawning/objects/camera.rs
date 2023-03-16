@@ -26,7 +26,6 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                 },
                 Rig::builder()
                     .with(Position::new(Vec3::ZERO))
-                    .with(Rotation::new(Quat::IDENTITY))
                     .with(YawPitch::new().yaw_degrees(45.0).pitch_degrees(-30.0))
                     .with(Smooth::new_position_rotation(0.3, 0.3))
                     .with(Arm::new(Vec3::Z * 4.0))

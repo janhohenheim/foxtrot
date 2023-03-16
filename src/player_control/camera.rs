@@ -119,25 +119,29 @@ impl Plugin for CameraPlugin {
             .add_systems(
                 (
                     cursor_grab_system.pipe(log_errors),
+                    update_config.pipe(log_errors),
+                )
+                    .in_set(OnUpdate(GameState::Playing)),
+            )
+            .add_systems(
+                (
                     init_camera.pipe(log_errors),
                     set_camera_focus
                         .pipe(log_errors)
                         .in_set(SetCameraFocusLabel),
-                    switch_kind.run_if(never).after(SetCameraFocusLabel),
-                    update_transform
-                        .pipe(log_errors)
-                        .in_set(UpdateCameraTransformLabel)
-                        .after(switch_kind),
-                    update_config.pipe(log_errors),
-                    move_skydome.after(UpdateCameraTransformLabel),
+                    switch_kind.run_if(never),
+                    update_rig.pipe(log_errors),
+                    move_skydome,
                 )
+                    .chain()
+                    .in_set(CameraUpdateSystemSet)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub struct UpdateCameraTransformLabel;
+pub struct CameraUpdateSystemSet;
 
 fn init_camera(
     mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>,
@@ -152,7 +156,6 @@ fn init_camera(
             .context("Failed to get game config from handle")?;
         match &mut camera.kind {
             IngameCameraKind::ThirdPerson(camera) => {
-                camera.transform = *transform;
                 camera.config = game_config.clone();
             }
             IngameCameraKind::FirstPerson(camera) => {
@@ -168,7 +171,7 @@ fn init_camera(
     Ok(())
 }
 
-pub fn update_transform(
+pub fn update_rig(
     time: Res<Time>,
     rapier_context: Res<RapierContext>,
     mut camera: Query<(
@@ -185,7 +188,7 @@ pub fn update_transform(
         {
             match &mut camera.kind {
                 IngameCameraKind::ThirdPerson(camera) => {
-                    camera.update_transform(actions, &rapier_context, &mut rig)?
+                    camera.update_rig(actions, &rapier_context, &mut rig)?
                 }
                 IngameCameraKind::FirstPerson(camera) => {
                     camera.update_transform(dt, actions, *transform)?;

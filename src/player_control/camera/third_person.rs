@@ -2,7 +2,7 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::util::clamp_pitch_degrees;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::util::trait_extension::Vec2Ext;
+use crate::util::trait_extension::{F32Ext, Vec2Ext};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -10,6 +10,7 @@ use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
 pub fn update_rig(
+    time: Res<Time>,
     mut camera_query: Query<(
         &mut IngameCamera,
         &mut Rig,
@@ -19,6 +20,7 @@ pub fn update_rig(
     rapier_context: Res<RapierContext>,
     config: Res<GameConfig>,
 ) -> Result<()> {
+    let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query
         .iter_mut()
         .filter(|query_result| query_result.0.kind == IngameCameraKind::ThirdPerson)
@@ -47,7 +49,9 @@ pub fn update_rig(
         set_desired_distance(&mut camera, actions, &config);
 
         let distance = get_distance_to_collision(&rapier_context, &config, &camera, transform);
-        rig.driver_mut::<Arm>().offset.z = distance;
+        let zoom_smoothness = get_zoom_smoothness(&config, &mut rig, distance);
+        set_arm(&mut rig, distance, zoom_smoothness, dt);
+
         rig.driver_mut::<Smooth>().position_smoothness =
             config.camera.third_person.translation_smoothing;
         rig.driver_mut::<Smooth>().rotation_smoothness =
@@ -55,6 +59,23 @@ pub fn update_rig(
         rig.driver_mut::<LookAt>().smoothness = config.camera.third_person.tracking_smoothing;
     }
     Ok(())
+}
+
+fn get_zoom_smoothness(config: &GameConfig, rig: &Rig, new_distance: f32) -> f32 {
+    let current_distance = rig.driver::<Arm>().offset.z;
+    if new_distance < current_distance - 1e-4 {
+        config.camera.third_person.zoom_in_smoothing
+    } else {
+        config.camera.third_person.zoom_out_smoothing
+    }
+}
+
+fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
+    // Taken from https://github.com/h3r2tic/dolly/blob/main/src/util.rs#L34
+    const SMOOTHNESS_MULT: f32 = 8.0;
+    let factor = 1.0 - (-SMOOTHNESS_MULT * dt / zoom_smoothness.max(1e-5)).exp();
+    let arm_length = &mut rig.driver_mut::<Arm>().offset.z;
+    *arm_length = arm_length.lerp(distance, factor);
 }
 
 fn set_desired_distance(

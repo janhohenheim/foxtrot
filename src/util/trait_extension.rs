@@ -1,10 +1,8 @@
 use bevy::prelude::*;
 use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues};
 
-pub trait Vec3Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
+pub trait Vec3Ext: Copy {
     fn is_approx_zero(self) -> bool;
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn split(self, up: Vec3) -> SplitVec3;
 }
 impl Vec3Ext for Vec3 {
@@ -35,8 +33,7 @@ impl SplitVec3 {
     }
 }
 
-pub trait Vec2Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec2`] is [`Copy`]
+pub trait Vec2Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn x0y(self) -> Vec3;
 }
@@ -133,10 +130,10 @@ impl MeshExt for Mesh {
     }
 }
 
-pub trait F32Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`f32`] is [`Copy`]
+pub trait F32Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn squared(self) -> f32;
+    fn lerp(self, other: f32, ratio: f32) -> f32;
 }
 
 impl F32Ext for f32 {
@@ -148,6 +145,11 @@ impl F32Ext for f32 {
     #[inline]
     fn squared(self) -> f32 {
         self * self
+    }
+
+    #[inline]
+    fn lerp(self, other: f32, ratio: f32) -> f32 {
+        self.mul_add(1. - ratio, other * ratio)
     }
 }
 

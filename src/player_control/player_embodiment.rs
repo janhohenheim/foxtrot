@@ -66,18 +66,15 @@ fn handle_horizontal_movement(
         return Ok(());
     };
 
-    for (actions, mut walk, transform) in &mut player_query {
+    for (actions, mut walk, player_transform) in &mut player_query {
         if let Some(movement) = actions
             .axis_pair(PlayerAction::Move)
             .context("Player movement is not an axis pair")?
             .max_normalized()
         {
-            let forward = camera_transform
-                .forward()
-                .split(camera_transform.up())
-                .horizontal
-                .normalize();
-            let sideways = forward.cross(transform.up());
+            let up = player_transform.up();
+            let forward = camera_transform.forward().split(up).horizontal.normalize();
+            let sideways = forward.cross(up);
             let forward_action = forward * movement.y;
             let sideways_action = sideways * movement.x;
 

@@ -102,8 +102,8 @@ pub struct ThirdPerson {
 impl Default for ThirdPerson {
     fn default() -> Self {
         Self {
-            translation_smoothing_going_closer: 100.0,
-            translation_smoothing_going_further: 50.0,
+            translation_smoothing_going_closer: 1.0,
+            translation_smoothing_going_further: 0.3,
             rotation_smoothing: 45.0,
             most_acute_from_above: TAU / 10.,
             most_acute_from_below: TAU / 7.,

@@ -1,5 +1,6 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
+use crate::player_control::camera::util::clamp_pitch;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::{F32Ext, Vec2Ext};
 use anyhow::{Context, Result};
@@ -9,21 +10,21 @@ use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
 pub fn update_rig(
-    mut camera_query: Query<(&mut IngameCamera, &mut Rig, &ActionState<CameraAction>)>,
+    mut camera_query: Query<(
+        &mut IngameCamera,
+        &mut Rig,
+        &ActionState<CameraAction>,
+        &Transform,
+    )>,
     rapier_context: Res<RapierContext>,
     config: Res<GameConfig>,
 ) -> Result<()> {
-    for (mut camera, mut rig, actions) in camera_query
+    for (mut camera, mut rig, actions, transform) in camera_query
         .iter_mut()
         .filter(|query_result| query_result.0.kind == IngameCameraKind::ThirdPerson)
     {
-        if let Some(secondary_target) = camera.secondary_target {
-            rig.driver_mut::<LookAt>().target = secondary_target;
-            rig.driver_mut::<Position>().position = secondary_target;
-        } else {
-            rig.driver_mut::<LookAt>().target = camera.target;
-            rig.driver_mut::<Position>().position = camera.target;
-        }
+        rig.driver_mut::<LookAt>().target = camera.target.translation;
+        rig.driver_mut::<Position>().position = camera.target.translation;
 
         let camera_movement = actions
             .axis_pair(CameraAction::Pan)
@@ -34,6 +35,14 @@ pub fn update_rig(
             let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
             let yaw_pitch = rig.driver_mut::<YawPitch>();
             yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
+            yaw_pitch.pitch_degrees = clamp_pitch(
+                camera.target.up(),
+                transform.forward(),
+                yaw_pitch.pitch_degrees.to_radians(),
+                config.camera.third_person.most_acute_from_above,
+                config.camera.third_person.most_acute_from_below,
+            )
+            .to_degrees();
         }
 
         let zoom =
@@ -44,7 +53,7 @@ pub fn update_rig(
             config.camera.third_person.max_distance,
         );
         let current_offset = rig.driver::<Arm>().offset;
-        let origin = camera.target;
+        let origin = camera.target.translation;
         let direction = current_offset.normalize();
 
         let max_toi = camera.desired_distance;
@@ -73,7 +82,7 @@ pub fn update_rig(
                 .translation_smoothing_going_further
         };
         rig.driver_mut::<Arm>().offset = offset;
-        //rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
+        rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
     }
     Ok(())
 }

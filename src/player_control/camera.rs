@@ -19,8 +19,7 @@ mod util;
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
-    pub target: Vec3,
-    pub secondary_target: Option<Vec3>,
+    pub target: Transform,
     pub desired_distance: f32,
     pub kind: IngameCameraKind,
 }
@@ -29,7 +28,6 @@ impl Default for IngameCamera {
     fn default() -> Self {
         Self {
             target: default(),
-            secondary_target: default(),
             desired_distance: 5.,
             kind: default(),
         }

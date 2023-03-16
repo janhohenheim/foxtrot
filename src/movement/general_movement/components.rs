@@ -53,9 +53,10 @@ impl CharacterControllerBundle {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub struct Model;
+#[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize)]
+pub struct Model {
+    pub(crate) target: Entity,
+}
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]

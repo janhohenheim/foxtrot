@@ -22,7 +22,7 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
         _object: GameObject,
         transform: Transform,
     ) -> Result<Entity> {
-        Ok(spawner
+        let entity = spawner
             .commands
             .spawn((
                 PbrBundle {
@@ -53,6 +53,16 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                         GameCollisionGroup::PLAYER.into(),
                     ),
                 ));
+            })
+            .id();
+        spawner
+            .commands
+            .spawn((
+                Model { target: entity },
+                SpatialBundle::default(),
+                Name::new("NPC Model Parent"),
+            ))
+            .with_children(|parent| {
                 parent.spawn((
                     SceneBundle {
                         scene: spawner.scene_handles.character.clone(),
@@ -63,10 +73,10 @@ impl PrimedGameObjectSpawnerImplementor for NpcSpawner {
                         },
                         ..default()
                     },
-                    Model,
                     Name::new("NPC Model"),
                 ));
-            })
-            .id())
+            });
+
+        Ok(entity)
     }
 }

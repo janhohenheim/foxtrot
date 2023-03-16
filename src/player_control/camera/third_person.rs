@@ -52,6 +52,7 @@ pub fn update_rig(
             config.camera.third_person.translation_smoothing;
         rig.driver_mut::<Smooth>().rotation_smoothness =
             config.camera.third_person.rotation_smoothing;
+        rig.driver_mut::<LookAt>().smoothness = config.camera.third_person.tracking_smoothing;
     }
     Ok(())
 }

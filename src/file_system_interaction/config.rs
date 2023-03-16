@@ -71,6 +71,7 @@ pub struct FirstPerson {
     pub rotation_smoothing: f32,
     pub min_degrees_looking_down: f32,
     pub min_degrees_looking_up: f32,
+    pub tracking_smoothing: f32,
 }
 
 impl Default for FirstPerson {
@@ -80,6 +81,7 @@ impl Default for FirstPerson {
             rotation_smoothing: 45.0,
             min_degrees_looking_down: 36.,
             min_degrees_looking_up: 50.,
+            tracking_smoothing: 0.1,
         }
     }
 }
@@ -95,6 +97,7 @@ pub struct ThirdPerson {
     pub max_distance: f32,
     pub zoom_speed: f32,
     pub min_distance_to_objects: f32,
+    pub tracking_smoothing: f32,
 }
 
 impl Default for ThirdPerson {
@@ -108,6 +111,7 @@ impl Default for ThirdPerson {
             max_distance: 10.0,
             zoom_speed: 0.7,
             min_distance_to_objects: 5e-1,
+            tracking_smoothing: 0.1,
         }
     }
 }

@@ -1,16 +1,15 @@
 use bevy::prelude::*;
-use std::f32::consts::PI;
 
-pub fn clamp_pitch(
+pub fn clamp_pitch_degrees(
     up: Vec3,
     forward: Vec3,
     angle: f32,
     most_acute_from_above: f32,
     most_acute_from_below: f32,
 ) -> f32 {
-    let angle_to_axis = forward.angle_between(up);
-    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > PI / 2. {
-        (PI - angle_to_axis, most_acute_from_above, -1.)
+    let angle_to_axis = forward.angle_between(up).to_degrees();
+    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > 90. {
+        (180. - angle_to_axis, most_acute_from_above, -1.)
     } else {
         (angle_to_axis, most_acute_from_below, 1.)
     };
@@ -19,7 +18,7 @@ pub fn clamp_pitch(
     } else {
         angle
     };
-    if new_angle.abs() < 0.01 {
+    if new_angle.abs() < 1. {
         0.
     } else {
         new_angle

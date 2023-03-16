@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
-use std::f32::consts::TAU;
 
 #[derive(
     Debug,
@@ -79,8 +78,8 @@ impl Default for FirstPerson {
         Self {
             translation_smoothing: 50.0,
             rotation_smoothing: 45.0,
-            most_acute_from_above: TAU / 10.,
-            most_acute_from_below: TAU / 7.,
+            most_acute_from_above: 36.,
+            most_acute_from_below: 50.,
         }
     }
 }
@@ -105,8 +104,8 @@ impl Default for ThirdPerson {
             translation_smoothing_going_closer: 1.0,
             translation_smoothing_going_further: 0.3,
             rotation_smoothing: 45.0,
-            most_acute_from_above: TAU / 10.,
-            most_acute_from_below: TAU / 7.,
+            most_acute_from_above: 36.,
+            most_acute_from_below: 50.,
             min_distance: 1e-2,
             max_distance: 10.0,
             zoom_speed: 0.7,

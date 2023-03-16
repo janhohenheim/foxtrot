@@ -35,8 +35,7 @@ pub struct GeneralMovementPlugin;
 
 impl Plugin for GeneralMovementPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Model>()
-            .register_type::<Grounded>()
+        app.register_type::<Grounded>()
             .register_type::<Jumping>()
             .register_type::<Velocity>()
             .register_type::<Walking>()
@@ -49,6 +48,7 @@ impl Plugin for GeneralMovementPlugin {
                     apply_jumping.after(update_grounded),
                     rotate_characters.after(update_grounded),
                     play_animations.pipe(log_errors).after(update_grounded),
+                    sync_models.pipe(log_errors),
                 )
                     .in_set(OnUpdate(GameState::Playing)),
             );
@@ -211,4 +211,28 @@ pub fn apply_walking(
             }
         }
     }
+}
+
+fn sync_models(
+    time: Res<Time>,
+    mut commands: Commands,
+    without_model: Query<&Transform, Without<Model>>,
+    mut with_model: Query<(Entity, &mut Transform, &Model)>,
+) -> Result<()> {
+    let dt = time.delta_seconds();
+    for (model_entity, mut model_transform, model) in with_model.iter_mut() {
+        if let Ok(target_transform) = without_model.get(model.target) {
+            const SMOOTHNESS: f32 = 20.;
+            let scale = (SMOOTHNESS * dt).min(1.);
+            model_transform.translation = model_transform
+                .translation
+                .lerp(target_transform.translation, scale);
+            model_transform.rotation = model_transform
+                .rotation
+                .slerp(target_transform.rotation, scale);
+        } else {
+            commands.entity(model_entity).despawn_recursive();
+        }
+    }
+    Ok(())
 }

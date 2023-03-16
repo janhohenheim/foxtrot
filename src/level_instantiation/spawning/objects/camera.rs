@@ -31,7 +31,7 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                     .with(Arm::new(Vec3::Z * 5.))
                     .with(
                         LookAt::new(Vec3::ZERO)
-                            .tracking_smoothness(0.5)
+                            .tracking_smoothness(0.1)
                             .tracking_predictive(true),
                     )
                     .build(),

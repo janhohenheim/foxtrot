@@ -24,7 +24,7 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
         _object: GameObject,
         transform: Transform,
     ) -> Result<Entity> {
-        Ok(spawner
+        let entity = spawner
             .commands
             .spawn((
                 PbrBundle {
@@ -46,6 +46,14 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                 create_player_action_input_manager_bundle(),
                 create_ui_action_input_manager_bundle(),
             ))
+            .id();
+        spawner
+            .commands
+            .spawn((
+                Model { target: entity },
+                SpatialBundle::default(),
+                Name::new("Player Model Parent"),
+            ))
             .with_children(|parent| {
                 parent.spawn((
                     SceneBundle {
@@ -57,10 +65,9 @@ impl PrimedGameObjectSpawnerImplementor for PlayerSpawner {
                         },
                         ..default()
                     },
-                    Model,
                     Name::new("Player Model"),
                 ));
-            })
-            .id())
+            });
+        Ok(entity)
     }
 }

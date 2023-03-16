@@ -1,3 +1,4 @@
+use crate::movement::general_movement::Model;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -15,6 +16,7 @@ pub fn link_animations(
     player_query: Query<Entity, Added<AnimationPlayer>>,
     parent_query: Query<&Parent>,
     animations_entity_link_query: Query<&AnimationEntityLink>,
+    models: Query<&Model>,
     mut commands: Commands,
 ) {
     #[cfg(feature = "tracing")]
@@ -24,18 +26,21 @@ pub fn link_animations(
         if animations_entity_link_query.get(top_entity).is_ok() {
             warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
         } else {
+            let link_target = if let Ok(model) = models.get(top_entity) {
+                model.target
+            } else {
+                top_entity
+            };
             commands
-                .entity(top_entity)
+                .entity(link_target)
                 .insert(AnimationEntityLink(entity));
         }
     }
 }
 
-/// Source: <https://github.com/bevyengine/bevy/discussions/5564>
 fn get_top_parent(curr_entity: Entity, parent_query: &Query<&Parent>) -> Entity {
-    let mut last_entity = curr_entity;
-    while let Ok(parent) = parent_query.get(last_entity) {
-        last_entity = parent.get();
-    }
-    last_entity
+    parent_query
+        .iter_ancestors(curr_entity)
+        .last()
+        .unwrap_or(curr_entity)
 }

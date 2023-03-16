@@ -33,7 +33,7 @@ impl Default for FixedAngleCamera {
 impl From<&ThirdPersonCamera> for FixedAngleCamera {
     fn from(third_person_camera: &ThirdPersonCamera) -> Self {
         Self {
-            transform: third_person_camera.transform,
+            transform: third_person_camera.fo,
             target: third_person_camera.target,
             up: third_person_camera.up,
             distance: third_person_camera.distance,

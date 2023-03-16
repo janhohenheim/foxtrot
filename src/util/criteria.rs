@@ -7,6 +7,5 @@ pub fn is_frozen(actions_frozen: Res<ActionsFrozen>) -> bool {
 
 #[allow(unused)]
 pub fn never() -> bool {
-    warn!("A system was skipped for debugging purposes!");
     false
 }

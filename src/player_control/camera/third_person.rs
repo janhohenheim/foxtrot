@@ -1,7 +1,7 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::{FirstPersonCamera, FixedAngleCamera};
-use crate::util::trait_extension::{Vec2Ext, Vec3Ext};
+use crate::util::trait_extension::{F32Ext, Vec2Ext, Vec3Ext};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct ThirdPersonCamera {
-    pub transform: Transform,
+    pub forward: Vec3,
     pub target: Vec3,
     pub up: Vec3,
     pub secondary_target: Option<Vec3>,
@@ -24,7 +24,7 @@ impl Default for ThirdPersonCamera {
     fn default() -> Self {
         Self {
             up: Vec3::Y,
-            transform: default(),
+            forward: default(),
             distance: 5.,
             target: default(),
             secondary_target: default(),
@@ -37,11 +37,9 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
     fn from(first_person_camera: &FirstPersonCamera) -> Self {
         let target = first_person_camera.transform.translation;
         let distance = first_person_camera.config.camera.third_person.min_distance;
-        let eye = target - first_person_camera.forward() * distance;
         let up = first_person_camera.up;
-        let eye = Transform::from_translation(eye).looking_at(target, up);
         Self {
-            transform: eye,
+            forward: first_person_camera.forward(),
             target,
             up,
             distance,
@@ -53,14 +51,8 @@ impl From<&FirstPersonCamera> for ThirdPersonCamera {
 
 impl From<&FixedAngleCamera> for ThirdPersonCamera {
     fn from(fixed_angle_camera: &FixedAngleCamera) -> Self {
-        let mut transform = fixed_angle_camera.transform;
-        let config = fixed_angle_camera.config.clone();
-        transform.rotate_axis(
-            transform.right(),
-            config.camera.third_person.most_acute_from_above,
-        );
         Self {
-            transform,
+            forward: fixed_angle_camera.forward(),
             target: fixed_angle_camera.target,
             up: fixed_angle_camera.up,
             distance: fixed_angle_camera.distance,
@@ -72,17 +64,21 @@ impl From<&FixedAngleCamera> for ThirdPersonCamera {
 
 impl ThirdPersonCamera {
     pub fn forward(&self) -> Vec3 {
-        self.transform.forward()
+        self.forward
     }
 
-    pub fn update_transform(
+    pub fn update_rig(
         &mut self,
         camera_actions: &ActionState<CameraAction>,
         rapier_context: &RapierContext,
         rig: &mut Rig,
     ) -> Result<()> {
         if let Some(secondary_target) = self.secondary_target {
-            self.align_with_primary_and_secondary_target(secondary_target, rig);
+            rig.driver_mut::<LookAt>().target = secondary_target;
+            rig.driver_mut::<Position>().position = secondary_target;
+        } else {
+            rig.driver_mut::<LookAt>().target = self.target;
+            rig.driver_mut::<Position>().position = self.target;
         }
 
         let camera_movement = camera_actions
@@ -96,11 +92,7 @@ impl ThirdPersonCamera {
         let zoom = camera_actions.clamped_value(CameraAction::Zoom);
         self.update_desired_distance(zoom);
         self.set_arm(rapier_context, rig);
-        rig.driver_mut::<LookAt>().target = self.target;
-        rig.driver_mut::<Position>().position = self.target;
-        self.transform.translation = self.target + rig.driver::<Arm>().offset;
-        self.transform.rotation = rig.driver_mut::<Rotation>().rotation;
-
+        self.forward = -rig.driver::<Arm>().offset.normalize();
         Ok(())
     }
 
@@ -119,54 +111,28 @@ impl ThirdPersonCamera {
         self.distance = (self.distance - zoom).clamp(min_distance, max_distance);
     }
 
-    fn align_with_primary_and_secondary_target(&mut self, secondary_target: Vec3, rig: &mut Rig) {
-        let target_to_secondary_target = (secondary_target - self.target).split(self.up).horizontal;
-        if target_to_secondary_target.is_approx_zero() {
-            return;
-        }
-        let target_to_secondary_target = target_to_secondary_target;
-        let eye_to_target = (self.target - self.transform.translation)
-            .split(self.up)
-            .horizontal;
-        let yaw = eye_to_target
-            .angle_between(target_to_secondary_target)
-            .to_degrees();
-        let yaw_pitch = rig.driver_mut::<YawPitch>();
-        yaw_pitch.rotate_yaw_pitch(yaw, 0.);
-    }
-
     fn set_arm(&mut self, rapier_context: &RapierContext, rig: &mut Rig) {
-        let line_of_sight_result = self.keep_line_of_sight(rapier_context);
-        let translation_smoothing =
-            if line_of_sight_result.correction == LineOfSightCorrection::Further {
-                self.config
-                    .camera
-                    .third_person
-                    .translation_smoothing_going_further
-            } else {
-                self.config
-                    .camera
-                    .third_person
-                    .translation_smoothing_going_closer
-            };
-        rig.driver_mut::<Arm>().offset = line_of_sight_result.offset;
-        //rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
-    }
-
-    pub fn keep_line_of_sight(&self, rapier_context: &RapierContext) -> LineOfSightResult {
+        let current_offset = rig.driver::<Arm>().offset;
         let origin = self.target;
-        let direction = -self.forward();
+        let direction = current_offset.normalize();
 
         let distance = self.get_raycast_distance(origin, direction, rapier_context);
         let offset = direction * distance;
 
-        let original_distance = self.target - self.transform.translation;
-        let correction = if distance * distance < original_distance.length_squared() - 1e-3 {
-            LineOfSightCorrection::Closer
+        let original_distance_squared = current_offset.length_squared();
+        let translation_smoothing = if distance.squared() < original_distance_squared - 1e-3 {
+            self.config
+                .camera
+                .third_person
+                .translation_smoothing_going_closer
         } else {
-            LineOfSightCorrection::Further
+            self.config
+                .camera
+                .third_person
+                .translation_smoothing_going_further
         };
-        LineOfSightResult { offset, correction }
+        rig.driver_mut::<Arm>().offset = offset;
+        //rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
     }
 
     pub fn get_raycast_distance(
@@ -186,16 +152,4 @@ impl ThirdPersonCamera {
             .map(|(_entity, toi)| toi - min_distance_to_objects)
             .unwrap_or(max_toi)
     }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LineOfSightResult {
-    pub offset: Vec3,
-    pub correction: LineOfSightCorrection,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LineOfSightCorrection {
-    Closer,
-    Further,
 }

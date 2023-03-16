@@ -26,3 +26,5 @@ min_distance = 0.01
 max_distance = 10.0
 zoom_speed = 0.7
 min_distance_to_objects = 1e-1
+zoom_in_smoothing = 0.3
+zoom_out_smoothing = 1.2

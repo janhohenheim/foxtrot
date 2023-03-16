@@ -98,6 +98,8 @@ pub struct ThirdPerson {
     pub zoom_speed: f32,
     pub min_distance_to_objects: f32,
     pub tracking_smoothing: f32,
+    pub zoom_in_smoothing: f32,
+    pub zoom_out_smoothing: f32,
 }
 
 impl Default for ThirdPerson {
@@ -112,6 +114,8 @@ impl Default for ThirdPerson {
             zoom_speed: 0.7,
             min_distance_to_objects: 5e-1,
             tracking_smoothing: 0.1,
+            zoom_in_smoothing: 0.3,
+            zoom_out_smoothing: 1.2,
         }
     }
 }

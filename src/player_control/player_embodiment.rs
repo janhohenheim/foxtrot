@@ -3,9 +3,7 @@ use crate::movement::general_movement::{
     apply_jumping, apply_walking, reset_movement_components, Grounded, Jumping, Walking,
 };
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
-use crate::player_control::camera::{
-    focus::switch_kind as switch_camera_kind, CameraUpdateSystemSet, IngameCamera, IngameCameraKind,
-};
+use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 use crate::util::log_error::log_errors;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
@@ -36,12 +34,10 @@ impl Plugin for PlayerEmbodimentPlugin {
                         .after(CameraUpdateSystemSet)
                         .after(reset_movement_components)
                         .before(apply_walking),
-                    handle_camera_kind
-                        .after(switch_camera_kind)
-                        .before(apply_walking),
                     handle_speed_effects,
                     rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
                     control_walking_sound.pipe(log_errors),
+                    handle_camera_kind,
                 )
                     .in_set(OnUpdate(GameState::Playing)),
             );
@@ -62,11 +58,11 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
-    camera_query: Query<&IngameCamera>,
+    camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
-    let Some(camera) = camera_query.iter().next() else {
+    let Some((camera, camera_transform)) = camera_query.iter().next() else {
         return Ok(());
     };
 
@@ -76,9 +72,9 @@ fn handle_horizontal_movement(
             .context("Player movement is not an axis pair")?
             .max_normalized()
         {
-            let forward = camera
+            let forward = camera_transform
                 .forward()
-                .split(transform.up())
+                .split(camera_transform.up())
                 .horizontal
                 .normalize();
             let sideways = forward.cross(transform.up());
@@ -86,7 +82,7 @@ fn handle_horizontal_movement(
             let sideways_action = sideways * movement.x;
 
             let is_looking_backward = forward.dot(forward_action) < 0.0;
-            let is_first_person = matches!(camera.kind, IngameCameraKind::FirstPerson(_));
+            let is_first_person = camera.kind == IngameCameraKind::FirstPerson;
             let modifier = if is_looking_backward && is_first_person {
                 0.7
             } else {
@@ -110,14 +106,16 @@ fn handle_camera_kind(
     for (camera_transform, camera) in camera_query.iter() {
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
-                IngameCameraKind::FirstPerson(_) => {
-                    let up = camera.up();
-                    let horizontal_direction = camera_transform.forward().split(up).horizontal;
+                IngameCameraKind::FirstPerson => {
+                    let camera_up = camera_transform.up();
+                    let horizontal_direction =
+                        camera_transform.forward().split(camera_up).horizontal;
                     let looking_target = player_transform.translation + horizontal_direction;
-                    player_transform.look_at(looking_target, up);
+                    let player_up = player_transform.up();
+                    player_transform.look_at(looking_target, player_up);
                     *visibility = Visibility::Hidden;
                 }
-                IngameCameraKind::ThirdPerson(_) | IngameCameraKind::FixedAngle(_) => {
+                IngameCameraKind::ThirdPerson | IngameCameraKind::FixedAngle => {
                     *visibility = Visibility::Inherited;
                 }
             }

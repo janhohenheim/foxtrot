@@ -72,10 +72,10 @@ fn update_interaction_opportunities(
 fn update_interaction_ui(
     mut commands: Commands,
     interaction_ui: Option<ResMut<InteractionUi>>,
-    non_player_query: Query<&Transform, Without<Player>>,
-    player_query: Query<&Transform, With<Player>>,
+    non_player_query: Query<&Transform, (Without<Player>, Without<IngameCamera>)>,
+    player_query: Query<&Transform, (With<Player>, Without<IngameCamera>)>,
     interaction_opportunities: Res<InteractionOpportunities>,
-    camera_query: Query<&IngameCamera>,
+    camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) -> Result<()> {
     let mut valid_target = None;
     for entity in interaction_opportunities.0.iter() {
@@ -83,9 +83,13 @@ fn update_interaction_ui(
             .get(*entity)
             .context("Failed to get transform of interaction target")?;
         for player_transform in player_query.iter() {
-            for camera in camera_query.iter() {
-                let is_facing_target =
-                    is_facing_target(*player_transform, *target_transform, camera);
+            for (camera, camera_transform) in camera_query.iter() {
+                let is_facing_target = is_facing_target(
+                    *player_transform,
+                    *target_transform,
+                    *camera_transform,
+                    camera,
+                );
                 if is_facing_target {
                     valid_target = Some(*entity);
                     break;
@@ -143,12 +147,13 @@ fn determine_player_and_target(
 fn is_facing_target(
     player_transform: Transform,
     target_transform: Transform,
+    camera_transform: Transform,
     camera: &IngameCamera,
 ) -> bool {
-    if matches!(camera.kind, IngameCameraKind::FixedAngle(_)) {
+    if camera.kind == IngameCameraKind::FixedAngle {
         return true;
     }
-    let camera_to_player = camera.forward();
+    let camera_to_player = camera_transform.forward();
     let player_to_target = target_transform.translation - player_transform.translation;
     let angle = camera_to_player.angle_between(player_to_target);
     angle < TAU / 8.

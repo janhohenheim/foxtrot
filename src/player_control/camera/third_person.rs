@@ -39,23 +39,27 @@ pub fn update_rig(
                 camera.target.up(),
                 transform.forward(),
                 yaw_pitch.pitch_degrees,
-                config.camera.third_person.most_acute_from_above,
-                config.camera.third_person.most_acute_from_below,
+                config.camera.third_person.min_degrees_looking_down,
+                config.camera.third_person.min_degrees_looking_up,
             );
         }
 
-        set_desired_distance(&config, &mut camera, actions);
+        set_desired_distance(&mut camera, actions, &config);
 
-        let distance = get_distance_to_collision(&rapier_context, &config, &mut camera, transform);
-        set_arm(&config, &mut rig, distance);
+        let distance = get_distance_to_collision(&rapier_context, &config, &camera, transform);
+        rig.driver_mut::<Arm>().offset.z = distance;
+        rig.driver_mut::<Smooth>().position_smoothness =
+            config.camera.third_person.translation_smoothing;
+        rig.driver_mut::<Smooth>().rotation_smoothness =
+            config.camera.third_person.rotation_smoothing;
     }
     Ok(())
 }
 
 fn set_desired_distance(
-    config: &GameConfig,
     camera: &mut IngameCamera,
     actions: &ActionState<CameraAction>,
+    config: &GameConfig,
 ) {
     let zoom = actions.clamped_value(CameraAction::Zoom) * config.camera.third_person.zoom_speed;
 
@@ -63,23 +67,6 @@ fn set_desired_distance(
         config.camera.third_person.min_distance,
         config.camera.third_person.max_distance,
     );
-}
-
-fn set_arm(config: &GameConfig, rig: &mut Rig, distance: f32) {
-    let current_distance = rig.driver::<Arm>().offset.z;
-    let translation_smoothing = if distance < current_distance - 1e-3 {
-        config
-            .camera
-            .third_person
-            .translation_smoothing_going_closer
-    } else {
-        config
-            .camera
-            .third_person
-            .translation_smoothing_going_further
-    };
-    rig.driver_mut::<Arm>().offset.z = distance;
-    rig.driver_mut::<Smooth>().position_smoothness = translation_smoothing;
 }
 
 fn get_distance_to_collision(

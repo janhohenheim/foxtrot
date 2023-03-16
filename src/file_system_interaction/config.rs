@@ -69,8 +69,8 @@ impl Default for FixedAngle {
 pub struct FirstPerson {
     pub translation_smoothing: f32,
     pub rotation_smoothing: f32,
-    pub most_acute_from_above: f32,
-    pub most_acute_from_below: f32,
+    pub min_degrees_looking_down: f32,
+    pub min_degrees_looking_up: f32,
 }
 
 impl Default for FirstPerson {
@@ -78,8 +78,8 @@ impl Default for FirstPerson {
         Self {
             translation_smoothing: 50.0,
             rotation_smoothing: 45.0,
-            most_acute_from_above: 36.,
-            most_acute_from_below: 50.,
+            min_degrees_looking_down: 36.,
+            min_degrees_looking_up: 50.,
         }
     }
 }
@@ -87,11 +87,10 @@ impl Default for FirstPerson {
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub struct ThirdPerson {
-    pub translation_smoothing_going_closer: f32,
-    pub translation_smoothing_going_further: f32,
+    pub translation_smoothing: f32,
     pub rotation_smoothing: f32,
-    pub most_acute_from_above: f32,
-    pub most_acute_from_below: f32,
+    pub min_degrees_looking_down: f32,
+    pub min_degrees_looking_up: f32,
     pub min_distance: f32,
     pub max_distance: f32,
     pub zoom_speed: f32,
@@ -101,11 +100,10 @@ pub struct ThirdPerson {
 impl Default for ThirdPerson {
     fn default() -> Self {
         Self {
-            translation_smoothing_going_closer: 1.0,
-            translation_smoothing_going_further: 0.3,
-            rotation_smoothing: 45.0,
-            most_acute_from_above: 36.,
-            most_acute_from_below: 50.,
+            translation_smoothing: 0.3,
+            rotation_smoothing: 40.3,
+            min_degrees_looking_down: 36.,
+            min_degrees_looking_up: 50.,
             min_distance: 1e-2,
             max_distance: 10.0,
             zoom_speed: 0.7,

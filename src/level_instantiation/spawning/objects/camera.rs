@@ -29,7 +29,11 @@ impl PrimedGameObjectSpawnerImplementor for CameraSpawner {
                     .with(YawPitch::new().yaw_degrees(45.0).pitch_degrees(-30.0))
                     .with(Smooth::new_position_rotation(0.3, 0.3))
                     .with(Arm::new(Vec3::Z * 5.))
-                    .with(LookAt::new(Vec3::ZERO).tracking_smoothness(1.25))
+                    .with(
+                        LookAt::new(Vec3::ZERO)
+                            .tracking_smoothness(0.5)
+                            .tracking_predictive(true),
+                    )
                     .build(),
                 create_camera_action_input_manager_bundle(),
                 Name::new("Main Camera"),

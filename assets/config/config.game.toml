@@ -10,21 +10,20 @@ rotation_smoothing = 0.3
 translation_smoothing = 0.3
 zoom_in_smoothing = 0.3
 zoom_out_smoothing = 1.2
-min_distance_to_objects = 1e-1
 
 [camera.first_person]
 translation_smoothing = 0.3
 rotation_smoothing = 0.3
-min_degrees_looking_down = 36.0
-min_degrees_looking_up = 50.0
-tracking_smoothing = 0.1
+min_degrees_looking_down = 10.0
+min_degrees_looking_up = 10.0
+tracking_smoothing = 1.5
 
 [camera.third_person]
-translation_smoothing = 0.3
-rotation_smoothing = 0.3
-tracking_smoothing = 0.1
-min_degrees_looking_down = 36.0
-min_degrees_looking_up = 50.0
+translation_smoothing = 0.5
+rotation_smoothing = 0.5
+tracking_smoothing = 0.8
+min_degrees_looking_down = 10.0
+min_degrees_looking_up = 90.0
 min_distance = 0.1
 max_distance = 10.0
 zoom_speed = 0.7

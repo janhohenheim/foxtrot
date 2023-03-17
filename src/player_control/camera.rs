@@ -1,3 +1,4 @@
+use crate::player_control::camera::kind::update_drivers;
 use crate::player_control::camera::{
     cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
     skydome::move_skydome,
@@ -37,6 +38,7 @@ impl Default for IngameCamera {
         }
     }
 }
+
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub enum IngameCameraKind {
@@ -67,6 +69,7 @@ impl Plugin for CameraPlugin {
             .add_systems(
                 (
                     update_kind,
+                    update_drivers,
                     set_camera_focus
                         .pipe(log_errors)
                         .in_set(SetCameraFocusLabel),

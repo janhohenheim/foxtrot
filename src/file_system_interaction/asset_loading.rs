@@ -1,6 +1,6 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
 use anyhow::{Context, Result};

@@ -2,6 +2,7 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::util::clamp_pitch_degrees;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
+use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{F32Ext, Vec2Ext};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -22,16 +23,26 @@ pub fn update_rig(
 ) -> Result<()> {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
-        rig.driver_mut::<LookAt>().target = camera.target.translation;
+        rig.driver_mut::<LookAt>().target = if let Some(secondary_target) = camera.secondary_target
+        {
+            secondary_target.translation
+        } else if camera.kind != IngameCameraKind::FirstPerson {
+            camera.target.translation
+        } else {
+            transform.translation + transform.forward()
+        };
         rig.driver_mut::<Position>().position = camera.target.translation;
 
         let camera_movement = actions
-            .axis_pair(CameraAction::Pan)
+            .axis_pair(CameraAction::Orbit)
             .context("Camera movement is not an axis pair")?
             .xy();
         if !camera_movement.is_approx_zero() {
             let yaw_pitch = rig.driver_mut::<YawPitch>();
-            if camera.kind != IngameCameraKind::FixedAngle {
+            if camera.kind == IngameCameraKind::FixedAngle {
+                yaw_pitch.yaw_degrees = 0.;
+                yaw_pitch.pitch_degrees = -90.;
+            } else {
                 let yaw = -camera_movement.x * config.camera.mouse_sensitivity_x;
                 let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
                 yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
@@ -53,19 +64,25 @@ pub fn update_rig(
                     most_acute_looking_down,
                     most_acute_looking_up,
                 );
-            } else {
-                yaw_pitch.yaw_degrees = 0.;
-                yaw_pitch.pitch_degrees = -90.;
             }
         }
 
-        if camera.kind != IngameCameraKind::FirstPerson {
-            set_desired_distance(&mut camera, actions, &config);
-            let distance = get_distance_to_collision(&rapier_context, &config, &camera, transform);
-            let zoom_smoothness = get_zoom_smoothness(&config, &camera, &mut rig, distance);
-            set_arm(&mut rig, distance, zoom_smoothness, dt);
-        } else {
-            rig.driver_mut::<Arm>().offset.z = 0.;
+        set_desired_distance(&mut camera, actions, &config);
+        match camera.kind {
+            IngameCameraKind::ThirdPerson => {
+                let distance =
+                    get_distance_to_collision(&rapier_context, &config, &camera, transform);
+                let zoom_smoothness = get_zoom_smoothness(&config, &camera, &mut rig, distance);
+                set_arm(&mut rig, distance, zoom_smoothness, dt);
+            }
+            IngameCameraKind::FirstPerson => {
+                rig.driver_mut::<Arm>().offset.z = 0.;
+            }
+            IngameCameraKind::FixedAngle => {
+                let zoom_smoothness =
+                    get_zoom_smoothness(&config, &camera, &mut rig, camera.desired_distance);
+                set_arm(&mut rig, camera.desired_distance, zoom_smoothness, dt);
+            }
         }
 
         set_smoothness(&mut rig, &config, &camera);
@@ -121,9 +138,7 @@ fn get_zoom_smoothness(
 }
 
 fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
-    // Taken from https://github.com/h3r2tic/dolly/blob/main/src/util.rs#L34
-    const SMOOTHNESS_MULTIPLIER: f32 = 8.0;
-    let factor = 1.0 - (-SMOOTHNESS_MULTIPLIER * dt / zoom_smoothness.max(1e-5)).exp();
+    let factor = smoothness_to_lerp_factor(zoom_smoothness, dt);
     let arm_length = &mut rig.driver_mut::<Arm>().offset.z;
     *arm_length = arm_length.lerp(distance, factor);
 }
@@ -143,7 +158,7 @@ fn set_desired_distance(
             config.camera.fixed_angle.min_distance,
             config.camera.fixed_angle.max_distance,
         ),
-        _ => unreachable!(),
+        IngameCameraKind::FirstPerson => (0.0, 0.0),
     };
     camera.desired_distance = (camera.desired_distance - zoom).clamp(min_distance, max_distance);
 }

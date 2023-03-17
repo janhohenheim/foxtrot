@@ -11,6 +11,7 @@ impl Vec3Ext for Vec3 {
         self.length_squared() < 1e-5
     }
 
+    #[inline]
     fn split(self, up: Vec3) -> SplitVec3 {
         let vertical = up * self.dot(up);
         let horizontal = self - vertical;
@@ -153,8 +154,9 @@ impl F32Ext for f32 {
     }
 }
 
-pub trait TransformExt {
+pub trait TransformExt: Copy {
     fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform;
+    fn lerp(self, other: Transform, ratio: f32) -> Transform;
 }
 
 impl TransformExt for Transform {
@@ -163,5 +165,16 @@ impl TransformExt for Transform {
         let horizontal_direction = direction - up * direction.dot(up);
         let look_target = self.translation + horizontal_direction;
         self.looking_at(look_target, up)
+    }
+
+    fn lerp(self, other: Transform, ratio: f32) -> Transform {
+        let translation = self.translation.lerp(other.translation, ratio);
+        let rotation = self.rotation.slerp(other.rotation, ratio);
+        let scale = self.scale.lerp(other.scale, ratio);
+        Transform {
+            translation,
+            rotation,
+            scale,
+        }
     }
 }

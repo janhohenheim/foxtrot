@@ -4,7 +4,7 @@ use crate::movement::general_movement::{
 };
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
@@ -104,12 +104,10 @@ fn handle_camera_kind(
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
                 IngameCameraKind::FirstPerson => {
-                    let camera_up = camera_transform.up();
-                    let horizontal_direction =
-                        camera_transform.forward().split(camera_up).horizontal;
+                    let up = player_transform.up();
+                    let horizontal_direction = camera_transform.forward().split(up).horizontal;
                     let looking_target = player_transform.translation + horizontal_direction;
-                    let player_up = player_transform.up();
-                    player_transform.look_at(looking_target, player_up);
+                    player_transform.look_at(looking_target, up);
                     *visibility = Visibility::Hidden;
                 }
                 IngameCameraKind::ThirdPerson | IngameCameraKind::FixedAngle => {

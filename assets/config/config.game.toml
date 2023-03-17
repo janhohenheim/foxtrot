@@ -12,8 +12,8 @@ zoom_in_smoothing = 0.3
 zoom_out_smoothing = 1.2
 
 [camera.first_person]
-translation_smoothing = 0.3
-rotation_smoothing = 0.3
+translation_smoothing = 0.01
+rotation_smoothing = 0.1
 min_degrees_looking_down = 10.0
 min_degrees_looking_up = 10.0
 tracking_smoothing = 1.5

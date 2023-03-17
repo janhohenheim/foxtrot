@@ -72,7 +72,7 @@ fn set_first_person_drivers_with_target(rig: &mut Rig) {
 
 fn set_fixed_angle_drivers(rig: &mut Rig) {
     rig.ensure_driver_exists(Arm::new(default()));
-    rig.override_driver(LookAt::new(default()).tracking_predictive(true));
+    rig.remove_driver::<LookAt>();
 }
 
 trait RigExt {

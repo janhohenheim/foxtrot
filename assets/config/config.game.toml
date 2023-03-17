@@ -3,11 +3,14 @@ mouse_sensitivity_x = 8e-4
 mouse_sensitivity_y = 5e-4
 
 [camera.fixed_angle]
-min_distance = 5.0
+min_distance = 9.0
 max_distance = 20.0
 zoom_speed = 0.7
 rotation_smoothing = 45.0
 translation_smoothing = 50.0
+zoom_in_smoothing = 0.3
+zoom_out_smoothing = 1.2
+min_distance_to_objects = 1e-1
 
 [camera.first_person]
 translation_smoothing = 0.3

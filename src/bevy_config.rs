@@ -1,4 +1,4 @@
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PresentMode;

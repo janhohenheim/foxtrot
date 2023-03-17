@@ -1,4 +1,4 @@
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::util::trait_extension::MeshExt;
 use anyhow::{bail, Context, Result};
 use bevy::prelude::*;

@@ -2,7 +2,7 @@ use crate::player_control::camera::{
     cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
     skydome::move_skydome,
 };
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -22,6 +22,7 @@ mod util;
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
     pub target: Transform,
+    pub secondary_target: Option<Transform>,
     pub desired_distance: f32,
     pub kind: IngameCameraKind,
 }
@@ -29,8 +30,9 @@ pub struct IngameCamera {
 impl Default for IngameCamera {
     fn default() -> Self {
         Self {
-            target: default(),
             desired_distance: 5.,
+            target: default(),
+            secondary_target: default(),
             kind: default(),
         }
     }

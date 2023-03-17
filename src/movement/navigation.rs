@@ -3,7 +3,7 @@ use crate::dev::dev_editor::DevEditorWindow;
 use crate::level_instantiation::spawning::objects::npc;
 use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
 use crate::player_control::player_embodiment::Player;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 #[cfg(feature = "dev")]

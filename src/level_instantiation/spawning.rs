@@ -18,7 +18,7 @@ use crate::level_instantiation::spawning::spawn::{
     despawn, spawn_delayed, spawn_requested, DelayedSpawnEvents, Despawn,
 };
 use crate::shader::Materials;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
 use anyhow::Result;

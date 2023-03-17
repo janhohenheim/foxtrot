@@ -2,7 +2,7 @@ use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instantiation::spawning::{
     GameObject, SpawnEvent, SpawnRequestedLabel, SpawnTracker,
 };
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::world_interaction::interactions_ui::InteractionOpportunities;

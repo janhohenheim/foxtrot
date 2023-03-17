@@ -28,7 +28,7 @@ pub fn update_kind(
             }
             IngameCameraKind::FixedAngle
                 if camera.desired_distance < config.camera.fixed_angle.min_distance + 1e-5
-                    && zoom < -1e-5 =>
+                    && zoomed_in =>
             {
                 Some(IngameCameraKind::ThirdPerson)
             }

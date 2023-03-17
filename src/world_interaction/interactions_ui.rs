@@ -2,7 +2,7 @@ use crate::player_control::actions::PlayerAction;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use crate::GameState;
 use anyhow::{Context, Result};

@@ -5,7 +5,7 @@ use std::time::Duration;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
 pub use components::*;

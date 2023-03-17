@@ -221,12 +221,12 @@ pub fn apply_walking(
 fn sync_models(
     time: Res<Time>,
     mut commands: Commands,
-    without_model: Query<&Transform, Without<Model>>,
-    mut with_model: Query<(Entity, &mut Transform, &Model)>,
+    without_model: Query<(&Transform, &Visibility), Without<Model>>,
+    mut with_model: Query<(Entity, &mut Transform, &mut Visibility, &Model)>,
 ) -> Result<()> {
     let dt = time.delta_seconds();
-    for (model_entity, mut model_transform, model) in with_model.iter_mut() {
-        if let Ok(target_transform) = without_model.get(model.target) {
+    for (model_entity, mut model_transform, mut visibility, model) in with_model.iter_mut() {
+        if let Ok((target_transform, target_visibility)) = without_model.get(model.target) {
             const SMOOTHNESS: f32 = 20.;
             let scale = (SMOOTHNESS * dt).min(1.);
             model_transform.translation = model_transform
@@ -235,6 +235,7 @@ fn sync_models(
             model_transform.rotation = model_transform
                 .rotation
                 .slerp(target_transform.rotation, scale);
+            *visibility = *target_visibility;
         } else {
             commands.entity(model_entity).despawn_recursive();
         }

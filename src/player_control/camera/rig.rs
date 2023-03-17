@@ -56,9 +56,9 @@ fn get_arm_distance(
 ) -> Option<f32> {
     match camera.kind {
         IngameCameraKind::ThirdPerson => Some(get_distance_to_collision(
-            &rapier_context,
-            &config,
-            &camera,
+            rapier_context,
+            config,
+            camera,
             transform,
         )),
         IngameCameraKind::FixedAngle => Some(camera.desired_distance),
@@ -84,7 +84,7 @@ fn set_yaw_pitch(
     let yaw = -camera_movement.x * config.camera.mouse_sensitivity_x;
     let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
     yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
-    let (most_acute_looking_down, most_acute_looking_up) = get_most_acute_degrees(&config, &camera);
+    let (most_acute_looking_down, most_acute_looking_up) = get_most_acute_degrees(config, camera);
     yaw_pitch.pitch_degrees = clamp_pitch_degrees(
         camera.target.up(),
         transform.forward(),

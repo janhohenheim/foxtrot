@@ -87,7 +87,7 @@ regex = "1"
 chrono = "0.4"
 glob = "0.3"
 oxidized_navigation = "0.3"
-bitflags = "1"
+bitflags = "2"
 iyes_progress = "0.8"
 unicode-segmentation = "1"
 bevy_hanabi = { version = "0.6", optional = true }
@@ -97,7 +97,7 @@ leafwing-input-manager = { version = "0.9", features = [ "egui" ] }
 bevy_editor_pls = { version = "0.3", optional = true}
 bevy_prototype_debug_lines = { version = "0.10", optional = true, features = ["3d"] }
 wasm-bindgen = { version = "0.2", optional = true }
-warbler_grass = "0.3"
+warbler_grass = "0.3.1"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
 bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "b2f5dc787664cb8c3d92f792cbd437886fc090c6" }
 
@@ -108,6 +108,3 @@ image = { version = "0.24", default-features = false }
 [build-dependencies]
 embed-resource = "1.4"
 
-[patch.crates-io]
-# Fix https://github.com/EmiOnGit/warbler_grass/issues/52
-warbler_grass = { git = "https://github.com/EmiOnGit/warbler_grass", rev = "3fd85a393eee3c1bdeef5d8290a072befe3bd35f" }

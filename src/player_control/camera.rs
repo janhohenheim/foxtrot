@@ -1,18 +1,20 @@
-use crate::level_instantiation::spawning::objects::skydome::Skydome;
-use crate::player_control::actions::ActionsFrozen;
-use crate::player_control::camera::focus::set_camera_focus;
+use crate::player_control::camera::{
+    cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
+    skydome::move_skydome,
+};
 use crate::util::log_error::log_errors;
 use crate::GameState;
-use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::window::CursorGrabMode;
-use bevy::window::PrimaryWindow;
 use bevy_dolly::prelude::*;
+pub use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
 use ui::*;
 
+mod cursor;
 pub mod focus;
-mod third_person;
+mod kind;
+mod rig;
+mod skydome;
 mod ui;
 mod util;
 
@@ -59,15 +61,14 @@ impl Plugin for CameraPlugin {
             .add_system(Dolly::<IngameCamera>::update_active)
             .add_system(spawn_ui_camera.on_startup())
             .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-            .add_systems(
-                (cursor_grab_system.pipe(log_errors),).in_set(OnUpdate(GameState::Playing)),
-            )
+            .add_systems((grab_cursor.pipe(log_errors),).in_set(OnUpdate(GameState::Playing)))
             .add_systems(
                 (
+                    update_kind,
                     set_camera_focus
                         .pipe(log_errors)
                         .in_set(SetCameraFocusLabel),
-                    third_person::update_rig.pipe(log_errors),
+                    update_rig.pipe(log_errors),
                     move_skydome,
                 )
                     .chain()
@@ -79,43 +80,3 @@ impl Plugin for CameraPlugin {
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub struct CameraUpdateSystemSet;
-
-fn move_skydome(
-    camera_query: Query<&Transform, (With<IngameCamera>, Without<Skydome>)>,
-    mut skydome_query: Query<&mut Transform, (Without<IngameCamera>, With<Skydome>)>,
-) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("move_skydome").entered();
-    for camera_transform in camera_query.iter() {
-        for mut skydome_transform in skydome_query.iter_mut() {
-            skydome_transform.translation = camera_transform.translation;
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
-pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
-
-fn cursor_grab_system(
-    mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
-    actions_frozen: Res<ActionsFrozen>,
-    force_cursor_grab: Res<ForceCursorGrabMode>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("cursor_grab_system").entered();
-    let mut window = primary_windows
-        .get_single_mut()
-        .context("Failed to get primary window")?;
-    let cursor = &mut window.cursor;
-    if let Some(mode) = force_cursor_grab.0 {
-        cursor.grab_mode = mode;
-        cursor.visible = mode != CursorGrabMode::Locked;
-    } else if actions_frozen.is_frozen() {
-        cursor.grab_mode = CursorGrabMode::None;
-        cursor.visible = true;
-    } else {
-        cursor.grab_mode = CursorGrabMode::Locked;
-        cursor.visible = false;
-    }
-    Ok(())
-}

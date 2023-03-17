@@ -50,6 +50,9 @@ pub struct FixedAngle {
     pub zoom_speed: f32,
     pub rotation_smoothing: f32,
     pub translation_smoothing: f32,
+    pub zoom_in_smoothing: f32,
+    pub zoom_out_smoothing: f32,
+    pub min_distance_to_objects: f32,
 }
 
 impl Default for FixedAngle {
@@ -60,6 +63,9 @@ impl Default for FixedAngle {
             zoom_speed: 0.7,
             rotation_smoothing: 45.0,
             translation_smoothing: 50.0,
+            zoom_in_smoothing: 0.3,
+            zoom_out_smoothing: 1.2,
+            min_distance_to_objects: 5e-1,
         }
     }
 }

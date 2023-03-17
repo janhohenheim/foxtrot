@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use bevy::prelude::*;
+use std::time::Duration;
 
 use bevy_rapier3d::prelude::*;
 mod components;
@@ -169,12 +170,16 @@ fn play_animations(
 
         if !grounded.0 {
             animation_player
-                .play(animations.aerial.clone_weak())
+                .play_with_transition(animations.aerial.clone_weak(), Duration::from_secs_f32(0.2))
                 .repeat();
         } else if has_horizontal_movement {
-            animation_player.play(animations.walk.clone_weak()).repeat();
+            animation_player
+                .play_with_transition(animations.walk.clone_weak(), Duration::from_secs_f32(0.2))
+                .repeat();
         } else {
-            animation_player.play(animations.idle.clone_weak()).repeat();
+            animation_player
+                .play_with_transition(animations.idle.clone_weak(), Duration::from_secs_f32(0.2))
+                .repeat();
         }
     }
     Ok(())

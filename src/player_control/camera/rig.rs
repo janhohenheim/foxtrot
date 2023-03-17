@@ -23,71 +23,108 @@ pub fn update_rig(
 ) -> Result<()> {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
-        rig.driver_mut::<LookAt>().target = if let Some(secondary_target) = camera.secondary_target
-        {
-            secondary_target.translation
-        } else if camera.kind != IngameCameraKind::FirstPerson {
-            camera.target.translation
-        } else {
-            transform.translation + transform.forward()
-        };
-        rig.driver_mut::<Position>().position = camera.target.translation;
-
-        let camera_movement = actions
-            .axis_pair(CameraAction::Orbit)
-            .context("Camera movement is not an axis pair")?
-            .xy();
-        if !camera_movement.is_approx_zero() {
+        set_look_at(&mut rig, &camera);
+        set_position(&mut rig, &camera);
+        if camera.kind == IngameCameraKind::FixedAngle {
             let yaw_pitch = rig.driver_mut::<YawPitch>();
-            if camera.kind == IngameCameraKind::FixedAngle {
-                yaw_pitch.yaw_degrees = 0.;
-                yaw_pitch.pitch_degrees = -90.;
-            } else {
-                let yaw = -camera_movement.x * config.camera.mouse_sensitivity_x;
-                let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
-                yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
-                let (most_acute_looking_down, most_acute_looking_up) = match camera.kind {
-                    IngameCameraKind::ThirdPerson => (
-                        config.camera.third_person.min_degrees_looking_down,
-                        config.camera.third_person.min_degrees_looking_up,
-                    ),
-                    IngameCameraKind::FirstPerson => (
-                        config.camera.first_person.min_degrees_looking_down,
-                        config.camera.first_person.min_degrees_looking_up,
-                    ),
-                    _ => unreachable!(),
-                };
-                yaw_pitch.pitch_degrees = clamp_pitch_degrees(
-                    camera.target.up(),
-                    transform.forward(),
-                    yaw_pitch.pitch_degrees,
-                    most_acute_looking_down,
-                    most_acute_looking_up,
-                );
+            yaw_pitch.yaw_degrees = 0.;
+            yaw_pitch.pitch_degrees = -90.;
+        } else {
+            let camera_movement = get_camera_movement(actions)?;
+            if !camera_movement.is_approx_zero() {
+                set_yaw_pitch(&mut rig, &camera, transform, camera_movement, &config);
             }
         }
 
         set_desired_distance(&mut camera, actions, &config);
-        match camera.kind {
-            IngameCameraKind::ThirdPerson => {
-                let distance =
-                    get_distance_to_collision(&rapier_context, &config, &camera, transform);
-                let zoom_smoothness = get_zoom_smoothness(&config, &camera, &mut rig, distance);
-                set_arm(&mut rig, distance, zoom_smoothness, dt);
-            }
-            IngameCameraKind::FirstPerson => {
-                rig.driver_mut::<Arm>().offset.z = 0.;
-            }
-            IngameCameraKind::FixedAngle => {
-                let zoom_smoothness =
-                    get_zoom_smoothness(&config, &camera, &mut rig, camera.desired_distance);
-                set_arm(&mut rig, camera.desired_distance, zoom_smoothness, dt);
-            }
+        let distance = get_arm_distance(&camera, transform, &rapier_context, &config);
+        if let Some(distance) = distance {
+            let zoom_smoothness = get_zoom_smoothness(&config, &camera, &rig, distance);
+            set_arm(&mut rig, distance, zoom_smoothness, dt);
         }
 
         set_smoothness(&mut rig, &config, &camera);
     }
     Ok(())
+}
+
+fn get_arm_distance(
+    camera: &IngameCamera,
+    transform: &Transform,
+    rapier_context: &RapierContext,
+    config: &GameConfig,
+) -> Option<f32> {
+    match camera.kind {
+        IngameCameraKind::ThirdPerson => Some(get_distance_to_collision(
+            &rapier_context,
+            &config,
+            &camera,
+            transform,
+        )),
+        IngameCameraKind::FixedAngle => Some(camera.desired_distance),
+        _ => None,
+    }
+}
+
+fn get_camera_movement(actions: &ActionState<CameraAction>) -> Result<Vec2> {
+    actions
+        .axis_pair(CameraAction::Orbit)
+        .context("Camera movement is not an axis pair")
+        .map(|pair| pair.xy())
+}
+
+fn set_yaw_pitch(
+    rig: &mut Rig,
+    camera: &IngameCamera,
+    transform: &Transform,
+    camera_movement: Vec2,
+    config: &GameConfig,
+) {
+    let yaw_pitch = rig.driver_mut::<YawPitch>();
+    let yaw = -camera_movement.x * config.camera.mouse_sensitivity_x;
+    let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
+    yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
+    let (most_acute_looking_down, most_acute_looking_up) = get_most_acute_degrees(&config, &camera);
+    yaw_pitch.pitch_degrees = clamp_pitch_degrees(
+        camera.target.up(),
+        transform.forward(),
+        yaw_pitch.pitch_degrees,
+        most_acute_looking_down,
+        most_acute_looking_up,
+    );
+}
+
+fn set_look_at(rig: &mut Rig, camera: &IngameCamera) {
+    if let Some(look_at) = rig.try_driver_mut::<LookAt>() {
+        look_at.target = if camera.kind != IngameCameraKind::FixedAngle && let Some(secondary_target) = camera.secondary_target {
+            secondary_target.translation
+        } else {
+            camera.target.translation
+        }
+    };
+}
+
+fn set_position(rig: &mut Rig, camera: &IngameCamera) {
+    let target = if camera.kind != IngameCameraKind::FirstPerson && let Some(secondary_target) = camera.secondary_target {
+        secondary_target.translation
+    } else {
+        camera.target.translation
+    };
+    rig.driver_mut::<Position>().position = target;
+}
+
+fn get_most_acute_degrees(config: &GameConfig, camera: &IngameCamera) -> (f32, f32) {
+    match camera.kind {
+        IngameCameraKind::ThirdPerson => (
+            config.camera.third_person.min_degrees_looking_down,
+            config.camera.third_person.min_degrees_looking_up,
+        ),
+        IngameCameraKind::FirstPerson => (
+            config.camera.first_person.min_degrees_looking_down,
+            config.camera.first_person.min_degrees_looking_up,
+        ),
+        _ => unreachable!(),
+    }
 }
 
 fn set_smoothness(rig: &mut Rig, config: &GameConfig, camera: &IngameCamera) {
@@ -104,7 +141,9 @@ fn set_smoothness(rig: &mut Rig, config: &GameConfig, camera: &IngameCamera) {
                 config.camera.first_person.translation_smoothing;
             rig.driver_mut::<Smooth>().rotation_smoothness =
                 config.camera.first_person.rotation_smoothing;
-            rig.driver_mut::<LookAt>().smoothness = config.camera.first_person.tracking_smoothing;
+            if let Some(look_at) = rig.try_driver_mut::<LookAt>() {
+                look_at.smoothness = config.camera.first_person.tracking_smoothing;
+            }
         }
         IngameCameraKind::FixedAngle => {
             rig.driver_mut::<Smooth>().position_smoothness =
@@ -179,7 +218,6 @@ fn get_distance_to_collision(
 
     let min_distance = match camera.kind {
         IngameCameraKind::ThirdPerson => config.camera.third_person.min_distance_to_objects,
-        IngameCameraKind::FixedAngle => config.camera.fixed_angle.min_distance_to_objects,
         _ => unreachable!(),
     };
 

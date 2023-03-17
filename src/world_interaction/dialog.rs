@@ -198,10 +198,6 @@ fn present_choices(
                 if ui.button(&text).clicked()
                     || actions.just_pressed(PlayerAction::numbered_choice(index as u8 + 1))
                 {
-                    info!("Picked choice: {:?}", choice_id);
-                    info!("Text: {:?}", text);
-                    info!("Choice: {:?}", choice);
-                    info!("Index: {:?}", index);
                     picked_choice = Some((choice_id.clone(), choice.clone()));
                 }
             }

@@ -73,7 +73,15 @@ fn handle_horizontal_movement(
             .max_normalized()
         {
             let up = player_transform.up();
-            let forward = camera_transform.forward().split(up).horizontal.normalize();
+            let forward = if camera.kind == IngameCameraKind::FixedAngle {
+                camera_transform.up()
+            } else {
+                camera_transform.forward()
+            }
+            .split(up)
+            .horizontal
+            .normalize();
+
             let sideways = forward.cross(up);
             let forward_action = forward * movement.y;
             let sideways_action = sideways * movement.x;

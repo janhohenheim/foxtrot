@@ -1,6 +1,5 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::CameraAction;
-use crate::player_control::camera::util::clamp_pitch_degrees;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{F32Ext, Vec2Ext};
@@ -222,7 +221,61 @@ fn get_distance_to_collision(
     };
 
     rapier_context
-        .cast_ray(origin, direction, max_toi, solid, filter)
-        .map(|(_entity, toi)| toi - min_distance)
+        .cast_ray_and_get_normal(origin, direction, max_toi, solid, filter)
+        .map(|(_entity, ray_intersection)| {
+            get_distance_such_that_min_distance_from_collision_is_ensured(
+                ray_intersection,
+                direction,
+                min_distance,
+            )
+        })
         .unwrap_or(max_toi)
+}
+
+fn get_distance_such_that_min_distance_from_collision_is_ensured(
+    ray_intersection: RayIntersection,
+    direction: Vec3,
+    min_distance: f32,
+) -> f32 {
+    //  Wall
+    //  ↑
+    //  │╲
+    //  │  ╲
+    //  │    ╲
+    //  │      ╲
+    //  │        ╲
+    //  │      ( α ╲
+    //  └─────────────→ Normal, magnitude = min_distance
+    //  │              ╲
+    //  │                ╲
+    //  │                  ╲
+    let adjacent_side = min_distance;
+    let angle = direction.angle_between(-ray_intersection.normal);
+    let hypotenuse = adjacent_side / angle.cos();
+    ray_intersection.toi - hypotenuse
+}
+
+pub fn clamp_pitch_degrees(
+    up: Vec3,
+    forward: Vec3,
+    angle: f32,
+    most_acute_from_above: f32,
+    most_acute_from_below: f32,
+) -> f32 {
+    let angle_to_axis = forward.angle_between(up).to_degrees();
+    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > 90. {
+        (180. - angle_to_axis, most_acute_from_above, -1.)
+    } else {
+        (angle_to_axis, most_acute_from_below, 1.)
+    };
+    let new_angle = if acute_angle_to_axis < most_acute_allowed {
+        angle - sign * (most_acute_allowed - acute_angle_to_axis)
+    } else {
+        angle
+    };
+    if new_angle.abs() < 1. {
+        0.
+    } else {
+        new_angle
+    }
 }

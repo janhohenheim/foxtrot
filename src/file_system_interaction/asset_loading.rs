@@ -1,7 +1,9 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
+use crate::util::pipe::log_errors;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
+use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -30,7 +32,8 @@ impl Plugin for LoadingPlugin {
             .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
             .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
             .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
-            .add_system(show_progress.in_set(OnUpdate(GameState::Loading)));
+            .add_system(show_progress.in_set(OnUpdate(GameState::Loading)))
+            .add_system(update_config.pipe(log_errors));
     }
 }
 
@@ -133,4 +136,26 @@ fn show_progress(
             });
         });
     }
+}
+
+fn update_config(
+    mut commands: Commands,
+    config: Res<Assets<GameConfig>>,
+    mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
+) -> Result<()> {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("update_config").entered();
+    for event in config_asset_events.iter() {
+        match event {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+                // Guaranteed by Bevy to not fail
+                let config = config
+                    .get(handle)
+                    .context("Failed to get config even though it was just created")?;
+                commands.insert_resource(config.clone());
+            }
+            AssetEvent::Removed { .. } => {}
+        }
+    }
+    Ok(())
 }

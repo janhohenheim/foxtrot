@@ -1,4 +1,4 @@
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -16,7 +16,7 @@ impl Plugin for PhysicsPlugin {
                 timestep_mode: TimestepMode::Variable {
                     max_dt: 1.0 / 20.0,
                     time_scale: 1.0,
-                    substeps: 1,
+                    substeps: 4,
                 },
                 ..default()
             })

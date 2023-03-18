@@ -67,10 +67,10 @@ fn set_yaw_pitch(rig: &mut Rig, camera: &IngameCamera, camera_movement: Vec2, co
 
 fn set_look_at(rig: &mut Rig, camera: &IngameCamera) {
     if let Some(look_at) = rig.try_driver_mut::<LookAt>() {
-        look_at.target = if let Some(secondary_target) = camera.secondary_target {
-            secondary_target.translation
-        } else {
-            camera.target.translation
+        if let Some(secondary_target) = camera.secondary_target {
+            look_at.target = secondary_target.translation
+        } else if camera.kind != IngameCameraKind::FirstPerson {
+            look_at.target = camera.target.translation
         }
     };
 }

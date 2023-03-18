@@ -1,6 +1,6 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::{ActionsFrozen, PlayerAction};
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
 pub use crate::world_interaction::dialog::resources::{
@@ -198,10 +198,6 @@ fn present_choices(
                 if ui.button(&text).clicked()
                     || actions.just_pressed(PlayerAction::numbered_choice(index as u8 + 1))
                 {
-                    info!("Picked choice: {:?}", choice_id);
-                    info!("Text: {:?}", text);
-                    info!("Choice: {:?}", choice);
-                    info!("Index: {:?}", index);
                     picked_choice = Some((choice_id.clone(), choice.clone()));
                 }
             }

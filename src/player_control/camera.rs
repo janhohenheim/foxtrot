@@ -1,97 +1,50 @@
-use crate::file_system_interaction::asset_loading::ConfigAssets;
-use crate::file_system_interaction::config::GameConfig;
-use crate::level_instantiation::spawning::objects::skydome::Skydome;
-use crate::player_control::actions::{ActionsFrozen, CameraAction};
-use crate::player_control::camera::focus::{set_camera_focus, switch_kind};
-use crate::util::log_error::log_errors;
+use crate::player_control::camera::kind::update_drivers;
+use crate::player_control::camera::{
+    cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
+    skydome::move_skydome,
+};
+use crate::util::pipe::log_errors;
 use crate::GameState;
-use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::window::CursorGrabMode;
-use bevy::window::PrimaryWindow;
-use bevy_rapier3d::prelude::*;
-pub use first_person::FirstPersonCamera;
-pub use fixed_angle::FixedAngleCamera;
-use leafwing_input_manager::prelude::ActionState;
+use bevy_dolly::prelude::*;
+pub use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
-pub use third_person::ThirdPersonCamera;
 use ui::*;
 
-mod first_person;
-mod fixed_angle;
+mod cursor;
 pub mod focus;
-mod third_person;
+mod kind;
+mod rig;
+mod skydome;
 mod ui;
-mod util;
 
-#[derive(
-    Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect, Default,
-)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Component, Serialize, Deserialize)]
 pub struct IngameCamera {
+    pub target: Transform,
+    pub secondary_target: Option<Transform>,
+    pub desired_distance: f32,
     pub kind: IngameCameraKind,
 }
 
-impl IngameCamera {
-    pub fn set_primary_target(&mut self, target: Vec3) {
-        match &mut self.kind {
-            IngameCameraKind::ThirdPerson(camera) => {
-                camera.target = target;
-            }
-            IngameCameraKind::FirstPerson(camera) => {
-                camera.transform.translation = target;
-            }
-            IngameCameraKind::FixedAngle(camera) => {
-                camera.target = target;
-            }
-        }
-    }
-
-    pub fn up(&self) -> Vec3 {
-        match &self.kind {
-            IngameCameraKind::ThirdPerson(camera) => camera.up,
-            IngameCameraKind::FirstPerson(camera) => camera.up,
-            IngameCameraKind::FixedAngle(camera) => camera.up,
-        }
-    }
-
-    pub fn up_mut(&mut self) -> &mut Vec3 {
-        match &mut self.kind {
-            IngameCameraKind::ThirdPerson(camera) => &mut camera.up,
-            IngameCameraKind::FirstPerson(camera) => &mut camera.up,
-            IngameCameraKind::FixedAngle(camera) => &mut camera.up,
-        }
-    }
-
-    pub fn forward(&self) -> Vec3 {
-        match &self.kind {
-            IngameCameraKind::ThirdPerson(camera) => camera.forward(),
-            IngameCameraKind::FirstPerson(camera) => camera.forward(),
-            IngameCameraKind::FixedAngle(camera) => camera.forward(),
-        }
-    }
-
-    pub fn secondary_target_mut(&mut self) -> &mut Option<Vec3> {
-        match &mut self.kind {
-            IngameCameraKind::ThirdPerson(camera) => &mut camera.secondary_target,
-            IngameCameraKind::FirstPerson(camera) => &mut camera.look_target,
-            IngameCameraKind::FixedAngle(camera) => &mut camera.secondary_target,
+impl Default for IngameCamera {
+    fn default() -> Self {
+        Self {
+            desired_distance: 5.,
+            target: default(),
+            secondary_target: default(),
+            kind: default(),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub enum IngameCameraKind {
-    ThirdPerson(ThirdPersonCamera),
-    FirstPerson(FirstPersonCamera),
-    FixedAngle(FixedAngleCamera),
-}
-
-impl Default for IngameCameraKind {
-    fn default() -> Self {
-        Self::ThirdPerson(ThirdPersonCamera::default())
-    }
+    #[default]
+    ThirdPerson,
+    FirstPerson,
+    FixedAngle,
 }
 
 /// Handles the main ingame camera, i.e. not the UI camera in the menu.
@@ -105,161 +58,29 @@ pub struct SetCameraFocusLabel;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<UiCamera>()
-            .register_type::<ThirdPersonCamera>()
             .register_type::<IngameCamera>()
             .register_type::<IngameCameraKind>()
-            .register_type::<FirstPersonCamera>()
-            .register_type::<FixedAngleCamera>()
             .init_resource::<ForceCursorGrabMode>()
+            .add_system(Dolly::<IngameCamera>::update_active)
             .add_system(spawn_ui_camera.on_startup())
             .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
+            .add_systems((grab_cursor.pipe(log_errors),).in_set(OnUpdate(GameState::Playing)))
             .add_systems(
                 (
-                    cursor_grab_system.pipe(log_errors),
-                    init_camera.pipe(log_errors),
+                    update_kind,
+                    update_drivers,
                     set_camera_focus
                         .pipe(log_errors)
                         .in_set(SetCameraFocusLabel),
-                    switch_kind.after(SetCameraFocusLabel),
-                    update_transform
-                        .pipe(log_errors)
-                        .in_set(UpdateCameraTransformLabel)
-                        .after(switch_kind),
-                    update_config.pipe(log_errors),
-                    move_skydome.after(UpdateCameraTransformLabel),
+                    update_rig.pipe(log_errors),
+                    move_skydome,
                 )
+                    .chain()
+                    .in_set(CameraUpdateSystemSet)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub struct UpdateCameraTransformLabel;
-
-fn init_camera(
-    mut camera: Query<(&Transform, &mut IngameCamera), Added<IngameCamera>>,
-    config_handles: Res<ConfigAssets>,
-    config: Res<Assets<GameConfig>>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("init_camera").entered();
-    for (transform, mut camera) in camera.iter_mut() {
-        let game_config = config
-            .get(&config_handles.game)
-            .context("Failed to get game config from handle")?;
-        match &mut camera.kind {
-            IngameCameraKind::ThirdPerson(camera) => {
-                camera.transform = *transform;
-                camera.config = game_config.clone();
-            }
-            IngameCameraKind::FirstPerson(camera) => {
-                camera.transform = *transform;
-                camera.config = game_config.clone();
-            }
-            IngameCameraKind::FixedAngle(camera) => {
-                camera.transform = *transform;
-                camera.config = game_config.clone();
-            }
-        }
-    }
-    Ok(())
-}
-
-pub fn update_transform(
-    time: Res<Time>,
-    rapier_context: Res<RapierContext>,
-    mut camera: Query<(
-        &ActionState<CameraAction>,
-        &mut IngameCamera,
-        &mut Transform,
-    )>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("update_transform").entered();
-    for (actions, mut camera, mut transform) in camera.iter_mut() {
-        let dt = time.delta_seconds();
-        let new_transform = {
-            match &mut camera.kind {
-                IngameCameraKind::ThirdPerson(camera) => {
-                    camera.update_transform(dt, actions, &rapier_context, *transform)
-                }
-                IngameCameraKind::FirstPerson(camera) => {
-                    camera.update_transform(dt, actions, *transform)
-                }
-                IngameCameraKind::FixedAngle(camera) => {
-                    camera.update_transform(dt, actions, *transform)
-                }
-            }
-        }?;
-        *transform = new_transform;
-    }
-    Ok(())
-}
-
-fn update_config(
-    config: Res<Assets<GameConfig>>,
-    mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
-    mut camera_query: Query<&mut IngameCamera>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("update_config").entered();
-    for event in config_asset_events.iter() {
-        match event {
-            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
-                // Guaranteed by Bevy to not fail
-                let config = config
-                    .get(handle)
-                    .context("Failed to get config even though it was just created")?;
-                for mut camera in camera_query.iter_mut() {
-                    *match camera.kind {
-                        IngameCameraKind::ThirdPerson(ref mut camera) => &mut camera.config,
-                        IngameCameraKind::FirstPerson(ref mut camera) => &mut camera.config,
-                        IngameCameraKind::FixedAngle(ref mut camera) => &mut camera.config,
-                    } = config.clone();
-                }
-            }
-            AssetEvent::Removed { .. } => {}
-        }
-    }
-    Ok(())
-}
-
-fn move_skydome(
-    camera_query: Query<&Transform, (With<IngameCamera>, Without<Skydome>)>,
-    mut skydome_query: Query<&mut Transform, (Without<IngameCamera>, With<Skydome>)>,
-) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("move_skydome").entered();
-    for camera_transform in camera_query.iter() {
-        for mut skydome_transform in skydome_query.iter_mut() {
-            skydome_transform.translation = camera_transform.translation;
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
-pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
-
-fn cursor_grab_system(
-    mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
-    actions_frozen: Res<ActionsFrozen>,
-    force_cursor_grab: Res<ForceCursorGrabMode>,
-) -> Result<()> {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("cursor_grab_system").entered();
-    let mut window = primary_windows
-        .get_single_mut()
-        .context("Failed to get primary window")?;
-    let cursor = &mut window.cursor;
-    if let Some(mode) = force_cursor_grab.0 {
-        cursor.grab_mode = mode;
-        cursor.visible = mode != CursorGrabMode::Locked;
-    } else if actions_frozen.is_frozen() {
-        cursor.grab_mode = CursorGrabMode::None;
-        cursor.visible = true;
-    } else {
-        cursor.grab_mode = CursorGrabMode::Locked;
-        cursor.visible = false;
-    }
-    Ok(())
-}
+pub struct CameraUpdateSystemSet;

@@ -1,10 +1,8 @@
 use bevy::prelude::*;
 use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues};
 
-pub trait Vec3Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
+pub trait Vec3Ext: Copy {
     fn is_approx_zero(self) -> bool;
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec3`] is [`Copy`]
     fn split(self, up: Vec3) -> SplitVec3;
 }
 impl Vec3Ext for Vec3 {
@@ -13,6 +11,7 @@ impl Vec3Ext for Vec3 {
         self.length_squared() < 1e-5
     }
 
+    #[inline]
     fn split(self, up: Vec3) -> SplitVec3 {
         let vertical = up * self.dot(up);
         let horizontal = self - vertical;
@@ -35,8 +34,7 @@ impl SplitVec3 {
     }
 }
 
-pub trait Vec2Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`Vec2`] is [`Copy`]
+pub trait Vec2Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn x0y(self) -> Vec3;
 }
@@ -133,10 +131,10 @@ impl MeshExt for Mesh {
     }
 }
 
-pub trait F32Ext {
-    #[allow(clippy::wrong_self_convention)] // Because [`f32`] is [`Copy`]
+pub trait F32Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn squared(self) -> f32;
+    fn lerp(self, other: f32, ratio: f32) -> f32;
 }
 
 impl F32Ext for f32 {
@@ -149,10 +147,16 @@ impl F32Ext for f32 {
     fn squared(self) -> f32 {
         self * self
     }
+
+    #[inline]
+    fn lerp(self, other: f32, ratio: f32) -> f32 {
+        self.mul_add(1. - ratio, other * ratio)
+    }
 }
 
-pub trait TransformExt {
+pub trait TransformExt: Copy {
     fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform;
+    fn lerp(self, other: Transform, ratio: f32) -> Transform;
 }
 
 impl TransformExt for Transform {
@@ -161,5 +165,16 @@ impl TransformExt for Transform {
         let horizontal_direction = direction - up * direction.dot(up);
         let look_target = self.translation + horizontal_direction;
         self.looking_at(look_target, up)
+    }
+
+    fn lerp(self, other: Transform, ratio: f32) -> Transform {
+        let translation = self.translation.lerp(other.translation, ratio);
+        let rotation = self.rotation.slerp(other.rotation, ratio);
+        let scale = self.scale.lerp(other.scale, ratio);
+        Transform {
+            translation,
+            rotation,
+            scale,
+        }
     }
 }

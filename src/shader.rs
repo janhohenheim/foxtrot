@@ -1,6 +1,6 @@
 #![allow(clippy::extra_unused_type_parameters)]
 use crate::file_system_interaction::asset_loading::TextureAssets;
-use crate::util::log_error::log_errors;
+use crate::util::pipe::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::asset::HandleId;

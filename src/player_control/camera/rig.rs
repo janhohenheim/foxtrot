@@ -31,7 +31,7 @@ pub fn update_rig(
         } else {
             let camera_movement = get_camera_movement(actions)?;
             if !camera_movement.is_approx_zero() {
-                set_yaw_pitch(&mut rig, &camera, transform, camera_movement, &config);
+                set_yaw_pitch(&mut rig, &camera, camera_movement, &config);
             }
         }
 
@@ -72,25 +72,15 @@ fn get_camera_movement(actions: &ActionState<CameraAction>) -> Result<Vec2> {
         .map(|pair| pair.xy())
 }
 
-fn set_yaw_pitch(
-    rig: &mut Rig,
-    camera: &IngameCamera,
-    transform: &Transform,
-    camera_movement: Vec2,
-    config: &GameConfig,
-) {
+fn set_yaw_pitch(rig: &mut Rig, camera: &IngameCamera, camera_movement: Vec2, config: &GameConfig) {
     let yaw_pitch = rig.driver_mut::<YawPitch>();
     let yaw = -camera_movement.x * config.camera.mouse_sensitivity_x;
     let pitch = -camera_movement.y * config.camera.mouse_sensitivity_y;
     yaw_pitch.rotate_yaw_pitch(yaw.to_degrees(), pitch.to_degrees());
     let (most_acute_looking_down, most_acute_looking_up) = get_most_acute_degrees(config, camera);
-    yaw_pitch.pitch_degrees = clamp_pitch_degrees(
-        camera.target.up(),
-        transform.forward(),
-        yaw_pitch.pitch_degrees,
-        most_acute_looking_down,
-        most_acute_looking_up,
-    );
+    yaw_pitch.pitch_degrees = yaw_pitch
+        .pitch_degrees
+        .clamp(most_acute_looking_up, most_acute_looking_down);
 }
 
 fn set_look_at(rig: &mut Rig, camera: &IngameCamera) {
@@ -115,12 +105,12 @@ fn set_position(rig: &mut Rig, camera: &IngameCamera) {
 fn get_most_acute_degrees(config: &GameConfig, camera: &IngameCamera) -> (f32, f32) {
     match camera.kind {
         IngameCameraKind::ThirdPerson => (
-            config.camera.third_person.min_degrees_looking_down,
-            config.camera.third_person.min_degrees_looking_up,
+            config.camera.third_person.max_pitch,
+            config.camera.third_person.min_pitch,
         ),
         IngameCameraKind::FirstPerson => (
-            config.camera.first_person.min_degrees_looking_down,
-            config.camera.first_person.min_degrees_looking_up,
+            config.camera.first_person.max_pitch,
+            config.camera.first_person.min_pitch,
         ),
         _ => unreachable!(),
     }
@@ -241,41 +231,16 @@ fn get_distance_such_that_min_distance_from_collision_is_ensured(
     //  ↑
     //  │╲
     //  │  ╲
-    //  │    ╲
+    //  │    ╲ Hypotenuse, direction = direction
     //  │      ╲
     //  │        ╲
     //  │      ( α ╲
     //  └─────────────→ Normal, magnitude = min_distance
     //  │              ╲
-    //  │                ╲
+    //  │                ╲   Target vector. Magnitude = total length (toi) - hypotenuse
     //  │                  ╲
     let adjacent_side = min_distance;
     let angle = direction.angle_between(-ray_intersection.normal);
     let hypotenuse = adjacent_side / angle.cos();
     ray_intersection.toi - hypotenuse
-}
-
-pub fn clamp_pitch_degrees(
-    up: Vec3,
-    forward: Vec3,
-    angle: f32,
-    most_acute_from_above: f32,
-    most_acute_from_below: f32,
-) -> f32 {
-    let angle_to_axis = forward.angle_between(up).to_degrees();
-    let (acute_angle_to_axis, most_acute_allowed, sign) = if angle_to_axis > 90. {
-        (180. - angle_to_axis, most_acute_from_above, -1.)
-    } else {
-        (angle_to_axis, most_acute_from_below, 1.)
-    };
-    let new_angle = if acute_angle_to_axis < most_acute_allowed {
-        angle - sign * (most_acute_allowed - acute_angle_to_axis)
-    } else {
-        angle
-    };
-    if new_angle.abs() < 1. {
-        0.
-    } else {
-        new_angle
-    }
 }

@@ -10,6 +10,7 @@ rotation_smoothing = 0.3
 translation_smoothing = 0.3
 zoom_in_smoothing = 0.3
 zoom_out_smoothing = 1.2
+pitch = -80.0
 
 [camera.first_person]
 translation_smoothing = 0.01

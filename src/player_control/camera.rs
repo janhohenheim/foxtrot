@@ -17,7 +17,6 @@ mod kind;
 mod rig;
 mod skydome;
 mod ui;
-mod util;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Component, Serialize, Deserialize)]

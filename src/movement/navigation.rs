@@ -19,10 +19,9 @@ use oxidized_navigation::{
 use serde::{Deserialize, Serialize};
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
-/// Currently only one navmesh is supported. It is loaded automagically from any entity whose name contains `"[navmesh]"`.
 pub struct NavigationPlugin;
 
-const CELL_WIDTH: f32 = 0.5 * npc::RADIUS;
+const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
@@ -30,17 +29,17 @@ impl Plugin for NavigationPlugin {
             .insert_resource(NavMeshSettings {
                 cell_width: CELL_WIDTH,
                 cell_height: 0.5 * CELL_WIDTH,
-                tile_width: 150,
+                tile_width: 170,
                 world_half_extents: 250.0,
-                world_bottom_bound: -100.0,
+                world_bottom_bound: -20.0,
                 max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
                 walkable_height: 25,
-                walkable_radius: 3,
+                walkable_radius: 4,
                 step_height: 3,
-                min_region_area: 50,
+                min_region_area: 30,
                 merge_region_area: 500,
-                max_contour_simplification_error: 1.1,
-                max_edge_length: 70,
+                max_contour_simplification_error: 1.3,
+                max_edge_length: 100,
             })
             .add_system(
                 query_mesh

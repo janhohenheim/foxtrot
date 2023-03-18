@@ -28,7 +28,7 @@ pub fn update_rig(
         if camera.kind == IngameCameraKind::FixedAngle {
             let yaw_pitch = rig.driver_mut::<YawPitch>();
             yaw_pitch.yaw_degrees = 0.;
-            yaw_pitch.pitch_degrees = -90.;
+            yaw_pitch.pitch_degrees = -80.0;
         } else {
             let camera_movement = get_camera_movement(actions)?;
             if !camera_movement.is_approx_zero() {

@@ -110,4 +110,4 @@ embed-resource = "1.4"
 
 [patch.crates-io]
 # https://github.com/EmiOnGit/warbler_grass/pull/58
-warbler_grass = { git = "https://github.com/janhohenheim/warbler_grass", rev = "85f70d8f1f90dffa0162c8d96ecc43679d3ca032" }
+warbler_grass = { git = "https://github.com/janhohenheim/warbler_grass", rev = "41a6039634ad4e48981504d3e46dfdbbdf9f571e" }

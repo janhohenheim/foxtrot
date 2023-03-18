@@ -73,8 +73,8 @@ impl Default for FixedAngle {
 pub struct FirstPerson {
     pub translation_smoothing: f32,
     pub rotation_smoothing: f32,
-    pub min_degrees_looking_down: f32,
-    pub min_degrees_looking_up: f32,
+    pub max_pitch: f32,
+    pub min_pitch: f32,
     pub tracking_smoothing: f32,
 }
 
@@ -83,8 +83,8 @@ impl Default for FirstPerson {
         Self {
             translation_smoothing: 50.0,
             rotation_smoothing: 45.0,
-            min_degrees_looking_down: 36.,
-            min_degrees_looking_up: 50.,
+            max_pitch: 36.,
+            min_pitch: 50.,
             tracking_smoothing: 0.1,
         }
     }
@@ -95,8 +95,8 @@ impl Default for FirstPerson {
 pub struct ThirdPerson {
     pub translation_smoothing: f32,
     pub rotation_smoothing: f32,
-    pub min_degrees_looking_down: f32,
-    pub min_degrees_looking_up: f32,
+    pub max_pitch: f32,
+    pub min_pitch: f32,
     pub min_distance: f32,
     pub max_distance: f32,
     pub zoom_speed: f32,
@@ -111,8 +111,8 @@ impl Default for ThirdPerson {
         Self {
             translation_smoothing: 0.3,
             rotation_smoothing: 40.3,
-            min_degrees_looking_down: 36.,
-            min_degrees_looking_up: 50.,
+            max_pitch: 36.,
+            min_pitch: 50.,
             min_distance: 1e-2,
             max_distance: 10.0,
             zoom_speed: 0.7,

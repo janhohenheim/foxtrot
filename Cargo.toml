@@ -76,7 +76,7 @@ tracing = [
 bevy = { version = "0.10", default-features = false }
 bevy_kira_audio = "0.15"
 bevy_asset_loader = { version = "0.15", features = ["progress_tracking"] }
-bevy_common_assets = { version = "0.5", features = ["ron", "toml"] }
+bevy_common_assets = { version = "0.6", features = ["ron", "toml"] }
 bevy_egui = "0.20"
 serde = { version = "1", features = ["derive"] }
 indexmap = { version = "1", features = ["serde-1"] }
@@ -97,11 +97,11 @@ leafwing-input-manager = { version = "0.9", features = [ "egui" ] }
 bevy_editor_pls = { version = "0.3", optional = true}
 bevy_prototype_debug_lines = { version = "0.10", optional = true, features = ["3d"] }
 wasm-bindgen = { version = "0.2", optional = true }
-warbler_grass = "0.3.1"
+warbler_grass = "0.3"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
 bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "b2f5dc787664cb8c3d92f792cbd437886fc090c6" }
 spew = "0.1"
-bevy_mod_sysfail = "2.0.0"
+bevy_mod_sysfail = "2"
 
 # keep the following in sync with Bevy's dependencies
 winit = { version = "0.28", default-features = false }

@@ -1,31 +1,19 @@
-use crate::level_instantiation::spawning::{
-    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
-};
-use anyhow::Result;
+use crate::file_system_interaction::asset_loading::SceneAssets;
+use crate::level_instantiation::spawning::GameObject;
 use bevy::prelude::*;
 
-pub struct LevelSpawner;
-
-impl PrimedGameObjectSpawnerImplementor for LevelSpawner {
-    fn spawn<'a, 'b: 'a>(
-        &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
-        object: GameObject,
-        transform: Transform,
-    ) -> Result<Entity> {
-        Ok(spawner
-            .commands
-            .spawn((
-                SceneBundle {
-                    scene: spawner.scene_handles.level.clone(),
-                    transform,
-                    ..default()
-                },
-                Name::new(format!("{object:?}")),
-                Imported,
-            ))
-            .id())
-    }
+pub(crate) fn spawn(world: &mut World, transform: Transform) {
+    let scene_handles = world.get_resource::<SceneAssets>().unwrap().clone();
+    world.spawn((
+        SceneBundle {
+            scene: scene_handles.level,
+            transform,
+            ..default()
+        },
+        Name::new(format!("Level")),
+        Imported,
+        GameObject::Level,
+    ));
 }
 
 #[derive(Component)]

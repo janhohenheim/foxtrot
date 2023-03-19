@@ -1,6 +1,6 @@
 use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, GameSaveRequest};
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
-use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::camera::ForceCursorGrabMode;
 use crate::util::pipe::log_errors;
 use crate::GameState;
@@ -15,6 +15,7 @@ use bevy_prototype_debug_lines::DebugLines;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMesh;
 use serde::{Deserialize, Serialize};
+use spew::prelude::*;
 use strum::IntoEnumIterator;
 
 pub struct DevEditorPlugin;
@@ -73,13 +74,13 @@ impl EditorWindow for DevEditorWindow {
                         filename: state.level_name.clone(),
                     });
                     // Make sure the player is spawned after the level
-                    world.send_event(DelayedSpawnEvent {
-                        tick_delay: 2,
-                        event: SpawnEvent {
+                    world.send_event(
+                        SpawnEvent {
                             object: GameObject::Player,
-                            transform: Transform::from_translation((0., 1.5, 0.).into()),
-                        },
-                    });
+                            data: Transform::from_translation((0., 1.5, 0.).into()),
+                        }
+                        .delay_frames(2),
+                    );
                 }
             });
         });
@@ -105,7 +106,7 @@ impl EditorWindow for DevEditorWindow {
         if ui.button("Spawn").clicked() {
             world.send_event(SpawnEvent {
                 object: state.spawn_item,
-                ..default()
+                data: Transform::default(),
             });
         }
 

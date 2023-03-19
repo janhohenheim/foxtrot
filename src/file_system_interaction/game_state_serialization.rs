@@ -1,5 +1,5 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
-use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::player_embodiment::Player;
 use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
@@ -10,6 +10,7 @@ use bevy::prelude::*;
 use chrono::prelude::Local;
 use glob::glob;
 use serde::{Deserialize, Serialize};
+use spew::prelude::*;
 use std::borrow::Cow;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -57,7 +58,7 @@ fn handle_load_requests(
     mut commands: Commands,
     mut load_events: EventReader<GameLoadRequest>,
     mut loader: EventWriter<WorldLoadRequest>,
-    mut spawner: EventWriter<DelayedSpawnEvent>,
+    mut spawner: EventWriter<DelayedSpawnEvent<GameObject, Transform>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
 ) -> Result<()> {
     for load in load_events.iter() {
@@ -116,15 +117,13 @@ fn handle_load_requests(
         }
         commands.insert_resource(save_model.conditions);
 
-        spawner.send(DelayedSpawnEvent {
-            tick_delay: 2,
-            event: SpawnEvent {
+        spawner.send(
+            SpawnEvent {
                 object: GameObject::Player,
-                transform: Transform {
-                    ..save_model.player_transform
-                },
-            },
-        });
+                data: save_model.player_transform,
+            }
+            .delay_frames(2),
+        );
     }
     Ok(())
 }

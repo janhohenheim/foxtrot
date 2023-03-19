@@ -1,9 +1,9 @@
-use crate::util::pipe::log_errors;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy::window::PrimaryWindow;
 use bevy::winit::WinitWindows;
+use bevy_mod_sysfail::macros::*;
 use std::io::Cursor;
 use winit::window::Icon;
 
@@ -30,11 +30,12 @@ impl Plugin for BevyConfigPlugin {
         app.insert_resource(Msaa::Sample4)
             .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
             .add_plugins(default_plugins)
-            .add_system(set_window_icon.pipe(log_errors).on_startup());
+            .add_system(set_window_icon.on_startup());
     }
 }
 
 // Sets the icon on Windows and X11
+#[sysfail(log(level = "error"))]
 fn set_window_icon(
     windows: NonSend<WinitWindows>,
     primary_windows: Query<Entity, With<PrimaryWindow>>,

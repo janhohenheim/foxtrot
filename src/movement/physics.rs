@@ -1,8 +1,8 @@
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
+use bevy_mod_sysfail::macros::*;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 
@@ -20,14 +20,11 @@ impl Plugin for PhysicsPlugin {
                 },
                 ..default()
             })
-            .add_system(
-                read_colliders
-                    .pipe(log_errors)
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
+            .add_system(read_colliders.in_set(OnUpdate(GameState::Playing)));
     }
 }
 
+#[sysfail(log(level = "error"))]
 pub fn read_colliders(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,

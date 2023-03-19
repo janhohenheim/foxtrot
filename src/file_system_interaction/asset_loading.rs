@@ -1,6 +1,5 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
-use crate::util::pipe::log_errors;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -12,6 +11,7 @@ use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::egui::ProgressBar;
 use bevy_egui::{egui, EguiContexts};
 use bevy_kira_audio::AudioSource;
+use bevy_mod_sysfail::macros::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub struct LoadingPlugin;
@@ -33,7 +33,7 @@ impl Plugin for LoadingPlugin {
             .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
             .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
             .add_system(show_progress.in_set(OnUpdate(GameState::Loading)))
-            .add_system(update_config.pipe(log_errors));
+            .add_system(update_config);
     }
 }
 
@@ -138,6 +138,7 @@ fn show_progress(
     }
 }
 
+#[sysfail(log(level = "error"))]
 fn update_config(
     mut commands: Commands,
     config: Res<Assets<GameConfig>>,

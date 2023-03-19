@@ -1,6 +1,5 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
 use crate::player_control::actions::{ActionsFrozen, PlayerAction};
-use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
 pub use crate::world_interaction::dialog::resources::{
@@ -13,6 +12,7 @@ use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContexts, EguiPlugin};
+use bevy_mod_sysfail::macros::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -26,13 +26,7 @@ impl Plugin for DialogPlugin {
         app.add_plugin(EguiPlugin)
             .register_type::<DialogId>()
             .add_event::<DialogEvent>()
-            .add_systems(
-                (
-                    set_current_dialog.pipe(log_errors),
-                    show_dialog.pipe(log_errors),
-                )
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
+            .add_systems((set_current_dialog, show_dialog).in_set(OnUpdate(GameState::Playing)));
     }
 }
 
@@ -41,6 +35,7 @@ pub struct DialogTarget {
     pub dialog_id: DialogId,
 }
 
+#[sysfail(log(level = "error"))]
 fn set_current_dialog(
     mut commands: Commands,
     active_conditions: Res<ActiveConditions>,
@@ -101,6 +96,7 @@ fn set_current_dialog(
     Ok(())
 }
 
+#[sysfail(log(level = "error"))]
 fn show_dialog(
     mut commands: Commands,
     current_dialog: Option<ResMut<CurrentDialog>>,

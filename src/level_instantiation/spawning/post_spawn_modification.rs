@@ -3,6 +3,7 @@ use crate::level_instantiation::spawning::objects::level::Imported;
 use anyhow::{Context, Result};
 use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
+use bevy_mod_sysfail::macros::*;
 use regex::Regex;
 use std::sync::LazyLock;
 
@@ -34,6 +35,7 @@ static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {
         .expect("Failed to compile color regex")
 });
 
+#[sysfail(log(level = "error"))]
 pub fn set_color(
     added_name: Query<(&Name, &Children), Added<Name>>,
     material_handles: Query<&Handle<StandardMaterial>>,
@@ -76,6 +78,7 @@ pub fn set_color(
     Ok(())
 }
 
+#[sysfail(log(level = "error"))]
 pub fn set_shadows(
     mut commands: Commands,
     added_mesh: Query<Entity, Added<Handle<Mesh>>>,

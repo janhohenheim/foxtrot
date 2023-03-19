@@ -6,11 +6,13 @@ use crate::util::trait_extension::Vec2Ext;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
+use bevy_mod_sysfail::macros::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
+#[sysfail(log)]
 pub fn update_rig(
     time: Res<Time>,
     mut camera_query: Query<(

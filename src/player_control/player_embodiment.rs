@@ -4,13 +4,13 @@ use crate::movement::general_movement::{
 };
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
+use bevy_mod_sysfail::macros::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -30,13 +30,12 @@ impl Plugin for PlayerEmbodimentPlugin {
                         .after(reset_movement_components)
                         .before(apply_jumping),
                     handle_horizontal_movement
-                        .pipe(log_errors)
                         .after(CameraUpdateSystemSet)
                         .after(reset_movement_components)
                         .before(apply_walking),
                     handle_speed_effects,
                     rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
-                    control_walking_sound.pipe(log_errors),
+                    control_walking_sound,
                     handle_camera_kind,
                 )
                     .in_set(OnUpdate(GameState::Playing)),
@@ -56,6 +55,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
     }
 }
 
+#[sysfail(log)]
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
@@ -176,6 +176,7 @@ fn rotate_to_speaker(
     }
 }
 
+#[sysfail(log)]
 fn control_walking_sound(
     time: Res<Time>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,

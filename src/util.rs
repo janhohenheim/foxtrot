@@ -1,5 +1,4 @@
 pub mod criteria;
-pub mod pipe;
 pub mod trait_extension;
 
 pub fn smoothness_to_lerp_factor(smoothness: f32, dt: f32) -> f32 {

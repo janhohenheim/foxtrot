@@ -3,7 +3,9 @@ use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::dialog::CurrentDialog;
 use anyhow::Result;
 use bevy::prelude::*;
+use bevy_mod_sysfail::macros::*;
 
+#[sysfail(log)]
 pub fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     current_dialog: Option<Res<CurrentDialog>>,

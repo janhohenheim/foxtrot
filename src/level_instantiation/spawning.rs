@@ -3,7 +3,6 @@ use crate::level_instantiation::spawning::despawn::{despawn, Despawn};
 use crate::level_instantiation::spawning::post_spawn_modification::{
     despawn_removed, set_color, set_hidden, set_shadows,
 };
-use crate::util::pipe::log_errors;
 use crate::GameState;
 pub use animation_link::AnimationEntityLink;
 use bevy::prelude::*;
@@ -39,12 +38,7 @@ impl Plugin for SpawningPlugin {
             ))
             .add_systems((despawn, link_animations).in_set(OnUpdate(GameState::Playing)))
             .add_systems(
-                (
-                    set_hidden,
-                    despawn_removed,
-                    set_color.pipe(log_errors),
-                    set_shadows.pipe(log_errors),
-                )
+                (set_hidden, despawn_removed, set_color, set_shadows)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }

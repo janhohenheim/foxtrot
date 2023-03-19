@@ -1,12 +1,12 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::player_embodiment::Player;
-use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
+use bevy_mod_sysfail::macros::*;
 use chrono::prelude::Local;
 use glob::glob;
 use serde::{Deserialize, Serialize};
@@ -23,10 +23,8 @@ impl Plugin for GameStateSerializationPlugin {
             .add_event::<GameLoadRequest>()
             .add_systems(
                 (
-                    handle_load_requests.pipe(log_errors),
-                    handle_save_requests
-                        .pipe(log_errors)
-                        .run_if(resource_exists::<CurrentLevel>()),
+                    handle_load_requests,
+                    handle_save_requests.run_if(resource_exists::<CurrentLevel>()),
                 )
                     .chain()
                     .in_set(OnUpdate(GameState::Playing)),
@@ -54,6 +52,7 @@ struct SaveModel {
     dialog_event: Option<DialogEvent>,
 }
 
+#[sysfail(log)]
 fn handle_load_requests(
     mut commands: Commands,
     mut load_events: EventReader<GameLoadRequest>,
@@ -128,6 +127,7 @@ fn handle_load_requests(
     Ok(())
 }
 
+#[sysfail(log)]
 fn handle_save_requests(
     mut save_events: EventReader<GameSaveRequest>,
     conditions: Res<ActiveConditions>,

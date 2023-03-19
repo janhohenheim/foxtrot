@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
 pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn grab_cursor(
     mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,

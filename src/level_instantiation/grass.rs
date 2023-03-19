@@ -19,7 +19,7 @@ impl Plugin for GrassPlugin {
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn add_grass(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,

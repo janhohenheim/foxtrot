@@ -24,7 +24,7 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn read_colliders(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,

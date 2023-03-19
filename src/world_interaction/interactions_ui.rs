@@ -65,7 +65,7 @@ fn update_interaction_opportunities(
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn update_interaction_ui(
     mut commands: Commands,
     interaction_ui: Option<ResMut<InteractionUi>>,
@@ -156,7 +156,7 @@ fn is_facing_target(
     angle < TAU / 8.
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,

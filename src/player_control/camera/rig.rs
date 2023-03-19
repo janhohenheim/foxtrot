@@ -12,7 +12,7 @@ use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn update_rig(
     time: Res<Time>,
     mut camera_query: Query<(

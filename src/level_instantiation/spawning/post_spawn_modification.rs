@@ -35,7 +35,7 @@ static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {
         .expect("Failed to compile color regex")
 });
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn set_color(
     added_name: Query<(&Name, &Children), Added<Name>>,
     material_handles: Query<&Handle<StandardMaterial>>,
@@ -78,7 +78,7 @@ pub fn set_color(
     Ok(())
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn set_shadows(
     mut commands: Commands,
     added_mesh: Query<Entity, Added<Handle<Mesh>>>,

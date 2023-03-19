@@ -52,7 +52,7 @@ struct SaveModel {
     dialog_event: Option<DialogEvent>,
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn handle_load_requests(
     mut commands: Commands,
     mut load_events: EventReader<GameLoadRequest>,
@@ -127,7 +127,7 @@ fn handle_load_requests(
     Ok(())
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn handle_save_requests(
     mut save_events: EventReader<GameSaveRequest>,
     conditions: Res<ActiveConditions>,

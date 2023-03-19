@@ -145,7 +145,7 @@ fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut T
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
@@ -219,7 +219,7 @@ pub fn apply_walking(
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn sync_models(
     time: Res<Time>,
     mut commands: Commands,

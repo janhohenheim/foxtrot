@@ -138,7 +138,7 @@ fn show_progress(
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn update_config(
     mut commands: Commands,
     config: Res<Assets<GameConfig>>,

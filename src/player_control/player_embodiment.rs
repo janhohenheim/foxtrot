@@ -55,7 +55,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
@@ -176,7 +176,7 @@ fn rotate_to_speaker(
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn control_walking_sound(
     time: Res<Time>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,

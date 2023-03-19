@@ -10,7 +10,7 @@ pub(crate) fn spawn(world: &mut World, transform: Transform) {
             transform,
             ..default()
         },
-        Name::new(format!("Level")),
+        Name::new("Level"),
         Imported,
         GameObject::Level,
     ));

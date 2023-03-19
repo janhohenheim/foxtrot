@@ -35,7 +35,7 @@ impl Plugin for BevyConfigPlugin {
 }
 
 // Sets the icon on Windows and X11
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn set_window_icon(
     windows: NonSend<WinitWindows>,
     primary_windows: Query<Entity, With<PrimaryWindow>>,

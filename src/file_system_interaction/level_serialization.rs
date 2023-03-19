@@ -45,7 +45,7 @@ pub struct CurrentLevel {
     pub scene: String,
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&GameObject, Option<&Transform>)>,
@@ -95,7 +95,7 @@ fn save_world(
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Protected;
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn load_world(
     mut commands: Commands,
     mut load_requests: EventReader<WorldLoadRequest>,

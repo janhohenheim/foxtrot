@@ -129,7 +129,7 @@ static REPEAT_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"\[repeat:\s*(\d+),\s*(\d+)\]").expect("Failed to compile repeat regex")
 });
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 pub fn set_texture_to_repeat(
     mut commands: Commands,
     added_name: Query<(&Name, &Children), Added<Name>>,

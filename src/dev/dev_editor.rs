@@ -148,7 +148,7 @@ impl Default for DevEditorState {
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn handle_debug_render(
     state: Res<Editor>,
     mut debug_render_context: ResMut<DebugRenderContext>,
@@ -175,7 +175,7 @@ fn set_cursor_grab_mode(
     }
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn handle_navmesh_render(
     state: Res<Editor>,
     nav_mesh: Res<NavMesh>,

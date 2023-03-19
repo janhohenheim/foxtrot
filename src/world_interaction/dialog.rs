@@ -35,7 +35,7 @@ pub struct DialogTarget {
     pub dialog_id: DialogId,
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn set_current_dialog(
     mut commands: Commands,
     active_conditions: Res<ActiveConditions>,
@@ -96,7 +96,7 @@ fn set_current_dialog(
     Ok(())
 }
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn show_dialog(
     mut commands: Commands,
     current_dialog: Option<ResMut<CurrentDialog>>,

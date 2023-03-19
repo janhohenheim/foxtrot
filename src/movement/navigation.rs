@@ -54,7 +54,7 @@ impl Plugin for NavigationPlugin {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Follower;
 
-#[sysfail(log)]
+#[sysfail(log(level = "error"))]
 fn query_mesh(
     mut with_follower: Query<(&Transform, &mut Walking), (With<Follower>, Without<Player>)>,
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,

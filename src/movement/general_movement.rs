@@ -5,9 +5,9 @@ use std::time::Duration;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
+use bevy_mod_sysfail::macros::*;
 pub use components::*;
 
 /// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].
@@ -48,8 +48,8 @@ impl Plugin for GeneralMovementPlugin {
                     apply_walking.after(update_grounded),
                     apply_jumping.after(update_grounded),
                     rotate_characters.after(update_grounded),
-                    play_animations.pipe(log_errors).after(update_grounded),
-                    sync_models.pipe(log_errors),
+                    play_animations.after(update_grounded),
+                    sync_models,
                 )
                     .in_set(OnUpdate(GameState::Playing)),
             );
@@ -145,6 +145,7 @@ fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut T
     }
 }
 
+#[sysfail(log)]
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
@@ -218,6 +219,7 @@ pub fn apply_walking(
     }
 }
 
+#[sysfail(log)]
 fn sync_models(
     time: Res<Time>,
     mut commands: Commands,

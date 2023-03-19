@@ -3,13 +3,13 @@ use crate::dev::dev_editor::DevEditorWindow;
 use crate::level_instantiation::spawning::objects::npc;
 use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
 use crate::player_control::player_embodiment::Player;
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 #[cfg(feature = "dev")]
 use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
+use bevy_mod_sysfail::macros::*;
 #[cfg(feature = "dev")]
 use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{
@@ -43,7 +43,6 @@ impl Plugin for NavigationPlugin {
             })
             .add_system(
                 query_mesh
-                    .pipe(log_errors)
                     .after(reset_movement_components)
                     .before(apply_walking)
                     .in_set(OnUpdate(GameState::Playing)),
@@ -55,6 +54,7 @@ impl Plugin for NavigationPlugin {
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Follower;
 
+#[sysfail(log)]
 fn query_mesh(
     mut with_follower: Query<(&Transform, &mut Walking), (With<Follower>, Without<Player>)>,
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,

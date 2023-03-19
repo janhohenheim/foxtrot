@@ -2,7 +2,6 @@ use crate::file_system_interaction::game_state_serialization::{GameLoadRequest, 
 use crate::file_system_interaction::level_serialization::{WorldLoadRequest, WorldSaveRequest};
 use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::camera::ForceCursorGrabMode;
-use crate::util::pipe::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -11,6 +10,7 @@ use bevy_editor_pls::editor_window::EditorWindow;
 use bevy_editor_pls::{AddEditorWindow, Editor, EditorEvent};
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
+use bevy_mod_sysfail::macros::*;
 use bevy_prototype_debug_lines::DebugLines;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMesh;
@@ -26,8 +26,8 @@ impl Plugin for DevEditorPlugin {
             .add_editor_window::<DevEditorWindow>()
             .add_systems(
                 (
-                    handle_debug_render.pipe(log_errors),
-                    handle_navmesh_render.pipe(log_errors),
+                    handle_debug_render,
+                    handle_navmesh_render,
                     set_cursor_grab_mode,
                 )
                     .in_set(OnUpdate(GameState::Playing)),
@@ -148,6 +148,7 @@ impl Default for DevEditorState {
     }
 }
 
+#[sysfail(log)]
 fn handle_debug_render(
     state: Res<Editor>,
     mut debug_render_context: ResMut<DebugRenderContext>,
@@ -174,6 +175,7 @@ fn set_cursor_grab_mode(
     }
 }
 
+#[sysfail(log)]
 fn handle_navmesh_render(
     state: Res<Editor>,
     nav_mesh: Res<NavMesh>,

@@ -3,7 +3,6 @@ use crate::player_control::camera::{
     cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
     skydome::move_skydome,
 };
-use crate::util::pipe::log_errors;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -64,15 +63,13 @@ impl Plugin for CameraPlugin {
             .add_system(Dolly::<IngameCamera>::update_active)
             .add_system(spawn_ui_camera.on_startup())
             .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-            .add_systems((grab_cursor.pipe(log_errors),).in_set(OnUpdate(GameState::Playing)))
+            .add_system(grab_cursor.in_set(OnUpdate(GameState::Playing)))
             .add_systems(
                 (
                     update_kind,
                     update_drivers,
-                    set_camera_focus
-                        .pipe(log_errors)
-                        .in_set(SetCameraFocusLabel),
-                    update_rig.pipe(log_errors),
+                    set_camera_focus.in_set(SetCameraFocusLabel),
+                    update_rig,
                     move_skydome,
                 )
                     .chain()

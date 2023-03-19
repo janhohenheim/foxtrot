@@ -2,11 +2,13 @@ use crate::player_control::actions::ActionsFrozen;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
+use bevy_mod_sysfail::macros::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
 pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
 
+#[sysfail(log)]
 pub fn grab_cursor(
     mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,

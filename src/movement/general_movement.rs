@@ -44,13 +44,14 @@ impl Plugin for GeneralMovementPlugin {
             .add_systems(
                 (
                     reset_movement_components,
-                    update_grounded.after(reset_movement_components),
-                    apply_walking.after(update_grounded),
-                    apply_jumping.after(update_grounded),
-                    rotate_characters.after(update_grounded),
-                    play_animations.after(update_grounded),
+                    update_grounded,
+                    apply_jumping,
+                    apply_walking,
+                    rotate_characters,
+                    play_animations,
                     sync_models,
                 )
+                    .chain()
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }

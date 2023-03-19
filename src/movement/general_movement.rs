@@ -43,19 +43,24 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<CharacterAnimations>()
             .add_systems(
                 (
-                    reset_movement_components,
+                    reset_forces_and_impulses,
                     update_grounded,
                     apply_jumping,
                     apply_walking,
                     rotate_characters,
                     play_animations,
                     sync_models,
+                    reset_movement_components,
                 )
                     .chain()
+                    .in_set(GeneralMovementSystemSet)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
+
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub struct GeneralMovementSystemSet;
 
 fn update_grounded(
     mut query: Query<(Entity, &Transform, &Collider, &mut Grounded)>,
@@ -79,20 +84,26 @@ fn update_grounded(
     }
 }
 
-pub fn reset_movement_components(
+pub fn reset_forces_and_impulses(
     mut forces: Query<&mut ExternalForce>,
     mut impulses: Query<&mut ExternalImpulse>,
-    mut walking: Query<&mut Walking>,
-    mut jumpers: Query<&mut Jumping>,
 ) {
     #[cfg(feature = "tracing")]
-    let _span = info_span!("reset_movement_components").entered();
+    let _span = info_span!("reset_forces_and_impulses").entered();
     for mut force in &mut forces {
         *force = default();
     }
     for mut impulse in &mut impulses {
         *impulse = default();
     }
+}
+
+pub fn reset_movement_components(
+    mut walking: Query<&mut Walking>,
+    mut jumpers: Query<&mut Jumping>,
+) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("reset_movement_components").entered();
     for mut walk in &mut walking {
         walk.direction = None;
     }

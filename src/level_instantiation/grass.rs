@@ -1,9 +1,9 @@
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::MeshExt;
 use anyhow::{bail, Context, Result};
 use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy::transform::TransformSystem;
+use bevy_mod_sysfail::macros::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 
@@ -13,13 +13,13 @@ impl Plugin for GrassPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(WarblersPlugin).add_system(
             add_grass
-                .pipe(log_errors)
                 .after(TransformSystem::TransformPropagate)
                 .in_base_set(CoreSet::PostUpdate),
         );
     }
 }
 
+#[sysfail(log(level = "error"))]
 pub fn add_grass(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,

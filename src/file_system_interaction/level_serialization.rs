@@ -1,12 +1,12 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instantiation::spawning::GameObject;
-use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
+use bevy_mod_sysfail::macros::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use std::path::Path;
@@ -20,10 +20,8 @@ impl Plugin for LevelSerializationPlugin {
             .add_event::<WorldLoadRequest>()
             .add_systems(
                 (
-                    save_world.pipe(log_errors),
-                    load_world
-                        .pipe(log_errors)
-                        .run_if(resource_exists::<LevelAssets>()),
+                    save_world,
+                    load_world.run_if(resource_exists::<LevelAssets>()),
                 )
                     .in_base_set(CoreSet::PostUpdate),
             );
@@ -47,6 +45,7 @@ pub struct CurrentLevel {
     pub scene: String,
 }
 
+#[sysfail(log(level = "error"))]
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&GameObject, Option<&Transform>)>,
@@ -96,6 +95,7 @@ fn save_world(
 #[reflect(Component, Serialize, Deserialize)]
 pub struct Protected;
 
+#[sysfail(log(level = "error"))]
 fn load_world(
     mut commands: Commands,
     mut load_requests: EventReader<WorldLoadRequest>,

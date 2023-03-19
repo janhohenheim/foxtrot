@@ -5,9 +5,9 @@ use std::time::Duration;
 use bevy_rapier3d::prelude::*;
 mod components;
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::util::pipe::log_errors;
 use crate::util::trait_extension::Vec3Ext;
 use crate::GameState;
+use bevy_mod_sysfail::macros::*;
 pub use components::*;
 
 /// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].
@@ -43,18 +43,24 @@ impl Plugin for GeneralMovementPlugin {
             .register_type::<CharacterAnimations>()
             .add_systems(
                 (
+                    reset_forces_and_impulses,
+                    update_grounded,
+                    apply_jumping,
+                    apply_walking,
+                    rotate_characters,
+                    play_animations,
+                    sync_models,
                     reset_movement_components,
-                    update_grounded.after(reset_movement_components),
-                    apply_walking.after(update_grounded),
-                    apply_jumping.after(update_grounded),
-                    rotate_characters.after(update_grounded),
-                    play_animations.pipe(log_errors).after(update_grounded),
-                    sync_models.pipe(log_errors),
                 )
+                    .chain()
+                    .in_set(GeneralMovementSystemSet)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }
 }
+
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub struct GeneralMovementSystemSet;
 
 fn update_grounded(
     mut query: Query<(Entity, &Transform, &Collider, &mut Grounded)>,
@@ -78,20 +84,26 @@ fn update_grounded(
     }
 }
 
-pub fn reset_movement_components(
+pub fn reset_forces_and_impulses(
     mut forces: Query<&mut ExternalForce>,
     mut impulses: Query<&mut ExternalImpulse>,
-    mut walking: Query<&mut Walking>,
-    mut jumpers: Query<&mut Jumping>,
 ) {
     #[cfg(feature = "tracing")]
-    let _span = info_span!("reset_movement_components").entered();
+    let _span = info_span!("reset_forces_and_impulses").entered();
     for mut force in &mut forces {
         *force = default();
     }
     for mut impulse in &mut impulses {
         *impulse = default();
     }
+}
+
+pub fn reset_movement_components(
+    mut walking: Query<&mut Walking>,
+    mut jumpers: Query<&mut Jumping>,
+) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("reset_movement_components").entered();
     for mut walk in &mut walking {
         walk.direction = None;
     }
@@ -145,6 +157,7 @@ fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut T
     }
 }
 
+#[sysfail(log(level = "error"))]
 fn play_animations(
     mut animation_player: Query<&mut AnimationPlayer>,
     characters: Query<(
@@ -218,6 +231,7 @@ pub fn apply_walking(
     }
 }
 
+#[sysfail(log(level = "error"))]
 fn sync_models(
     time: Res<Time>,
     mut commands: Commands,

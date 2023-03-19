@@ -1,6 +1,5 @@
 #![allow(clippy::extra_unused_type_parameters)]
 use crate::file_system_interaction::asset_loading::TextureAssets;
-use crate::util::pipe::log_errors;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::asset::HandleId;
@@ -13,6 +12,7 @@ use bevy::render::render_resource::{
     AsBindGroup, RenderPipelineDescriptor, ShaderRef, ShaderType, SpecializedMeshPipelineError,
 };
 use bevy::utils::HashMap;
+use bevy_mod_sysfail::macros::*;
 use regex::Regex;
 use std::sync::LazyLock;
 
@@ -27,11 +27,7 @@ impl Plugin for ShaderPlugin {
             .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
             .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())
             .add_system(setup_shader.in_schedule(OnExit(GameState::Loading)))
-            .add_system(
-                set_texture_to_repeat
-                    .pipe(log_errors)
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
+            .add_system(set_texture_to_repeat.in_set(OnUpdate(GameState::Playing)));
     }
 }
 
@@ -133,6 +129,7 @@ static REPEAT_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"\[repeat:\s*(\d+),\s*(\d+)\]").expect("Failed to compile repeat regex")
 });
 
+#[sysfail(log(level = "error"))]
 pub fn set_texture_to_repeat(
     mut commands: Commands,
     added_name: Query<(&Name, &Children), Added<Name>>,

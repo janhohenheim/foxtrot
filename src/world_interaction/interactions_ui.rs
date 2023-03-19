@@ -2,7 +2,6 @@ use crate::player_control::actions::PlayerAction;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
-use crate::util::pipe::log_errors;
 use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -10,6 +9,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
+use bevy_mod_sysfail::macros::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -22,16 +22,12 @@ impl Plugin for InteractionsUiPlugin {
         app.register_type::<InteractionOpportunities>()
             .init_resource::<InteractionOpportunities>()
             .add_systems(
-                (
-                    update_interaction_opportunities,
-                    update_interaction_ui.pipe(log_errors),
-                )
+                (update_interaction_opportunities, update_interaction_ui)
                     .chain()
                     .in_set(OnUpdate(GameState::Playing)),
             )
             .add_system(
                 display_interaction_prompt
-                    .pipe(log_errors)
                     .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
                     .in_set(OnUpdate(GameState::Playing)),
             );
@@ -69,6 +65,7 @@ fn update_interaction_opportunities(
     }
 }
 
+#[sysfail(log(level = "error"))]
 fn update_interaction_ui(
     mut commands: Commands,
     interaction_ui: Option<ResMut<InteractionUi>>,
@@ -159,6 +156,7 @@ fn is_facing_target(
     angle < TAU / 8.
 }
 
+#[sysfail(log(level = "error"))]
 fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
     mut dialog_event_writer: EventWriter<DialogEvent>,

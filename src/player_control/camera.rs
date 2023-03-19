@@ -51,9 +51,6 @@ pub enum IngameCameraKind {
 /// third person or fixed angle camera is used.
 pub struct CameraPlugin;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub struct SetCameraFocusLabel;
-
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<UiCamera>()
@@ -68,7 +65,7 @@ impl Plugin for CameraPlugin {
                 (
                     update_kind,
                     update_drivers,
-                    set_camera_focus.in_set(SetCameraFocusLabel),
+                    set_camera_focus,
                     update_rig,
                     move_skydome,
                 )

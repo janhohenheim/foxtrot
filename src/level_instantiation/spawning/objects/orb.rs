@@ -1,50 +1,50 @@
-use crate::level_instantiation::spawning::{
-    GameObject, PrimedGameObjectSpawner, PrimedGameObjectSpawnerImplementor,
-};
-use anyhow::Result;
+use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
+use crate::level_instantiation::spawning::GameObject;
+use crate::shader::Materials;
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
+use bevy::reflect::TypeUuid;
 
-pub struct OrbSpawner;
-
-impl PrimedGameObjectSpawnerImplementor for OrbSpawner {
-    fn create_mesh(&self, mesh_assets: &mut ResMut<Assets<Mesh>>) -> Option<Handle<Mesh>> {
-        Some(mesh_assets.add(Mesh::from(shape::UVSphere {
+fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
+    const MESH_HANDLE: HandleUntyped =
+        HandleUntyped::weak_from_u64(Mesh::TYPE_UUID, 0x1f40128bac02a9b);
+    mesh_assets.get_or_add(MESH_HANDLE, || {
+        Mesh::from(shape::UVSphere {
             radius: 1.0,
             ..default()
-        })))
-    }
-    fn spawn<'a, 'b: 'a>(
-        &self,
-        spawner: &'b mut PrimedGameObjectSpawner<'_, '_, 'a>,
-        object: GameObject,
-        transform: Transform,
-    ) -> Result<Entity> {
-        Ok(spawner
-            .commands
-            .spawn((
-                MaterialMeshBundle {
-                    mesh: spawner.outer_spawner.meshes[&object].clone(),
-                    material: spawner.materials.glowy.clone(),
-                    transform,
+        })
+    })
+}
+
+pub(crate) fn spawn(world: &mut World, transform: Transform) {
+    let mesh_handle = {
+        let mut meshes = world.get_resource_mut::<Assets<Mesh>>().unwrap();
+        get_or_add_mesh_handle(&mut meshes)
+    };
+    let materials = world.get_resource::<Materials>().unwrap().clone();
+    world
+        .spawn((
+            MaterialMeshBundle {
+                mesh: mesh_handle,
+                material: materials.glowy,
+                transform,
+                ..default()
+            },
+            Name::new("Orb"),
+            NotShadowCaster,
+            NotShadowReceiver,
+            GameObject::Orb,
+        ))
+        .with_children(|parent| {
+            parent.spawn((PointLightBundle {
+                point_light: PointLight {
+                    intensity: 10_000.,
+                    radius: 1.,
+                    color: Color::rgb(0.5, 0.1, 0.),
+                    shadows_enabled: true,
                     ..default()
                 },
-                Name::new("Orb"),
-                NotShadowCaster,
-                NotShadowReceiver,
-            ))
-            .with_children(|parent| {
-                parent.spawn((PointLightBundle {
-                    point_light: PointLight {
-                        intensity: 10_000.,
-                        radius: 1.,
-                        color: Color::rgb(0.5, 0.1, 0.),
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                    ..default()
-                },));
-            })
-            .id())
-    }
+                ..default()
+            },));
+        });
 }

@@ -1,9 +1,10 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
-use crate::level_instantiation::spawning::{DelayedSpawnEvent, GameObject, SpawnEvent};
+use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::player_embodiment::Player;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
+use spew::prelude::*;
 
 pub struct MapPlugin;
 
@@ -27,7 +28,7 @@ impl Plugin for MapPlugin {
 fn setup(
     mut commands: Commands,
     mut loader: EventWriter<WorldLoadRequest>,
-    mut delayed_spawner: EventWriter<DelayedSpawnEvent>,
+    mut delayed_spawner: EventWriter<DelayedSpawnEvent<GameObject, Transform>>,
 ) {
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
@@ -39,13 +40,13 @@ fn setup(
     });
 
     // Make sure the player is spawned after the level
-    delayed_spawner.send(DelayedSpawnEvent {
-        tick_delay: 2,
-        event: SpawnEvent {
+    delayed_spawner.send(
+        SpawnEvent {
             object: GameObject::Player,
-            transform: Transform::from_xyz(0., 1.5, 0.),
-        },
-    });
+            data: Transform::from_xyz(0., 1.5, 0.),
+        }
+        .delay_frames(2),
+    );
 }
 
 fn show_loading_screen(mut egui_contexts: EguiContexts) {

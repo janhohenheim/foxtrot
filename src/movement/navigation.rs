@@ -1,7 +1,7 @@
 #[cfg(feature = "dev")]
 use crate::dev::dev_editor::DevEditorWindow;
 use crate::level_instantiation::spawning::objects::npc;
-use crate::movement::general_movement::{apply_walking, reset_movement_components, Walking};
+use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
@@ -43,8 +43,7 @@ impl Plugin for NavigationPlugin {
             })
             .add_system(
                 query_mesh
-                    .after(reset_movement_components)
-                    .before(apply_walking)
+                    .before(GeneralMovementSystemSet)
                     .in_set(OnUpdate(GameState::Playing)),
             );
     }

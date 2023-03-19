@@ -1994,6 +1994,7 @@ dependencies = [
  "regex",
  "ron",
  "serde",
+ "spew",
  "strum",
  "strum_macros",
  "unicode-segmentation",
@@ -3833,6 +3834,13 @@ dependencies = [
  "optional",
  "robust",
  "smallvec",
+]
+
+[[package]]
+name = "spew"
+version = "0.1.0"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]

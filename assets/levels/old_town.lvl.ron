@@ -1,47 +1,47 @@
 ([
     (
-        object: Sunlight,
-        transform: (
+        Sunlight,
+        (
             translation: (0.0, 0.0, 0.0),
             rotation: (-0.38268346, 0.0, 0.0, 0.9238795),
             scale: (1.0, 1.0, 1.0),
         ),
     ),
     (
-        object: Skydome,
-        transform: (
+        Skydome,
+        (
             translation: (0.0, 0.0, 0.0),
             rotation: (0.0, 0.0, 0.0, 1.0),
             scale: (1.0, 1.0, 1.0),
         ),
     ),
     (
-        object: Level,
-        transform: (
+        Level,
+        (
             translation: (0.0, 0.0, 0.0),
             rotation: (0.0, 0.0, 0.0, 1.0),
             scale: (1.0, 1.0, 1.0),
         ),
     ),
     (
-        object: Orb,
-        transform: (
+        Orb,
+        (
             translation: (0.7, 5.0, -2.0),
             rotation: (0.0, 0.0, 0.0, 1.0),
             scale: (1.0, 1.0, 1.0),
         ),
     ),
     (
-        object: Npc,
-        transform: (
+        Npc,
+        (
             translation: (-1.488441, 1.5, -1.6930319),
             rotation: (0.0, -0.64089495, 0.0, 0.7676286),
             scale: (1., 1., 1.),
         ),
     ),
     (
-        object: Camera,
-        transform: (
+        Camera,
+        (
             translation: (7.366603, 2.1272051, -3.338453),
             rotation: (-0.0713736, 0.7723035, 0.08818959, 0.62504065),
             scale: (1.0, 1.0, 1.0),

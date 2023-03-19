@@ -40,13 +40,13 @@ impl Plugin for LoadingPlugin {
 // the following asset collections will be loaded during the State `GameState::InitialLoading`
 // when done loading, they will be inserted as resources (see <https://github.com/NiklasEi/bevy_asset_loader>)
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct AudioAssets {
     #[asset(path = "audio/walking.ogg")]
     pub walking: Handle<AudioSource>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct SceneAssets {
     #[asset(path = "scenes/Fox.glb#Scene0")]
     pub character: Handle<Scene>,
@@ -54,7 +54,7 @@ pub struct SceneAssets {
     pub level: Handle<Scene>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct AnimationAssets {
     #[asset(path = "scenes/Fox.glb#Animation0")]
     pub character_idle: Handle<AnimationClip>,
@@ -64,7 +64,7 @@ pub struct AnimationAssets {
     pub character_running: Handle<AnimationClip>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct LevelAssets {
     #[cfg_attr(feature = "native", asset(path = "levels", collection(typed, mapped)))]
     #[cfg_attr(
@@ -74,7 +74,7 @@ pub struct LevelAssets {
     pub levels: HashMap<String, Handle<SerializedLevel>>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct DialogAssets {
     #[cfg_attr(feature = "native", asset(path = "dialogs", collection(typed, mapped)))]
     #[cfg_attr(
@@ -84,7 +84,7 @@ pub struct DialogAssets {
     pub dialogs: HashMap<String, Handle<Dialog>>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub glowy_interior: Handle<Image>,
@@ -92,7 +92,7 @@ pub struct TextureAssets {
     pub sky: Handle<Image>,
 }
 
-#[derive(AssetCollection, Resource)]
+#[derive(AssetCollection, Resource, Clone)]
 pub struct ConfigAssets {
     #[asset(path = "config/config.game.toml")]
     pub game: Handle<GameConfig>,

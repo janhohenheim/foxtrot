@@ -1,7 +1,5 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
-use crate::level_instantiation::spawning::{
-    GameObject, SpawnEvent, SpawnRequestedLabel, SpawnTracker,
-};
+use crate::level_instantiation::spawning::GameObject;
 use crate::util::pipe::log_errors;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::CurrentDialog;
@@ -10,6 +8,7 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
+use spew::prelude::*;
 use std::path::Path;
 use std::{fs, iter};
 
@@ -19,11 +18,13 @@ impl Plugin for LevelSerializationPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<WorldSaveRequest>()
             .add_event::<WorldLoadRequest>()
-            .add_system(save_world.pipe(log_errors).after(SpawnRequestedLabel))
-            .add_system(
-                load_world
-                    .pipe(log_errors)
-                    .run_if(resource_exists::<LevelAssets>())
+            .add_systems(
+                (
+                    save_world.pipe(log_errors),
+                    load_world
+                        .pipe(log_errors)
+                        .run_if(resource_exists::<LevelAssets>()),
+                )
                     .in_base_set(CoreSet::PostUpdate),
             );
     }
@@ -48,7 +49,7 @@ pub struct CurrentLevel {
 
 fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
-    spawn_query: Query<(&SpawnTracker, Option<&Transform>)>,
+    spawn_query: Query<(&GameObject, Option<&Transform>)>,
 ) -> Result<()> {
     for save in save_requests.iter() {
         let scene = save.filename.clone();
@@ -98,8 +99,8 @@ pub struct Protected;
 fn load_world(
     mut commands: Commands,
     mut load_requests: EventReader<WorldLoadRequest>,
-    current_spawn_query: Query<Entity, With<SpawnTracker>>,
-    mut spawn_requests: EventWriter<SpawnEvent>,
+    current_spawn_query: Query<Entity, With<GameObject>>,
+    mut spawn_requests: EventWriter<SpawnEvent<GameObject, Transform>>,
     levels: Res<Assets<SerializedLevel>>,
     level_handles: Res<LevelAssets>,
 ) -> Result<()> {
@@ -128,16 +129,16 @@ fn load_world(
         };
         let spawn_events = &levels
             .get(handle)
-            .context("Failed to get level from handle in level assets")?
-            .0;
+            .context("Failed to get level from handle in level assets")?;
+        let spawn_events = Vec::<SpawnEvent<GameObject, Transform>>::from(*spawn_events);
         for entity in &current_spawn_query {
             commands
                 .get_entity(entity)
                 .context("Failed to get entity while loading")?
                 .despawn_recursive();
         }
-        for event in spawn_events {
-            spawn_requests.send(event.clone());
+        for event in spawn_events.into_iter() {
+            spawn_requests.send(event);
         }
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
@@ -151,20 +152,43 @@ fn load_world(
     Ok(())
 }
 
-fn serialize_world(spawn_query: &Query<(&SpawnTracker, Option<&Transform>)>) -> Result<String> {
+fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Result<String> {
     let objects: Vec<_> = spawn_query
         .iter()
-        .filter(|(spawn_tracker, _)| !matches!(spawn_tracker.object, GameObject::Player))
-        .map(|(spawn_tracker, transform)| SpawnEvent {
-            object: spawn_tracker.object,
-            transform: transform.map(Clone::clone).unwrap_or_default(),
+        .filter(|(game_object, _)| **game_object != GameObject::Player)
+        .map(|(game_object, transform)| SpawnEvent {
+            object: *game_object,
+            data: transform.map(Clone::clone).unwrap_or_default(),
         })
         .collect();
-    let serialized_level = SerializedLevel(objects);
+    let serialized_level = SerializedLevel::from(objects);
     ron::ser::to_string_pretty(&serialized_level, default()).context("Failed to serialize world")
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid, Deref, DerefMut)]
 #[uuid = "eb7cc7bc-5a97-41ed-b0c3-0d4e2137b73b"]
 #[reflect(Serialize, Deserialize)]
-pub struct SerializedLevel(pub Vec<SpawnEvent>);
+pub struct SerializedLevel(pub Vec<(GameObject, Transform)>);
+
+impl From<Vec<SpawnEvent<GameObject, Transform>>> for SerializedLevel {
+    fn from(events: Vec<SpawnEvent<GameObject, Transform>>) -> Self {
+        Self(
+            events
+                .into_iter()
+                .map(|event| (event.object, event.data))
+                .collect(),
+        )
+    }
+}
+
+impl From<&SerializedLevel> for Vec<SpawnEvent<GameObject, Transform>> {
+    fn from(level: &SerializedLevel) -> Self {
+        level
+            .iter()
+            .map(|(object, transform)| SpawnEvent {
+                object: *object,
+                data: *transform,
+            })
+            .collect()
+    }
+}

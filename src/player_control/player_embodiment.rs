@@ -1,7 +1,9 @@
 use crate::file_system_interaction::audio::AudioHandles;
+use crate::file_system_interaction::config::GameConfig;
 use crate::movement::general_movement::{GeneralMovementSystemSet, Grounded, Jumping, Walking};
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
+use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
 use crate::world_interaction::dialog::CurrentDialog;
 use crate::GameState;
@@ -121,6 +123,7 @@ fn handle_camera_kind(
 fn handle_speed_effects(
     velocities: Query<&Velocity, With<Player>>,
     mut projections: Query<&mut Projection, With<IngameCamera>>,
+    config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_speed_effects").entered();
@@ -128,13 +131,13 @@ fn handle_speed_effects(
         let speed_squared = velocity.linvel.length_squared();
         for mut projection in projections.iter_mut() {
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
-                const MAX_SPEED_FOR_FOV: f32 = 12.;
-                const MIN_FOV: f32 = 0.75;
-                const MAX_FOV: f32 = 1.5;
-                let scale = (speed_squared / MAX_SPEED_FOR_FOV.squared())
+                let fov_saturation_speed = config.player.fov_saturation_speed;
+                let min_fov = config.player.min_fov;
+                let max_fov = config.player.max_fov;
+                let scale = (speed_squared / fov_saturation_speed.squared())
                     .min(1.0)
                     .squared();
-                perspective.fov = MIN_FOV + (MAX_FOV - MIN_FOV) * scale;
+                perspective.fov = min_fov + (max_fov - min_fov) * scale;
             }
         }
     }
@@ -145,6 +148,7 @@ fn rotate_to_speaker(
     mut with_player: Query<(&mut Transform, &Velocity), With<Player>>,
     without_player: Query<&Transform, Without<Player>>,
     current_dialog: Res<CurrentDialog>,
+    config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
@@ -160,9 +164,9 @@ fn rotate_to_speaker(
             let target_rotation = transform
                 .horizontally_looking_at(speaker_transform.translation, up)
                 .rotation;
-            const SMOOTHNESS: f32 = 4.;
-            let scale = (SMOOTHNESS * dt).min(1.);
-            let rotation = transform.rotation.slerp(target_rotation, scale);
+            let smoothness = config.player.rotate_to_speaker_smoothness;
+            let factor = smoothness_to_lerp_factor(smoothness, dt);
+            let rotation = transform.rotation.slerp(target_rotation, factor);
             transform.rotation = rotation;
         }
     }

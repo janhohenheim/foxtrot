@@ -1,3 +1,4 @@
+use crate::file_system_interaction::config::GameConfig;
 use crate::level_instantiation::spawning::objects::player;
 use crate::movement::general_movement::Grounded;
 use crate::particles::init::init_effects;
@@ -24,8 +25,8 @@ struct SprintingParticle;
 fn play_sprinting_effect(
     with_player: Query<(&Transform, &Grounded, &Velocity), Without<SprintingParticle>>,
     mut with_particle: Query<(&mut Transform, &mut ParticleEffect), With<SprintingParticle>>,
+    config: Res<GameConfig>,
 ) {
-    const SPRINT_EFFECT_SPEED_THRESHOLD: f32 = 7.;
     for (player_transform, grounded, velocity) in with_player.iter() {
         let horizontal_speed_squared = velocity
             .linvel
@@ -33,7 +34,8 @@ fn play_sprinting_effect(
             .horizontal
             .length_squared();
         for (mut particle_transform, mut effect) in with_particle.iter_mut() {
-            if grounded.0 && horizontal_speed_squared > SPRINT_EFFECT_SPEED_THRESHOLD.squared() {
+            let threshold = config.player.sprint_effect_speed_threshold;
+            if grounded.0 && horizontal_speed_squared > threshold.squared() {
                 let translation = player_transform.translation
                     - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);

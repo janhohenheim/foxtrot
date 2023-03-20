@@ -20,6 +20,7 @@ pub struct GameConfig {
     pub camera: Camera,
     pub characters: Characters,
     pub player: Player,
+    pub dialog: Dialog,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
@@ -86,4 +87,10 @@ pub struct Player {
     pub fov_saturation_speed: f32,
     pub min_fov: f32,
     pub max_fov: f32,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct Dialog {
+    pub base_letters_per_second: f32,
 }

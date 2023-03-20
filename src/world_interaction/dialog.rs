@@ -1,4 +1,5 @@
 use crate::file_system_interaction::asset_loading::DialogAssets;
+use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
@@ -104,6 +105,7 @@ fn show_dialog(
     actions: Query<&ActionState<PlayerAction>>,
     time: Res<Time>,
     mut elapsed_time: Local<f32>,
+    config: Res<GameConfig>,
 ) -> Result<()> {
     let Some(mut current_dialog) = current_dialog else {
             *elapsed_time = 0.0;
@@ -120,7 +122,7 @@ fn show_dialog(
                 ui.set_width(dialog_size.x);
                 ui.set_height(dialog_size.y);
 
-                let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time);
+                let dialog_text = create_dialog_rich_text(&current_page, *elapsed_time, &config);
                 ui.vertical(|ui| {
                     ui.add_space(5.);
                     ui.label(&dialog_text);
@@ -250,9 +252,9 @@ fn set_dialog_style(style: &mut egui::Style) {
     style.visuals.widgets.noninteractive.fg_stroke.color = egui::Color32::from_gray(250);
 }
 
-fn create_dialog_rich_text(page: &Page, elapsed_time: f32) -> String {
-    const BASE_LETTERS_PER_SECOND: f32 = 60.;
-    let letters_to_display = (BASE_LETTERS_PER_SECOND * page.talking_speed * elapsed_time) as usize;
+fn create_dialog_rich_text(page: &Page, elapsed_time: f32, config: &GameConfig) -> String {
+    let base_letters_per_second = config.dialog.base_letters_per_second;
+    let letters_to_display = (base_letters_per_second * page.talking_speed * elapsed_time) as usize;
     page.text.graphemes(true).take(letters_to_display).collect()
 }
 

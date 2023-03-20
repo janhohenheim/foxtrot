@@ -19,7 +19,7 @@ use std::sync::LazyLock;
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
 /// The handles can be stored and retrieved in the [`Materials`] resource.
-pub fn ShaderPlugin(app: &mut App) {
+pub fn shader_plugin(app: &mut App) {
     app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
         .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
         .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())

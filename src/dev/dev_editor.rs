@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use strum::IntoEnumIterator;
 
-pub fn DevEditorPlugin(app: &mut App) {
+pub fn dev_editor_plugin(app: &mut App) {
     app.init_resource::<DevEditorState>()
         .add_editor_window::<DevEditorWindow>()
         .add_systems(

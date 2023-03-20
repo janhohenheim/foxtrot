@@ -20,7 +20,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
 
-pub fn DialogPlugin(app: &mut App) {
+pub fn dialog_plugin(app: &mut App) {
     app.add_plugin(EguiPlugin)
         .register_type::<DialogId>()
         .add_event::<DialogEvent>()

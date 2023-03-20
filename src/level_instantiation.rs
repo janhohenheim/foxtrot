@@ -2,21 +2,18 @@ pub mod grass;
 pub mod map;
 pub mod spawning;
 
-use crate::level_instantiation::grass::GrassPlugin;
-use crate::level_instantiation::map::MapPlugin;
-use crate::level_instantiation::spawning::SpawningPlugin;
+use crate::level_instantiation::grass::grass_plugin;
+use crate::level_instantiation::map::map_plugin;
+use crate::level_instantiation::spawning::spawning_plugin;
 use bevy::prelude::*;
+use seldom_fn_plugin::FnPluginExt;
 
 /// Handles creation of levels and objects. Split into the following sub-plugins:
-/// - [`MapPlugin`] handles loading of level files and orchestrates the spawning of the objects therein.
-/// - [`SpawningPlugin`] handles the spawning of objects in general.
-/// - [`GrassPlugin`] handles the spawning of grass on top of marked meshes.
-pub struct LevelInstantiationPlugin;
-
-impl Plugin for LevelInstantiationPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(MapPlugin)
-            .add_plugin(SpawningPlugin)
-            .add_plugin(GrassPlugin);
-    }
+/// - [`map_plugin`] handles loading of level files and orchestrates the spawning of the objects therein.
+/// - [`spawning_plugin`] handles the spawning of objects in general.
+/// - [`grass_plugin`] handles the spawning of grass on top of marked meshes.
+pub fn level_instantiation_plugin(app: &mut App) {
+    app.fn_plugin(map_plugin)
+        .fn_plugin(spawning_plugin)
+        .fn_plugin(grass_plugin);
 }

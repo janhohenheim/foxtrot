@@ -15,21 +15,17 @@ use std::borrow::Cow;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub struct GameStateSerializationPlugin;
-
-impl Plugin for GameStateSerializationPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_event::<GameSaveRequest>()
-            .add_event::<GameLoadRequest>()
-            .add_systems(
-                (
-                    handle_load_requests,
-                    handle_save_requests.run_if(resource_exists::<CurrentLevel>()),
-                )
-                    .chain()
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn game_state_serialization_plugin(app: &mut App) {
+    app.add_event::<GameSaveRequest>()
+        .add_event::<GameLoadRequest>()
+        .add_systems(
+            (
+                handle_load_requests,
+                handle_save_requests.run_if(resource_exists::<CurrentLevel>()),
+            )
+                .chain()
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]

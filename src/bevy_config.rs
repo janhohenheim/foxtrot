@@ -8,30 +8,26 @@ use std::io::Cursor;
 use winit::window::Icon;
 
 /// Overrides the default Bevy plugins and configures things like the screen settings.
-pub struct BevyConfigPlugin;
-
-impl Plugin for BevyConfigPlugin {
-    fn build(&self, app: &mut App) {
-        let default_plugins = DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                resolution: (800., 600.).into(),
-                title: "Foxtrot".to_string(),
-                canvas: Some("#bevy".to_owned()),
-                present_mode: PresentMode::AutoVsync,
-                ..default()
-            }),
+pub fn bevy_config_plugin(app: &mut App) {
+    let default_plugins = DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+            resolution: (800., 600.).into(),
+            title: "Foxtrot".to_string(),
+            canvas: Some("#bevy".to_owned()),
+            present_mode: PresentMode::AutoVsync,
             ..default()
-        });
-        #[cfg(feature = "native-dev")]
-        let default_plugins = default_plugins.set(AssetPlugin {
-            watch_for_changes: true,
-            ..default()
-        });
-        app.insert_resource(Msaa::Sample4)
-            .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
-            .add_plugins(default_plugins)
-            .add_system(set_window_icon.on_startup());
-    }
+        }),
+        ..default()
+    });
+    #[cfg(feature = "native-dev")]
+    let default_plugins = default_plugins.set(AssetPlugin {
+        watch_for_changes: true,
+        ..default()
+    });
+    app.insert_resource(Msaa::Sample4)
+        .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+        .add_plugins(default_plugins)
+        .add_system(set_window_icon.on_startup());
 }
 
 // Sets the icon on Windows and X11

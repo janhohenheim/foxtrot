@@ -14,29 +14,25 @@ use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;
 
-pub struct PlayerEmbodimentPlugin;
-
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
-impl Plugin for PlayerEmbodimentPlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<Timer>()
-            .register_type::<Player>()
-            .add_systems(
-                (
-                    handle_jump,
-                    handle_horizontal_movement,
-                    handle_speed_effects,
-                    rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
-                    control_walking_sound,
-                    handle_camera_kind,
-                )
-                    .chain()
-                    .after(CameraUpdateSystemSet)
-                    .before(GeneralMovementSystemSet)
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn player_embodiment_plugin(app: &mut App) {
+    app.register_type::<Timer>()
+        .register_type::<Player>()
+        .add_systems(
+            (
+                handle_jump,
+                handle_horizontal_movement,
+                handle_speed_effects,
+                rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
+                control_walking_sound,
+                handle_camera_kind,
+            )
+                .chain()
+                .after(CameraUpdateSystemSet)
+                .before(GeneralMovementSystemSet)
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]

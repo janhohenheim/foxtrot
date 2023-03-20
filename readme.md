@@ -9,15 +9,14 @@ The all-in-one Bevy 3D game template.
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
 that I want to use in my games. Since the target audience is me, the code is not super well documented, but it should 
 be good enough for others to find inspiration, copy parts they like or troubleshoot their own implementations :)
- 
 
 ## What does this template give you?
 - A 3D character controller
-- Physics via `bevy_rapier`
-- Audio via `bevy_kira_audio`
-- Pathfinding via `oxidized_navigation`
-- `bevy_editor_pls` in the `dev` feature, bound to 'Q'
-- Custom editor for the game state found in the windows for `bevy_editor_pls`.
+- Physics via [`bevy_rapier`](https://crates.io/crates/bevy_rapier)
+- Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
+- Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
+- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) in the `dev` feature, bound to 'Q'
+- Custom editor for the game state found in the windows selection for `bevy_editor_pls`.
 - Saving / loading levels
 - Saving / loading the game state
 - Animations
@@ -25,17 +24,26 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - Shaders
 - GLTF imports, including auto-detection of colliders
 - Dynamic builds in the `native-dev` feature
-- Grass blades using `warbler_grass`
+- Grass blades using [`warbler_grass`](https://crates.io/crates/warbler_grass)
+- Smooth cameras via [`bevy_dolly`](https://github.com/BlackPhlox/bevy_dolly)
 - A skydome that follows the camera
+- Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
+- Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
 
 ## Usage
+
+Simply use the [template button on GitHub](https://github.com/janhohenheim/foxtrot/generate) to create a new repository from this template.
+Then, replace all instances of the word `foxtrot` with the name of your game. Change the game version as well as the author information in the following files:
+- `Cargo.toml`
+- `build/windows/installer/Package.wxs`
+- `build/macos/src/Game.app/Contents/Resources/Info.plist`
 
 ### Running the game
 Native:
 ```bash
 cargo run
 ```
-WASM:
+Wasm:
 ```bash
 trunk serve --no-default-features --features wasm_dev
 ```

@@ -14,27 +14,21 @@ use bevy_kira_audio::AudioSource;
 use bevy_mod_sysfail::macros::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
-pub struct LoadingPlugin;
-
-impl Plugin for LoadingPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
-            .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
-            .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
-            .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
-            .add_loading_state(
-                LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu),
-            )
-            .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, AnimationAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, LevelAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
-            .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
-            .add_system(show_progress.in_set(OnUpdate(GameState::Loading)))
-            .add_system(update_config);
-    }
+pub fn loading_plugin(app: &mut App) {
+    app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
+        .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
+        .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
+        .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
+        .add_loading_state(LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu))
+        .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, AnimationAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, LevelAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
+        .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
+        .add_system(show_progress.in_set(OnUpdate(GameState::Loading)))
+        .add_system(update_config);
 }
 
 // the following asset collections will be loaded during the State `GameState::InitialLoading`

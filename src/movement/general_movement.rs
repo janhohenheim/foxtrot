@@ -32,31 +32,27 @@ pub use components::*;
 /// - An instantaneous force (i.e. an impulse) like jumping: `external_impulse.impulse += velocity * read_mass_properties.0.mass`, with `external_impulse`: [`ExternalImpulse`], `read_mass_properties`: [`ReadMassProperties`], and a user-defined `velocity`: [`Vec3`]
 ///
 /// Note: you might notice that the normal force is not included in the above diagram. This is because rapier emulates it by moving penetrating colliders out of each other.
-pub struct GeneralMovementPlugin;
-
-impl Plugin for GeneralMovementPlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<Grounded>()
-            .register_type::<Jumping>()
-            .register_type::<Velocity>()
-            .register_type::<Walking>()
-            .register_type::<CharacterAnimations>()
-            .add_systems(
-                (
-                    reset_forces_and_impulses,
-                    update_grounded,
-                    apply_jumping,
-                    apply_walking,
-                    rotate_characters,
-                    play_animations,
-                    sync_models,
-                    reset_movement_components,
-                )
-                    .chain()
-                    .in_set(GeneralMovementSystemSet)
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn GeneralMovementPlugin(app: &mut App) {
+    app.register_type::<Grounded>()
+        .register_type::<Jumping>()
+        .register_type::<Velocity>()
+        .register_type::<Walking>()
+        .register_type::<CharacterAnimations>()
+        .add_systems(
+            (
+                reset_forces_and_impulses,
+                update_grounded,
+                apply_jumping,
+                apply_walking,
+                rotate_characters,
+                play_animations,
+                sync_models,
+                reset_movement_components,
+            )
+                .chain()
+                .in_set(GeneralMovementSystemSet)
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]

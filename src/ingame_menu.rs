@@ -5,14 +5,8 @@ use bevy_egui::{egui, EguiContexts};
 use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
-pub struct IngameMenuPlugin;
-
-impl Plugin for IngameMenuPlugin {
-    fn build(&self, app: &mut App) {
-        {
-            app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
-        }
-    }
+pub fn IngameMenuPlugin(app: &mut App) {
+    app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
 }
 
 fn handle_pause(

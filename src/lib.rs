@@ -30,7 +30,7 @@ pub mod shader;
 pub mod util;
 pub mod world_interaction;
 
-pub use crate::bevy_config::BevyConfigPlugin;
+use crate::bevy_config::bevy_config_plugin;
 #[cfg(feature = "dev")]
 use crate::dev::DevPlugin;
 use crate::file_system_interaction::FileSystemInteractionPlugin;
@@ -44,6 +44,7 @@ use crate::player_control::PlayerControlPlugin;
 use crate::shader::ShaderPlugin;
 use crate::world_interaction::WorldInteractionPlugin;
 use bevy::prelude::*;
+use seldom_fn_plugin::FnPluginExt;
 
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
@@ -59,7 +60,7 @@ enum GameState {
 /// Main entrypoint for Foxtrot.
 ///
 /// The top-level plugins are:
-/// - [`BevyConfigPlugin`]: Sets up the bevy configuration.
+/// - [`bevy_config_plugin`]: Sets up the bevy configuration.
 /// - [`MenuPlugin`]: Handles the menu.
 /// - [`MovementPlugin`]: Handles the movement of entities.
 /// - [`PlayerControlPlugin`]: Handles the player's control.
@@ -70,6 +71,8 @@ enum GameState {
 /// - [`DevPlugin`]: Handles the dev tools.
 /// - [`IngameMenuPlugin`]: Handles the ingame menu accessed via ESC.
 /// - [`ParticlePlugin`]: Handles the particle system. Since [bevy_hanabi](https://github.com/djeedai/bevy_hanabi) does not support wasm, this plugin is only available on native.
+///
+/// Because Foxtrot uses `seldom_fn_plugin`, these are all functions.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -84,18 +87,18 @@ impl Plugin for GamePlugin {
         compile_error!("You can only compile with the native-dev feature if you compile with the native feature.");
 
         app.add_state::<GameState>()
-            .add_plugin(BevyConfigPlugin)
-            .add_plugin(MenuPlugin)
-            .add_plugin(MovementPlugin)
-            .add_plugin(PlayerControlPlugin)
-            .add_plugin(WorldInteractionPlugin)
-            .add_plugin(LevelInstantiationPlugin)
-            .add_plugin(FileSystemInteractionPlugin)
-            .add_plugin(ShaderPlugin)
-            .add_plugin(IngameMenuPlugin);
+            .fn_plugin(bevy_config_plugin)
+            .fn_plugin(MenuPlugin)
+            .fn_plugin(MovementPlugin)
+            .fn_plugin(PlayerControlPlugin)
+            .fn_plugin(WorldInteractionPlugin)
+            .fn_plugin(LevelInstantiationPlugin)
+            .fn_plugin(FileSystemInteractionPlugin)
+            .fn_plugin(ShaderPlugin)
+            .fn_plugin(IngameMenuPlugin);
         #[cfg(feature = "dev")]
-        app.add_plugin(DevPlugin);
+        app.fn_plugin(DevPlugin);
         #[cfg(feature = "native")]
-        app.add_plugin(ParticlePlugin);
+        app.fn_plugin(ParticlePlugin);
     }
 }

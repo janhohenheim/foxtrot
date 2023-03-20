@@ -15,23 +15,19 @@ use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
-pub struct InteractionsUiPlugin;
-
-impl Plugin for InteractionsUiPlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<InteractionOpportunities>()
-            .init_resource::<InteractionOpportunities>()
-            .add_systems(
-                (update_interaction_opportunities, update_interaction_ui)
-                    .chain()
-                    .in_set(OnUpdate(GameState::Playing)),
-            )
-            .add_system(
-                display_interaction_prompt
-                    .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn InteractionsUiPlugin(app: &mut App) {
+    app.register_type::<InteractionOpportunities>()
+        .init_resource::<InteractionOpportunities>()
+        .add_systems(
+            (update_interaction_opportunities, update_interaction_ui)
+                .chain()
+                .in_set(OnUpdate(GameState::Playing)),
+        )
+        .add_system(
+            display_interaction_prompt
+                .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 #[derive(Resource, Debug)]

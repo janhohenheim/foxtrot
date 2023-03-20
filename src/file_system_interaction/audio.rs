@@ -4,14 +4,9 @@ use bevy::prelude::*;
 use bevy_kira_audio::prelude::{Audio, *};
 
 /// Handles initialization of all sounds.
-pub struct InternalAudioPlugin;
-
-// This plugin is responsible to control the game audio
-impl Plugin for InternalAudioPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(AudioPlugin)
-            .add_system(init_audio.in_schedule(OnExit(GameState::Loading)));
-    }
+pub fn InternalAudioPlugin(app: &mut App) {
+    app.add_plugin(AudioPlugin)
+        .add_system(init_audio.in_schedule(OnExit(GameState::Loading)));
 }
 
 #[derive(Debug, Clone, Resource)]

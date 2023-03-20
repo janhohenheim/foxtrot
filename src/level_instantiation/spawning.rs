@@ -15,7 +15,7 @@ mod despawn;
 pub mod objects;
 mod post_spawn_modification;
 
-pub fn SpawningPlugin(app: &mut App) {
+pub fn spawning_plugin(app: &mut App) {
     app.add_plugin(SpewPlugin::<GameObject, Transform>::default())
         .register_type::<Despawn>()
         .register_type::<AnimationEntityLink>()

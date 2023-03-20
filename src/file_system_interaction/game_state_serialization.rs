@@ -15,7 +15,7 @@ use std::borrow::Cow;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn GameStateSerializationPlugin(app: &mut App) {
+pub fn game_state_serialization_plugin(app: &mut App) {
     app.add_event::<GameSaveRequest>()
         .add_event::<GameLoadRequest>()
         .add_systems(

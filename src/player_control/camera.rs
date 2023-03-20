@@ -49,7 +49,7 @@ pub enum IngameCameraKind {
 /// Handles the main ingame camera, i.e. not the UI camera in the menu.
 /// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
 /// third person or fixed angle camera is used.
-pub fn CameraPlugin(app: &mut App) {
+pub fn camera_plugin(app: &mut App) {
     app.register_type::<UiCamera>()
         .register_type::<IngameCamera>()
         .register_type::<IngameCameraKind>()

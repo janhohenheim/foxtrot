@@ -7,7 +7,7 @@ use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
-pub fn PhysicsPlugin(app: &mut App) {
+pub fn physics_plugin(app: &mut App) {
     app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .insert_resource(RapierConfiguration {
             timestep_mode: TimestepMode::Variable {

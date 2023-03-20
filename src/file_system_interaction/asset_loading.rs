@@ -14,7 +14,7 @@ use bevy_kira_audio::AudioSource;
 use bevy_mod_sysfail::macros::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
-pub fn LoadingPlugin(app: &mut App) {
+pub fn loading_plugin(app: &mut App) {
     app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
         .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
         .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))

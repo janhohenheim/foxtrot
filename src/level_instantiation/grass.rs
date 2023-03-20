@@ -7,7 +7,7 @@ use bevy_mod_sysfail::macros::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 
-pub fn GrassPlugin(app: &mut App) {
+pub fn grass_plugin(app: &mut App) {
     app.add_plugin(WarblersPlugin).add_system(
         add_grass
             .after(TransformSystem::TransformPropagate)

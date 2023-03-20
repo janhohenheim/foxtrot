@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use serde::{Deserialize, Serialize};
 
-pub fn ConditionPlugin(app: &mut App) {
+pub fn condition_plugin(app: &mut App) {
     app.init_resource::<ActiveConditions>()
         .add_event::<ConditionAddEvent>()
         .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));

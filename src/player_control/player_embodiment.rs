@@ -16,7 +16,7 @@ use std::ops::DerefMut;
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
-pub fn PlayerEmbodimentPlugin(app: &mut App) {
+pub fn player_embodiment_plugin(app: &mut App) {
     app.register_type::<Timer>()
         .register_type::<Player>()
         .add_systems(

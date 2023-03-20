@@ -1,4 +1,4 @@
-use crate::dev::dev_editor::DevEditorPlugin;
+use crate::dev::dev_editor::dev_editor_plugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
@@ -10,13 +10,13 @@ pub mod dev_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Don't include this in a release build.
-pub fn DevPlugin(app: &mut App) {
+pub fn dev_plugin(app: &mut App) {
     {
         app.add_plugin(EditorPlugin)
             .insert_resource(default_editor_controls())
             .add_plugin(FrameTimeDiagnosticsPlugin::default())
             .add_plugin(DebugLinesPlugin::default())
-            .fn_plugin(DevEditorPlugin)
+            .fn_plugin(dev_editor_plugin)
             .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
             .add_plugin(RapierDebugRenderPlugin {
                 enabled: false,

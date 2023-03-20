@@ -12,7 +12,7 @@ use spew::prelude::*;
 use std::path::Path;
 use std::{fs, iter};
 
-pub fn LevelSerializationPlugin(app: &mut App) {
+pub fn level_serialization_plugin(app: &mut App) {
     app.add_event::<WorldSaveRequest>()
         .add_event::<WorldLoadRequest>()
         .add_systems(

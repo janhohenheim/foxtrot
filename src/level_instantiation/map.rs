@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use spew::prelude::*;
 
-pub fn MapPlugin(app: &mut App) {
+pub fn map_plugin(app: &mut App) {
     app.add_system(
         setup
             .run_if(not(resource_exists::<CurrentLevel>()))

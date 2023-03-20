@@ -32,7 +32,7 @@ pub use components::*;
 /// - An instantaneous force (i.e. an impulse) like jumping: `external_impulse.impulse += velocity * read_mass_properties.0.mass`, with `external_impulse`: [`ExternalImpulse`], `read_mass_properties`: [`ReadMassProperties`], and a user-defined `velocity`: [`Vec3`]
 ///
 /// Note: you might notice that the normal force is not included in the above diagram. This is because rapier emulates it by moving penetrating colliders out of each other.
-pub fn GeneralMovementPlugin(app: &mut App) {
+pub fn general_movement_plugin(app: &mut App) {
     app.register_type::<Grounded>()
         .register_type::<Jumping>()
         .register_type::<Velocity>()

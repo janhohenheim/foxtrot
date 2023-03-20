@@ -13,7 +13,7 @@ jobs:
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: 1.69.0
           override: true
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev

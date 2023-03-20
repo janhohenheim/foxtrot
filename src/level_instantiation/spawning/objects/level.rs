@@ -2,11 +2,14 @@ use crate::file_system_interaction::asset_loading::SceneAssets;
 use crate::level_instantiation::spawning::GameObject;
 use bevy::prelude::*;
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    let scene_handles = world.get_resource::<SceneAssets>().unwrap().clone();
-    world.spawn((
+pub(crate) fn spawn(
+    In(transform): In<Transform>,
+    mut commands: Commands,
+    scene_handles: Res<SceneAssets>,
+) {
+    commands.spawn((
         SceneBundle {
-            scene: scene_handles.level,
+            scene: scene_handles.level.clone(),
             transform,
             ..default()
         },

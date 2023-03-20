@@ -1,13 +1,9 @@
 # Foxtrot
-[![Live Demo](https://img.shields.io/badge/live%20demo-v0.1.12-blue)](https://janhohenheim.github.io/foxtrot/)
+[![Live Demo](https://img.shields.io/badge/live%20demo-v0.2.0-blue)](https://janhohenheim.github.io/foxtrot/)
 
 The all-in-one Bevy 3D game template.  
 
 https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b1d1-ccc59b02fa7b.mov
-
-I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
-that I want to use in my games. Since the target audience is me, the code is not super well documented, but it should 
-be good enough for others to find inspiration, copy parts they like or troubleshoot their own implementations :)
 
 ## What does this template give you?
 - A 3D character controller
@@ -28,6 +24,7 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - A skydome that follows the camera
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
 - Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
+- Particle effects via [`bevy_hanabi`](https://github.com/djeedai/bevy_hanabi)
 - Clean and extensible object spawning via [`spew`](https://crates.io/crates/spew)
 
 ## Usage

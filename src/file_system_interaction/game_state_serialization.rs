@@ -57,7 +57,7 @@ fn handle_load_requests(
     mut commands: Commands,
     mut load_events: EventReader<GameLoadRequest>,
     mut loader: EventWriter<WorldLoadRequest>,
-    mut spawner: EventWriter<DelayedSpawnEvent<GameObject, Transform>>,
+    mut spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
 ) -> Result<()> {
     for load in load_events.iter() {
@@ -117,11 +117,7 @@ fn handle_load_requests(
         commands.insert_resource(save_model.conditions);
 
         spawner.send(
-            SpawnEvent {
-                object: GameObject::Player,
-                data: save_model.player_transform,
-            }
-            .delay_frames(2),
+            SpawnEvent::with_data(GameObject::Player, save_model.player_transform).delay_frames(2),
         );
     }
     Ok(())

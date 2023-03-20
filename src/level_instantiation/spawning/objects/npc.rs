@@ -11,9 +11,13 @@ use std::f32::consts::TAU;
 pub const HEIGHT: f32 = 0.4;
 pub const RADIUS: f32 = 0.4;
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    let animations = world.get_resource::<AnimationAssets>().unwrap();
-    let entity = world
+pub(crate) fn spawn(
+    In(transform): In<Transform>,
+    mut commands: Commands,
+    animations: Res<AnimationAssets>,
+    scene_handles: Res<SceneAssets>,
+) {
+    let entity = commands
         .spawn((
             PbrBundle {
                 transform,
@@ -47,8 +51,7 @@ pub(crate) fn spawn(world: &mut World, transform: Transform) {
         })
         .id();
 
-    let scene_handles = world.get_resource::<SceneAssets>().unwrap().clone();
-    world
+    commands
         .spawn((
             Model { target: entity },
             SpatialBundle::default(),

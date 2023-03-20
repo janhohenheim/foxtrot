@@ -13,9 +13,13 @@ use std::f32::consts::TAU;
 pub const HEIGHT: f32 = 0.4;
 pub const RADIUS: f32 = 0.3;
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    let animations = world.get_resource::<AnimationAssets>().unwrap().clone();
-    let entity = world
+pub(crate) fn spawn(
+    In(transform): In<Transform>,
+    mut commands: Commands,
+    animations: Res<AnimationAssets>,
+    scene_handles: Res<SceneAssets>,
+) {
+    let entity = commands
         .spawn((
             PbrBundle {
                 transform,
@@ -26,9 +30,9 @@ pub(crate) fn spawn(world: &mut World, transform: Transform) {
             Ccd::enabled(),
             CharacterControllerBundle::capsule(HEIGHT, RADIUS),
             CharacterAnimations {
-                idle: animations.character_idle,
-                walk: animations.character_walking,
-                aerial: animations.character_running,
+                idle: animations.character_idle.clone(),
+                walk: animations.character_walking.clone(),
+                aerial: animations.character_running.clone(),
             },
             CollisionGroups::new(
                 GameCollisionGroup::PLAYER.into(),
@@ -40,8 +44,7 @@ pub(crate) fn spawn(world: &mut World, transform: Transform) {
         ))
         .id();
 
-    let scene_handles = world.get_resource::<SceneAssets>().unwrap().clone();
-    world
+    commands
         .spawn((
             Model { target: entity },
             SpatialBundle::default(),
@@ -50,7 +53,7 @@ pub(crate) fn spawn(world: &mut World, transform: Transform) {
         .with_children(|parent| {
             parent.spawn((
                 SceneBundle {
-                    scene: scene_handles.character,
+                    scene: scene_handles.character.clone(),
                     transform: Transform {
                         translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
                         rotation: Quat::from_rotation_y(TAU / 2.),

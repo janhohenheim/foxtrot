@@ -4,8 +4,8 @@ use crate::player_control::camera::IngameCamera;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    world.spawn((
+pub(crate) fn spawn(In(transform): In<Transform>, mut commands: Commands) {
+    commands.spawn((
         IngameCamera::default(),
         Camera3dBundle {
             transform,

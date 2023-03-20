@@ -75,10 +75,10 @@ impl EditorWindow for DevEditorWindow {
                     });
                     // Make sure the player is spawned after the level
                     world.send_event(
-                        SpawnEvent {
-                            object: GameObject::Player,
-                            data: Transform::from_translation((0., 1.5, 0.).into()),
-                        }
+                        SpawnEvent::with_data(
+                            GameObject::Player,
+                            Transform::from_translation((0., 1.5, 0.).into()),
+                        )
                         .delay_frames(2),
                     );
                 }
@@ -104,10 +104,10 @@ impl EditorWindow for DevEditorWindow {
         ui.add_space(10.);
         ui.label("Spawning");
         if ui.button("Spawn").clicked() {
-            world.send_event(SpawnEvent {
-                object: state.spawn_item,
-                data: Transform::default(),
-            });
+            world.send_event(SpawnEvent::with_data(
+                state.spawn_item,
+                Transform::default(),
+            ));
         }
 
         ui.add_space(3.);

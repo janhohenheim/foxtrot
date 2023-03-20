@@ -2,8 +2,8 @@ use crate::level_instantiation::spawning::GameObject;
 
 use bevy::prelude::*;
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    world.spawn((
+pub(crate) fn spawn(In(transform): In<Transform>, mut commands: Commands) {
+    commands.spawn((
         PointLightBundle {
             point_light: PointLight {
                 color: Color::WHITE,

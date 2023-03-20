@@ -28,7 +28,7 @@ impl Plugin for MapPlugin {
 fn setup(
     mut commands: Commands,
     mut loader: EventWriter<WorldLoadRequest>,
-    mut delayed_spawner: EventWriter<DelayedSpawnEvent<GameObject, Transform>>,
+    mut delayed_spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
 ) {
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
@@ -41,11 +41,7 @@ fn setup(
 
     // Make sure the player is spawned after the level
     delayed_spawner.send(
-        SpawnEvent {
-            object: GameObject::Player,
-            data: Transform::from_xyz(0., 1.5, 0.),
-        }
-        .delay_frames(2),
+        SpawnEvent::with_data(GameObject::Player, Transform::from_xyz(0., 1.5, 0.)).delay_frames(2),
     );
 }
 

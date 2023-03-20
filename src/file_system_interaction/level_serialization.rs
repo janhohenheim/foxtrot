@@ -156,9 +156,11 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
     let objects: Vec<_> = spawn_query
         .iter()
         .filter(|(game_object, _)| **game_object != GameObject::Player)
-        .map(|(game_object, transform)| SpawnEvent {
-            object: *game_object,
-            data: transform.map(Clone::clone).unwrap_or_default(),
+        .map(|(game_object, transform)| {
+            SpawnEvent::with_data(
+                *game_object,
+                transform.map(Clone::clone).unwrap_or_default(),
+            )
         })
         .collect();
     let serialized_level = SerializedLevel::from(objects);
@@ -185,10 +187,7 @@ impl From<&SerializedLevel> for Vec<SpawnEvent<GameObject, Transform>> {
     fn from(level: &SerializedLevel) -> Self {
         level
             .iter()
-            .map(|(object, transform)| SpawnEvent {
-                object: *object,
-                data: *transform,
-            })
+            .map(|(object, transform)| SpawnEvent::with_data(*object, *transform))
             .collect()
     }
 }

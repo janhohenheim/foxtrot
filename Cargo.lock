@@ -3904,9 +3904,9 @@ dependencies = [
 
 [[package]]
 name = "spew"
-version = "0.1.1"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eaccc03b9ead0180b51a33c48bcbec06f297cadea3ac8170a1cfc55e7f89359a"
+checksum = "8bdede3797a0a56b6c46ad30b5ff1967a39393be29c7b3c453cec8c597f438aa"
 dependencies = [
  "bevy",
 ]

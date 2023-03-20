@@ -13,11 +13,11 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 
 ## What does this template give you?
 - A 3D character controller
-- Physics via `bevy_rapier`
-- Audio via `bevy_kira_audio`
-- Pathfinding via `oxidized_navigation`
-- `bevy_editor_pls` in the `dev` feature, bound to 'Q'
-- Custom editor for the game state found in the windows for `bevy_editor_pls`.
+- Physics via [`bevy_rapier`](https://crates.io/crates/bevy_rapier)
+- Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
+- Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
+- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) in the `dev` feature, bound to 'Q'
+- Custom editor for the game state found in the windows selection for `bevy_editor_pls`.
 - Saving / loading levels
 - Saving / loading the game state
 - Animations
@@ -25,8 +25,11 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - Shaders
 - GLTF imports, including auto-detection of colliders
 - Dynamic builds in the `native-dev` feature
-- Grass blades using `warbler_grass`
+- Grass blades using [`warbler_grass`](https://crates.io/crates/warbler_grass)
+- Smooth cameras via [`bevy_dolly`](https://github.com/BlackPhlox/bevy_dolly)
 - A skydome that follows the camera
+- Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
+- Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
 
 ## Usage
 

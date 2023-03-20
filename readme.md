@@ -9,7 +9,6 @@ The all-in-one Bevy 3D game template.
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
 that I want to use in my games. Since the target audience is me, the code is not super well documented, but it should 
 be good enough for others to find inspiration, copy parts they like or troubleshoot their own implementations :)
- 
 
 ## What does this template give you?
 - A 3D character controller
@@ -32,6 +31,12 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
 
 ## Usage
+
+Simply use the [template button on GitHub](https://github.com/janhohenheim/foxtrot/generate) to create a new repository from this template.
+Then, replace all instances of the word `foxtrot` with the name of your game. Change the game version as well as the author information in the following files:
+- `Cargo.toml`
+- `build/windows/installer/Package.wxs`
+- `build/macos/src/Game.app/Contents/Resources/Info.plist`
 
 ### Running the game
 Native:

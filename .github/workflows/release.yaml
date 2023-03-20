@@ -38,7 +38,9 @@ jobs:
       - name: Install rust toolchain for Apple Silicon
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: nightly
           target: aarch64-apple-darwin
+          override: true
       - name: Install zld
         run: |
           brew install michaeleisel/zld/zld
@@ -48,7 +50,9 @@ jobs:
       - name: Install rust toolchain for Apple x86
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: nightly
           target: x86_64-apple-darwin
+          override: true
       - name: Build release for x86 Apple
         run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features native --target=x86_64-apple-darwin
@@ -90,6 +94,9 @@ jobs:
           git lfs pull
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
@@ -128,6 +135,9 @@ jobs:
           git lfs pull
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Install dotnet
         uses: actions/setup-dotnet@v3
         with:
@@ -175,6 +185,9 @@ jobs:
           git lfs pull
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install trunk

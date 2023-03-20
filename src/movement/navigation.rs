@@ -18,11 +18,13 @@ use oxidized_navigation::{
 };
 use serde::{Deserialize, Serialize};
 
+/// Manually tweaked
 const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
 pub fn navigation_plugin(app: &mut App) {
     app.add_plugin(OxidizedNavigationPlugin)
+        // consts manually tweaked
         .insert_resource(NavMeshSettings {
             cell_width: CELL_WIDTH,
             cell_height: 0.5 * CELL_WIDTH,

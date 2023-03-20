@@ -42,3 +42,6 @@ sprint_effect_speed_threshold = 7.0
 fov_saturation_speed = 12.0
 min_fov = 0.75
 max_fov = 1.5
+
+[dialog]
+base_letters_per_second = 60.0

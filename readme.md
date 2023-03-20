@@ -43,7 +43,7 @@ Native:
 ```bash
 cargo run
 ```
-WASM:
+Wasm:
 ```bash
 trunk serve --no-default-features --features wasm_dev
 ```

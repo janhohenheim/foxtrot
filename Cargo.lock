@@ -2053,6 +2053,7 @@ dependencies = [
  "rand",
  "regex",
  "ron",
+ "seldom_fn_plugin",
  "serde",
  "spew",
  "strum",
@@ -3757,6 +3758,15 @@ name = "scratch"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1792db035ce95be60c3f8853017b3999209281c24e2ba5bc8e59bf97a0c590c1"
+
+[[package]]
+name = "seldom_fn_plugin"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fe39c9c3154c4f55410e499f0fa4473868536a4b281d38d4b7cc775ea5a0182"
+dependencies = [
+ "bevy",
+]
 
 [[package]]
 name = "semver"

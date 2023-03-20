@@ -12,21 +12,18 @@ use spew::prelude::*;
 use std::path::Path;
 use std::{fs, iter};
 
-pub struct LevelSerializationPlugin;
-
-impl Plugin for LevelSerializationPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_event::<WorldSaveRequest>()
-            .add_event::<WorldLoadRequest>()
-            .add_systems(
-                (
-                    save_world,
-                    load_world.run_if(resource_exists::<LevelAssets>()),
-                )
-                    .in_base_set(CoreSet::PostUpdate),
-            );
-    }
+pub fn level_serialization_plugin(app: &mut App) {
+    app.add_event::<WorldSaveRequest>()
+        .add_event::<WorldLoadRequest>()
+        .add_systems(
+            (
+                save_world,
+                load_world.run_if(resource_exists::<LevelAssets>()),
+            )
+                .in_base_set(CoreSet::PostUpdate),
+        );
 }
+
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub struct WorldSaveRequest {

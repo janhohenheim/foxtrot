@@ -7,16 +7,12 @@ use bevy_mod_sysfail::macros::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 
-pub struct GrassPlugin;
-
-impl Plugin for GrassPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(WarblersPlugin).add_system(
-            add_grass
-                .after(TransformSystem::TransformPropagate)
-                .in_base_set(CoreSet::PostUpdate),
-        );
-    }
+pub fn grass_plugin(app: &mut App) {
+    app.add_plugin(WarblersPlugin).add_system(
+        add_grass
+            .after(TransformSystem::TransformPropagate)
+            .in_base_set(CoreSet::PostUpdate),
+    );
 }
 
 #[sysfail(log(level = "error"))]

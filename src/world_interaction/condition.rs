@@ -3,14 +3,10 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use serde::{Deserialize, Serialize};
 
-pub struct ConditionPlugin;
-
-impl Plugin for ConditionPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<ActiveConditions>()
-            .add_event::<ConditionAddEvent>()
-            .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
-    }
+pub fn condition_plugin(app: &mut App) {
+    app.init_resource::<ActiveConditions>()
+        .add_event::<ConditionAddEvent>()
+        .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]

@@ -6,24 +6,21 @@ pub mod level_serialization;
 
 use bevy::prelude::*;
 
-use crate::file_system_interaction::asset_loading::LoadingPlugin;
-use crate::file_system_interaction::audio::InternalAudioPlugin;
-use crate::file_system_interaction::game_state_serialization::GameStateSerializationPlugin;
-use crate::file_system_interaction::level_serialization::LevelSerializationPlugin;
+use crate::file_system_interaction::asset_loading::loading_plugin;
+use crate::file_system_interaction::audio::internal_audio_plugin;
+use crate::file_system_interaction::game_state_serialization::game_state_serialization_plugin;
+use crate::file_system_interaction::level_serialization::level_serialization_plugin;
+use seldom_fn_plugin::FnPluginExt;
 
 /// Handles loading and saving of levels and save states to disk.
 /// Split into the following sub-plugins:
-/// - [`LoadingPlugin`] handles loading of assets.
-/// - [`GameStateSerializationPlugin`] handles saving and loading of game states.
-/// - [`LevelSerializationPlugin`] handles saving and loading of levels.
-/// - [`InternalAudioPlugin`]: Handles audio initialization
-pub struct FileSystemInteractionPlugin;
-
-impl Plugin for FileSystemInteractionPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(LoadingPlugin)
-            .add_plugin(GameStateSerializationPlugin)
-            .add_plugin(LevelSerializationPlugin)
-            .add_plugin(InternalAudioPlugin);
-    }
+/// - [`loading_plugin`] handles loading of assets.
+/// - [`game_state_serialization_plugin`] handles saving and loading of game states.
+/// - [`level_serialization_plugin`] handles saving and loading of levels.
+/// - [`internal_audio_plugin`]: Handles audio initialization
+pub fn file_system_interaction_plugin(app: &mut App) {
+    app.fn_plugin(loading_plugin)
+        .fn_plugin(game_state_serialization_plugin)
+        .fn_plugin(level_serialization_plugin)
+        .fn_plugin(internal_audio_plugin);
 }

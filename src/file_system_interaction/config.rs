@@ -18,6 +18,9 @@ use serde::{Deserialize, Serialize};
 #[uuid = "93a7c64b-4d6e-4420-b8c1-dfca481d9387"]
 pub struct GameConfig {
     pub camera: Camera,
+    pub characters: Characters,
+    pub player: Player,
+    pub dialog: Dialog,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
@@ -67,4 +70,27 @@ pub struct ThirdPerson {
     pub tracking_smoothing: f32,
     pub zoom_in_smoothing: f32,
     pub zoom_out_smoothing: f32,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct Characters {
+    pub model_sync_smoothing: f32,
+    pub rotation_smoothing: f32,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct Player {
+    pub rotate_to_speaker_smoothness: f32,
+    pub sprint_effect_speed_threshold: f32,
+    pub fov_saturation_speed: f32,
+    pub min_fov: f32,
+    pub max_fov: f32,
+}
+
+#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[reflect(Serialize, Deserialize)]
+pub struct Dialog {
+    pub base_letters_per_second: f32,
 }

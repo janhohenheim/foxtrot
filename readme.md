@@ -29,6 +29,7 @@ be good enough for others to find inspiration, copy parts they like or troublesh
 - A skydome that follows the camera
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
 - Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
+- Clean and extensible object spawning via [`spew`](https://crates.io/crates/spew)
 
 ## Usage
 

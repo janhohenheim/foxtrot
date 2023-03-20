@@ -3,8 +3,7 @@
 
 The all-in-one Bevy 3D game template.  
 
-
-![Foxtrot in action](https://media.giphy.com/media/NKBVjKZewDfttXSx56/giphy.gif)
+https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b1d1-ccc59b02fa7b.mov
 
 I created Foxtrot because I wanted to have a quick starting point for jams, prototypes and projects supporting features
 that I want to use in my games. Since the target audience is me, the code is not super well documented, but it should 

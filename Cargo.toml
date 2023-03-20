@@ -100,7 +100,7 @@ wasm-bindgen = { version = "0.2", optional = true }
 warbler_grass = "0.3"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
 bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "b2f5dc787664cb8c3d92f792cbd437886fc090c6" }
-spew = "0.2"
+spew = "0.2.1"
 bevy_mod_sysfail = "2"
 
 # keep the following in sync with Bevy's dependencies

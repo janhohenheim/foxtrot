@@ -16,17 +16,18 @@ fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
     })
 }
 
-pub(crate) fn spawn(world: &mut World, transform: Transform) {
-    let mesh_handle = {
-        let mut meshes = world.get_resource_mut::<Assets<Mesh>>().unwrap();
-        get_or_add_mesh_handle(&mut meshes)
-    };
-    let materials = world.get_resource::<Materials>().unwrap().clone();
-    world
+pub(crate) fn spawn(
+    In(transform): In<Transform>,
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    materials: Res<Materials>,
+) {
+    let mesh_handle = get_or_add_mesh_handle(&mut meshes);
+    commands
         .spawn((
             MaterialMeshBundle {
                 mesh: mesh_handle,
-                material: materials.glowy,
+                material: materials.glowy.clone(),
                 transform,
                 ..default()
             },

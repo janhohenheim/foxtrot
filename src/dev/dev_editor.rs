@@ -18,21 +18,17 @@ use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use strum::IntoEnumIterator;
 
-pub struct DevEditorPlugin;
-
-impl Plugin for DevEditorPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<DevEditorState>()
-            .add_editor_window::<DevEditorWindow>()
-            .add_systems(
-                (
-                    handle_debug_render,
-                    handle_navmesh_render,
-                    set_cursor_grab_mode,
-                )
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn DevEditorPlugin(app: &mut App) {
+    app.init_resource::<DevEditorState>()
+        .add_editor_window::<DevEditorWindow>()
+        .add_systems(
+            (
+                handle_debug_render,
+                handle_navmesh_render,
+                set_cursor_grab_mode,
+            )
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 pub struct DevEditorWindow;

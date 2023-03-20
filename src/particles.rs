@@ -10,15 +10,11 @@ use bevy_rapier3d::prelude::*;
 mod init;
 
 /// Handles particle effects instantiation and playing.
-pub struct ParticlePlugin;
-
-impl Plugin for ParticlePlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<SprintingParticle>()
-            .add_plugin(HanabiPlugin)
-            .add_system(init_effects.in_schedule(OnExit(GameState::Loading)))
-            .add_system(play_sprinting_effect.in_set(OnUpdate(GameState::Playing)));
-    }
+pub fn ParticlePlugin(app: &mut App) {
+    app.register_type::<SprintingParticle>()
+        .add_plugin(HanabiPlugin)
+        .add_system(init_effects.in_schedule(OnExit(GameState::Loading)))
+        .add_system(play_sprinting_effect.in_set(OnUpdate(GameState::Playing)));
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Default)]

@@ -10,6 +10,7 @@ use crate::file_system_interaction::asset_loading::LoadingPlugin;
 use crate::file_system_interaction::audio::InternalAudioPlugin;
 use crate::file_system_interaction::game_state_serialization::GameStateSerializationPlugin;
 use crate::file_system_interaction::level_serialization::LevelSerializationPlugin;
+use seldom_fn_plugin::FnPluginExt;
 
 /// Handles loading and saving of levels and save states to disk.
 /// Split into the following sub-plugins:
@@ -17,13 +18,9 @@ use crate::file_system_interaction::level_serialization::LevelSerializationPlugi
 /// - [`GameStateSerializationPlugin`] handles saving and loading of game states.
 /// - [`LevelSerializationPlugin`] handles saving and loading of levels.
 /// - [`InternalAudioPlugin`]: Handles audio initialization
-pub struct FileSystemInteractionPlugin;
-
-impl Plugin for FileSystemInteractionPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(LoadingPlugin)
-            .add_plugin(GameStateSerializationPlugin)
-            .add_plugin(LevelSerializationPlugin)
-            .add_plugin(InternalAudioPlugin);
-    }
+pub fn FileSystemInteractionPlugin(app: &mut App) {
+    app.fn_plugin(LoadingPlugin)
+        .fn_plugin(GameStateSerializationPlugin)
+        .fn_plugin(LevelSerializationPlugin)
+        .fn_plugin(InternalAudioPlugin);
 }

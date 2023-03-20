@@ -20,14 +20,11 @@ use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
 
-pub struct DialogPlugin;
-impl Plugin for DialogPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugin(EguiPlugin)
-            .register_type::<DialogId>()
-            .add_event::<DialogEvent>()
-            .add_systems((set_current_dialog, show_dialog).in_set(OnUpdate(GameState::Playing)));
-    }
+pub fn DialogPlugin(app: &mut App) {
+    app.add_plugin(EguiPlugin)
+        .register_type::<DialogId>()
+        .add_event::<DialogEvent>()
+        .add_systems((set_current_dialog, show_dialog).in_set(OnUpdate(GameState::Playing)));
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize, Default)]

@@ -5,10 +5,6 @@ use leafwing_input_manager::plugin::InputManagerSystem;
 use leafwing_input_manager::prelude::*;
 use serde::{Deserialize, Serialize};
 
-/// Configures [`Actions`], the resource that holds all player input.
-/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
-pub struct ActionsPlugin;
-
 #[derive(Resource, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
 pub struct ActionsFrozen {
@@ -26,25 +22,24 @@ impl ActionsFrozen {
     }
 }
 
-// This plugin listens for keyboard input and converts the input into Actions
-// Actions can then be used as a resource in other systems to act on the player input.
-impl Plugin for ActionsPlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<PlayerAction>()
-            .register_type::<CameraAction>()
-            .register_type::<UiAction>()
-            .register_type::<ActionsFrozen>()
-            .init_resource::<ActionsFrozen>()
-            .add_plugin(InputManagerPlugin::<PlayerAction>::default())
-            .add_plugin(InputManagerPlugin::<CameraAction>::default())
-            .add_plugin(InputManagerPlugin::<UiAction>::default())
-            .add_system(
-                remove_actions_when_frozen
-                    .run_if(is_frozen)
-                    .after(InputManagerSystem::ManualControl)
-                    .in_base_set(CoreSet::PreUpdate),
-            );
-    }
+/// Configures [`Actions`], the resource that holds all player input.
+/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
+
+pub fn ActionsPlugin(app: &mut App) {
+    app.register_type::<PlayerAction>()
+        .register_type::<CameraAction>()
+        .register_type::<UiAction>()
+        .register_type::<ActionsFrozen>()
+        .init_resource::<ActionsFrozen>()
+        .add_plugin(InputManagerPlugin::<PlayerAction>::default())
+        .add_plugin(InputManagerPlugin::<CameraAction>::default())
+        .add_plugin(InputManagerPlugin::<UiAction>::default())
+        .add_system(
+            remove_actions_when_frozen
+                .run_if(is_frozen)
+                .after(InputManagerSystem::ManualControl)
+                .in_base_set(CoreSet::PreUpdate),
+        );
 }
 
 #[derive(Debug, Clone, Copy, Actionlike, Reflect, FromReflect, Default)]

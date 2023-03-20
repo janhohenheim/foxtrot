@@ -4,27 +4,24 @@ use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
 use bevy_prototype_debug_lines::DebugLinesPlugin;
 use bevy_rapier3d::prelude::*;
+use seldom_fn_plugin::FnPluginExt;
 
 pub mod dev_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Don't include this in a release build.
-pub struct DevPlugin;
-
-impl Plugin for DevPlugin {
-    fn build(&self, app: &mut App) {
-        {
-            app.add_plugin(EditorPlugin)
-                .insert_resource(default_editor_controls())
-                .add_plugin(FrameTimeDiagnosticsPlugin::default())
-                .add_plugin(DebugLinesPlugin::default())
-                .add_plugin(DevEditorPlugin)
-                .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
-                .add_plugin(RapierDebugRenderPlugin {
-                    enabled: false,
-                    ..default()
-                });
-        }
+pub fn DevPlugin(app: &mut App) {
+    {
+        app.add_plugin(EditorPlugin)
+            .insert_resource(default_editor_controls())
+            .add_plugin(FrameTimeDiagnosticsPlugin::default())
+            .add_plugin(DebugLinesPlugin::default())
+            .fn_plugin(DevEditorPlugin)
+            .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
+            .add_plugin(RapierDebugRenderPlugin {
+                enabled: false,
+                ..default()
+            });
     }
 }
 

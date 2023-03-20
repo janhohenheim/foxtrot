@@ -49,31 +49,27 @@ pub enum IngameCameraKind {
 /// Handles the main ingame camera, i.e. not the UI camera in the menu.
 /// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
 /// third person or fixed angle camera is used.
-pub struct CameraPlugin;
-
-impl Plugin for CameraPlugin {
-    fn build(&self, app: &mut App) {
-        app.register_type::<UiCamera>()
-            .register_type::<IngameCamera>()
-            .register_type::<IngameCameraKind>()
-            .init_resource::<ForceCursorGrabMode>()
-            .add_system(Dolly::<IngameCamera>::update_active)
-            .add_system(spawn_ui_camera.on_startup())
-            .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-            .add_system(grab_cursor.in_set(OnUpdate(GameState::Playing)))
-            .add_systems(
-                (
-                    update_kind,
-                    update_drivers,
-                    set_camera_focus,
-                    update_rig,
-                    move_skydome,
-                )
-                    .chain()
-                    .in_set(CameraUpdateSystemSet)
-                    .in_set(OnUpdate(GameState::Playing)),
-            );
-    }
+pub fn CameraPlugin(app: &mut App) {
+    app.register_type::<UiCamera>()
+        .register_type::<IngameCamera>()
+        .register_type::<IngameCameraKind>()
+        .init_resource::<ForceCursorGrabMode>()
+        .add_system(Dolly::<IngameCamera>::update_active)
+        .add_system(spawn_ui_camera.on_startup())
+        .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
+        .add_system(grab_cursor.in_set(OnUpdate(GameState::Playing)))
+        .add_systems(
+            (
+                update_kind,
+                update_drivers,
+                set_camera_focus,
+                update_rig,
+                move_skydome,
+            )
+                .chain()
+                .in_set(CameraUpdateSystemSet)
+                .in_set(OnUpdate(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]

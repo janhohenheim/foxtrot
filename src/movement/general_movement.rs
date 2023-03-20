@@ -4,8 +4,10 @@ use std::time::Duration;
 
 use bevy_rapier3d::prelude::*;
 mod components;
+use crate::file_system_interaction::config::GameConfig;
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::util::trait_extension::Vec3Ext;
+use crate::util::smoothness_to_lerp_factor;
+use crate::util::trait_extension::{TransformExt, Vec3Ext};
 use crate::GameState;
 use bevy_mod_sysfail::macros::*;
 pub use components::*;
@@ -133,7 +135,11 @@ pub fn apply_jumping(
     }
 }
 
-fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut Transform)>) {
+fn rotate_characters(
+    time: Res<Time>,
+    mut player_query: Query<(&Velocity, &mut Transform)>,
+    config: Res<GameConfig>,
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_characters").entered();
     let dt = time.delta_seconds();
@@ -146,9 +152,9 @@ fn rotate_characters(time: Res<Time>, mut player_query: Query<(&Velocity, &mut T
         let target_transform =
             transform.looking_at(transform.translation + horizontal_movement, up);
         // Asymptotic averaging
-        const SMOOTHNESS: f32 = 4.;
-        let scale = (SMOOTHNESS * dt).min(1.);
-        let rotation = transform.rotation.slerp(target_transform.rotation, scale);
+        let smoothness = config.characters.rotation_smoothing;
+        let factor = smoothness_to_lerp_factor(smoothness, dt);
+        let rotation = transform.rotation.slerp(target_transform.rotation, factor);
         transform.rotation = rotation;
     }
 }
@@ -233,18 +239,14 @@ fn sync_models(
     mut commands: Commands,
     without_model: Query<(&Transform, &Visibility), Without<Model>>,
     mut with_model: Query<(Entity, &mut Transform, &mut Visibility, &Model)>,
+    game_config: Res<GameConfig>,
 ) -> Result<()> {
     let dt = time.delta_seconds();
     for (model_entity, mut model_transform, mut visibility, model) in with_model.iter_mut() {
         if let Ok((target_transform, target_visibility)) = without_model.get(model.target) {
-            const SMOOTHNESS: f32 = 20.;
-            let scale = (SMOOTHNESS * dt).min(1.);
-            model_transform.translation = model_transform
-                .translation
-                .lerp(target_transform.translation, scale);
-            model_transform.rotation = model_transform
-                .rotation
-                .slerp(target_transform.rotation, scale);
+            let smoothness = game_config.characters.model_sync_smoothing;
+            let factor = smoothness_to_lerp_factor(smoothness, dt);
+            *model_transform = model_transform.lerp(*target_transform, factor);
             *visibility = *target_visibility;
         } else {
             commands.entity(model_entity).despawn_recursive();

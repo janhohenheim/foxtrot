@@ -31,3 +31,17 @@ zoom_speed = 0.7
 min_distance_to_objects = 4e-1
 zoom_in_smoothing = 0.2
 zoom_out_smoothing = 1.2
+
+[characters]
+model_sync_smoothing = 0.15
+rotation_smoothing = 1.0
+
+[player]
+rotate_to_speaker_smoothness = 3.0
+sprint_effect_speed_threshold = 7.0
+fov_saturation_speed = 12.0
+min_fov = 0.75
+max_fov = 1.5
+
+[dialog]
+base_letters_per_second = 60.0

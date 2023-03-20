@@ -22,9 +22,6 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
       - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
         if: runner.os == 'linux'
@@ -50,9 +47,6 @@ jobs:
             target/
           key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
       - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Run doc tests
@@ -71,9 +65,6 @@ jobs:
             target/
           key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
       - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install trunk
@@ -99,10 +90,6 @@ jobs:
             target/
           key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
       - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          components: rustfmt, clippy
-          override: true
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Check format

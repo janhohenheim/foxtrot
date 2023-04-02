@@ -3,6 +3,7 @@ use crate::player_control::actions::create_camera_action_input_manager_bundle;
 use crate::player_control::camera::IngameCamera;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
+#[cfg(feature = "dev")]
 use bevy_editor_pls::default_windows::cameras::EditorCamera;
 
 pub(crate) fn spawn(In(transform): In<Transform>, mut commands: Commands) {
@@ -22,6 +23,7 @@ pub(crate) fn spawn(In(transform): In<Transform>, mut commands: Commands) {
         create_camera_action_input_manager_bundle(),
         Name::new("Main Camera"),
         GameObject::Camera,
+        #[cfg(feature = "dev")]
         EditorCamera,
     ));
 }

@@ -43,7 +43,6 @@ jobs:
         with:
           toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
           target: aarch64-apple-darwin
-          override: true
       - name: Install zld
         run: |
           brew install michaeleisel/zld/zld
@@ -55,7 +54,6 @@ jobs:
         with:
           toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
           target: x86_64-apple-darwin
-          override: true
       - name: Build release for x86 Apple
         run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features native --target=x86_64-apple-darwin

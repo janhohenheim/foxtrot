@@ -4,6 +4,10 @@ on:
   pull_request:
   push:
 
+env:
+  CARGO_TERM_COLOR: always
+  NIGHTLY_TOOLCHAIN: nightly-2023-03-01
+
 jobs:
   test-native:
     strategy:
@@ -12,19 +16,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
         if: runner.os == 'linux'
@@ -33,26 +29,18 @@ jobs:
         if: runner.os == 'macos'
       - name: Install llvm tools
         run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
-        if : runner.os == 'windows'
+        if: runner.os == 'windows'
       - name: Build & run tests for native
         run: cargo test
   test-native-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Run doc tests
@@ -61,25 +49,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install trunk
         uses: jetli/trunk-action@v0.1.0
         with:
-          version: 'v0.16.0'
+          version: "v0.16.0"
       - name: Add wasm target
         run: |
           rustup target add wasm32-unknown-unknown
@@ -89,20 +69,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: dtolnay/rust-toolchain@master
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ubuntu-latest-cargo-build-nightly-${{ hashFiles('**/Cargo.toml') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly-2023-03-01
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
           components: rustfmt, clippy
-          override: true
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Check format

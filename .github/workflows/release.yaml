@@ -11,6 +11,9 @@ env:
   GAME_EXECUTABLE_NAME: foxtrot
   GAME_OSX_APP_NAME: Foxtrot
 
+  CARGO_TERM_COLOR: always
+  NIGHTLY_TOOLCHAIN: nightly-2023-03-01
+
 permissions:
   contents: write
 
@@ -19,8 +22,8 @@ jobs:
     runs-on: macos-latest
 
     env:
-        # macOS 11.0 Big Sur is the first version of macOS to support universal binaries
-        MACOSX_DEPLOYMENT_TARGET: 11.0
+      # macOS 11.0 Big Sur is the first version of macOS to support universal binaries
+      MACOSX_DEPLOYMENT_TARGET: 11.0
     steps:
       - name: Get tag
         id: tag
@@ -36,9 +39,9 @@ jobs:
         run: |
           rm build.rs
       - name: Install rust toolchain for Apple Silicon
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-03-01
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
           target: aarch64-apple-darwin
           override: true
       - name: Install zld
@@ -48,9 +51,9 @@ jobs:
         run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path) RUSTFLAGS="-C link-arg=-fuse-ld=/usr/local/bin/zld -Z share-generics=y" cargo build --release --no-default-features --features native --target=aarch64-apple-darwin
       - name: Install rust toolchain for Apple x86
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-03-01
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
           target: x86_64-apple-darwin
           override: true
       - name: Build release for x86 Apple
@@ -93,10 +96,9 @@ jobs:
         run: |
           git lfs pull
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
@@ -134,10 +136,9 @@ jobs:
         run: |
           git lfs pull
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
       - name: Install dotnet
         uses: actions/setup-dotnet@v3
         with:
@@ -167,11 +168,11 @@ jobs:
       - name: Upload installer
         uses: svenstaro/upload-release-action@v2
         with:
-         repo_token: ${{ secrets.GITHUB_TOKEN }}
-         file: installer/en-US/installer.msi
-         asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.msi
-         tag: ${{ github.ref }}
-         overwrite: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: installer/en-US/installer.msi
+          asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.msi
+          tag: ${{ github.ref }}
+          overwrite: true
   build-web:
     runs-on: ubuntu-latest
 
@@ -184,16 +185,15 @@ jobs:
         run: |
           git lfs pull
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: nightly-2023-03-01
-          override: true
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Install trunk
         uses: jetli/trunk-action@v0.1.0
         with:
-          version: 'v0.16.0'
+          version: "v0.16.0"
       - name: Add wasm target
         run: |
           rustup target add wasm32-unknown-unknown

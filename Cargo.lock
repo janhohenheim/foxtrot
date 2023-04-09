@@ -4407,13 +4407,13 @@ dependencies = [
 
 [[package]]
 name = "warbler_grass"
-version = "0.3.1"
-source = "git+https://github.com/janhohenheim/warbler_grass?rev=41a6039634ad4e48981504d3e46dfdbbdf9f571e#41a6039634ad4e48981504d3e46dfdbbdf9f571e"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d0aec45ecbb34b3bb06a1b2596e3fddbe316b6edb23a86b77ffb7ecbfe36429"
 dependencies = [
  "bevy",
  "bitflags 1.3.2",
  "bytemuck",
- "serde",
 ]
 
 [[package]]

@@ -99,7 +99,3 @@ image = { version = "0.24", default-features = false }
 
 [build-dependencies]
 embed-resource = "1.4"
-
-[patch.crates-io]
-# https://github.com/EmiOnGit/warbler_grass/pull/58
-warbler_grass = { git = "https://github.com/janhohenheim/warbler_grass", rev = "41a6039634ad4e48981504d3e46dfdbbdf9f571e" }

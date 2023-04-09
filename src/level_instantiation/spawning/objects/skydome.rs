@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, FromReflect, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Skydome;
+pub(crate) struct Skydome;
 
 fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
     const MESH_HANDLE: HandleUntyped =

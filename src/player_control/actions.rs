@@ -7,17 +7,17 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Resource, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct ActionsFrozen {
+pub(crate) struct ActionsFrozen {
     freeze_count: usize,
 }
 impl ActionsFrozen {
-    pub fn freeze(&mut self) {
+    pub(crate) fn freeze(&mut self) {
         self.freeze_count += 1;
     }
-    pub fn unfreeze(&mut self) {
+    pub(crate) fn unfreeze(&mut self) {
         self.freeze_count -= 1;
     }
-    pub fn is_frozen(&self) -> bool {
+    pub(crate) fn is_frozen(&self) -> bool {
         self.freeze_count > 0
     }
 }
@@ -25,7 +25,7 @@ impl ActionsFrozen {
 /// Configures [`Actions`], the resource that holds all player input.
 /// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
 
-pub fn actions_plugin(app: &mut App) {
+pub(crate) fn actions_plugin(app: &mut App) {
     app.register_type::<PlayerAction>()
         .register_type::<CameraAction>()
         .register_type::<UiAction>()
@@ -43,7 +43,7 @@ pub fn actions_plugin(app: &mut App) {
 }
 
 #[derive(Debug, Clone, Copy, Actionlike, Reflect, FromReflect, Default)]
-pub enum PlayerAction {
+pub(crate) enum PlayerAction {
     #[default]
     Move,
     Sprint,
@@ -63,7 +63,7 @@ pub enum PlayerAction {
 }
 
 impl PlayerAction {
-    pub fn numbered_choice(index: u8) -> Self {
+    pub(crate) fn numbered_choice(index: u8) -> Self {
         match index {
             0 => PlayerAction::NumberedChoice0,
             1 => PlayerAction::NumberedChoice1,
@@ -84,19 +84,19 @@ impl PlayerAction {
 }
 
 #[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
-pub enum CameraAction {
+pub(crate) enum CameraAction {
     #[default]
     Orbit,
     Zoom,
 }
 
 #[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
-pub enum UiAction {
+pub(crate) enum UiAction {
     #[default]
     TogglePause,
 }
 
-pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
+pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
     InputManagerBundle {
         input_map: InputMap::new([
             (QwertyScanCode::Space, PlayerAction::Jump),
@@ -120,7 +120,7 @@ pub fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerA
     }
 }
 
-pub fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraAction> {
+pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraAction> {
     InputManagerBundle {
         input_map: InputMap::default()
             .insert(DualAxis::mouse_motion(), CameraAction::Orbit)
@@ -130,14 +130,14 @@ pub fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraA
     }
 }
 
-pub fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
+pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
         input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
         ..default()
     }
 }
 
-pub fn remove_actions_when_frozen(
+pub(crate) fn remove_actions_when_frozen(
     mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
@@ -155,7 +155,7 @@ pub fn remove_actions_when_frozen(
     }
 }
 
-pub trait DualAxisDataExt {
+pub(crate) trait DualAxisDataExt {
     fn max_normalized(self) -> Option<Vec2>;
 }
 

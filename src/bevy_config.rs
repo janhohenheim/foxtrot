@@ -8,7 +8,7 @@ use std::io::Cursor;
 use winit::window::Icon;
 
 /// Overrides the default Bevy plugins and configures things like the screen settings.
-pub fn bevy_config_plugin(app: &mut App) {
+pub(crate) fn bevy_config_plugin(app: &mut App) {
     let default_plugins = DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
             resolution: (800., 600.).into(),

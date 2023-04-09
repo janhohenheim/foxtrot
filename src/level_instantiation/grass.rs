@@ -7,7 +7,7 @@ use bevy_mod_sysfail::macros::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 
-pub fn grass_plugin(app: &mut App) {
+pub(crate) fn grass_plugin(app: &mut App) {
     app.add_plugin(WarblersPlugin).add_system(
         add_grass
             .after(TransformSystem::TransformPropagate)
@@ -16,7 +16,7 @@ pub fn grass_plugin(app: &mut App) {
 }
 
 #[sysfail(log(level = "error"))]
-pub fn add_grass(
+pub(crate) fn add_grass(
     mut commands: Commands,
     added_name: Query<(Entity, &Name), Added<Name>>,
     meshes: Res<Assets<Mesh>>,

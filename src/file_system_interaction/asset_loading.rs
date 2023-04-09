@@ -14,7 +14,7 @@ use bevy_kira_audio::AudioSource;
 use bevy_mod_sysfail::macros::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
-pub fn loading_plugin(app: &mut App) {
+pub(crate) fn loading_plugin(app: &mut App) {
     app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
         .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
         .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
@@ -35,61 +35,61 @@ pub fn loading_plugin(app: &mut App) {
 // when done loading, they will be inserted as resources (see <https://github.com/NiklasEi/bevy_asset_loader>)
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct AudioAssets {
+pub(crate) struct AudioAssets {
     #[asset(path = "audio/walking.ogg")]
-    pub walking: Handle<AudioSource>,
+    pub(crate) walking: Handle<AudioSource>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct SceneAssets {
+pub(crate) struct SceneAssets {
     #[asset(path = "scenes/Fox.glb#Scene0")]
-    pub character: Handle<Scene>,
+    pub(crate) character: Handle<Scene>,
     #[asset(path = "scenes/old_town.glb#Scene0")]
-    pub level: Handle<Scene>,
+    pub(crate) level: Handle<Scene>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct AnimationAssets {
+pub(crate) struct AnimationAssets {
     #[asset(path = "scenes/Fox.glb#Animation0")]
-    pub character_idle: Handle<AnimationClip>,
+    pub(crate) character_idle: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation1")]
-    pub character_walking: Handle<AnimationClip>,
+    pub(crate) character_walking: Handle<AnimationClip>,
     #[asset(path = "scenes/Fox.glb#Animation2")]
-    pub character_running: Handle<AnimationClip>,
+    pub(crate) character_running: Handle<AnimationClip>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct LevelAssets {
+pub(crate) struct LevelAssets {
     #[cfg_attr(feature = "native", asset(path = "levels", collection(typed, mapped)))]
     #[cfg_attr(
         feature = "wasm",
         asset(paths("levels/old_town.lvl.ron"), collection(typed, mapped))
     )]
-    pub levels: HashMap<String, Handle<SerializedLevel>>,
+    pub(crate) levels: HashMap<String, Handle<SerializedLevel>>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct DialogAssets {
+pub(crate) struct DialogAssets {
     #[cfg_attr(feature = "native", asset(path = "dialogs", collection(typed, mapped)))]
     #[cfg_attr(
         feature = "wasm",
         asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))
     )]
-    pub dialogs: HashMap<String, Handle<Dialog>>,
+    pub(crate) dialogs: HashMap<String, Handle<Dialog>>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct TextureAssets {
+pub(crate) struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
-    pub glowy_interior: Handle<Image>,
+    pub(crate) glowy_interior: Handle<Image>,
     #[asset(path = "textures/sky.jpg")]
-    pub sky: Handle<Image>,
+    pub(crate) sky: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub struct ConfigAssets {
+pub(crate) struct ConfigAssets {
     #[asset(path = "config/config.game.toml")]
-    pub game: Handle<GameConfig>,
+    pub(crate) game: Handle<GameConfig>,
 }
 
 fn show_progress(

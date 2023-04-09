@@ -6,12 +6,12 @@ use crate::player_control::camera::{
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-pub use cursor::ForceCursorGrabMode;
+pub(crate) use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
 use ui::*;
 
 mod cursor;
-pub mod focus;
+pub(crate) mod focus;
 mod kind;
 mod rig;
 mod skydome;
@@ -19,11 +19,11 @@ mod ui;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct IngameCamera {
-    pub target: Transform,
-    pub secondary_target: Option<Transform>,
-    pub desired_distance: f32,
-    pub kind: IngameCameraKind,
+pub(crate) struct IngameCamera {
+    pub(crate) target: Transform,
+    pub(crate) secondary_target: Option<Transform>,
+    pub(crate) desired_distance: f32,
+    pub(crate) kind: IngameCameraKind,
 }
 
 impl Default for IngameCamera {
@@ -39,7 +39,7 @@ impl Default for IngameCamera {
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub enum IngameCameraKind {
+pub(crate) enum IngameCameraKind {
     #[default]
     ThirdPerson,
     FirstPerson,
@@ -49,7 +49,7 @@ pub enum IngameCameraKind {
 /// Handles the main ingame camera, i.e. not the UI camera in the menu.
 /// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
 /// third person or fixed angle camera is used.
-pub fn camera_plugin(app: &mut App) {
+pub(crate) fn camera_plugin(app: &mut App) {
     app.register_type::<UiCamera>()
         .register_type::<IngameCamera>()
         .register_type::<IngameCameraKind>()
@@ -73,4 +73,4 @@ pub fn camera_plugin(app: &mut App) {
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub struct CameraUpdateSystemSet;
+pub(crate) struct CameraUpdateSystemSet;

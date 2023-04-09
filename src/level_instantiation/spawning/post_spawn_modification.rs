@@ -7,7 +7,7 @@ use bevy_mod_sysfail::macros::*;
 use regex::Regex;
 use std::sync::LazyLock;
 
-pub fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) {
+pub(crate) fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("set_hidden").entered();
     for (name, mut visibility) in added_name.iter_mut() {
@@ -17,7 +17,7 @@ pub fn set_hidden(mut added_name: Query<(&Name, &mut Visibility), Added<Name>>) 
     }
 }
 
-pub fn despawn_removed(
+pub(crate) fn despawn_removed(
     mut commands: Commands,
     mut added_name: Query<(Entity, &Name), Added<Name>>,
 ) {
@@ -36,7 +36,7 @@ static COLOR_REGEX: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 #[sysfail(log(level = "error"))]
-pub fn set_color(
+pub(crate) fn set_color(
     added_name: Query<(&Name, &Children), Added<Name>>,
     material_handles: Query<&Handle<StandardMaterial>>,
     mut standard_materials: ResMut<Assets<StandardMaterial>>,
@@ -79,7 +79,7 @@ pub fn set_color(
 }
 
 #[sysfail(log(level = "error"))]
-pub fn set_shadows(
+pub(crate) fn set_shadows(
     mut commands: Commands,
     added_mesh: Query<Entity, Added<Handle<Mesh>>>,
     parent_query: Query<&Parent>,

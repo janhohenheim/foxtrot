@@ -19,7 +19,7 @@ use std::sync::LazyLock;
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
 /// The handles can be stored and retrieved in the [`Materials`] resource.
-pub fn shader_plugin(app: &mut App) {
+pub(crate) fn shader_plugin(app: &mut App) {
     app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
         .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
         .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())
@@ -28,11 +28,11 @@ pub fn shader_plugin(app: &mut App) {
 }
 
 #[derive(Resource, Debug, Clone)]
-pub struct Materials {
-    pub glowy: Handle<GlowyMaterial>,
+pub(crate) struct Materials {
+    pub(crate) glowy: Handle<GlowyMaterial>,
     /// (Texture asset ID, Repeats) -> RepeatedMaterial
-    pub repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
-    pub skydome: Handle<SkydomeMaterial>,
+    pub(crate) repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
+    pub(crate) skydome: Handle<SkydomeMaterial>,
 }
 
 fn setup_shader(
@@ -58,10 +58,10 @@ fn setup_shader(
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
 /// Material for [`glowy.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/glowy.wgsl).
-pub struct GlowyMaterial {
+pub(crate) struct GlowyMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub env_texture: Handle<Image>,
+    pub(crate) env_texture: Handle<Image>,
 }
 
 impl Material for GlowyMaterial {
@@ -73,10 +73,10 @@ impl Material for GlowyMaterial {
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "8ca95d76-91d6-44c0-a67b-8a4d22cd59b1"]
 /// Material for [`skydome.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/skydome.wgsl).
-pub struct SkydomeMaterial {
+pub(crate) struct SkydomeMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub env_texture: Handle<Image>,
+    pub(crate) env_texture: Handle<Image>,
 }
 
 impl Material for SkydomeMaterial {
@@ -97,22 +97,22 @@ impl Material for SkydomeMaterial {
 
 #[repr(C, align(16))] // All WebGPU uniforms must be aligned to 16 bytes
 #[derive(Clone, Copy, ShaderType, Debug, Hash, Eq, PartialEq, Default)]
-pub struct Repeats {
-    pub horizontal: u32,
-    pub vertical: u32,
-    pub _wasm_padding1: u32,
-    pub _wasm_padding2: u32,
+pub(crate) struct Repeats {
+    pub(crate) horizontal: u32,
+    pub(crate) vertical: u32,
+    pub(crate) _wasm_padding1: u32,
+    pub(crate) _wasm_padding2: u32,
 }
 
 #[derive(AsBindGroup, Debug, Clone, TypeUuid)]
 #[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
 /// Material for [`repeated.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/repeated.wgsl).
-pub struct RepeatedMaterial {
+pub(crate) struct RepeatedMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub texture: Handle<Image>,
+    pub(crate) texture: Handle<Image>,
     #[uniform(2)]
-    pub repeats: Repeats,
+    pub(crate) repeats: Repeats,
 }
 
 impl Material for RepeatedMaterial {
@@ -126,7 +126,7 @@ static REPEAT_REGEX: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 #[sysfail(log(level = "error"))]
-pub fn set_texture_to_repeat(
+pub(crate) fn set_texture_to_repeat(
     mut commands: Commands,
     added_name: Query<(&Name, &Children), Added<Name>>,
     material_handles: Query<&Handle<StandardMaterial>>,

@@ -4,7 +4,7 @@ use crate::level_instantiation::spawning::post_spawn_modification::{
     despawn_removed, set_color, set_hidden, set_shadows,
 };
 use crate::GameState;
-pub use animation_link::AnimationEntityLink;
+pub(crate) use animation_link::AnimationEntityLink;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
@@ -12,10 +12,10 @@ use strum_macros::EnumIter;
 
 mod animation_link;
 mod despawn;
-pub mod objects;
+pub(crate) mod objects;
 mod post_spawn_modification;
 
-pub fn spawning_plugin(app: &mut App) {
+pub(crate) fn spawning_plugin(app: &mut App) {
     app.add_plugin(SpewPlugin::<GameObject, Transform>::default())
         .register_type::<Despawn>()
         .register_type::<AnimationEntityLink>()
@@ -57,7 +57,7 @@ pub fn spawning_plugin(app: &mut App) {
     Default,
 )]
 #[reflect(Component, Serialize, Deserialize)]
-pub enum GameObject {
+pub(crate) enum GameObject {
     #[default]
     Empty,
     Box,

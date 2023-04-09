@@ -20,4 +20,4 @@ pub(crate) fn spawn(
 }
 
 #[derive(Component)]
-pub struct Imported;
+pub(crate) struct Imported;

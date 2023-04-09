@@ -10,7 +10,7 @@ use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{TransformExt, Vec3Ext};
 use crate::GameState;
 use bevy_mod_sysfail::macros::*;
-pub use components::*;
+pub(crate) use components::*;
 
 /// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].
 /// The default forces on a character going right are:  
@@ -34,7 +34,7 @@ pub use components::*;
 /// - An instantaneous force (i.e. an impulse) like jumping: `external_impulse.impulse += velocity * read_mass_properties.0.mass`, with `external_impulse`: [`ExternalImpulse`], `read_mass_properties`: [`ReadMassProperties`], and a user-defined `velocity`: [`Vec3`]
 ///
 /// Note: you might notice that the normal force is not included in the above diagram. This is because rapier emulates it by moving penetrating colliders out of each other.
-pub fn general_movement_plugin(app: &mut App) {
+pub(crate) fn general_movement_plugin(app: &mut App) {
     app.register_type::<Grounded>()
         .register_type::<Jumping>()
         .register_type::<Velocity>()
@@ -58,7 +58,7 @@ pub fn general_movement_plugin(app: &mut App) {
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub struct GeneralMovementSystemSet;
+pub(crate) struct GeneralMovementSystemSet;
 
 fn update_grounded(
     mut query: Query<(Entity, &Transform, &Collider, &mut Grounded)>,
@@ -82,7 +82,7 @@ fn update_grounded(
     }
 }
 
-pub fn reset_forces_and_impulses(
+pub(crate) fn reset_forces_and_impulses(
     mut forces: Query<&mut ExternalForce>,
     mut impulses: Query<&mut ExternalImpulse>,
 ) {
@@ -96,7 +96,7 @@ pub fn reset_forces_and_impulses(
     }
 }
 
-pub fn reset_movement_components(
+pub(crate) fn reset_movement_components(
     mut walking: Query<&mut Walking>,
     mut jumpers: Query<&mut Jumping>,
 ) {
@@ -110,7 +110,7 @@ pub fn reset_movement_components(
     }
 }
 
-pub fn apply_jumping(
+pub(crate) fn apply_jumping(
     mut character_query: Query<(
         &Grounded,
         &mut ExternalImpulse,
@@ -200,7 +200,7 @@ fn play_animations(
     Ok(())
 }
 
-pub fn apply_walking(
+pub(crate) fn apply_walking(
     mut character_query: Query<(
         &mut ExternalForce,
         &Walking,

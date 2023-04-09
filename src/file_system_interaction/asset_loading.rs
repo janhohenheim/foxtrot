@@ -88,6 +88,7 @@ pub(crate) struct TextureAssets {
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct ConfigAssets {
+    #[allow(dead_code)]
     #[asset(path = "config/config.game.toml")]
     pub(crate) game: Handle<GameConfig>,
 }

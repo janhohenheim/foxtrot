@@ -28,12 +28,6 @@ pub(crate) struct SplitVec3 {
     pub(crate) horizontal: Vec3,
 }
 
-impl SplitVec3 {
-    pub(crate) fn as_array(self) -> [Vec3; 2] {
-        [self.vertical, self.horizontal]
-    }
-}
-
 pub(crate) trait Vec2Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn x0y(self) -> Vec3;

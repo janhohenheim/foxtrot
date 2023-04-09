@@ -4,7 +4,7 @@ use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
 pub(crate) use crate::world_interaction::dialog::resources::{
-    CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
+    CurrentDialog, Dialog, DialogEvent, DialogId, NextPage,
 };
 use crate::GameState;
 use anyhow::{Context, Ok, Result};

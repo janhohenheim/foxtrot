@@ -12,7 +12,7 @@ env:
   GAME_OSX_APP_NAME: Foxtrot
 
   CARGO_TERM_COLOR: always
-  NIGHTLY_TOOLCHAIN: nightly-2023-03-01
+  NIGHTLY_TOOLCHAIN: nightly
 
 permissions:
   contents: write

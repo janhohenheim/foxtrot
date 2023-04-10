@@ -49,6 +49,10 @@ fn show_loading_screen(mut egui_contexts: EguiContexts) {
             ui.heading("Loading");
             ui.label("Spawning level...");
             ui.add_space(10.0);
+            #[cfg(feature = "wasm")]
+            ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
+            #[cfg(feature = "wasm")]
+            ui.label("This may take a while. Don't worry, your browser did not crash!");
         });
     });
 }

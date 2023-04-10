@@ -8,63 +8,63 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Serialize, Deserialize)]
-pub struct DialogEvent {
-    pub dialog: DialogId,
-    pub source: Entity,
-    pub page: Option<PageId>,
+pub(crate) struct DialogEvent {
+    pub(crate) dialog: DialogId,
+    pub(crate) source: Entity,
+    pub(crate) page: Option<PageId>,
 }
 
 #[derive(Debug, Clone, PartialEq, Resource, Serialize, Deserialize)]
-pub struct CurrentDialog {
-    pub source: Entity,
-    pub id: DialogId,
-    pub dialog: Dialog,
-    pub current_page: PageId,
-    pub last_choice: Option<ConditionId>,
+pub(crate) struct CurrentDialog {
+    pub(crate) source: Entity,
+    pub(crate) id: DialogId,
+    pub(crate) dialog: Dialog,
+    pub(crate) current_page: PageId,
+    pub(crate) last_choice: Option<ConditionId>,
 }
 impl CurrentDialog {
-    pub fn fetch_page(&self, page_id: &PageId) -> Result<Page> {
+    pub(crate) fn fetch_page(&self, page_id: &PageId) -> Result<Page> {
         self.dialog
             .pages
             .get(page_id)
             .with_context(|| format!("Failed to fetch page with id {}", page_id.0))
             .cloned()
     }
-    pub fn fetch_current_page(&self) -> Result<Page> {
+    pub(crate) fn fetch_current_page(&self) -> Result<Page> {
         self.fetch_page(&self.current_page)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
 #[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
-pub struct Dialog {
-    pub initial_page: Vec<InitialPage>,
-    pub pages: HashMap<PageId, Page>,
+pub(crate) struct Dialog {
+    pub(crate) initial_page: Vec<InitialPage>,
+    pub(crate) pages: HashMap<PageId, Page>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default, FromReflect)]
 #[reflect(Serialize, Deserialize)]
-pub struct InitialPage {
-    pub id: PageId,
+pub(crate) struct InitialPage {
+    pub(crate) id: PageId,
     #[serde(default, skip_serializing_if = "HashSet::is_empty")]
-    pub positive_requirements: HashSet<ConditionId>,
+    pub(crate) positive_requirements: HashSet<ConditionId>,
     #[serde(default, skip_serializing_if = "HashSet::is_empty")]
-    pub negative_requirements: HashSet<ConditionId>,
+    pub(crate) negative_requirements: HashSet<ConditionId>,
 }
 
 impl InitialPage {
-    pub fn is_available(&self, active_conditions: &ActiveConditions) -> bool {
+    pub(crate) fn is_available(&self, active_conditions: &ActiveConditions) -> bool {
         self.positive_requirements.is_subset(&active_conditions.0)
             && self.negative_requirements.is_disjoint(&active_conditions.0)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Page {
-    pub text: String,
+pub(crate) struct Page {
+    pub(crate) text: String,
     #[serde(default = "get_default_talking_speed")]
-    pub talking_speed: f32,
-    pub next_page: NextPage,
+    pub(crate) talking_speed: f32,
+    pub(crate) next_page: NextPage,
 }
 
 fn get_default_talking_speed() -> f32 {
@@ -82,7 +82,7 @@ impl Default for Page {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub enum NextPage {
+pub(crate) enum NextPage {
     /// There is only one automatic option for the next page
     Continue(PageId),
     /// The user can choose between different answers that determine the next page
@@ -100,18 +100,18 @@ impl Default for NextPage {
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize, FromReflect)]
 #[reflect(Serialize, Deserialize)]
-pub struct DialogChoice {
+pub(crate) struct DialogChoice {
     /// The player's answer
-    pub text: String,
-    pub next_page_id: PageId,
+    pub(crate) text: String,
+    pub(crate) next_page_id: PageId,
     #[serde(default, skip_serializing_if = "HashSet::is_empty")]
-    pub positive_requirements: HashSet<ConditionId>,
+    pub(crate) positive_requirements: HashSet<ConditionId>,
     #[serde(default, skip_serializing_if = "HashSet::is_empty")]
-    pub negative_requirements: HashSet<ConditionId>,
+    pub(crate) negative_requirements: HashSet<ConditionId>,
 }
 
 impl DialogChoice {
-    pub fn is_available(&self, active_conditions: &ActiveConditions) -> bool {
+    pub(crate) fn is_available(&self, active_conditions: &ActiveConditions) -> bool {
         self.positive_requirements.is_subset(&active_conditions.0)
             && self.negative_requirements.is_disjoint(&active_conditions.0)
     }
@@ -132,9 +132,9 @@ impl DialogChoice {
 )]
 #[reflect(Component, Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
-pub struct DialogId(pub String);
+pub(crate) struct DialogId(pub(crate) String);
 impl DialogId {
-    pub fn new(id: &str) -> Self {
+    pub(crate) fn new(id: &str) -> Self {
         Self(id.to_string())
     }
 }
@@ -156,7 +156,7 @@ impl From<DialogId> for String {
 )]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
-pub struct PageId(pub String);
+pub(crate) struct PageId(pub(crate) String);
 
 impl From<String> for PageId {
     fn from(value: String) -> Self {

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct AnimationEntityLink(pub Entity);
+pub(crate) struct AnimationEntityLink(pub(crate) Entity);
 
 impl Default for AnimationEntityLink {
     fn default() -> Self {
@@ -12,7 +12,7 @@ impl Default for AnimationEntityLink {
     }
 }
 
-pub fn link_animations(
+pub(crate) fn link_animations(
     player_query: Query<Entity, Added<AnimationPlayer>>,
     parent_query: Query<&Parent>,
     animations_entity_link_query: Query<&AnimationEntityLink>,

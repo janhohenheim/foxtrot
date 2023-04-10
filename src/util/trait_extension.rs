@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::render::mesh::{MeshVertexAttributeId, PrimitiveTopology, VertexAttributeValues};
 
-pub trait Vec3Ext: Copy {
+pub(crate) trait Vec3Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn split(self, up: Vec3) -> SplitVec3;
 }
@@ -23,18 +23,12 @@ impl Vec3Ext for Vec3 {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct SplitVec3 {
-    pub vertical: Vec3,
-    pub horizontal: Vec3,
+pub(crate) struct SplitVec3 {
+    pub(crate) vertical: Vec3,
+    pub(crate) horizontal: Vec3,
 }
 
-impl SplitVec3 {
-    pub fn as_array(self) -> [Vec3; 2] {
-        [self.vertical, self.horizontal]
-    }
-}
-
-pub trait Vec2Ext: Copy {
+pub(crate) trait Vec2Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn x0y(self) -> Vec3;
 }
@@ -50,7 +44,7 @@ impl Vec2Ext for Vec2 {
     }
 }
 
-pub trait MeshExt {
+pub(crate) trait MeshExt {
     fn transform(&mut self, transform: Transform);
     fn transformed(&self, transform: Transform) -> Mesh;
     fn read_coords_mut(&mut self, id: impl Into<MeshVertexAttributeId>) -> &mut Vec<[f32; 3]>;
@@ -131,7 +125,7 @@ impl MeshExt for Mesh {
     }
 }
 
-pub trait F32Ext: Copy {
+pub(crate) trait F32Ext: Copy {
     fn is_approx_zero(self) -> bool;
     fn squared(self) -> f32;
     fn lerp(self, other: f32, ratio: f32) -> f32;
@@ -154,7 +148,7 @@ impl F32Ext for f32 {
     }
 }
 
-pub trait TransformExt: Copy {
+pub(crate) trait TransformExt: Copy {
     fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform;
     fn lerp(self, other: Transform, ratio: f32) -> Transform;
 }

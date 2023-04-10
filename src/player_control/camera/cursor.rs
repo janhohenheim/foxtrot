@@ -6,10 +6,10 @@ use bevy_mod_sysfail::macros::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
-pub struct ForceCursorGrabMode(pub Option<CursorGrabMode>);
+pub(crate) struct ForceCursorGrabMode(pub(crate) Option<CursorGrabMode>);
 
 #[sysfail(log(level = "error"))]
-pub fn grab_cursor(
+pub(crate) fn grab_cursor(
     mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,
     force_cursor_grab: Res<ForceCursorGrabMode>,

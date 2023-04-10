@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use strum::IntoEnumIterator;
 
-pub fn dev_editor_plugin(app: &mut App) {
+pub(crate) fn dev_editor_plugin(app: &mut App) {
     app.init_resource::<DevEditorState>()
         .add_editor_window::<DevEditorWindow>()
         .add_systems(
@@ -31,7 +31,7 @@ pub fn dev_editor_plugin(app: &mut App) {
         );
 }
 
-pub struct DevEditorWindow;
+pub(crate) struct DevEditorWindow;
 
 impl EditorWindow for DevEditorWindow {
     type State = DevEditorState;
@@ -122,13 +122,13 @@ impl EditorWindow for DevEditorWindow {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct DevEditorState {
-    pub open: bool,
-    pub level_name: String,
-    pub save_name: String,
-    pub spawn_item: GameObject,
-    pub collider_render_enabled: bool,
-    pub navmesh_render_enabled: bool,
+pub(crate) struct DevEditorState {
+    pub(crate) open: bool,
+    pub(crate) level_name: String,
+    pub(crate) save_name: String,
+    pub(crate) spawn_item: GameObject,
+    pub(crate) collider_render_enabled: bool,
+    pub(crate) navmesh_render_enabled: bool,
 }
 
 impl Default for DevEditorState {

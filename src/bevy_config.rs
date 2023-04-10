@@ -19,7 +19,7 @@ pub fn bevy_config_plugin(app: &mut App) {
             present_mode: PresentMode::AutoVsync,
             // This breaks WASM for some reason
             #[cfg(not(feature = "wasm"))]
-            mode: WindowMode::Fullscreen,
+            mode: WindowMode::BorderlessFullscreen,
             fit_canvas_to_parent: true,
             ..default()
         }),

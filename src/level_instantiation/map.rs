@@ -17,8 +17,6 @@ pub fn map_plugin(app: &mut App) {
             .run_if(not(any_with_component::<Player>()))
             .in_set(OnUpdate(GameState::Playing)),
     );
-    #[cfg(feature = "wasm")]
-    app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
 }
 
 fn setup(
@@ -48,47 +46,6 @@ fn show_loading_screen(mut egui_contexts: EguiContexts) {
             ui.heading("Loading");
             ui.label("Spawning level...");
             ui.add_space(10.0);
-            #[cfg(feature = "wasm")]
-            ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
-            #[cfg(feature = "wasm")]
-            ui.label("This may take a while. Don't worry, your browser did not crash!");
         });
     });
-}
-
-#[cfg(feature = "wasm")]
-fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
-    let id = egui::Id::new("loading-screen-shown");
-    egui_contexts.ctx_mut().memory_mut(|memory| {
-        let memory = &mut memory.data;
-        match (memory.get_temp::<()>(id), player_query.iter().next()) {
-            (None, None) => {
-                loader::show_loader();
-                memory.insert_temp(id, ());
-            }
-            (Some(_), Some(_)) => {
-                loader::hide_loader();
-                memory.remove::<()>(id);
-            }
-            _ => {}
-        }
-    });
-}
-
-#[cfg(feature = "wasm")]
-mod loader {
-    use wasm_bindgen::prelude::*;
-
-    #[wasm_bindgen(inline_js = "
-        export function show_loader() {
-            document.querySelector('.loader').hidden = false;
-        }
-        export function hide_loader() {
-            document.querySelector('.loader').hidden = true;
-        }")]
-    extern "C" {
-        pub fn show_loader();
-
-        pub fn hide_loader();
-    }
 }

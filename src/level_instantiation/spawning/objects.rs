@@ -1,19 +1,19 @@
 use bevy_rapier3d::prelude::*;
 use bitflags::bitflags;
 
-pub mod camera;
-pub mod level;
-pub mod npc;
-pub mod orb;
-pub mod player;
-pub mod point_light;
-pub mod primitives;
-pub mod skydome;
-pub mod sunlight;
+pub(crate) mod camera;
+pub(crate) mod level;
+pub(crate) mod npc;
+pub(crate) mod orb;
+pub(crate) mod player;
+pub(crate) mod point_light;
+pub(crate) mod primitives;
+pub(crate) mod skydome;
+pub(crate) mod sunlight;
 mod util;
 
 bitflags! {
-    pub struct GameCollisionGroup: u32 {
+    pub(crate) struct GameCollisionGroup: u32 {
         const PLAYER = 1 << 0;
         const OTHER = 1 << 31;
 

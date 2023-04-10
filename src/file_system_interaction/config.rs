@@ -16,81 +16,81 @@ use serde::{Deserialize, Serialize};
 )]
 #[reflect(Serialize, Deserialize, Resource)]
 #[uuid = "93a7c64b-4d6e-4420-b8c1-dfca481d9387"]
-pub struct GameConfig {
-    pub camera: Camera,
-    pub characters: Characters,
-    pub player: Player,
-    pub dialog: Dialog,
+pub(crate) struct GameConfig {
+    pub(crate) camera: Camera,
+    pub(crate) characters: Characters,
+    pub(crate) player: Player,
+    pub(crate) dialog: Dialog,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct Camera {
-    pub fixed_angle: FixedAngle,
-    pub first_person: FirstPerson,
-    pub third_person: ThirdPerson,
-    pub mouse_sensitivity_x: f32,
-    pub mouse_sensitivity_y: f32,
+pub(crate) struct Camera {
+    pub(crate) fixed_angle: FixedAngle,
+    pub(crate) first_person: FirstPerson,
+    pub(crate) third_person: ThirdPerson,
+    pub(crate) mouse_sensitivity_x: f32,
+    pub(crate) mouse_sensitivity_y: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct FixedAngle {
-    pub min_distance: f32,
-    pub max_distance: f32,
-    pub zoom_speed: f32,
-    pub rotation_smoothing: f32,
-    pub translation_smoothing: f32,
-    pub zoom_in_smoothing: f32,
-    pub zoom_out_smoothing: f32,
-    pub pitch: f32,
+pub(crate) struct FixedAngle {
+    pub(crate) min_distance: f32,
+    pub(crate) max_distance: f32,
+    pub(crate) zoom_speed: f32,
+    pub(crate) rotation_smoothing: f32,
+    pub(crate) translation_smoothing: f32,
+    pub(crate) zoom_in_smoothing: f32,
+    pub(crate) zoom_out_smoothing: f32,
+    pub(crate) pitch: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct FirstPerson {
-    pub translation_smoothing: f32,
-    pub rotation_smoothing: f32,
-    pub max_pitch: f32,
-    pub min_pitch: f32,
-    pub tracking_smoothing: f32,
+pub(crate) struct FirstPerson {
+    pub(crate) translation_smoothing: f32,
+    pub(crate) rotation_smoothing: f32,
+    pub(crate) max_pitch: f32,
+    pub(crate) min_pitch: f32,
+    pub(crate) tracking_smoothing: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct ThirdPerson {
-    pub translation_smoothing: f32,
-    pub rotation_smoothing: f32,
-    pub max_pitch: f32,
-    pub min_pitch: f32,
-    pub min_distance: f32,
-    pub max_distance: f32,
-    pub zoom_speed: f32,
-    pub min_distance_to_objects: f32,
-    pub tracking_smoothing: f32,
-    pub zoom_in_smoothing: f32,
-    pub zoom_out_smoothing: f32,
+pub(crate) struct ThirdPerson {
+    pub(crate) translation_smoothing: f32,
+    pub(crate) rotation_smoothing: f32,
+    pub(crate) max_pitch: f32,
+    pub(crate) min_pitch: f32,
+    pub(crate) min_distance: f32,
+    pub(crate) max_distance: f32,
+    pub(crate) zoom_speed: f32,
+    pub(crate) min_distance_to_objects: f32,
+    pub(crate) tracking_smoothing: f32,
+    pub(crate) zoom_in_smoothing: f32,
+    pub(crate) zoom_out_smoothing: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct Characters {
-    pub model_sync_smoothing: f32,
-    pub rotation_smoothing: f32,
+pub(crate) struct Characters {
+    pub(crate) model_sync_smoothing: f32,
+    pub(crate) rotation_smoothing: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct Player {
-    pub rotate_to_speaker_smoothness: f32,
-    pub sprint_effect_speed_threshold: f32,
-    pub fov_saturation_speed: f32,
-    pub min_fov: f32,
-    pub max_fov: f32,
+pub(crate) struct Player {
+    pub(crate) rotate_to_speaker_smoothness: f32,
+    pub(crate) sprint_effect_speed_threshold: f32,
+    pub(crate) fov_saturation_speed: f32,
+    pub(crate) min_fov: f32,
+    pub(crate) max_fov: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct Dialog {
-    pub base_letters_per_second: f32,
+pub(crate) struct Dialog {
+    pub(crate) base_letters_per_second: f32,
 }

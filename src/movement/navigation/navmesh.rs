@@ -4,7 +4,7 @@ use bevy_pathmesh::PathMesh;
 #[cfg(feature = "dev")]
 use serde::{Deserialize, Serialize};
 
-pub fn read_navmesh(
+pub(crate) fn read_navmesh(
     mut commands: Commands,
     added_name: Query<(Entity, &Name, &GlobalTransform), Added<Name>>,
     children: Query<&Children>,
@@ -38,4 +38,4 @@ pub fn read_navmesh(
 #[cfg(feature = "dev")]
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct NavMesh;
+pub(crate) struct NavMesh;

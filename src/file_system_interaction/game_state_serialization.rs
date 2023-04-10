@@ -15,7 +15,7 @@ use std::borrow::Cow;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub fn game_state_serialization_plugin(app: &mut App) {
+pub(crate) fn game_state_serialization_plugin(app: &mut App) {
     app.add_event::<GameSaveRequest>()
         .add_event::<GameLoadRequest>()
         .add_systems(
@@ -29,13 +29,13 @@ pub fn game_state_serialization_plugin(app: &mut App) {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
-pub struct GameSaveRequest {
-    pub filename: Option<String>,
+pub(crate) struct GameSaveRequest {
+    pub(crate) filename: Option<String>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
-pub struct GameLoadRequest {
-    pub filename: Option<String>,
+pub(crate) struct GameLoadRequest {
+    pub(crate) filename: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Resource, Serialize, Deserialize, Default)]

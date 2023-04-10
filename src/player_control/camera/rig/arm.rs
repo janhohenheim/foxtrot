@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_rapier3d::prelude::*;
 
-pub fn get_arm_distance(
+pub(crate) fn get_arm_distance(
     camera: &IngameCamera,
     transform: &Transform,
     rapier_context: &RapierContext,
@@ -24,7 +24,7 @@ pub fn get_arm_distance(
     }
 }
 
-pub fn get_zoom_smoothness(
+pub(crate) fn get_zoom_smoothness(
     config: &GameConfig,
     camera: &IngameCamera,
     rig: &Rig,
@@ -46,7 +46,7 @@ pub fn get_zoom_smoothness(
     }
 }
 
-pub fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
+pub(crate) fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
     let factor = smoothness_to_lerp_factor(zoom_smoothness, dt);
     let arm_length = &mut rig.driver_mut::<Arm>().offset.z;
     *arm_length = arm_length.lerp(distance, factor);

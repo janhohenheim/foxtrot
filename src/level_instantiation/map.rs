@@ -17,6 +17,9 @@ pub(crate) fn map_plugin(app: &mut App) {
             .run_if(not(any_with_component::<Player>()))
             .in_set(OnUpdate(GameState::Playing)),
     );
+
+    #[cfg(feature = "wasm")]
+    app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
 }
 
 fn setup(

@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_mod_sysfail::macros::*;
 
 #[sysfail(log(level = "error"))]
-pub fn set_camera_focus(
+pub(crate) fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     current_dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&Transform, With<Player>>,

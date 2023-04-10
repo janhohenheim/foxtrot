@@ -1,6 +1,6 @@
-pub mod grass;
-pub mod map;
-pub mod spawning;
+pub(crate) mod grass;
+pub(crate) mod map;
+pub(crate) mod spawning;
 
 use crate::level_instantiation::grass::grass_plugin;
 use crate::level_instantiation::map::map_plugin;
@@ -12,7 +12,7 @@ use seldom_fn_plugin::FnPluginExt;
 /// - [`map_plugin`] handles loading of level files and orchestrates the spawning of the objects therein.
 /// - [`spawning_plugin`] handles the spawning of objects in general.
 /// - [`grass_plugin`] handles the spawning of grass on top of marked meshes.
-pub fn level_instantiation_plugin(app: &mut App) {
+pub(crate) fn level_instantiation_plugin(app: &mut App) {
     app.fn_plugin(map_plugin)
         .fn_plugin(spawning_plugin)
         .fn_plugin(grass_plugin);

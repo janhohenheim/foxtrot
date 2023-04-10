@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
-pub fn navigation_plugin(app: &mut App) {
+pub(crate) fn navigation_plugin(app: &mut App) {
     app.add_plugin(OxidizedNavigationPlugin)
         // consts manually tweaked
         .insert_resource(NavMeshSettings {
@@ -49,7 +49,7 @@ pub fn navigation_plugin(app: &mut App) {
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Follower;
+pub(crate) struct Follower;
 
 #[sysfail(log(level = "error"))]
 fn query_mesh(

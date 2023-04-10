@@ -4,7 +4,7 @@ use bevy::pbr::NotShadowReceiver;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 
-pub fn init_effects(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
+pub(crate) fn init_effects(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
     let sprinting = create_sprinting_effect(&mut effects);
     commands.spawn((
         Name::new("Sprinting particle"),

@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use spew::prelude::*;
 
-pub fn map_plugin(app: &mut App) {
+pub(crate) fn map_plugin(app: &mut App) {
     app.add_system(
         setup
             .run_if(not(resource_exists::<CurrentLevel>()))
@@ -48,4 +48,41 @@ fn show_loading_screen(mut egui_contexts: EguiContexts) {
             ui.add_space(10.0);
         });
     });
+}
+
+#[cfg(feature = "wasm")]
+fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
+    let id = egui::Id::new("loading-screen-shown");
+    egui_contexts.ctx_mut().memory_mut(|memory| {
+        let memory = &mut memory.data;
+        match (memory.get_temp::<()>(id), player_query.iter().next()) {
+            (None, None) => {
+                loader::show_loader();
+                memory.insert_temp(id, ());
+            }
+            (Some(_), Some(_)) => {
+                loader::hide_loader();
+                memory.remove::<()>(id);
+            }
+            _ => {}
+        }
+    });
+}
+
+#[cfg(feature = "wasm")]
+mod loader {
+    use wasm_bindgen::prelude::*;
+
+    #[wasm_bindgen(inline_js = "
+        export function show_loader() {
+            document.querySelector('.loader').hidden = false;
+        }
+        export function hide_loader() {
+            document.querySelector('.loader').hidden = true;
+        }")]
+    extern "C" {
+        pub(crate) fn show_loader();
+
+        pub(crate) fn hide_loader();
+    }
 }

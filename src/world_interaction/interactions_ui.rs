@@ -15,7 +15,7 @@ use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
-pub fn interactions_ui_plugin(app: &mut App) {
+pub(crate) fn interactions_ui_plugin(app: &mut App) {
     app.register_type::<InteractionOpportunities>()
         .init_resource::<InteractionOpportunities>()
         .add_systems(
@@ -31,13 +31,13 @@ pub fn interactions_ui_plugin(app: &mut App) {
 }
 
 #[derive(Resource, Debug)]
-pub struct InteractionUi {
+pub(crate) struct InteractionUi {
     source: Entity,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct InteractionOpportunities(pub HashSet<Entity>);
+pub(crate) struct InteractionOpportunities(pub(crate) HashSet<Entity>);
 
 fn update_interaction_opportunities(
     mut collision_events: EventReader<CollisionEvent>,

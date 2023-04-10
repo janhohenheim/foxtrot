@@ -25,3 +25,31 @@ html {
     white 20px
   );
 }
+
+.loader {
+  --loader-size: 32px;
+  --loader-position-y: 155px;
+  position: fixed;
+  left: calc(50% - var(--loader-size) / 2);
+  top: calc(50% - var(--game-ui-height) / 2 + var(--loader-position-y));
+  width: var(--loader-size);
+  height: var(--loader-size);
+  border: 3px solid #005c80;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: rotation 2s linear infinite;
+}
+
+.loader:not([hidden]) {
+  display: inline-block;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use serde::{Deserialize, Serialize};
 
-pub fn condition_plugin(app: &mut App) {
+pub(crate) fn condition_plugin(app: &mut App) {
     app.init_resource::<ActiveConditions>()
         .add_event::<ConditionAddEvent>()
         .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
@@ -11,9 +11,9 @@ pub fn condition_plugin(app: &mut App) {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct ActiveConditions(pub HashSet<ConditionId>);
+pub(crate) struct ActiveConditions(pub(crate) HashSet<ConditionId>);
 impl ActiveConditions {
-    pub fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
 }
@@ -23,7 +23,7 @@ impl ActiveConditions {
 )]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
-pub struct ConditionId(pub String);
+pub(crate) struct ConditionId(pub(crate) String);
 
 impl From<String> for ConditionId {
     fn from(value: String) -> Self {
@@ -39,7 +39,7 @@ impl From<ConditionId> for String {
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
-pub struct ConditionAddEvent(pub ConditionId);
+pub(crate) struct ConditionAddEvent(pub(crate) ConditionId);
 
 fn add_conditions(
     mut conditions: ResMut<ActiveConditions>,

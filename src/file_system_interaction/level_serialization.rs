@@ -12,7 +12,7 @@ use spew::prelude::*;
 use std::path::Path;
 use std::{fs, iter};
 
-pub fn level_serialization_plugin(app: &mut App) {
+pub(crate) fn level_serialization_plugin(app: &mut App) {
     app.add_event::<WorldSaveRequest>()
         .add_event::<WorldLoadRequest>()
         .add_systems(
@@ -26,20 +26,20 @@ pub fn level_serialization_plugin(app: &mut App) {
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct WorldSaveRequest {
-    pub filename: String,
+pub(crate) struct WorldSaveRequest {
+    pub(crate) filename: String,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub struct WorldLoadRequest {
-    pub filename: String,
+pub(crate) struct WorldLoadRequest {
+    pub(crate) filename: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub struct CurrentLevel {
-    pub scene: String,
+pub(crate) struct CurrentLevel {
+    pub(crate) scene: String,
 }
 
 #[sysfail(log(level = "error"))]
@@ -90,7 +90,7 @@ fn save_world(
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub struct Protected;
+pub(crate) struct Protected;
 
 #[sysfail(log(level = "error"))]
 fn load_world(
@@ -167,7 +167,7 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid, Deref, DerefMut)]
 #[uuid = "eb7cc7bc-5a97-41ed-b0c3-0d4e2137b73b"]
 #[reflect(Serialize, Deserialize)]
-pub struct SerializedLevel(pub Vec<(GameObject, Transform)>);
+pub(crate) struct SerializedLevel(pub(crate) Vec<(GameObject, Transform)>);
 
 impl From<Vec<SpawnEvent<GameObject, Transform>>> for SerializedLevel {
     fn from(events: Vec<SpawnEvent<GameObject, Transform>>) -> Self {

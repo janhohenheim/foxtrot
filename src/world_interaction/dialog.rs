@@ -3,8 +3,8 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::world_interaction::condition::{ActiveConditions, ConditionAddEvent, ConditionId};
 use crate::world_interaction::dialog::resources::Page;
-pub use crate::world_interaction::dialog::resources::{
-    CurrentDialog, Dialog, DialogEvent, DialogId, InitialPage, NextPage,
+pub(crate) use crate::world_interaction::dialog::resources::{
+    CurrentDialog, Dialog, DialogEvent, DialogId, NextPage,
 };
 use crate::GameState;
 use anyhow::{Context, Ok, Result};
@@ -21,7 +21,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
 
-pub fn dialog_plugin(app: &mut App) {
+pub(crate) fn dialog_plugin(app: &mut App) {
     app.add_plugin(EguiPlugin)
         .register_type::<DialogId>()
         .add_event::<DialogEvent>()
@@ -29,8 +29,8 @@ pub fn dialog_plugin(app: &mut App) {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize, Default)]
-pub struct DialogTarget {
-    pub dialog_id: DialogId,
+pub(crate) struct DialogTarget {
+    pub(crate) dialog_id: DialogId,
 }
 
 #[sysfail(log(level = "error"))]

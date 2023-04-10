@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-pub fn update_kind(
+pub(crate) fn update_kind(
     mut camera_query: Query<(&mut IngameCamera, &ActionState<CameraAction>)>,
     config: Res<GameConfig>,
 ) {
@@ -41,7 +41,7 @@ pub fn update_kind(
     }
 }
 
-pub fn update_drivers(mut camera_query: Query<(&IngameCamera, &mut Rig)>) {
+pub(crate) fn update_drivers(mut camera_query: Query<(&IngameCamera, &mut Rig)>) {
     for (camera, mut rig) in camera_query.iter_mut() {
         match camera.kind {
             IngameCameraKind::ThirdPerson => set_third_person_drivers(&mut rig),

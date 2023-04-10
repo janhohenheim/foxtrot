@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use spew::prelude::*;
 
-pub fn map_plugin(app: &mut App) {
+pub(crate) fn map_plugin(app: &mut App) {
     app.add_system(
         setup
             .run_if(not(resource_exists::<CurrentLevel>()))
@@ -87,8 +87,8 @@ mod loader {
             document.querySelector('.loader').hidden = true;
         }")]
     extern "C" {
-        pub fn show_loader();
+        pub(crate) fn show_loader();
 
-        pub fn hide_loader();
+        pub(crate) fn hide_loader();
     }
 }

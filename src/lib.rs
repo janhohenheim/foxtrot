@@ -15,20 +15,20 @@
 //! Instead, decide for yourself which features you like and which one's you don't and simply trim the code accordingly.
 //! Feel free to [file an issue](https://github.com/janhohenheim/foxtrot/issues/new) if you need help!
 //! The docs are organized such that you can click through the plugins to explore the systems at play.
-pub mod bevy_config;
+pub(crate) mod bevy_config;
 #[cfg(feature = "dev")]
-pub mod dev;
-pub mod file_system_interaction;
-pub mod ingame_menu;
-pub mod level_instantiation;
-pub mod menu;
-pub mod movement;
+pub(crate) mod dev;
+pub(crate) mod file_system_interaction;
+pub(crate) mod ingame_menu;
+pub(crate) mod level_instantiation;
+pub(crate) mod menu;
+pub(crate) mod movement;
 #[cfg(feature = "native")]
-pub mod particles;
-pub mod player_control;
-pub mod shader;
-pub mod util;
-pub mod world_interaction;
+pub(crate) mod particles;
+pub(crate) mod player_control;
+pub(crate) mod shader;
+pub(crate) mod util;
+pub(crate) mod world_interaction;
 
 use crate::bevy_config::bevy_config_plugin;
 #[cfg(feature = "dev")]

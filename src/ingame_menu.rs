@@ -1,5 +1,6 @@
 use crate::player_control::actions::{ActionsFrozen, UiAction};
 use crate::GameState;
+use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 use leafwing_input_manager::prelude::ActionState;
@@ -12,6 +13,7 @@ pub(crate) fn ingame_menu_plugin(app: &mut App) {
 fn handle_pause(
     mut time: ResMut<Time>,
     actions: Query<&ActionState<UiAction>>,
+    mut app_exit_events: EventWriter<AppExit>,
     mut actions_frozen: ResMut<ActionsFrozen>,
     mut egui_contexts: EguiContexts,
     mut paused: Local<bool>,
@@ -37,6 +39,14 @@ fn handle_pause(
                             ui.heading("Game Paused");
                             ui.separator();
                             ui.label("Press ESC to resume");
+
+                            ui.add_space(100.0);
+
+                            if ui.button("Quit Game").clicked() {
+                                app_exit_events.send(AppExit);
+                                #[cfg(feature = "wasm")]
+                                wasm::close_tab()
+                            }
                         });
                     });
             }
@@ -45,5 +55,18 @@ fn handle_pause(
             time.pause();
             actions_frozen.freeze();
         }
+    }
+}
+
+#[cfg(feature = "wasm")]
+mod wasm {
+    use wasm_bindgen::prelude::*;
+
+    #[wasm_bindgen(inline_js = "
+        export function close_tab() {
+            window.close();
+        }")]
+    extern "C" {
+        pub(crate) fn close_tab();
     }
 }

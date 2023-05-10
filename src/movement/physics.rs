@@ -41,7 +41,7 @@ pub(crate) fn read_colliders(
 
                 commands
                     .entity(collider_entity)
-                    .insert((rapier_collider, NavMeshAffector::default()));
+                    .insert((rapier_collider, NavMeshAffector));
             }
         }
     }

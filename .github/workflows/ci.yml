@@ -7,6 +7,8 @@ on:
 env:
   CARGO_TERM_COLOR: always
   NIGHTLY_TOOLCHAIN: nightly
+  # Sparse cargo registry for faster updates
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 
 jobs:
   test-native:

@@ -3,7 +3,7 @@ authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
 version = "0.2.0"
-license = "MIT OR  Apache-2.0"
+license = "MIT OR Apache-2.0"
 exclude = [
     "dist",
     "build",

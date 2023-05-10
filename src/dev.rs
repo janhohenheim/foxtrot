@@ -14,7 +14,7 @@ pub(crate) fn dev_plugin(app: &mut App) {
     {
         app.add_plugin(EditorPlugin)
             .insert_resource(default_editor_controls())
-            .add_plugin(FrameTimeDiagnosticsPlugin::default())
+            .add_plugin(FrameTimeDiagnosticsPlugin)
             .add_plugin(DebugLinesPlugin::default())
             .fn_plugin(dev_editor_plugin)
             .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))

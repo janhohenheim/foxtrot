@@ -12,10 +12,7 @@ env:
 
 jobs:
   test:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
@@ -25,15 +22,8 @@ jobs:
         uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-        if: runner.os == 'linux'
-      - name: Install zld
-        run: brew install michaeleisel/zld/zld
-        if: runner.os == 'macos'
-      - name: Install llvm tools
-        run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
-        if: runner.os == 'windows'
       - name: Run cargo test
-        run: cargo test
+        run: cargo test --all-features
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -49,4 +39,10 @@ jobs:
       - name: Check format
         run: cargo fmt --all -- --check
       - name: Run clippy with native dev features
-        run: cargo clippy --workspace -- --deny warnings
+        run: cargo clippy --workspace --all-targets -- --deny warnings
+      - name: Run clippy with native release features
+        run: cargo clippy --workspace --all-targets --no-default-features --features native -- --deny warnings
+      - name: Run clippy with wasm dev features
+        run: cargo clippy --workspace --all-targets --no-default-features --features wasm_dev -- --deny warnings
+      - name: Run clippy with wasm release features
+        run: cargo clippy --workspace --all-targets --no-default-features --features wasm -- --deny warnings

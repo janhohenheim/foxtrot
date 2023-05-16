@@ -9,6 +9,7 @@ env:
   NIGHTLY_TOOLCHAIN: nightly
   # Sparse cargo registry for faster updates
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  CARGO_INCREMENTAL: 1
 
 jobs:
   test-native:

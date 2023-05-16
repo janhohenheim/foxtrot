@@ -12,7 +12,10 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
@@ -22,7 +25,14 @@ jobs:
         uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run cargo test
+        if: runner.os == 'linux'
+      - name: Install zld
+        run: brew install michaeleisel/zld/zld
+        if: runner.os == 'macos'
+      - name: Install llvm tools
+        run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
+        if: runner.os == 'windows'
+      - name: Build & run tests for native
         run: cargo test
   lint:
     runs-on: ubuntu-latest

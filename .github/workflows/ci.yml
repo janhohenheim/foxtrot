@@ -21,12 +21,12 @@ jobs:
         uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run cargo test
+      - name: Run cargo test for native-dev
         run: cargo test
 
   test-wasm:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'wasm') # Building for Wasm clears the `target` dir, invalidating the cache and causing builds to take > 30 mins
+    if: contains(github.event.pull_request.labels.*.name, 'wasm') # Gating because building Wasm clears the `target` dir, invalidating the cache and causing builds to take > 30 mins
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master

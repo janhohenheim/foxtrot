@@ -32,7 +32,7 @@ jobs:
       - name: Install llvm tools
         run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
         if: runner.os == 'windows'
-      - name: Build & run tests for native
+      - name: Run cargo test
         run: cargo test
   lint:
     runs-on: ubuntu-latest

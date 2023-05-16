@@ -2,7 +2,6 @@ name: CI
 
 on:
   pull_request:
-  push:
 
 env:
   CARGO_TERM_COLOR: always
@@ -11,7 +10,7 @@ env:
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 
 jobs:
-  test:
+  test-native:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,6 +23,29 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Run cargo test
         run: cargo test --all-features
+
+  test-wasm:
+    runs-on: ubuntu-latest
+    if: false # Building for Wasm clears the `target` dir, invalidating the cache and causing builds to take > 30 mins
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+      - name: Install alsa and udev
+        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Install trunk
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: "v0.16.0"
+      - name: Add wasm target
+        run: |
+          rustup target add wasm32-unknown-unknown
+      - name: Build wasm
+        run: trunk build --no-default-features --features wasm_dev
+
   lint:
     runs-on: ubuntu-latest
     steps:

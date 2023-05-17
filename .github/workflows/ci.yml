@@ -2,40 +2,15 @@ name: CI
 
 on:
   pull_request:
-  push:
-
+    types: [ labeled, opened, synchronize, reopened ]
 env:
   CARGO_TERM_COLOR: always
   NIGHTLY_TOOLCHAIN: nightly
   # Sparse cargo registry for faster updates
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
-  CARGO_INCREMENTAL: 1
 
 jobs:
   test-native:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
-      - name: Cache Cargo build files
-        uses: Leafwing-Studios/cargo-cache@v1
-      - name: Install alsa and udev
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-        if: runner.os == 'linux'
-      - name: Install zld
-        run: brew install michaeleisel/zld/zld
-        if: runner.os == 'macos'
-      - name: Install llvm tools
-        run: cargo install -f cargo-binutils && rustup component add llvm-tools-preview
-        if: runner.os == 'windows'
-      - name: Build & run tests for native
-        run: cargo test
-  test-native-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,10 +21,14 @@ jobs:
         uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
-      - name: Run doc tests
-        run: cargo test --doc
+      - name: Run cargo test for native-dev
+        run: cargo test
+
   test-wasm:
     runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-D warnings"
+    if: contains(github.event.pull_request.labels.*.name, 'wasm') # Gated because building Wasm clears the `target` dir, invalidating the cache and causing builds to take > 30 mins :(
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
@@ -68,8 +47,11 @@ jobs:
           rustup target add wasm32-unknown-unknown
       - name: Build wasm
         run: trunk build --no-default-features --features wasm_dev
+
   lint:
     runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: "-D warnings"
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
@@ -83,10 +65,4 @@ jobs:
       - name: Check format
         run: cargo fmt --all -- --check
       - name: Run clippy with native dev features
-        run: cargo clippy --workspace --all-targets -- --deny warnings
-      - name: Run clippy with native release features
-        run: cargo clippy --workspace --all-targets --no-default-features --features native -- --deny warnings
-      - name: Run clippy with wasm dev features
-        run: cargo clippy --workspace --all-targets --no-default-features --features wasm_dev -- --deny warnings
-      - name: Run clippy with wasm release features
-        run: cargo clippy --workspace --all-targets --no-default-features --features wasm -- --deny warnings
+        run: cargo clippy

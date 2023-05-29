@@ -60,9 +60,12 @@ pub(crate) struct AnimationAssets {
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct LevelAssets {
-    #[cfg_attr(feature = "native", asset(path = "levels", collection(typed, mapped)))]
     #[cfg_attr(
-        feature = "wasm",
+        not(target_arch = "wasm32"),
+        asset(path = "levels", collection(typed, mapped))
+    )]
+    #[cfg_attr(
+        target_arch = "wasm32",
         asset(paths("levels/old_town.lvl.ron"), collection(typed, mapped))
     )]
     pub(crate) levels: HashMap<String, Handle<SerializedLevel>>,
@@ -70,9 +73,12 @@ pub(crate) struct LevelAssets {
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct DialogAssets {
-    #[cfg_attr(feature = "native", asset(path = "dialogs", collection(typed, mapped)))]
     #[cfg_attr(
-        feature = "wasm",
+        not(target_arch = "wasm32"),
+        asset(path = "dialogs", collection(typed, mapped))
+    )]
+    #[cfg_attr(
+        target_arch = "wasm32",
         asset(paths("dialogs/follower.dlg.ron"), collection(typed, mapped))
     )]
     pub(crate) dialogs: HashMap<String, Handle<Dialog>>,

@@ -7,7 +7,10 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::CursorGrabMode;
 use bevy_editor_pls::editor_window::EditorWindow;
-use bevy_editor_pls::{AddEditorWindow, Editor, EditorEvent};
+use bevy_editor_pls::{
+    editor::{Editor, EditorEvent},
+    AddEditorWindow,
+};
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
 use bevy_mod_sysfail::macros::*;

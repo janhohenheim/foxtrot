@@ -12,7 +12,7 @@ pub(crate) mod dev_editor;
 /// Don't include this in a release build.
 pub(crate) fn dev_plugin(app: &mut App) {
     {
-        app.add_plugin(EditorPlugin)
+        app.add_plugin(EditorPlugin::new())
             .insert_resource(default_editor_controls())
             .add_plugin(FrameTimeDiagnosticsPlugin)
             .add_plugin(DebugLinesPlugin::default())
@@ -32,7 +32,7 @@ fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
     editor_controls.insert(
         Action::PlayPauseEditor,
         Binding {
-            input: UserInput::Single(Button::Keyboard(KeyCode::Q)),
+            input: UserInput::Single(Button::Keyboard(KeyCode::G)),
             conditions: vec![BindingCondition::ListeningForText(false)],
         },
     );

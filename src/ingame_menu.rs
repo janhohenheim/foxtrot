@@ -44,7 +44,7 @@ fn handle_pause(
 
                             if ui.button("Quit Game").clicked() {
                                 app_exit_events.send(AppExit);
-                                #[cfg(feature = "wasm")]
+                                #[cfg(target_arch = "wasm32")]
                                 wasm::close_tab()
                             }
                         });
@@ -58,7 +58,7 @@ fn handle_pause(
     }
 }
 
-#[cfg(feature = "wasm")]
+#[cfg(target_arch = "wasm32")]
 mod wasm {
     use wasm_bindgen::prelude::*;
 

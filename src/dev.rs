@@ -12,7 +12,7 @@ pub(crate) mod dev_editor;
 /// Don't include this in a release build.
 pub(crate) fn dev_plugin(app: &mut App) {
     {
-        app.add_plugin(EditorPlugin)
+        app.add_plugin(EditorPlugin::new())
             .insert_resource(default_editor_controls())
             .add_plugin(FrameTimeDiagnosticsPlugin)
             .add_plugin(DebugLinesPlugin::default())

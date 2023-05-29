@@ -18,7 +18,7 @@ pub(crate) fn map_plugin(app: &mut App) {
             .in_set(OnUpdate(GameState::Playing)),
     );
 
-    #[cfg(feature = "wasm")]
+    #[cfg(target_arch = "wasm32")]
     app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
 }
 
@@ -49,15 +49,15 @@ fn show_loading_screen(mut egui_contexts: EguiContexts) {
             ui.heading("Loading");
             ui.label("Spawning level...");
             ui.add_space(10.0);
-            #[cfg(feature = "wasm")]
+            #[cfg(target_arch = "wasm32")]
             ui.add_space(40.0); // Spinner from CSS (build/web/styles.css) goes here.
-            #[cfg(feature = "wasm")]
+            #[cfg(target_arch = "wasm32")]
             ui.label("This may take a while. Don't worry, your browser did not crash!");
         });
     });
 }
 
-#[cfg(feature = "wasm")]
+#[cfg(target_arch = "wasm32")]
 fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContexts) {
     let id = egui::Id::new("loading-screen-shown");
     egui_contexts.ctx_mut().memory_mut(|memory| {
@@ -76,7 +76,7 @@ fn show_wasm_loader(player_query: Query<&Player>, mut egui_contexts: EguiContext
     });
 }
 
-#[cfg(feature = "wasm")]
+#[cfg(target_arch = "wasm32")]
 mod loader {
     use wasm_bindgen::prelude::*;
 

@@ -10,7 +10,7 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - Physics via [`bevy_rapier`](https://crates.io/crates/bevy_rapier)
 - Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
 - Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
-- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) in the `dev` feature, bound to 'G'
+- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) bound to 'G'
 - Custom editor for the game state found in the windows selection for `bevy_editor_pls`.
 - Saving / loading levels
 - Saving / loading the game state
@@ -18,7 +18,7 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - A custom dialog system
 - Shaders
 - GLTF imports, including auto-detection of colliders
-- Dynamic builds in the `native-dev` feature
+- Dynamic builds when developing
 - Grass blades using [`warbler_grass`](https://crates.io/crates/warbler_grass)
 - Smooth cameras via [`bevy_dolly`](https://github.com/BlackPhlox/bevy_dolly)
 - A skydome that follows the camera
@@ -42,7 +42,7 @@ cargo run
 ```
 Wasm:
 ```bash
-trunk serve --no-default-features --features wasm_dev
+trunk serve
 ```
 
 Building WASM requires `trunk`:

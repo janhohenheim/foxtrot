@@ -1,32 +1,41 @@
 # NOTE: For maximum performance, build using a nightly compiler
 # If you are using rust stable, remove the `"-Z", "share-generics=y"` below.
 
-[target.x86_64-unknown-linux-gnu]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=lld", "-Z", "share-generics=y"]
+# Uncomment the following lines for better link time performance. Requires lld on Windows, zld on macOS and clang on Linux.
 
-# NOTE: you must manually install https://github.com/michaeleisel/zld on mac. you can easily do this with the "brew" package manager:
-# `brew install michaeleisel/zld/zld`
+# [target.x86_64-unknown-linux-gnu]
+# Uncomment for better performance. Requires clang.
+# linker = "clang"
+
+# Uncomment instead of default rustflags for better performance. Requires lld.
+# rustflags = ["-C", "link-arg=-fuse-ld=lld", "-Z", "share-generics=y"]
+rustflags = ["-Z", "share-generics=y"]
+
 [target.x86_64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Z", "share-generics=y"]
+# Uncomment instead of default rustflags for better performance. Requires zld via `brew install michaeleisel/zld/zld`
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Z", "share-generics=y"]
+rustflags = ["-Z", "share-generics=y"]
 
 [target.aarch64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld", "-Z", "share-generics=y"]
+# Uncomment instead of default rustflags for better performance. Requires zld via `brew install michaeleisel/zld/zld`
+# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld", "-Z", "share-generics=y"]
+rustflags = ["-Z", "share-generics=y"]
 
 [target.x86_64-pc-windows-msvc]
-linker = "rust-lld.exe"
+# Uncommentfor better performance. Requires lld via `cargo install -f cargo-binutils` and `rustup component add llvm-tools-preview`
+# linker = "rust-lld.exe"
 rustflags = ["-Z", "share-generics=n"]
 
-# Enable only a small amount of optimization in debug mode
+# Enable no optimization in debug mode. You should probably bump this up for Wasm builds.
 [profile.dev]
-opt-level = 1
+opt-level = 0
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
 # In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
 # debug = 1
 
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+# Enable some optimizations for dependencies (incl. Bevy), but not for our code. You should probably bump this up for Wasm builds.
 [profile.dev.package."*"]
-opt-level = 2
+opt-level = 1
 
 [profile.release]
 lto = "thin"

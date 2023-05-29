@@ -23,7 +23,7 @@ pub(crate) mod ingame_menu;
 pub(crate) mod level_instantiation;
 pub(crate) mod menu;
 pub(crate) mod movement;
-#[cfg(feature = "native")]
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) mod particles;
 pub(crate) mod player_control;
 pub(crate) mod shader;
@@ -38,7 +38,7 @@ use crate::ingame_menu::ingame_menu_plugin;
 use crate::level_instantiation::level_instantiation_plugin;
 use crate::menu::menu_plugin;
 use crate::movement::movement_plugin;
-#[cfg(feature = "native")]
+#[cfg(not(target_arch = "wasm32"))]
 use crate::particles::particle_plugin;
 use crate::player_control::player_control_plugin;
 use crate::shader::shader_plugin;
@@ -77,15 +77,6 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(not(feature = "core"))]
-        compile_error!("You need to compile with the core feature.");
-        #[cfg(all(feature = "wasm", feature = "native"))]
-        compile_error!(
-            "You can only compile with the wasm or native features, not both at the same time."
-        );
-        #[cfg(all(feature = "native-dev", not(feature = "native")))]
-        compile_error!("You can only compile with the native-dev feature if you compile with the native feature.");
-
         app.add_state::<GameState>()
             .fn_plugin(bevy_config_plugin)
             .fn_plugin(menu_plugin)
@@ -98,7 +89,7 @@ impl Plugin for GamePlugin {
             .fn_plugin(ingame_menu_plugin);
         #[cfg(feature = "dev")]
         app.fn_plugin(dev_plugin);
-        #[cfg(feature = "native")]
+        #[cfg(not(target_arch = "wasm32"))]
         app.fn_plugin(particle_plugin);
     }
 }

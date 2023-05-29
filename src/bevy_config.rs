@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy::window::PrimaryWindow;
-#[cfg(not(feature = "wasm"))]
+#[cfg(not(target_arch = "wasm32"))]
 use bevy::window::WindowMode;
 use bevy::winit::WinitWindows;
 use bevy_mod_sysfail::macros::*;
@@ -18,14 +18,14 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
             canvas: Some("#bevy".to_owned()),
             present_mode: PresentMode::AutoVsync,
             // This breaks WASM for some reason
-            #[cfg(not(feature = "wasm"))]
+            #[cfg(not(target_arch = "wasm32"))]
             mode: WindowMode::BorderlessFullscreen,
             fit_canvas_to_parent: true,
             ..default()
         }),
         ..default()
     });
-    #[cfg(feature = "native-dev")]
+    #[cfg(not(target_arch = "wasm32"))]
     let default_plugins = default_plugins.set(AssetPlugin {
         watch_for_changes: true,
         ..default()

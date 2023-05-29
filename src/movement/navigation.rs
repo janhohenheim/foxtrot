@@ -58,7 +58,7 @@ fn query_mesh(
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
     #[cfg(feature = "dev")] mut lines: ResMut<DebugLines>,
-    #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::Editor>,
+    #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("query_mesh").entered();

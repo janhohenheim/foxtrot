@@ -1,21 +1,23 @@
 # NOTE: For maximum performance, build using a nightly compiler
 # If you are using rust stable, remove the `"-Z", "share-generics=y"` below.
 
-[target.x86_64-unknown-linux-gnu]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=lld", "-Z", "share-generics=y"]
+# Uncomment the following lines for better link time performance. Requires lld on Windows, zld on macOS and clang on Linux.
+
+# [target.x86_64-unknown-linux-gnu]
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=lld", "-Z", "share-generics=y"]
 
 # NOTE: you must manually install https://github.com/michaeleisel/zld on mac. you can easily do this with the "brew" package manager:
 # `brew install michaeleisel/zld/zld`
-[target.x86_64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Z", "share-generics=y"]
+# [target.x86_64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Z", "share-generics=y"]
 
-[target.aarch64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld", "-Z", "share-generics=y"]
+# [target.aarch64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld", "-Z", "share-generics=y"]
 
-[target.x86_64-pc-windows-msvc]
-linker = "rust-lld.exe"
-rustflags = ["-Z", "share-generics=n"]
+# [target.x86_64-pc-windows-msvc]
+# linker = "rust-lld.exe"
+# rustflags = ["-Z", "share-generics=n"]
 
 # Enable only a small amount of optimization in debug mode
 [profile.dev]

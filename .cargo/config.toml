@@ -26,14 +26,14 @@ rustflags = ["-Z", "share-generics=y"]
 # linker = "rust-lld.exe"
 rustflags = ["-Z", "share-generics=n"]
 
-# Enable no optimization in debug mode.
+# Enable no optimization in debug mode. You should probably bump this up for Wasm builds.
 [profile.dev]
 opt-level = 0
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
 # In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
 # debug = 1
 
-# Enable some optimizations for dependencies (incl. Bevy), but not for our code:
+# Enable some optimizations for dependencies (incl. Bevy), but not for our code. You should probably bump this up for Wasm builds.
 [profile.dev.package."*"]
 opt-level = 1
 

@@ -118,17 +118,7 @@ impl DialogChoice {
 }
 
 #[derive(
-    Debug,
-    Clone,
-    Eq,
-    PartialEq,
-    Default,
-    Component,
-    Reflect,
-    Hash,
-    Serialize,
-    Deserialize,
-    FromReflect,
+    Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,
 )]
 #[reflect(Component, Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]

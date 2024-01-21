@@ -5,7 +5,7 @@ use bevy::window::PrimaryWindow;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::window::WindowMode;
 use bevy::winit::WinitWindows;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use std::io::Cursor;
 use winit::window::Icon;
 

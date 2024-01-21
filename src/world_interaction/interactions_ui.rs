@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};

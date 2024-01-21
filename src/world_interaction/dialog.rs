@@ -13,7 +13,7 @@ use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContexts, EguiPlugin};
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::path::Path;

@@ -6,7 +6,7 @@ use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use chrono::prelude::Local;
 use glob::glob;
 use serde::{Deserialize, Serialize};

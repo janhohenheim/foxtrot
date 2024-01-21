@@ -2,7 +2,7 @@ use crate::player_control::actions::ActionsFrozen;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]

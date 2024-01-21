@@ -9,7 +9,7 @@ use crate::GameState;
 use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 #[cfg(feature = "dev")]
 use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{

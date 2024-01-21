@@ -12,7 +12,7 @@ use bevy::render::render_resource::{
     AsBindGroup, RenderPipelineDescriptor, ShaderRef, ShaderType, SpecializedMeshPipelineError,
 };
 use bevy::utils::HashMap;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use regex::Regex;
 use std::sync::LazyLock;
 

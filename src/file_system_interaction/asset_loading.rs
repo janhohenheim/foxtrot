@@ -2,7 +2,7 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
-use anyhow::{Result};
+use anyhow::Result;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -19,14 +19,17 @@ pub(crate) fn loading_plugin(app: &mut App) {
         .add_plugins(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
         .add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
         .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
-        .add_loading_state(LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu))
-        .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, AnimationAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, LevelAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
-        .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
+        .add_loading_state(
+            LoadingState::new(GameState::Loading)
+                .continue_to_state(GameState::Menu)
+                .load_collection::<AudioAssets>()
+                .load_collection::<SceneAssets>()
+                .load_collection::<AnimationAssets>()
+                .load_collection::<LevelAssets>()
+                .load_collection::<DialogAssets>()
+                .load_collection::<TextureAssets>()
+                .load_collection::<ConfigAssets>(),
+        )
         .add_systems(Update, show_progress.run_if(in_state(GameState::Loading)))
         .add_systems(Update, update_config);
 }

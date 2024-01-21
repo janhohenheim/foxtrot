@@ -3,7 +3,7 @@ use anyhow::{bail, Context, Result};
 use bevy::prelude::*;
 use bevy::render::mesh::{PrimitiveTopology, VertexAttributeValues};
 use bevy::transform::TransformSystem;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 

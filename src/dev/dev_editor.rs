@@ -13,7 +13,7 @@ use bevy_editor_pls::{
 };
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_prototype_debug_lines::DebugLines;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMesh;

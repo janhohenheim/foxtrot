@@ -6,7 +6,7 @@ use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use std::path::Path;

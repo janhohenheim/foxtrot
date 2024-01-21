@@ -9,7 +9,7 @@ use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{TransformExt, Vec3Ext};
 use crate::GameState;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 pub(crate) use components::*;
 
 /// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].

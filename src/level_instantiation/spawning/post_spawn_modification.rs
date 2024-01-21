@@ -3,7 +3,7 @@ use crate::level_instantiation::spawning::objects::level::Imported;
 use anyhow::{Context, Result};
 use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use regex::Regex;
 use std::sync::LazyLock;
 

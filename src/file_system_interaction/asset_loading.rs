@@ -11,7 +11,7 @@ use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::egui::ProgressBar;
 use bevy_egui::{egui, EguiContexts};
 use bevy_kira_audio::AudioSource;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub(crate) fn loading_plugin(app: &mut App) {

@@ -2,7 +2,7 @@ use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 

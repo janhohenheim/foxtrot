@@ -33,7 +33,7 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
     app.insert_resource(Msaa::Sample4)
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         .add_plugins(default_plugins)
-        .add_systems(Update, set_window_icon.on_startup());
+        .add_systems(Startup, set_window_icon);
 }
 
 // Sets the icon on Windows and X11

@@ -6,7 +6,7 @@ use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct DialogEvent {
     pub(crate) dialog: DialogId,

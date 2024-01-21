@@ -28,12 +28,12 @@ pub(crate) fn game_state_serialization_plugin(app: &mut App) {
         );
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Event, Serialize, Deserialize, Default)]
 pub(crate) struct GameSaveRequest {
     pub(crate) filename: Option<String>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Event, Serialize, Deserialize, Default)]
 pub(crate) struct GameLoadRequest {
     pub(crate) filename: Option<String>,
 }

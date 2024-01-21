@@ -24,13 +24,13 @@ pub(crate) fn level_serialization_plugin(app: &mut App) {
         );
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct WorldSaveRequest {
     pub(crate) filename: String,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct WorldLoadRequest {
     pub(crate) filename: String,

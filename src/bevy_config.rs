@@ -25,11 +25,6 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
         }),
         ..default()
     });
-    #[cfg(not(target_arch = "wasm32"))]
-    let default_plugins = default_plugins.set(AssetPlugin {
-        watch_for_changes: true,
-        ..default()
-    });
     app.insert_resource(Msaa::Sample4)
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         .add_plugins(default_plugins)

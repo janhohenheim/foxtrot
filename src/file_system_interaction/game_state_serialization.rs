@@ -4,7 +4,7 @@ use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
-use anyhow::{Context, Result};
+use anyhow::{Context, Error, Result};
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use chrono::prelude::Local;
@@ -62,20 +62,8 @@ fn handle_load_requests(
             .filename
             .as_ref()
             .map(|filename| anyhow::Ok(Some(get_save_path(filename.clone()))))
-            .unwrap_or_else(|| {
-                let mut saves: Vec<_> = glob("./saves/*.sav.ron")
-                    .context("Failed to read glob pattern")?
-                    .filter_map(|entry| entry.ok())
-                    .filter(|entry| entry.is_file())
-                    .collect();
-                saves.sort_by_cached_key(|f| {
-                    f.metadata()
-                        .expect("Failed to read file metadata")
-                        .modified()
-                        .expect("Failed to read file modified time")
-                });
-                Ok(saves.last().map(|entry| entry.to_owned()))
-            })? {
+            .unwrap_or_else(read_last_save)?
+        {
             Some(path) => path,
             None => {
                 error!("Failed to load save: No filename provided and no saves found on disk");
@@ -118,6 +106,22 @@ fn handle_load_requests(
         );
     }
     Ok(())
+}
+
+fn read_last_save() -> Result<Option<PathBuf>, Error> {
+    let mut saves: Vec<_> = glob("./saves/*.sav.ron")
+        .context("Failed to read glob pattern")?
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.is_file())
+        .collect();
+    saves.sort_by_cached_key(|f| {
+        f.metadata()
+            .expect("Failed to read file metadata")
+            .modified()
+            .expect("Failed to read file modified time")
+    });
+    let save = saves.last().map(|entry| entry.to_owned());
+    Ok(save)
 }
 
 #[sysfail(log(level = "error"))]

@@ -35,8 +35,7 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
-#[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Asset, TypePath, Default)]
 pub(crate) struct Dialog {
     pub(crate) initial_page: Vec<InitialPage>,
     pub(crate) pages: HashMap<PageId, Page>,

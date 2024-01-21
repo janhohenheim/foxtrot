@@ -43,7 +43,7 @@ fn add_conditions(
     mut conditions: ResMut<ActiveConditions>,
     mut incoming_conditions: EventReader<ConditionAddEvent>,
 ) {
-    for incoming_condition in incoming_conditions.iter() {
+    for incoming_condition in incoming_conditions.read() {
         conditions.0.insert(incoming_condition.0.clone());
     }
 }

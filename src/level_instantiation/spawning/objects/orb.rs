@@ -3,7 +3,7 @@ use crate::level_instantiation::spawning::GameObject;
 use crate::shader::Materials;
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 
 fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
     const MESH_HANDLE: Handle<Mesh> = Handle::weak_from_u128(0x1f40128bac02a9b);

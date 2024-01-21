@@ -57,7 +57,7 @@ fn handle_load_requests(
     mut spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
 ) -> Result<()> {
-    for load in load_events.iter() {
+    for load in load_events.read() {
         let path = match load
             .filename
             .as_ref()
@@ -129,7 +129,7 @@ fn handle_save_requests(
     current_level: Res<CurrentLevel>,
 ) -> Result<()> {
     let dialog = dialog.map(|dialog| dialog.clone());
-    for save in save_events.iter() {
+    for save in save_events.read() {
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {
                 dialog: dialog.id,

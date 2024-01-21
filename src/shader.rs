@@ -2,10 +2,10 @@
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
 use anyhow::{Context, Result};
-use bevy::asset::UntypedAssetId;
+
 use bevy::pbr::{MaterialPipeline, MaterialPipelineKey};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use bevy::render::mesh::MeshVertexBufferLayout;
 use bevy::render::render_resource::Face::Front;
 use bevy::render::render_resource::{

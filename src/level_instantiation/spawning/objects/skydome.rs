@@ -4,7 +4,7 @@ use crate::shader::Materials;
 
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, Default)]

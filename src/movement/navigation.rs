@@ -1,20 +1,17 @@
-#[cfg(feature = "dev")]
-use crate::dev::dev_editor::DevEditorWindow;
+
 use crate::level_instantiation::spawning::objects::npc;
 use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
-#[cfg(feature = "dev")]
-use anyhow::Context;
+
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::Collider;
 use oxidized_navigation::{
-    query::{find_path, find_polygon_path, perform_string_pulling_on_path},
-    tiles::NavMeshTiles,
-    NavMesh, NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin,
+    query::{find_polygon_path, perform_string_pulling_on_path},
+    NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
 };
 
 use serde::{Deserialize, Serialize};
@@ -59,7 +56,7 @@ fn query_mesh(
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
-    #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
+    #[cfg(feature = "dev")] _editor_state: Res<bevy_editor_pls::editor::Editor>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("query_mesh").entered();

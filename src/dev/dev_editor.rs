@@ -15,7 +15,7 @@ use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
-use oxidized_navigation::NavMesh;
+
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use strum::IntoEnumIterator;
@@ -158,7 +158,7 @@ fn set_cursor_grab_mode(
     mut events: EventReader<EditorEvent>,
     mut force_cursor_grab: ResMut<ForceCursorGrabMode>,
 ) {
-    for event in events.iter() {
+    for event in events.read() {
         if let EditorEvent::Toggle { now_active } = event {
             if *now_active {
                 force_cursor_grab.0 = Some(CursorGrabMode::None);

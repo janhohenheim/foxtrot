@@ -37,6 +37,7 @@ pub(crate) fn navigation_plugin(app: &mut App) {
         merge_region_area: 500,
         max_contour_simplification_error: 1.3,
         max_edge_length: 100,
+        max_tile_generation_tasks: None,
     }))
     .add_systems(
         Update,

@@ -35,7 +35,7 @@ impl From<ConditionId> for String {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Event, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct ConditionAddEvent(pub(crate) ConditionId);
 

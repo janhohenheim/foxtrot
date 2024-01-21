@@ -149,10 +149,10 @@ fn update_config(
     let _span = info_span!("update_config").entered();
     for event in config_asset_events.iter() {
         match event {
-            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => {
+            AssetEvent::Added { id } | AssetEvent::Modified { id } => {
                 // Guaranteed by Bevy to not fail
                 let config = config
-                    .get(handle)
+                    .get(*id)
                     .context("Failed to get config even though it was just created")?;
                 commands.insert_resource(config.clone());
             }

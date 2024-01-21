@@ -11,7 +11,7 @@ pub(crate) fn ingame_menu_plugin(app: &mut App) {
 }
 
 fn handle_pause(
-    mut time: ResMut<Time>,
+    mut time: ResMut<Time<Virtual>>,
     actions: Query<&ActionState<UiAction>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut actions_frozen: ResMut<ActionsFrozen>,

@@ -11,7 +11,6 @@ use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 #[cfg(feature = "dev")]
-use bevy_prototype_debug_lines::DebugLines;
 use oxidized_navigation::{
     query::{find_path, perform_string_pulling_on_path},
     NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
@@ -57,7 +56,6 @@ fn query_mesh(
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
-    #[cfg(feature = "dev")] mut lines: ResMut<DebugLines>,
     #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
@@ -74,14 +72,6 @@ fn query_mesh(
                 if let Ok(path) = find_path(&nav_mesh, &nav_mesh_settings, from, to, None, None) {
                     let path = perform_string_pulling_on_path(&nav_mesh, from, to, &path)
                         .map_err(|e| anyhow::Error::msg(format!("{e:?}")))?;
-                    #[cfg(feature = "dev")]
-                    if editor_state
-                        .window_state::<DevEditorWindow>()
-                        .context("Failed to get dev window state")?
-                        .navmesh_render_enabled
-                    {
-                        draw_path(&path, &mut lines, Color::RED);
-                    }
                     let dir = path
                         .into_iter()
                         .map(|next_point| {
@@ -99,11 +89,4 @@ fn query_mesh(
     }
 
     Ok(())
-}
-
-#[cfg(feature = "dev")]
-fn draw_path(path: &[Vec3], lines: &mut DebugLines, color: Color) {
-    for (a, b) in path.iter().zip(path.iter().skip(1)) {
-        lines.line_colored(*a, *b, 0.1, color);
-    }
 }

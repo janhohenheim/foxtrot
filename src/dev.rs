@@ -2,7 +2,6 @@ use crate::dev::dev_editor::dev_editor_plugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy_editor_pls::prelude::*;
-use bevy_prototype_debug_lines::DebugLinesPlugin;
 use bevy_rapier3d::prelude::*;
 use seldom_fn_plugin::FnPluginExt;
 
@@ -15,7 +14,6 @@ pub(crate) fn dev_plugin(app: &mut App) {
         app.add_plugin(EditorPlugin::new())
             .insert_resource(default_editor_controls())
             .add_plugin(FrameTimeDiagnosticsPlugin)
-            .add_plugin(DebugLinesPlugin::default())
             .fn_plugin(dev_editor_plugin)
             .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
             .add_plugin(RapierDebugRenderPlugin {

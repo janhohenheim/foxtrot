@@ -972,7 +972,6 @@ dependencies = [
  "bevy_pbr 0.11.3",
  "bevy_reflect 0.11.3",
  "bevy_render 0.11.3",
- "bevy_sprite 0.11.3",
  "bevy_transform 0.11.3",
  "bevy_utils 0.11.3",
 ]
@@ -992,7 +991,7 @@ dependencies = [
  "bevy_pbr 0.12.1",
  "bevy_reflect 0.12.1",
  "bevy_render 0.12.1",
- "bevy_sprite 0.12.1",
+ "bevy_sprite",
  "bevy_transform 0.12.1",
  "bevy_utils 0.12.1",
 ]
@@ -1129,7 +1128,6 @@ dependencies = [
  "bevy_reflect 0.11.3",
  "bevy_render 0.11.3",
  "bevy_scene 0.11.3",
- "bevy_sprite 0.11.3",
  "bevy_tasks 0.11.3",
  "bevy_time 0.11.3",
  "bevy_transform 0.11.3",
@@ -1164,7 +1162,7 @@ dependencies = [
  "bevy_reflect 0.12.1",
  "bevy_render 0.12.1",
  "bevy_scene 0.12.1",
- "bevy_sprite 0.12.1",
+ "bevy_sprite",
  "bevy_tasks 0.12.1",
  "bevy_text",
  "bevy_time 0.12.1",
@@ -1373,15 +1371,6 @@ dependencies = [
  "radsort",
  "smallvec",
  "thread_local",
-]
-
-[[package]]
-name = "bevy_prototype_debug_lines"
-version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb1785a35dee1a7ce603569befa4e25ed4cb8b57341b2442c7fedb14e602b139"
-dependencies = [
- "bevy 0.11.3",
 ]
 
 [[package]]
@@ -1641,31 +1630,6 @@ dependencies = [
 
 [[package]]
 name = "bevy_sprite"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68a8ca824fad75c6ef74cfbbba0a4ce3ccc435fa23d6bf3f003f260548813397"
-dependencies = [
- "bevy_app 0.11.3",
- "bevy_asset 0.11.3",
- "bevy_core_pipeline 0.11.3",
- "bevy_derive 0.11.3",
- "bevy_ecs 0.11.3",
- "bevy_log 0.11.3",
- "bevy_math 0.11.3",
- "bevy_reflect 0.11.3",
- "bevy_render 0.11.3",
- "bevy_transform 0.11.3",
- "bevy_utils 0.11.3",
- "bitflags 2.4.2",
- "bytemuck",
- "fixedbitset",
- "guillotiere",
- "rectangle-pack",
- "thiserror",
-]
-
-[[package]]
-name = "bevy_sprite"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7cc0c9d946e17e3e0aaa202f182837bc796c4f862b2e5a805134f873f21cf7f"
@@ -1731,7 +1695,7 @@ dependencies = [
  "bevy_math 0.12.1",
  "bevy_reflect 0.12.1",
  "bevy_render 0.12.1",
- "bevy_sprite 0.12.1",
+ "bevy_sprite",
  "bevy_transform 0.12.1",
  "bevy_utils 0.12.1",
  "bevy_window 0.12.1",
@@ -1815,7 +1779,7 @@ dependencies = [
  "bevy_math 0.12.1",
  "bevy_reflect 0.12.1",
  "bevy_render 0.12.1",
- "bevy_sprite 0.12.1",
+ "bevy_sprite",
  "bevy_text",
  "bevy_transform 0.12.1",
  "bevy_utils 0.12.1",
@@ -2919,7 +2883,6 @@ dependencies = [
  "bevy_hanabi",
  "bevy_kira_audio",
  "bevy_mod_sysfail",
- "bevy_prototype_debug_lines",
  "bevy_rapier3d",
  "bitflags 2.4.2",
  "chrono",

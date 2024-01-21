@@ -21,7 +21,7 @@ homepage = "https://janhohenheim.github.io/foxtrot/"
 
 [features]
 default = ["dev"]
-dev = ["dep:bevy_editor_pls", "dep:bevy_prototype_debug_lines"]
+dev = ["dep:bevy_editor_pls"]
 tracing = ["bevy/trace_chrome"]
 
 [dependencies]
@@ -51,7 +51,6 @@ bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
 bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
-bevy_prototype_debug_lines = { version = "0.11", optional = true, features = [ "3d" ] }
 
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31

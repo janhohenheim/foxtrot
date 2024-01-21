@@ -16,7 +16,6 @@ use bevy_egui::{egui, EguiContexts, EguiPlugin};
 use bevy_mod_sysfail::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::path::Path;
 use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
@@ -46,17 +45,7 @@ fn set_current_dialog(
     mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     for dialog_event in dialog_events.read() {
-        let path = Path::new("dialogs")
-            .join(&dialog_event.dialog.0.clone())
-            .with_extension("dlg.ron")
-            .to_str()
-            .with_context(|| {
-                format!(
-                    "Failed to convert dialog path to string for dialog: {:?}",
-                    dialog_event.dialog
-                )
-            })?
-            .to_owned();
+        let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0.clone());
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
             Some(handle) => handle,
             None => {

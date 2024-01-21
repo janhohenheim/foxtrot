@@ -10,11 +10,13 @@ use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
-#[cfg(feature = "dev")]
+use bevy_rapier3d::prelude::Collider;
 use oxidized_navigation::{
-    query::{find_path, perform_string_pulling_on_path},
-    NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
+    query::{find_path, find_polygon_path, perform_string_pulling_on_path},
+    tiles::NavMeshTiles,
+    NavMesh, NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin,
 };
+
 use serde::{Deserialize, Serialize};
 
 /// Manually tweaked
@@ -23,7 +25,7 @@ const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
 pub(crate) fn navigation_plugin(app: &mut App) {
     // consts manually tweaked
-    app.add_plugins(OxidizedNavigationPlugin::new(NavMeshSettings {
+    app.add_plugins(OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
         cell_width: CELL_WIDTH,
         cell_height: 0.5 * CELL_WIDTH,
         tile_width: 170,
@@ -70,7 +72,9 @@ fn query_mesh(
                     continue;
                 }
 
-                if let Ok(path) = find_path(&nav_mesh, &nav_mesh_settings, from, to, None, None) {
+                if let Ok(path) =
+                    find_polygon_path(&nav_mesh, &nav_mesh_settings, from, to, None, None)
+                {
                     let path = perform_string_pulling_on_path(&nav_mesh, from, to, &path)
                         .map_err(|e| anyhow::Error::msg(format!("{e:?}")))?;
                     let dir = path

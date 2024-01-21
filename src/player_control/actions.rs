@@ -35,11 +35,10 @@ pub(crate) fn actions_plugin(app: &mut App) {
         .add_plugins(InputManagerPlugin::<CameraAction>::default())
         .add_plugins(InputManagerPlugin::<UiAction>::default())
         .add_systems(
-            Update,
+            PreUpdate,
             remove_actions_when_frozen
                 .run_if(is_frozen)
-                .after(InputManagerSystem::ManualControl)
-                .in_schedule(PreUpdate),
+                .after(InputManagerSystem::ManualControl),
         );
 }
 

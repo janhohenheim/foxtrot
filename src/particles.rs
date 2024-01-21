@@ -14,7 +14,7 @@ mod init;
 pub(crate) fn particle_plugin(app: &mut App) {
     app.register_type::<SprintingParticle>()
         .add_plugins(HanabiPlugin)
-        .add_systems(Update, init_effects.in_schedule(OnExit(GameState::Loading)))
+        .add_systems(OnExit(GameState::Loading), init_effects)
         .add_systems(
             Update,
             play_sprinting_effect.run_if(in_state(GameState::Playing)),

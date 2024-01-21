@@ -8,10 +8,8 @@ use spew::prelude::*;
 
 pub(crate) fn map_plugin(app: &mut App) {
     app.add_systems(
-        Update,
-        setup
-            .run_if(not(resource_exists::<CurrentLevel>()))
-            .in_schedule(OnEnter(GameState::Playing)),
+        OnEnter(GameState::Playing),
+        setup.run_if(not(resource_exists::<CurrentLevel>())),
     )
     .add_systems(
         Update,

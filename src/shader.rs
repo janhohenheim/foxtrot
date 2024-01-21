@@ -23,7 +23,7 @@ pub(crate) fn shader_plugin(app: &mut App) {
     app.add_plugins(MaterialPlugin::<GlowyMaterial>::default())
         .add_plugins(MaterialPlugin::<RepeatedMaterial>::default())
         .add_plugins(MaterialPlugin::<SkydomeMaterial>::default())
-        .add_systems(Update, setup_shader.in_schedule(OnExit(GameState::Loading)))
+        .add_systems(OnExit(GameState::Loading), setup_shader)
         .add_systems(
             Update,
             set_texture_to_repeat.run_if(in_state(GameState::Playing)),

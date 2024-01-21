@@ -43,7 +43,7 @@ pub(crate) fn navigation_plugin(app: &mut App) {
         .add_system(
             query_mesh
                 .before(GeneralMovementSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

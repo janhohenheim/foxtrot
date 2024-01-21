@@ -30,7 +30,7 @@ pub(crate) fn dev_editor_plugin(app: &mut App) {
                 handle_navmesh_render,
                 set_cursor_grab_mode,
             )
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

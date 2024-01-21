@@ -57,7 +57,7 @@ pub(crate) fn camera_plugin(app: &mut App) {
         .add_system(Dolly::<IngameCamera>::update_active)
         .add_system(spawn_ui_camera.on_startup())
         .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-        .add_system(grab_cursor.in_set(OnUpdate(GameState::Playing)))
+        .add_system(grab_cursor.run_if(in_state(GameState::Playing)))
         .add_systems(
             (
                 update_kind,
@@ -68,7 +68,7 @@ pub(crate) fn camera_plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(CameraUpdateSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

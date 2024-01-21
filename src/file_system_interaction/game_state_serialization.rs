@@ -24,7 +24,7 @@ pub(crate) fn game_state_serialization_plugin(app: &mut App) {
                 handle_save_requests.run_if(resource_exists::<CurrentLevel>()),
             )
                 .chain()
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

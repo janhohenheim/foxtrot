@@ -33,7 +33,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
                 .chain()
                 .after(CameraUpdateSystemSet)
                 .before(GeneralMovementSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -153,7 +153,7 @@ fn rotate_to_speaker(
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
     let Ok(speaker_transform) = without_player.get(current_dialog.source) else {
-         return;
+        return;
     };
     let dt = time.delta_seconds();
 

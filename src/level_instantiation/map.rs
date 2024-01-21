@@ -15,11 +15,11 @@ pub(crate) fn map_plugin(app: &mut App) {
     .add_system(
         show_loading_screen
             .run_if(not(any_with_component::<Player>()))
-            .in_set(OnUpdate(GameState::Playing)),
+            .run_if(in_state(GameState::Playing)),
     );
 
     #[cfg(target_arch = "wasm32")]
-    app.add_system(show_wasm_loader.in_set(OnUpdate(GameState::Playing)));
+    app.add_system(show_wasm_loader.run_if(in_state(GameState::Playing)));
 }
 
 fn setup(

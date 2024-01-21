@@ -23,7 +23,7 @@ pub(crate) struct GameConfig {
     pub(crate) dialog: Dialog,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct Camera {
     pub(crate) fixed_angle: FixedAngle,
@@ -33,7 +33,7 @@ pub(crate) struct Camera {
     pub(crate) mouse_sensitivity_y: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct FixedAngle {
     pub(crate) min_distance: f32,
@@ -46,7 +46,7 @@ pub(crate) struct FixedAngle {
     pub(crate) pitch: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct FirstPerson {
     pub(crate) translation_smoothing: f32,
@@ -56,7 +56,7 @@ pub(crate) struct FirstPerson {
     pub(crate) tracking_smoothing: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct ThirdPerson {
     pub(crate) translation_smoothing: f32,
@@ -72,14 +72,14 @@ pub(crate) struct ThirdPerson {
     pub(crate) zoom_out_smoothing: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct Characters {
     pub(crate) model_sync_smoothing: f32,
     pub(crate) rotation_smoothing: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct Player {
     pub(crate) rotate_to_speaker_smoothness: f32,
@@ -89,7 +89,7 @@ pub(crate) struct Player {
     pub(crate) max_fov: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct Dialog {
     pub(crate) base_letters_per_second: f32,

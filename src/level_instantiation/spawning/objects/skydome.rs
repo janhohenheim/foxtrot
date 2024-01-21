@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, FromReflect, Default)]
+#[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Skydome;
 

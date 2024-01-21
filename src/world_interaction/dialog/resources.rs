@@ -6,7 +6,7 @@ use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct DialogEvent {
     pub(crate) dialog: DialogId,
@@ -42,7 +42,7 @@ pub(crate) struct Dialog {
     pub(crate) pages: HashMap<PageId, Page>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct InitialPage {
     pub(crate) id: PageId,
@@ -98,7 +98,7 @@ impl Default for NextPage {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct DialogChoice {
     /// The player's answer
@@ -151,9 +151,7 @@ impl From<DialogId> for String {
     }
 }
 
-#[derive(
-    Debug, Clone, Eq, PartialEq, Default, Reflect, FromReflect, Hash, Serialize, Deserialize,
-)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
 pub(crate) struct PageId(pub(crate) String);

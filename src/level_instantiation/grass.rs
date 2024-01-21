@@ -11,7 +11,7 @@ pub(crate) fn grass_plugin(app: &mut App) {
     app.add_plugin(WarblersPlugin).add_system(
         add_grass
             .after(TransformSystem::TransformPropagate)
-            .in_base_set(CoreSet::PostUpdate),
+            .in_schedule(PostUpdate),
     );
 }
 

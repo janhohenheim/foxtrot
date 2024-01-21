@@ -1,4 +1,3 @@
-
 use crate::level_instantiation::spawning::objects::npc;
 use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
 use crate::player_control::player_embodiment::Player;

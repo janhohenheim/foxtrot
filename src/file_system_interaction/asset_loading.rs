@@ -2,7 +2,7 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
-use anyhow::{Context, Result};
+use anyhow::{Result};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
@@ -147,7 +147,7 @@ fn update_config(
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("update_config").entered();
-    for event in config_asset_events.iter() {
+    for event in config_asset_events.read() {
         match event {
             AssetEvent::Modified { id } | AssetEvent::LoadedWithDependencies { id } => {
                 // Guaranteed by Bevy to not fail

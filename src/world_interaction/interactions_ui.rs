@@ -47,7 +47,7 @@ fn update_interaction_opportunities(
     parent_query: Query<&Parent>,
     mut interaction_opportunities: ResMut<InteractionOpportunities>,
 ) {
-    for event in collision_events.iter() {
+    for event in collision_events.read() {
         let (entity_a, entity_b, ongoing) = unpack_event(event);
 
         let (_player_entity, target_entity) =

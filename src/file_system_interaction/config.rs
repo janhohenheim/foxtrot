@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Reflect, Asset, Serialize, Deserialize, Default, Resource)]

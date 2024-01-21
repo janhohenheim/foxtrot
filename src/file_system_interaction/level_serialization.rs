@@ -5,7 +5,7 @@ use crate::world_interaction::dialog::CurrentDialog;
 use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
@@ -47,7 +47,7 @@ fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&GameObject, Option<&Transform>)>,
 ) -> Result<()> {
-    for save in save_requests.iter() {
+    for save in save_requests.read() {
         let scene = save.filename.clone();
         let valid_candidates: Vec<_> = iter::once(scene.clone())
             .chain((1..).map(|n| format!("{0}-{n}", scene.clone())))
@@ -101,7 +101,7 @@ fn load_world(
     levels: Res<Assets<SerializedLevel>>,
     level_handles: Res<LevelAssets>,
 ) -> Result<()> {
-    for load in load_requests.iter() {
+    for load in load_requests.read() {
         let path = Path::new("levels")
             .join(load.filename.clone())
             .with_extension("lvl.ron")
@@ -156,7 +156,7 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
         .map(|(game_object, transform)| {
             SpawnEvent::with_data(
                 *game_object,
-                transform.map(Clone::clone).unwrap_or_default(),
+                transform.cloned().unwrap_or_default(),
             )
         })
         .collect();

@@ -45,7 +45,7 @@ fn set_current_dialog(
     dialog_handles: Res<DialogAssets>,
     mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
-    for dialog_event in dialog_events.iter() {
+    for dialog_event in dialog_events.read() {
         let path = Path::new("dialogs")
             .join(&dialog_event.dialog.0.clone())
             .with_extension("dlg.ron")

@@ -175,7 +175,7 @@ fn rotate_to_speaker(
 
 #[sysfail(log(level = "error"))]
 fn control_walking_sound(
-    time: Res<Time>,
+    time: Res<Time<Virtual>>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,

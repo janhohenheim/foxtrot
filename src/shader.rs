@@ -34,7 +34,7 @@ pub(crate) fn shader_plugin(app: &mut App) {
 pub(crate) struct Materials {
     pub(crate) glowy: Handle<GlowyMaterial>,
     /// (Texture asset ID, Repeats) -> RepeatedMaterial
-    pub(crate) repeated: HashMap<(UntypedAssetId, Repeats), Handle<RepeatedMaterial>>,
+    pub(crate) repeated: HashMap<(AssetId<Image>, Repeats), Handle<RepeatedMaterial>>,
     pub(crate) skydome: Handle<SkydomeMaterial>,
 }
 

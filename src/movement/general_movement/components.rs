@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Bundle)]
+#[derive(Clone, Bundle)]
 pub(crate) struct CharacterControllerBundle {
     pub(crate) gravity_scale: GravityScale,
     pub(crate) mass: ColliderMassProperties,

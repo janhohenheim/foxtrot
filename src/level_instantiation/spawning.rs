@@ -51,7 +51,6 @@ pub(crate) fn spawning_plugin(app: &mut App) {
     PartialEq,
     Hash,
     Reflect,
-    FromReflect,
     Serialize,
     Deserialize,
     Default,

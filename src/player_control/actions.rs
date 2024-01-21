@@ -38,7 +38,7 @@ pub(crate) fn actions_plugin(app: &mut App) {
             remove_actions_when_frozen
                 .run_if(is_frozen)
                 .after(InputManagerSystem::ManualControl)
-                .in_base_set(CoreSet::PreUpdate),
+                .in_schedule(PreUpdate),
         );
 }
 

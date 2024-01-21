@@ -20,7 +20,7 @@ pub(crate) fn level_serialization_plugin(app: &mut App) {
                 save_world,
                 load_world.run_if(resource_exists::<LevelAssets>()),
             )
-                .in_base_set(CoreSet::PostUpdate),
+                .in_schedule(PostUpdate),
         );
 }
 

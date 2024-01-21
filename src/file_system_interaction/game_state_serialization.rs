@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use std::borrow::Cow;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub(crate) fn game_state_serialization_plugin(app: &mut App) {
     app.add_event::<GameSaveRequest>()
@@ -171,5 +171,5 @@ fn handle_save_requests(
 
 fn get_save_path(filename: impl Into<Cow<'static, str>>) -> PathBuf {
     let filename = filename.into().to_string();
-    Path::new("saves").join(filename).with_extension("sav.ron")
+    format!("saves/{filename}.sav.ron").into()
 }

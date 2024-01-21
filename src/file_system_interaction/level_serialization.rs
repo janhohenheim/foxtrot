@@ -102,18 +102,7 @@ fn load_world(
     level_handles: Res<LevelAssets>,
 ) -> Result<()> {
     for load in load_requests.read() {
-        let mut path = Path::new("levels")
-            .join(load.filename.clone())
-            .with_extension("lvl.ron")
-            .to_str()
-            .with_context(|| {
-                format!(
-                    "Failed to convert path to string for filename: {}",
-                    load.filename
-                )
-            })?
-            .to_string();
-        path = path.replace('\\', "/");
+        let path = format!("levels/{}.lvl.ron", load.filename.clone());
         let handle = match level_handles.levels.get(&path) {
             Some(handle) => handle,
             None => {

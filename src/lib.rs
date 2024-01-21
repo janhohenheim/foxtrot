@@ -82,6 +82,7 @@ impl Plugin for GamePlugin {
             .fn_plugin(menu_plugin)
             .fn_plugin(movement_plugin)
             .fn_plugin(player_control_plugin)
+            .fn_plugin(world_interaction_plugin)
             .fn_plugin(level_instantiation_plugin)
             .fn_plugin(file_system_interaction_plugin)
             .fn_plugin(shader_plugin)

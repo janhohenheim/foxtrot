@@ -42,7 +42,7 @@ pub(crate) fn actions_plugin(app: &mut App) {
         );
 }
 
-#[derive(Debug, Clone, Copy, Actionlike, Reflect, Default)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Actionlike, Reflect, Default)]
 pub(crate) enum PlayerAction {
     #[default]
     Move,
@@ -83,14 +83,14 @@ impl PlayerAction {
     }
 }
 
-#[derive(Debug, Clone, Actionlike, Reflect, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Actionlike, Reflect, Default)]
 pub(crate) enum CameraAction {
     #[default]
     Orbit,
     Zoom,
 }
 
-#[derive(Debug, Clone, Actionlike, Reflect, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Actionlike, Reflect, Default)]
 pub(crate) enum UiAction {
     #[default]
     TogglePause,

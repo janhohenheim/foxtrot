@@ -2,7 +2,7 @@
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
 use anyhow::{Context, Result};
-use bevy::asset::HandleId;
+use bevy::asset::UntypedAssetId;
 use bevy::pbr::{MaterialPipeline, MaterialPipelineKey};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
@@ -31,7 +31,7 @@ pub(crate) fn shader_plugin(app: &mut App) {
 pub(crate) struct Materials {
     pub(crate) glowy: Handle<GlowyMaterial>,
     /// (Texture asset ID, Repeats) -> RepeatedMaterial
-    pub(crate) repeated: HashMap<(HandleId, Repeats), Handle<RepeatedMaterial>>,
+    pub(crate) repeated: HashMap<(UntypedAssetId, Repeats), Handle<RepeatedMaterial>>,
     pub(crate) skydome: Handle<SkydomeMaterial>,
 }
 

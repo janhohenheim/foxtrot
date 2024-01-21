@@ -1,7 +1,16 @@
 // Same imports as <https://github.com/bevyengine/bevy/blob/main/crates/bevy_pbr/src/render/pbr.wgsl>
 #import bevy_pbr::mesh_view_bindings
 #import bevy_pbr::mesh_bindings
-#import bevy_pbr::utils
+#import bevy_pbr::utils::PI
+
+#ifdef PREPASS_PIPELINE
+#import bevy_pbr::prepass_io::VertexOutput
+#else
+#import bevy_pbr::forward_io::VertexOutput
+#endif
+
+
+
 
 @group(1) @binding(0)
 var texture: texture_2d<f32>;
@@ -31,7 +40,7 @@ fn get_texture_sample(uv: vec2<f32>) -> vec4<f32> {
 }
 
 @fragment
-fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
+fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var n = normalize(in.world_normal);
     let uv = dir_to_equirectangular(n);
     return get_texture_sample(uv);

@@ -2,8 +2,7 @@
 
 #import bevy_pbr::mesh_view_bindings
 #import bevy_pbr::mesh_bindings
-// Bring in consts like PI
-#import bevy_pbr::utils
+#import bevy_pbr::utils::PI
 // Bring in tone-mapping functions
 #import bevy_pbr::pbr_types
 #import bevy_pbr::clustered_forward
@@ -12,6 +11,15 @@
 #import bevy_pbr::pbr_ambient
 #import bevy_pbr::fog
 #import bevy_pbr::pbr_functions
+#import bevy_pbr::mesh_view_bindings::view
+
+#ifdef PREPASS_PIPELINE
+#import bevy_pbr::prepass_io::VertexOutput
+#else
+#import bevy_pbr::forward_io::VertexOutput
+#endif
+
+
 
 
 @group(1) @binding(0)
@@ -51,7 +59,7 @@ fn get_texture_sample(direction: vec3<f32>) -> vec4<f32> {
 }
 
 @fragment
-fn fragment(in: FragmentInput) -> @location(0) vec4<f32> {
+fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     // vec normal to face
     var n = normalize(in.world_normal);
     // vec from face origin to camera

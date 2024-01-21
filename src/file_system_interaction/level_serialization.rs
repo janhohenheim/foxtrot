@@ -102,7 +102,7 @@ fn load_world(
     level_handles: Res<LevelAssets>,
 ) -> Result<()> {
     for load in load_requests.read() {
-        let path = Path::new("levels")
+        let mut path = Path::new("levels")
             .join(load.filename.clone())
             .with_extension("lvl.ron")
             .to_str()
@@ -113,6 +113,7 @@ fn load_world(
                 )
             })?
             .to_string();
+        path = path.replace('\\', "/");
         let handle = match level_handles.levels.get(&path) {
             Some(handle) => handle,
             None => {
@@ -154,10 +155,7 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
         .iter()
         .filter(|(game_object, _)| **game_object != GameObject::Player)
         .map(|(game_object, transform)| {
-            SpawnEvent::with_data(
-                *game_object,
-                transform.cloned().unwrap_or_default(),
-            )
+            SpawnEvent::with_data(*game_object, transform.cloned().unwrap_or_default())
         })
         .collect();
     let serialized_level = SerializedLevel::from(objects);

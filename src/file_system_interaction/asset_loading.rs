@@ -15,10 +15,10 @@ use bevy_mod_sysfail::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub(crate) fn loading_plugin(app: &mut App) {
-    app.add_plugin(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
-        .add_plugin(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
-        .add_plugin(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
-        .add_plugin(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
+    app.add_plugins(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
+        .add_plugins(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
+        .add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
+        .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
         .add_loading_state(LoadingState::new(GameState::Loading).continue_to_state(GameState::Menu))
         .add_collection_to_loading_state::<_, AudioAssets>(GameState::Loading)
         .add_collection_to_loading_state::<_, SceneAssets>(GameState::Loading)
@@ -27,8 +27,8 @@ pub(crate) fn loading_plugin(app: &mut App) {
         .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
         .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
         .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
-        .add_system(show_progress.run_if(in_state(GameState::Loading)))
-        .add_system(update_config);
+        .add_systems(Update, show_progress.run_if(in_state(GameState::Loading)))
+        .add_systems(Update, update_config);
 }
 
 // the following asset collections will be loaded during the State `GameState::InitialLoading`

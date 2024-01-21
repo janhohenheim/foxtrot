@@ -22,6 +22,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
     app.register_type::<Timer>()
         .register_type::<Player>()
         .add_systems(
+            Update,
             (
                 handle_jump,
                 handle_horizontal_movement,

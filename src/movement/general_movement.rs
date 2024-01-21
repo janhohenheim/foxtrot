@@ -41,6 +41,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .register_type::<Walking>()
         .register_type::<CharacterAnimations>()
         .add_systems(
+            Update,
             (
                 reset_forces_and_impulses,
                 update_grounded,

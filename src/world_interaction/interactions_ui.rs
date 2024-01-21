@@ -19,11 +19,13 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
     app.register_type::<InteractionOpportunities>()
         .init_resource::<InteractionOpportunities>()
         .add_systems(
+            Update,
             (update_interaction_opportunities, update_interaction_ui)
                 .chain()
                 .run_if(in_state(GameState::Playing)),
         )
-        .add_system(
+        .add_systems(
+            Update,
             display_interaction_prompt
                 .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
                 .run_if(in_state(GameState::Playing)),

@@ -22,7 +22,7 @@ const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
 pub(crate) fn navigation_plugin(app: &mut App) {
-    app.add_plugin(OxidizedNavigationPlugin)
+    app.add_plugins(OxidizedNavigationPlugin)
         // consts manually tweaked
         .insert_resource(NavMeshSettings {
             cell_width: CELL_WIDTH,
@@ -39,7 +39,8 @@ pub(crate) fn navigation_plugin(app: &mut App) {
             max_contour_simplification_error: 1.3,
             max_edge_length: 100,
         })
-        .add_system(
+        .add_systems(
+            Update,
             query_mesh
                 .before(GeneralMovementSystemSet)
                 .run_if(in_state(GameState::Playing)),

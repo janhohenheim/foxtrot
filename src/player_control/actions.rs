@@ -31,10 +31,11 @@ pub(crate) fn actions_plugin(app: &mut App) {
         .register_type::<UiAction>()
         .register_type::<ActionsFrozen>()
         .init_resource::<ActionsFrozen>()
-        .add_plugin(InputManagerPlugin::<PlayerAction>::default())
-        .add_plugin(InputManagerPlugin::<CameraAction>::default())
-        .add_plugin(InputManagerPlugin::<UiAction>::default())
-        .add_system(
+        .add_plugins(InputManagerPlugin::<PlayerAction>::default())
+        .add_plugins(InputManagerPlugin::<CameraAction>::default())
+        .add_plugins(InputManagerPlugin::<UiAction>::default())
+        .add_systems(
+            Update,
             remove_actions_when_frozen
                 .run_if(is_frozen)
                 .after(InputManagerSystem::ManualControl)

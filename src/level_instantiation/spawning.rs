@@ -16,7 +16,7 @@ pub(crate) mod objects;
 mod post_spawn_modification;
 
 pub(crate) fn spawning_plugin(app: &mut App) {
-    app.add_plugin(SpewPlugin::<GameObject, Transform>::default())
+    app.add_plugins(SpewPlugin::<GameObject, Transform>::default())
         .register_type::<Despawn>()
         .register_type::<AnimationEntityLink>()
         .add_spawners((
@@ -34,8 +34,12 @@ pub(crate) fn spawning_plugin(app: &mut App) {
             (GameObject::Camera, objects::camera::spawn),
             (GameObject::Skydome, objects::skydome::spawn),
         ))
-        .add_systems((despawn, link_animations).run_if(in_state(GameState::Playing)))
         .add_systems(
+            Update,
+            (despawn, link_animations).run_if(in_state(GameState::Playing)),
+        )
+        .add_systems(
+            Update,
             (set_hidden, despawn_removed, set_color, set_shadows)
                 .run_if(in_state(GameState::Playing)),
         );

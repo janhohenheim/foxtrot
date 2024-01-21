@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) fn condition_plugin(app: &mut App) {
     app.init_resource::<ActiveConditions>()
         .add_event::<ConditionAddEvent>()
-        .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
+        .add_system(add_conditions.run_if(in_state(GameState::Playing)));
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]

@@ -53,7 +53,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(GeneralMovementSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

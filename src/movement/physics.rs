@@ -17,7 +17,7 @@ pub(crate) fn physics_plugin(app: &mut App) {
             },
             ..default()
         })
-        .add_system(read_colliders.in_set(OnUpdate(GameState::Playing)));
+        .add_system(read_colliders.run_if(in_state(GameState::Playing)));
 }
 
 #[sysfail(log(level = "error"))]

@@ -34,10 +34,10 @@ pub(crate) fn spawning_plugin(app: &mut App) {
             (GameObject::Camera, objects::camera::spawn),
             (GameObject::Skydome, objects::skydome::spawn),
         ))
-        .add_systems((despawn, link_animations).in_set(OnUpdate(GameState::Playing)))
+        .add_systems((despawn, link_animations).run_if(in_state(GameState::Playing)))
         .add_systems(
             (set_hidden, despawn_removed, set_color, set_shadows)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

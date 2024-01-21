@@ -27,7 +27,7 @@ pub(crate) fn loading_plugin(app: &mut App) {
         .add_collection_to_loading_state::<_, DialogAssets>(GameState::Loading)
         .add_collection_to_loading_state::<_, TextureAssets>(GameState::Loading)
         .add_collection_to_loading_state::<_, ConfigAssets>(GameState::Loading)
-        .add_system(show_progress.in_set(OnUpdate(GameState::Loading)))
+        .add_system(show_progress.run_if(in_state(GameState::Loading)))
         .add_system(update_config);
 }
 

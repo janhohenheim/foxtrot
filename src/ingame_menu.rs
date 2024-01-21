@@ -7,7 +7,7 @@ use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
 pub(crate) fn ingame_menu_plugin(app: &mut App) {
-    app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
+    app.add_system(handle_pause.run_if(in_state(GameState::Playing)));
 }
 
 fn handle_pause(

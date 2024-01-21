@@ -55,8 +55,7 @@ fn setup_shader(
     });
 }
 
-#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
-#[uuid = "bd5c76fd-6fdd-4de4-9744-4e8beea8daaf"]
+#[derive(AsBindGroup, Debug, Clone, Asset, TypePath)]
 /// Material for [`glowy.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/glowy.wgsl).
 pub(crate) struct GlowyMaterial {
     #[texture(0)]
@@ -70,8 +69,7 @@ impl Material for GlowyMaterial {
     }
 }
 
-#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
-#[uuid = "8ca95d76-91d6-44c0-a67b-8a4d22cd59b1"]
+#[derive(AsBindGroup, Debug, Clone, Asset, TypePath)]
 /// Material for [`skydome.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/skydome.wgsl).
 pub(crate) struct SkydomeMaterial {
     #[texture(0)]
@@ -104,8 +102,7 @@ pub(crate) struct Repeats {
     pub(crate) _wasm_padding2: u32,
 }
 
-#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
-#[uuid = "82d336c5-fd6c-41a3-bdd4-267cd4c9be22"]
+#[derive(AsBindGroup, Debug, Clone, Asset, TypePath)]
 /// Material for [`repeated.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/repeated.wgsl).
 pub(crate) struct RepeatedMaterial {
     #[texture(0)]

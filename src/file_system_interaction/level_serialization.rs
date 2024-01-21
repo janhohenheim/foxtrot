@@ -164,8 +164,7 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
     ron::ser::to_string_pretty(&serialized_level, default()).context("Failed to serialize world")
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid, Deref, DerefMut)]
-#[uuid = "eb7cc7bc-5a97-41ed-b0c3-0d4e2137b73b"]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Asset, Deref, DerefMut)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct SerializedLevel(pub(crate) Vec<(GameObject, Transform)>);
 

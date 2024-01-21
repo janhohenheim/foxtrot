@@ -100,7 +100,7 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
     InputManagerBundle {
         input_map: InputMap::new([
             (QwertyScanCode::Space, PlayerAction::Jump),
-            (QwertyScanCode::LShift, PlayerAction::Sprint),
+            (QwertyScanCode::ShiftLeft, PlayerAction::Sprint),
             (QwertyScanCode::E, PlayerAction::Interact),
             (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
             (QwertyScanCode::Key1, PlayerAction::NumberedChoice1),

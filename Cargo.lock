@@ -4273,6 +4273,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb4ab0ab1cad97fbd83f85969f3ece1bba243e164444c459fd28aa302785c80c"
 dependencies = [
  "bevy 0.12.1",
+ "bevy_rapier3d",
  "nalgebra",
  "parry3d",
  "smallvec",

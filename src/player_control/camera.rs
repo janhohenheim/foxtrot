@@ -17,7 +17,7 @@ mod rig;
 mod skydome;
 mod ui;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct IngameCamera {
     pub(crate) target: Transform,
@@ -37,7 +37,7 @@ impl Default for IngameCamera {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) enum IngameCameraKind {
     #[default]

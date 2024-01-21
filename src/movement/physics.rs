@@ -8,7 +8,7 @@ use oxidized_navigation::NavMeshAffector;
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub(crate) fn physics_plugin(app: &mut App) {
-    app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+    app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .insert_resource(RapierConfiguration {
             timestep_mode: TimestepMode::Variable {
                 max_dt: 1.0 / 20.0,
@@ -17,7 +17,7 @@ pub(crate) fn physics_plugin(app: &mut App) {
             },
             ..default()
         })
-        .add_system(read_colliders.run_if(in_state(GameState::Playing)));
+        .add_systems(Update, read_colliders.run_if(in_state(GameState::Playing)));
 }
 
 #[sysfail(log(level = "error"))]

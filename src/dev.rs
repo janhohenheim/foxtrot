@@ -11,12 +11,12 @@ pub(crate) mod dev_editor;
 /// Don't include this in a release build.
 pub(crate) fn dev_plugin(app: &mut App) {
     {
-        app.add_plugin(EditorPlugin::new())
+        app.add_plugins(EditorPlugin::new())
             .insert_resource(default_editor_controls())
-            .add_plugin(FrameTimeDiagnosticsPlugin)
+            .add_plugins(FrameTimeDiagnosticsPlugin)
             .fn_plugin(dev_editor_plugin)
-            .add_plugin(LogDiagnosticsPlugin::filtered(vec![]))
-            .add_plugin(RapierDebugRenderPlugin {
+            .add_plugins(LogDiagnosticsPlugin::filtered(vec![]))
+            .add_plugins(RapierDebugRenderPlugin {
                 enabled: false,
                 ..default()
             });

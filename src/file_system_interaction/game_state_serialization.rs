@@ -19,6 +19,7 @@ pub(crate) fn game_state_serialization_plugin(app: &mut App) {
     app.add_event::<GameSaveRequest>()
         .add_event::<GameLoadRequest>()
         .add_systems(
+            Update,
             (
                 handle_load_requests,
                 handle_save_requests.run_if(resource_exists::<CurrentLevel>()),

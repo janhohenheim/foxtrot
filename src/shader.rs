@@ -20,11 +20,14 @@ use std::sync::LazyLock;
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
 /// The handles can be stored and retrieved in the [`Materials`] resource.
 pub(crate) fn shader_plugin(app: &mut App) {
-    app.add_plugin(MaterialPlugin::<GlowyMaterial>::default())
-        .add_plugin(MaterialPlugin::<RepeatedMaterial>::default())
-        .add_plugin(MaterialPlugin::<SkydomeMaterial>::default())
-        .add_system(setup_shader.in_schedule(OnExit(GameState::Loading)))
-        .add_system(set_texture_to_repeat.run_if(in_state(GameState::Playing)));
+    app.add_plugins(MaterialPlugin::<GlowyMaterial>::default())
+        .add_plugins(MaterialPlugin::<RepeatedMaterial>::default())
+        .add_plugins(MaterialPlugin::<SkydomeMaterial>::default())
+        .add_systems(Update, setup_shader.in_schedule(OnExit(GameState::Loading)))
+        .add_systems(
+            Update,
+            set_texture_to_repeat.run_if(in_state(GameState::Playing)),
+        );
 }
 
 #[derive(Resource, Debug, Clone)]

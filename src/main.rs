@@ -5,5 +5,5 @@ use bevy::prelude::*;
 use foxtrot::GamePlugin;
 
 fn main() {
-    App::new().add_plugin(GamePlugin).run();
+    App::new().add_plugins(GamePlugin).run();
 }

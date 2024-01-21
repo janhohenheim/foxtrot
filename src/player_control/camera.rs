@@ -54,11 +54,15 @@ pub(crate) fn camera_plugin(app: &mut App) {
         .register_type::<IngameCamera>()
         .register_type::<IngameCameraKind>()
         .init_resource::<ForceCursorGrabMode>()
-        .add_system(Dolly::<IngameCamera>::update_active)
-        .add_system(spawn_ui_camera.on_startup())
-        .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-        .add_system(grab_cursor.run_if(in_state(GameState::Playing)))
+        .add_systems(Update, Dolly::<IngameCamera>::update_active)
+        .add_systems(Update, spawn_ui_camera.on_startup())
         .add_systems(
+            Update,
+            despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)),
+        )
+        .add_systems(Update, grab_cursor.run_if(in_state(GameState::Playing)))
+        .add_systems(
+            Update,
             (
                 update_kind,
                 update_drivers,

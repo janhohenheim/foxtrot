@@ -8,7 +8,8 @@ use rand::{rngs::SmallRng, Rng, SeedableRng};
 use warbler_grass::prelude::*;
 
 pub(crate) fn grass_plugin(app: &mut App) {
-    app.add_plugin(WarblersPlugin).add_system(
+    app.add_plugins(WarblersPlugin).add_systems(
+        Update,
         add_grass
             .after(TransformSystem::TransformPropagate)
             .in_schedule(PostUpdate),

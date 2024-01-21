@@ -7,19 +7,24 @@ use bevy_egui::{egui, EguiContexts};
 use spew::prelude::*;
 
 pub(crate) fn map_plugin(app: &mut App) {
-    app.add_system(
+    app.add_systems(
+        Update,
         setup
             .run_if(not(resource_exists::<CurrentLevel>()))
             .in_schedule(OnEnter(GameState::Playing)),
     )
-    .add_system(
+    .add_systems(
+        Update,
         show_loading_screen
             .run_if(not(any_with_component::<Player>()))
             .run_if(in_state(GameState::Playing)),
     );
 
     #[cfg(target_arch = "wasm32")]
-    app.add_system(show_wasm_loader.run_if(in_state(GameState::Playing)));
+    app.add_systems(
+        Update,
+        show_wasm_loader.run_if(in_state(GameState::Playing)),
+    );
 }
 
 fn setup(

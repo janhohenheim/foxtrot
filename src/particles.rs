@@ -13,9 +13,12 @@ mod init;
 /// Handles particle effects instantiation and playing.
 pub(crate) fn particle_plugin(app: &mut App) {
     app.register_type::<SprintingParticle>()
-        .add_plugin(HanabiPlugin)
-        .add_system(init_effects.in_schedule(OnExit(GameState::Loading)))
-        .add_system(play_sprinting_effect.run_if(in_state(GameState::Playing)));
+        .add_plugins(HanabiPlugin)
+        .add_systems(Update, init_effects.in_schedule(OnExit(GameState::Loading)))
+        .add_systems(
+            Update,
+            play_sprinting_effect.run_if(in_state(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Default)]

@@ -16,6 +16,7 @@ pub(crate) fn level_serialization_plugin(app: &mut App) {
     app.add_event::<WorldSaveRequest>()
         .add_event::<WorldLoadRequest>()
         .add_systems(
+            Update,
             (
                 save_world,
                 load_world.run_if(resource_exists::<LevelAssets>()),

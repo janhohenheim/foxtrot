@@ -24,6 +24,7 @@ pub(crate) fn dev_editor_plugin(app: &mut App) {
     app.init_resource::<DevEditorState>()
         .add_editor_window::<DevEditorWindow>()
         .add_systems(
+            Update,
             (handle_debug_render, set_cursor_grab_mode).run_if(in_state(GameState::Playing)),
         );
 }

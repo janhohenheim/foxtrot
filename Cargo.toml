@@ -42,7 +42,8 @@ bitflags = "2"
 iyes_progress = "0.10"
 unicode-segmentation = "1"
 anyhow = "1"
-leafwing-input-manager = { version = "0.11", features = ["egui"] }
+# Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
+leafwing-input-manager = { version = "0.11", features = [] }
 warbler_grass = "0.4"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
 bevy_dolly = "0.0.2"

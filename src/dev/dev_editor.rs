@@ -13,10 +13,9 @@ use bevy_editor_pls::{
 };
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
-use bevy_mod_sysfail::macros::*;
-use bevy_prototype_debug_lines::DebugLines;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
-use oxidized_navigation::NavMesh;
+
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use strum::IntoEnumIterator;
@@ -25,12 +24,8 @@ pub(crate) fn dev_editor_plugin(app: &mut App) {
     app.init_resource::<DevEditorState>()
         .add_editor_window::<DevEditorWindow>()
         .add_systems(
-            (
-                handle_debug_render,
-                handle_navmesh_render,
-                set_cursor_grab_mode,
-            )
-                .in_set(OnUpdate(GameState::Playing)),
+            Update,
+            (handle_debug_render, set_cursor_grab_mode).run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -163,7 +158,7 @@ fn set_cursor_grab_mode(
     mut events: EventReader<EditorEvent>,
     mut force_cursor_grab: ResMut<ForceCursorGrabMode>,
 ) {
-    for event in events.iter() {
+    for event in events.read() {
         if let EditorEvent::Toggle { now_active } = event {
             if *now_active {
                 force_cursor_grab.0 = Some(CursorGrabMode::None);
@@ -172,46 +167,4 @@ fn set_cursor_grab_mode(
             }
         }
     }
-}
-
-#[sysfail(log(level = "error"))]
-fn handle_navmesh_render(
-    state: Res<Editor>,
-    nav_mesh: Res<NavMesh>,
-    mut lines: ResMut<DebugLines>,
-) -> Result<()> {
-    if !state
-        .window_state::<DevEditorWindow>()
-        .context("Failed to read dev window state")?
-        .navmesh_render_enabled
-    {
-        return Ok(());
-    }
-
-    if let Ok(nav_mesh) = nav_mesh.get().read() {
-        for (tile_coord, tile) in nav_mesh.get_tiles().iter() {
-            let tile_color = Color::Rgba {
-                red: 0.0,
-                green: (tile_coord.x % 10) as f32 / 10.0,
-                blue: (tile_coord.y % 10) as f32 / 10.0,
-                alpha: 1.0,
-            };
-            // Draw polygons.
-            for poly in tile.polygons.iter() {
-                let indices = &poly.indices;
-                for i in 0..indices.len() {
-                    let a = tile.vertices[indices[i] as usize];
-                    let b = tile.vertices[indices[(i + 1) % indices.len()] as usize];
-
-                    lines.line_colored(a, b, 0.0, tile_color);
-                }
-            }
-
-            // Draw vertex points.
-            for vertex in tile.vertices.iter() {
-                lines.line_colored(*vertex, *vertex + Vec3::Y, 0.0, tile_color);
-            }
-        }
-    }
-    Ok(())
 }

@@ -31,18 +31,18 @@ pub(crate) fn actions_plugin(app: &mut App) {
         .register_type::<UiAction>()
         .register_type::<ActionsFrozen>()
         .init_resource::<ActionsFrozen>()
-        .add_plugin(InputManagerPlugin::<PlayerAction>::default())
-        .add_plugin(InputManagerPlugin::<CameraAction>::default())
-        .add_plugin(InputManagerPlugin::<UiAction>::default())
-        .add_system(
+        .add_plugins(InputManagerPlugin::<PlayerAction>::default())
+        .add_plugins(InputManagerPlugin::<CameraAction>::default())
+        .add_plugins(InputManagerPlugin::<UiAction>::default())
+        .add_systems(
+            PreUpdate,
             remove_actions_when_frozen
                 .run_if(is_frozen)
-                .after(InputManagerSystem::ManualControl)
-                .in_base_set(CoreSet::PreUpdate),
+                .after(InputManagerSystem::ManualControl),
         );
 }
 
-#[derive(Debug, Clone, Copy, Actionlike, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
 pub(crate) enum PlayerAction {
     #[default]
     Move,
@@ -83,14 +83,14 @@ impl PlayerAction {
     }
 }
 
-#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
 pub(crate) enum CameraAction {
     #[default]
     Orbit,
     Zoom,
 }
 
-#[derive(Debug, Clone, Actionlike, Reflect, FromReflect, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
 pub(crate) enum UiAction {
     #[default]
     TogglePause,
@@ -100,7 +100,7 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
     InputManagerBundle {
         input_map: InputMap::new([
             (QwertyScanCode::Space, PlayerAction::Jump),
-            (QwertyScanCode::LShift, PlayerAction::Sprint),
+            (QwertyScanCode::ShiftLeft, PlayerAction::Sprint),
             (QwertyScanCode::E, PlayerAction::Interact),
             (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
             (QwertyScanCode::Key1, PlayerAction::NumberedChoice1),

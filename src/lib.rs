@@ -23,7 +23,6 @@ pub(crate) mod ingame_menu;
 pub(crate) mod level_instantiation;
 pub(crate) mod menu;
 pub(crate) mod movement;
-#[cfg(not(target_arch = "wasm32"))]
 pub(crate) mod particles;
 pub(crate) mod player_control;
 pub(crate) mod shader;
@@ -38,7 +37,6 @@ use crate::ingame_menu::ingame_menu_plugin;
 use crate::level_instantiation::level_instantiation_plugin;
 use crate::menu::menu_plugin;
 use crate::movement::movement_plugin;
-#[cfg(not(target_arch = "wasm32"))]
 use crate::particles::particle_plugin;
 use crate::player_control::player_control_plugin;
 use crate::shader::shader_plugin;
@@ -70,7 +68,7 @@ enum GameState {
 /// - [`shader_plugin`]: Handles the shaders.
 /// - [`dev_plugin`]: Handles the dev tools.
 /// - [`ingame_menu_plugin`]: Handles the ingame menu accessed via ESC.
-/// - [`particle_plugin`]: Handles the particle system. Since [bevy_hanabi](https://github.com/djeedai/bevy_hanabi) does not support wasm, this plugin is only available on native.
+/// - [`particle_plugin`]: Handles the particle system.
 ///
 /// Because Foxtrot uses `seldom_fn_plugin`, these are all functions.
 pub struct GamePlugin;
@@ -86,10 +84,9 @@ impl Plugin for GamePlugin {
             .fn_plugin(level_instantiation_plugin)
             .fn_plugin(file_system_interaction_plugin)
             .fn_plugin(shader_plugin)
-            .fn_plugin(ingame_menu_plugin);
+            .fn_plugin(ingame_menu_plugin)
+            .fn_plugin(particle_plugin);
         #[cfg(feature = "dev")]
         app.fn_plugin(dev_plugin);
-        #[cfg(not(target_arch = "wasm32"))]
-        app.fn_plugin(particle_plugin);
     }
 }

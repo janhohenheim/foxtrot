@@ -1,7 +1,7 @@
 use crate::level_instantiation::spawning::animation_link::link_animations;
 use crate::level_instantiation::spawning::despawn::{despawn, Despawn};
 use crate::level_instantiation::spawning::post_spawn_modification::{
-    despawn_removed, set_color, set_hidden, set_shadows,
+    despawn_removed, set_hidden, set_shadows,
 };
 use crate::GameState;
 pub(crate) use animation_link::AnimationEntityLink;
@@ -16,7 +16,7 @@ pub(crate) mod objects;
 mod post_spawn_modification;
 
 pub(crate) fn spawning_plugin(app: &mut App) {
-    app.add_plugin(SpewPlugin::<GameObject, Transform>::default())
+    app.add_plugins(SpewPlugin::<GameObject, Transform>::default())
         .register_type::<Despawn>()
         .register_type::<AnimationEntityLink>()
         .add_spawners((
@@ -34,10 +34,13 @@ pub(crate) fn spawning_plugin(app: &mut App) {
             (GameObject::Camera, objects::camera::spawn),
             (GameObject::Skydome, objects::skydome::spawn),
         ))
-        .add_systems((despawn, link_animations).in_set(OnUpdate(GameState::Playing)))
         .add_systems(
-            (set_hidden, despawn_removed, set_color, set_shadows)
-                .in_set(OnUpdate(GameState::Playing)),
+            Update,
+            (despawn, link_animations).run_if(in_state(GameState::Playing)),
+        )
+        .add_systems(
+            Update,
+            (set_hidden, despawn_removed, set_shadows).run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -51,7 +54,6 @@ pub(crate) fn spawning_plugin(app: &mut App) {
     PartialEq,
     Hash,
     Reflect,
-    FromReflect,
     Serialize,
     Deserialize,
     Default,

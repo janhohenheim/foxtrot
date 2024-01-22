@@ -2,13 +2,13 @@ use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
-use bevy_egui::egui::TextStyle::{Button, Heading};
+use bevy_egui::egui::TextStyle::{Body, Button, Heading};
 use bevy_egui::{egui, EguiContexts};
 
 /// This plugin is responsible for the game menu
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
 pub(crate) fn menu_plugin(app: &mut App) {
-    app.add_system(setup_menu.in_set(OnUpdate(GameState::Menu)));
+    app.add_systems(Update, setup_menu.run_if(in_state(GameState::Menu)));
 }
 
 fn setup_menu(mut egui_contexts: EguiContexts, mut next_state: ResMut<NextState<GameState>>) {
@@ -36,6 +36,7 @@ fn get_menu_panel() -> egui::CentralPanel {
 fn set_menu_style(style: &mut egui::Style) {
     style.text_styles = [
         (Heading, FontId::new(30.0, Proportional)),
+        (Body, FontId::new(20.0, Proportional)),
         (Button, FontId::new(20.0, Proportional)),
     ]
     .into();

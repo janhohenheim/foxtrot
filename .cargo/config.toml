@@ -33,9 +33,9 @@ opt-level = 0
 # In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
 # debug = 1
 
-# Enable some optimizations for dependencies (incl. Bevy), but not for our code. You should probably bump this up for Wasm builds.
+# Enable some optimizations for dependencies (incl. Bevy), but not for our code.
 [profile.dev.package."*"]
-opt-level = 1
+opt-level = 3
 
 [profile.release]
 lto = "thin"

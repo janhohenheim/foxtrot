@@ -4,16 +4,15 @@ use crate::shader::Materials;
 
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, FromReflect, Default)]
+#[derive(Debug, Component, Clone, Copy, Serialize, Deserialize, Reflect, Default)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Skydome;
 
 fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
-    const MESH_HANDLE: HandleUntyped =
-        HandleUntyped::weak_from_u64(Mesh::TYPE_UUID, 0x1f40128bac02a9a);
+    const MESH_HANDLE: Handle<Mesh> = Handle::weak_from_u128(0x1f40128bac02a9a);
     mesh_assets.get_or_add(MESH_HANDLE, || {
         Mesh::from(shape::UVSphere {
             radius: 150.0,

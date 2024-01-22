@@ -2,7 +2,7 @@
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
-version = "0.2.0"
+version = "0.3.0"
 license = "MIT OR Apache-2.0"
 exclude = [
     "dist",
@@ -13,7 +13,7 @@ exclude = [
     "resources",
     "build.rs",
 ]
-description = "The all-in-one Bevy 3D game template."
+description = "The all-in-one Bevy 3D game template for desktop."
 repository = "https://github.com/janhohenheim/foxtrot"
 keywords = ["gamedev", "bevy", "template", "game"]
 categories = ["game-development"]
@@ -21,44 +21,47 @@ homepage = "https://janhohenheim.github.io/foxtrot/"
 
 [features]
 default = ["dev"]
-dev = ["dep:bevy_editor_pls", "dep:bevy_prototype_debug_lines"]
+dev = ["dep:bevy_editor_pls"]
 tracing = ["bevy/trace_chrome"]
 
 [dependencies]
-bevy_kira_audio = "0.15"
-bevy_asset_loader = { version = "0.16", features = ["progress_tracking"] }
-bevy_common_assets = { version = "0.6", features = ["ron", "toml"] }
-bevy_egui = "0.20"
+bevy_kira_audio = "0.18"
+bevy_asset_loader = { version = "0.19", features = ["progress_tracking"] }
+bevy_common_assets = { version = "0.9", features = ["ron", "toml"] }
+bevy_egui = "0.24"
 serde = { version = "1", features = ["derive"] }
-indexmap = { version = "1", features = ["serde-1"] }
-strum = "0.24"
-strum_macros = "0.24"
+indexmap = { version = "2", features = ["serde"] }
+strum = "0.25"
+strum_macros = "0.25"
 ron = "0.8"
 regex = "1"
 chrono = "0.4"
 glob = "0.3"
-oxidized_navigation = "0.4"
+oxidized_navigation = { version = "0.8", features = ["rapier", "debug_draw"] }
 bitflags = "2"
-iyes_progress = "0.8"
+iyes_progress = "0.10"
 unicode-segmentation = "1"
 anyhow = "1"
-leafwing-input-manager = { version = "0.9", features = ["egui"] }
-warbler_grass = "0.3"
+# Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
+leafwing-input-manager = { version = "0.11", features = [] }
+warbler_grass = "0.4"
 rand = { version = "0.8", features = ["small_rng", "nightly"] }
-bevy_dolly = { git = "https://github.com/BlackPhlox/bevy_dolly", rev = "b2f5dc787664cb8c3d92f792cbd437886fc090c6" }
-spew = "0.2.1"
-bevy_mod_sysfail = "2"
-seldom_fn_plugin = "0.3"
-bevy_rapier3d = { version = "0.21", features = [ "serde-serialize", "simd-nightly",] }
-bevy_editor_pls = { version = "0.4", optional = true }
-bevy_prototype_debug_lines = { version = "0.10", optional = true, features = [ "3d" ] }
+bevy_dolly = "0.0.2"
+spew = "0.4"
+bevy_mod_sysfail = "5"
+seldom_fn_plugin = "0.5"
+bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
+bevy_editor_pls = { version = "0.7", optional = true }
+bevy_hanabi = "0.9"
 
 # keep the following in sync with Bevy's dependencies
-winit = { version = "0.28", default-features = false }
+## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31
+winit = { version = "0.28.7", default-features = false }
+## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_render/Cargo.toml#L57
 image = { version = "0.24", default-features = false }
 
 [dependencies.bevy]
-version = "0.10.1"
+version = "0.12"
 default-features = false
 features = [
     "animation",
@@ -80,26 +83,9 @@ features = [
     "ktx2",
     "tonemapping_luts",
     "serialize",
+    "dynamic_linking",
+    "file_watcher"
 ]
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies.bevy]
-version = "0.10.1"
-default-features = false
-features = [ "filesystem_watcher" ]
-
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies.bevy]
-version = "0.10.1"
-default-features = false
-features = [ "bevy_dylib" ]
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-bevy_hanabi = "0.6"
-bevy_rapier3d = { version = "0.21", features = ["parallel"] }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2"
-bevy_rapier3d = { version = "0.21", features = ["wasm-bindgen"] }
-
 [build-dependencies]
-embed-resource = "2.1"
+embed-resource = "2"

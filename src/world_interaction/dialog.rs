@@ -13,19 +13,21 @@ use bevy_egui::egui::FontFamily::Proportional;
 use bevy_egui::egui::FontId;
 use bevy_egui::egui::TextStyle::{Body, Button};
 use bevy_egui::{egui, EguiContexts, EguiPlugin};
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::path::Path;
 use unicode_segmentation::UnicodeSegmentation;
 
 mod resources;
 
 pub(crate) fn dialog_plugin(app: &mut App) {
-    app.add_plugin(EguiPlugin)
+    app.add_plugins(EguiPlugin)
         .register_type::<DialogId>()
         .add_event::<DialogEvent>()
-        .add_systems((set_current_dialog, show_dialog).in_set(OnUpdate(GameState::Playing)));
+        .add_systems(
+            Update,
+            (set_current_dialog, show_dialog).run_if(in_state(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize, Default)]
@@ -42,18 +44,8 @@ fn set_current_dialog(
     dialog_handles: Res<DialogAssets>,
     mut actions_frozen: ResMut<ActionsFrozen>,
 ) -> Result<()> {
-    for dialog_event in dialog_events.iter() {
-        let path = Path::new("dialogs")
-            .join(&dialog_event.dialog.0.clone())
-            .with_extension("dlg.ron")
-            .to_str()
-            .with_context(|| {
-                format!(
-                    "Failed to convert dialog path to string for dialog: {:?}",
-                    dialog_event.dialog
-                )
-            })?
-            .to_owned();
+    for dialog_event in dialog_events.read() {
+        let path = format!("dialogs/{}.dlg.ron", dialog_event.dialog.0.clone());
         let dialog_handle = match dialog_handles.dialogs.get(&path) {
             Some(handle) => handle,
             None => {
@@ -108,8 +100,8 @@ fn show_dialog(
     config: Res<GameConfig>,
 ) -> Result<()> {
     let Some(mut current_dialog) = current_dialog else {
-            *elapsed_time = 0.0;
-            return Ok(());
+        *elapsed_time = 0.0;
+        return Ok(());
     };
 
     for actions in actions.iter() {

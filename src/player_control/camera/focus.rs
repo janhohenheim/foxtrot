@@ -3,7 +3,7 @@ use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::dialog::CurrentDialog;
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn set_camera_focus(

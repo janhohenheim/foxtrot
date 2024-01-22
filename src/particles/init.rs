@@ -56,7 +56,7 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect 
             EffectAsset::new(
                 100,
                 Spawner::rate(10.0.into()).with_starts_active(false),
-                Module::default(),
+                module,
             )
             .with_name("Sprint")
             .init(position_circle_modifier)

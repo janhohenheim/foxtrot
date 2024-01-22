@@ -11,7 +11,7 @@ use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::Collider;
 #[cfg(feature = "dev")]
-use oxidized_navigation::debug_draw::{DrawPath, OxidizedNavigationDebugDrawPlugin};
+use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{
     query::{find_polygon_path, perform_string_pulling_on_path},
     NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
@@ -49,7 +49,8 @@ pub(crate) fn navigation_plugin(app: &mut App) {
             .run_if(in_state(GameState::Playing)),
     );
     #[cfg(feature = "dev")]
-    app.add_plugins(OxidizedNavigationDebugDrawPlugin);
+    app.add_plugins(OxidizedNavigationDebugDrawPlugin)
+        .add_systems(Update, draw_navmesh);
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -111,5 +112,19 @@ fn query_mesh(
         }
     }
 
+    Ok(())
+}
+
+#[cfg(feature = "dev")]
+#[sysfail(log(level = "error"))]
+fn draw_navmesh(
+    editor: Res<bevy_editor_pls::editor::Editor>,
+    mut draw_nav_mesh: ResMut<DrawNavMesh>,
+) -> Result<()> {
+    let nav_render_enabled = editor
+        .window_state::<DevEditorWindow>()
+        .context("Failed to read dev window state")?
+        .navmesh_render_enabled;
+    draw_nav_mesh.0 = nav_render_enabled;
     Ok(())
 }

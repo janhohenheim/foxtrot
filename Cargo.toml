@@ -84,7 +84,8 @@ features = [
     "tonemapping_luts",
     "serialize",
     "dynamic_linking",
-    "file_watcher"
+    "file_watcher",
+    "multi-threaded",
 ]
 
 [build-dependencies]

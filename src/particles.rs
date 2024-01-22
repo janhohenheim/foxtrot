@@ -13,9 +13,12 @@ mod init;
 /// Handles particle effects instantiation and playing.
 pub(crate) fn particle_plugin(app: &mut App) {
     app.register_type::<SprintingParticle>()
-        .add_plugin(HanabiPlugin)
-        .add_system(init_effects.in_schedule(OnExit(GameState::Loading)))
-        .add_system(play_sprinting_effect.in_set(OnUpdate(GameState::Playing)));
+        .add_plugins(HanabiPlugin)
+        .add_systems(OnExit(GameState::Loading), init_effects)
+        .add_systems(
+            Update,
+            play_sprinting_effect.run_if(in_state(GameState::Playing)),
+        );
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Default)]
@@ -24,7 +27,7 @@ struct SprintingParticle;
 
 fn play_sprinting_effect(
     with_player: Query<(&Transform, &Grounded, &Velocity), Without<SprintingParticle>>,
-    mut with_particle: Query<(&mut Transform, &mut ParticleEffect), With<SprintingParticle>>,
+    mut with_particle: Query<(&mut Transform, &mut EffectSpawner), With<SprintingParticle>>,
     config: Res<GameConfig>,
 ) {
     for (player_transform, grounded, velocity) in with_player.iter() {
@@ -33,15 +36,15 @@ fn play_sprinting_effect(
             .split(player_transform.up())
             .horizontal
             .length_squared();
-        for (mut particle_transform, mut effect) in with_particle.iter_mut() {
+        for (mut particle_transform, mut effect_spawner) in with_particle.iter_mut() {
             let threshold = config.player.sprint_effect_speed_threshold;
             if grounded.0 && horizontal_speed_squared > threshold.squared() {
                 let translation = player_transform.translation
                     - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);
-                effect.maybe_spawner().unwrap().set_active(true);
+                effect_spawner.set_active(true);
             } else {
-                effect.maybe_spawner().unwrap().set_active(false);
+                effect_spawner.set_active(false);
             }
         }
     }

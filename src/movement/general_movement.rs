@@ -9,7 +9,7 @@ use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{TransformExt, Vec3Ext};
 use crate::GameState;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 pub(crate) use components::*;
 
 /// Handles movement of character controllers, i.e. entities with the [`CharacterControllerBundle`].
@@ -41,6 +41,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .register_type::<Walking>()
         .register_type::<CharacterAnimations>()
         .add_systems(
+            Update,
             (
                 reset_forces_and_impulses,
                 update_grounded,
@@ -53,7 +54,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(GeneralMovementSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -125,7 +126,7 @@ pub(crate) fn apply_jumping(
     for (grounded, mut impulse, mut velocity, mass, jump, transform) in &mut character_query {
         if jump.requested && grounded.0 {
             let up = transform.up();
-            impulse.impulse += up * mass.0.mass * jump.speed;
+            impulse.impulse += up * mass.get().mass * jump.speed;
 
             // Kill any downward velocity. This ensures that repeated jumps are always the same height.
             // Otherwise the falling velocity from the last tick would dampen the jump velocity.
@@ -213,7 +214,7 @@ pub(crate) fn apply_walking(
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_walking").entered();
     for (mut force, walking, mut velocity, grounded, mass, transform) in &mut character_query {
-        let mass = mass.0.mass;
+        let mass = mass.get().mass;
         if let Some(acceleration) = walking.get_acceleration(grounded.0) {
             let walking_force = acceleration * mass;
             force.force += walking_force;

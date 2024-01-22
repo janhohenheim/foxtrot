@@ -7,11 +7,11 @@ use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
 pub(crate) fn ingame_menu_plugin(app: &mut App) {
-    app.add_system(handle_pause.in_set(OnUpdate(GameState::Playing)));
+    app.add_systems(Update, handle_pause.run_if(in_state(GameState::Playing)));
 }
 
 fn handle_pause(
-    mut time: ResMut<Time>,
+    mut time: ResMut<Time<Virtual>>,
     actions: Query<&ActionState<UiAction>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut actions_frozen: ResMut<ActionsFrozen>,
@@ -44,8 +44,6 @@ fn handle_pause(
 
                             if ui.button("Quit Game").clicked() {
                                 app_exit_events.send(AppExit);
-                                #[cfg(target_arch = "wasm32")]
-                                wasm::close_tab()
                             }
                         });
                     });
@@ -55,18 +53,5 @@ fn handle_pause(
             time.pause();
             actions_frozen.freeze();
         }
-    }
-}
-
-#[cfg(target_arch = "wasm32")]
-mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    #[wasm_bindgen(inline_js = "
-        export function close_tab() {
-            window.close();
-        }")]
-    extern "C" {
-        pub(crate) fn close_tab();
     }
 }

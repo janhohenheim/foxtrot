@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) fn condition_plugin(app: &mut App) {
     app.init_resource::<ActiveConditions>()
         .add_event::<ConditionAddEvent>()
-        .add_system(add_conditions.in_set(OnUpdate(GameState::Playing)));
+        .add_systems(Update, add_conditions.run_if(in_state(GameState::Playing)));
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
@@ -18,9 +18,7 @@ impl ActiveConditions {
     }
 }
 
-#[derive(
-    Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize, FromReflect,
-)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
 pub(crate) struct ConditionId(pub(crate) String);
@@ -37,7 +35,7 @@ impl From<ConditionId> for String {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Event, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct ConditionAddEvent(pub(crate) ConditionId);
 
@@ -45,7 +43,7 @@ fn add_conditions(
     mut conditions: ResMut<ActiveConditions>,
     mut incoming_conditions: EventReader<ConditionAddEvent>,
 ) {
-    for incoming_condition in incoming_conditions.iter() {
+    for incoming_condition in incoming_conditions.read() {
         conditions.0.insert(incoming_condition.0.clone());
     }
 }

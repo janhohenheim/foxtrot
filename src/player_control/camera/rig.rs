@@ -6,7 +6,7 @@ use crate::util::trait_extension::Vec2Ext;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
@@ -78,7 +78,9 @@ fn set_look_at(rig: &mut Rig, camera: &IngameCamera) {
 }
 
 fn set_position(rig: &mut Rig, camera: &IngameCamera) {
-    let target = if camera.kind != IngameCameraKind::FirstPerson && let Some(secondary_target) = camera.secondary_target {
+    let target = if camera.kind != IngameCameraKind::FirstPerson
+        && let Some(secondary_target) = camera.secondary_target
+    {
         secondary_target.translation
     } else {
         camera.target.translation

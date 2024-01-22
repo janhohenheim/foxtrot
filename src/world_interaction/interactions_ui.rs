@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use bevy::utils::HashSet;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -19,14 +19,16 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
     app.register_type::<InteractionOpportunities>()
         .init_resource::<InteractionOpportunities>()
         .add_systems(
+            Update,
             (update_interaction_opportunities, update_interaction_ui)
                 .chain()
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         )
-        .add_system(
+        .add_systems(
+            Update,
             display_interaction_prompt
                 .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -45,7 +47,7 @@ fn update_interaction_opportunities(
     parent_query: Query<&Parent>,
     mut interaction_opportunities: ResMut<InteractionOpportunities>,
 ) {
-    for event in collision_events.iter() {
+    for event in collision_events.read() {
         let (entity_a, entity_b, ongoing) = unpack_event(event);
 
         let (_player_entity, target_entity) =

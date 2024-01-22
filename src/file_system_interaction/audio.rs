@@ -5,8 +5,8 @@ use bevy_kira_audio::prelude::{Audio, *};
 
 /// Handles initialization of all sounds.
 pub(crate) fn internal_audio_plugin(app: &mut App) {
-    app.add_plugin(AudioPlugin)
-        .add_system(init_audio.in_schedule(OnExit(GameState::Loading)));
+    app.add_plugins(AudioPlugin)
+        .add_systems(OnExit(GameState::Loading), init_audio);
 }
 
 #[derive(Debug, Clone, Resource)]

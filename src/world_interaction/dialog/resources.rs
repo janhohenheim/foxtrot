@@ -1,12 +1,12 @@
 use crate::world_interaction::condition::{ActiveConditions, ConditionId};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
+
 use bevy::utils::{HashMap, HashSet};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct DialogEvent {
     pub(crate) dialog: DialogId,
@@ -35,14 +35,13 @@ impl CurrentDialog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TypeUuid, Default)]
-#[uuid = "f7c10043-7196-4ead-a4dd-040c33798a62"]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Asset, TypePath, Default)]
 pub(crate) struct Dialog {
     pub(crate) initial_page: Vec<InitialPage>,
     pub(crate) pages: HashMap<PageId, Page>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct InitialPage {
     pub(crate) id: PageId,
@@ -98,7 +97,7 @@ impl Default for NextPage {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct DialogChoice {
     /// The player's answer
@@ -118,17 +117,7 @@ impl DialogChoice {
 }
 
 #[derive(
-    Debug,
-    Clone,
-    Eq,
-    PartialEq,
-    Default,
-    Component,
-    Reflect,
-    Hash,
-    Serialize,
-    Deserialize,
-    FromReflect,
+    Debug, Clone, Eq, PartialEq, Default, Component, Reflect, Hash, Serialize, Deserialize,
 )]
 #[reflect(Component, Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
@@ -151,9 +140,7 @@ impl From<DialogId> for String {
     }
 }
 
-#[derive(
-    Debug, Clone, Eq, PartialEq, Default, Reflect, FromReflect, Hash, Serialize, Deserialize,
-)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Reflect, Hash, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize)]
 #[serde(from = "String", into = "String")]
 pub(crate) struct PageId(pub(crate) String);

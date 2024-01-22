@@ -4,36 +4,37 @@ use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::condition::ActiveConditions;
 use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
-use anyhow::{Context, Result};
+use anyhow::{Context, Error, Result};
 use bevy::prelude::*;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use chrono::prelude::Local;
 use glob::glob;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use std::borrow::Cow;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub(crate) fn game_state_serialization_plugin(app: &mut App) {
     app.add_event::<GameSaveRequest>()
         .add_event::<GameLoadRequest>()
         .add_systems(
+            Update,
             (
                 handle_load_requests,
                 handle_save_requests.run_if(resource_exists::<CurrentLevel>()),
             )
                 .chain()
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Event, Serialize, Deserialize, Default)]
 pub(crate) struct GameSaveRequest {
     pub(crate) filename: Option<String>,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Resource, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Resource, Event, Serialize, Deserialize, Default)]
 pub(crate) struct GameLoadRequest {
     pub(crate) filename: Option<String>,
 }
@@ -56,25 +57,13 @@ fn handle_load_requests(
     mut spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
     mut dialog_event_writer: EventWriter<DialogEvent>,
 ) -> Result<()> {
-    for load in load_events.iter() {
+    for load in load_events.read() {
         let path = match load
             .filename
             .as_ref()
             .map(|filename| anyhow::Ok(Some(get_save_path(filename.clone()))))
-            .unwrap_or_else(|| {
-                let mut saves: Vec<_> = glob("./saves/*.sav.ron")
-                    .context("Failed to read glob pattern")?
-                    .filter_map(|entry| entry.ok())
-                    .filter(|entry| entry.is_file())
-                    .collect();
-                saves.sort_by_cached_key(|f| {
-                    f.metadata()
-                        .expect("Failed to read file metadata")
-                        .modified()
-                        .expect("Failed to read file modified time")
-                });
-                Ok(saves.last().map(|entry| entry.to_owned()))
-            })? {
+            .unwrap_or_else(read_last_save)?
+        {
             Some(path) => path,
             None => {
                 error!("Failed to load save: No filename provided and no saves found on disk");
@@ -119,6 +108,22 @@ fn handle_load_requests(
     Ok(())
 }
 
+fn read_last_save() -> Result<Option<PathBuf>, Error> {
+    let mut saves: Vec<_> = glob("./saves/*.sav.ron")
+        .context("Failed to read glob pattern")?
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.is_file())
+        .collect();
+    saves.sort_by_cached_key(|f| {
+        f.metadata()
+            .expect("Failed to read file metadata")
+            .modified()
+            .expect("Failed to read file modified time")
+    });
+    let save = saves.last().map(|entry| entry.to_owned());
+    Ok(save)
+}
+
 #[sysfail(log(level = "error"))]
 fn handle_save_requests(
     mut save_events: EventReader<GameSaveRequest>,
@@ -128,7 +133,7 @@ fn handle_save_requests(
     current_level: Res<CurrentLevel>,
 ) -> Result<()> {
     let dialog = dialog.map(|dialog| dialog.clone());
-    for save in save_events.iter() {
+    for save in save_events.read() {
         for player in &player_query {
             let dialog_event = dialog.clone().map(|dialog| DialogEvent {
                 dialog: dialog.id,
@@ -166,5 +171,5 @@ fn handle_save_requests(
 
 fn get_save_path(filename: impl Into<Cow<'static, str>>) -> PathBuf {
     let filename = filename.into().to_string();
-    Path::new("saves").join(filename).with_extension("sav.ron")
+    format!("saves/{filename}.sav.ron").into()
 }

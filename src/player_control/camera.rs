@@ -17,7 +17,7 @@ mod rig;
 mod skydome;
 mod ui;
 
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize, FromReflect)]
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct IngameCamera {
     pub(crate) target: Transform,
@@ -37,7 +37,7 @@ impl Default for IngameCamera {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, FromReflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) enum IngameCameraKind {
     #[default]
@@ -54,11 +54,12 @@ pub(crate) fn camera_plugin(app: &mut App) {
         .register_type::<IngameCamera>()
         .register_type::<IngameCameraKind>()
         .init_resource::<ForceCursorGrabMode>()
-        .add_system(Dolly::<IngameCamera>::update_active)
-        .add_system(spawn_ui_camera.on_startup())
-        .add_system(despawn_ui_camera.in_schedule(OnEnter(GameState::Playing)))
-        .add_system(grab_cursor.in_set(OnUpdate(GameState::Playing)))
+        .add_systems(Update, Dolly::<IngameCamera>::update_active)
+        .add_systems(Startup, spawn_ui_camera)
+        .add_systems(OnEnter(GameState::Playing), despawn_ui_camera)
+        .add_systems(Update, grab_cursor.run_if(in_state(GameState::Playing)))
         .add_systems(
+            Update,
             (
                 update_kind,
                 update_drivers,
@@ -68,7 +69,7 @@ pub(crate) fn camera_plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(CameraUpdateSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 

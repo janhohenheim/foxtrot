@@ -10,7 +10,7 @@ use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
-use bevy_mod_sysfail::macros::*;
+use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -22,6 +22,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
     app.register_type::<Timer>()
         .register_type::<Player>()
         .add_systems(
+            Update,
             (
                 handle_jump,
                 handle_horizontal_movement,
@@ -33,7 +34,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
                 .chain()
                 .after(CameraUpdateSystemSet)
                 .before(GeneralMovementSystemSet)
-                .in_set(OnUpdate(GameState::Playing)),
+                .run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -153,7 +154,7 @@ fn rotate_to_speaker(
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
     let Ok(speaker_transform) = without_player.get(current_dialog.source) else {
-         return;
+        return;
     };
     let dt = time.delta_seconds();
 
@@ -174,7 +175,7 @@ fn rotate_to_speaker(
 
 #[sysfail(log(level = "error"))]
 fn control_walking_sound(
-    time: Res<Time>,
+    time: Res<Time<Virtual>>,
     character_query: Query<(&Velocity, &Transform, &Grounded), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,

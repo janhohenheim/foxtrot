@@ -5,8 +5,8 @@ use crate::world_interaction::dialog::CurrentDialog;
 use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
-use bevy_mod_sysfail::macros::*;
+
+use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
 use std::path::Path;
@@ -16,21 +16,21 @@ pub(crate) fn level_serialization_plugin(app: &mut App) {
     app.add_event::<WorldSaveRequest>()
         .add_event::<WorldLoadRequest>()
         .add_systems(
+            PostUpdate,
             (
                 save_world,
                 load_world.run_if(resource_exists::<LevelAssets>()),
-            )
-                .in_base_set(CoreSet::PostUpdate),
+            ),
         );
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct WorldSaveRequest {
     pub(crate) filename: String,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Eq, PartialEq, Event, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct WorldLoadRequest {
     pub(crate) filename: String,
@@ -47,7 +47,7 @@ fn save_world(
     mut save_requests: EventReader<WorldSaveRequest>,
     spawn_query: Query<(&GameObject, Option<&Transform>)>,
 ) -> Result<()> {
-    for save in save_requests.iter() {
+    for save in save_requests.read() {
         let scene = save.filename.clone();
         let valid_candidates: Vec<_> = iter::once(scene.clone())
             .chain((1..).map(|n| format!("{0}-{n}", scene.clone())))
@@ -101,18 +101,8 @@ fn load_world(
     levels: Res<Assets<SerializedLevel>>,
     level_handles: Res<LevelAssets>,
 ) -> Result<()> {
-    for load in load_requests.iter() {
-        let path = Path::new("levels")
-            .join(load.filename.clone())
-            .with_extension("lvl.ron")
-            .to_str()
-            .with_context(|| {
-                format!(
-                    "Failed to convert path to string for filename: {}",
-                    load.filename
-                )
-            })?
-            .to_string();
+    for load in load_requests.read() {
+        let path = format!("levels/{}.lvl.ron", load.filename.clone());
         let handle = match level_handles.levels.get(&path) {
             Some(handle) => handle,
             None => {
@@ -154,18 +144,14 @@ fn serialize_world(spawn_query: &Query<(&GameObject, Option<&Transform>)>) -> Re
         .iter()
         .filter(|(game_object, _)| **game_object != GameObject::Player)
         .map(|(game_object, transform)| {
-            SpawnEvent::with_data(
-                *game_object,
-                transform.map(Clone::clone).unwrap_or_default(),
-            )
+            SpawnEvent::with_data(*game_object, transform.cloned().unwrap_or_default())
         })
         .collect();
     let serialized_level = SerializedLevel::from(objects);
     ron::ser::to_string_pretty(&serialized_level, default()).context("Failed to serialize world")
 }
 
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, TypeUuid, Deref, DerefMut)]
-#[uuid = "eb7cc7bc-5a97-41ed-b0c3-0d4e2137b73b"]
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Asset, Deref, DerefMut)]
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct SerializedLevel(pub(crate) Vec<(GameObject, Transform)>);
 

@@ -89,9 +89,13 @@ fn query_mesh(
                             .context("Failed to read dev window state")?
                             .navmesh_render_enabled;
                         if nav_render_enabled {
+                            let shifted_path = path
+                                .iter()
+                                .map(|point| *point + Vec3::new(0., 0.2, 0.))
+                                .collect::<Vec<_>>();
                             commands.spawn(DrawPath {
                                 timer: Some(Timer::from_seconds(4.0, TimerMode::Once)),
-                                pulled_path: path.clone(),
+                                pulled_path: shifted_path,
                                 color: Color::BLUE,
                             });
                         }

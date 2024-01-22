@@ -2,7 +2,7 @@
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
-version = "0.2.0"
+version = "0.3.0"
 license = "MIT OR Apache-2.0"
 exclude = [
     "dist",
@@ -50,8 +50,9 @@ bevy_dolly = "0.0.2"
 spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
-bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable" ] }
+bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
+bevy_hanabi = "0.9"
 
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31
@@ -82,26 +83,9 @@ features = [
     "ktx2",
     "tonemapping_luts",
     "serialize",
+    "dynamic_linking",
+    "file_watcher"
 ]
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies.bevy]
-version = "0.12"
-default-features = false
-features = [ "file_watcher" ]
-
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies.bevy]
-version = "0.12"
-default-features = false
-features = [ "dynamic_linking" ]
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-bevy_hanabi = "0.9"
-bevy_rapier3d = { version = "0.23.0", features = ["parallel"] }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "0.2"
-bevy_rapier3d = { version = "0.23.0", features = ["wasm-bindgen"] }
 
 [build-dependencies]
 embed-resource = "2"

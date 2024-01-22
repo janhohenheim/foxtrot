@@ -1,7 +1,7 @@
 #![allow(clippy::extra_unused_type_parameters)]
 use crate::file_system_interaction::asset_loading::TextureAssets;
 use crate::GameState;
-use anyhow::{Result};
+use anyhow::Result;
 
 use bevy::pbr::{MaterialPipeline, MaterialPipelineKey};
 use bevy::prelude::*;
@@ -11,10 +11,6 @@ use bevy::render::render_resource::Face::Front;
 use bevy::render::render_resource::{
     AsBindGroup, RenderPipelineDescriptor, ShaderRef, SpecializedMeshPipelineError,
 };
-
-
-
-
 
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.

@@ -1,7 +1,7 @@
 use crate::level_instantiation::spawning::animation_link::link_animations;
 use crate::level_instantiation::spawning::despawn::{despawn, Despawn};
 use crate::level_instantiation::spawning::post_spawn_modification::{
-    despawn_removed, set_color, set_hidden, set_shadows,
+    despawn_removed, set_hidden, set_shadows,
 };
 use crate::GameState;
 pub(crate) use animation_link::AnimationEntityLink;
@@ -40,8 +40,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         )
         .add_systems(
             Update,
-            (set_hidden, despawn_removed, set_color, set_shadows)
-                .run_if(in_state(GameState::Playing)),
+            (set_hidden, despawn_removed, set_shadows).run_if(in_state(GameState::Playing)),
         );
 }
 

@@ -36,19 +36,8 @@ Then, replace all instances of the word `foxtrot` with the name of your game. Ch
 - `build/macos/src/Game.app/Contents/Resources/Info.plist`
 
 ### Running the game
-Native:
 ```bash
 cargo run
-```
-Wasm:
-```bash
-trunk serve
-```
-
-Building WASM requires `trunk`:
-
-```bash
-cargo install --locked trunk
 ```
 
 ### Updating assets

@@ -44,8 +44,6 @@ fn handle_pause(
 
                             if ui.button("Quit Game").clicked() {
                                 app_exit_events.send(AppExit);
-                                #[cfg(target_arch = "wasm32")]
-                                wasm::close_tab()
                             }
                         });
                     });
@@ -55,18 +53,5 @@ fn handle_pause(
             time.pause();
             actions_frozen.freeze();
         }
-    }
-}
-
-#[cfg(target_arch = "wasm32")]
-mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    #[wasm_bindgen(inline_js = "
-        export function close_tab() {
-            window.close();
-        }")]
-    extern "C" {
-        pub(crate) fn close_tab();
     }
 }

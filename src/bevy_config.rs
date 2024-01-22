@@ -2,7 +2,6 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy::window::PrimaryWindow;
-#[cfg(not(target_arch = "wasm32"))]
 use bevy::window::WindowMode;
 use bevy::winit::WinitWindows;
 use bevy_mod_sysfail::*;
@@ -17,8 +16,6 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
             title: "Foxtrot".to_string(),
             canvas: Some("#bevy".to_owned()),
             present_mode: PresentMode::AutoVsync,
-            // This breaks WASM for some reason
-            #[cfg(not(target_arch = "wasm32"))]
             mode: WindowMode::BorderlessFullscreen,
             fit_canvas_to_parent: true,
             ..default()

@@ -4,15 +4,20 @@ use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 
+#[cfg(feature = "dev")]
+use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::Collider;
+#[cfg(feature = "dev")]
+use oxidized_navigation::debug_draw::{DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{
     query::{find_polygon_path, perform_string_pulling_on_path},
     NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
 };
 
+use crate::dev::dev_editor::DevEditorWindow;
 use serde::{Deserialize, Serialize};
 
 /// Manually tweaked
@@ -43,6 +48,8 @@ pub(crate) fn navigation_plugin(app: &mut App) {
             .before(GeneralMovementSystemSet)
             .run_if(in_state(GameState::Playing)),
     );
+    #[cfg(feature = "dev")]
+    app.add_plugins(OxidizedNavigationDebugDrawPlugin);
 }
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
@@ -51,11 +58,12 @@ pub(crate) struct Follower;
 
 #[sysfail(log(level = "error"))]
 fn query_mesh(
+    #[cfg(feature = "dev")] mut commands: Commands,
     mut with_follower: Query<(&Transform, &mut Walking), (With<Follower>, Without<Player>)>,
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
-    #[cfg(feature = "dev")] _editor_state: Res<bevy_editor_pls::editor::Editor>,
+    #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("query_mesh").entered();
@@ -73,6 +81,20 @@ fn query_mesh(
                 {
                     let path = perform_string_pulling_on_path(&nav_mesh, from, to, &path)
                         .map_err(|e| anyhow::Error::msg(format!("{e:?}")))?;
+                    #[cfg(feature = "dev")]
+                    {
+                        let nav_render_enabled = editor_state
+                            .window_state::<DevEditorWindow>()
+                            .context("Failed to read dev window state")?
+                            .navmesh_render_enabled;
+                        if nav_render_enabled {
+                            commands.spawn(DrawPath {
+                                timer: Some(Timer::from_seconds(4.0, TimerMode::Once)),
+                                pulled_path: path.clone(),
+                                color: Color::BLUE,
+                            });
+                        }
+                    }
                     let dir = path
                         .into_iter()
                         .map(|next_point| {

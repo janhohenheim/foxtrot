@@ -50,7 +50,7 @@ jobs:
           brew install michaeleisel/zld/zld
       - name: Build release for Apple Silicon
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) RUSTFLAGS="-C link-arg=-fuse-ld=/usr/local/bin/zld -Z share-generics=y" cargo build --release --no-default-features --features native --target=aarch64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) RUSTFLAGS="-C link-arg=-fuse-ld=/usr/local/bin/zld -Z share-generics=y" cargo build --release --target=aarch64-apple-darwin
       - name: Install rust toolchain for Apple x86
         uses: dtolnay/rust-toolchain@master
         with:
@@ -58,7 +58,7 @@ jobs:
           target: x86_64-apple-darwin
       - name: Build release for x86 Apple
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --no-default-features --features native --target=x86_64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --target=x86_64-apple-darwin
       - name: Create Universal Binary
         run: |
           lipo -create -output target/release/${{ env.GAME_EXECUTABLE_NAME }} target/aarch64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }} target/x86_64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }}
@@ -103,7 +103,7 @@ jobs:
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
       - name: Build release
         run: |
-          cargo build --release --no-default-features --features native
+          cargo build --release
       - name: Prepare release
         run: |
           strip target/release/${{ env.GAME_EXECUTABLE_NAME }}
@@ -145,7 +145,7 @@ jobs:
           global-json-file: build/windows/installer/global.json
       - name: Build release
         run: |
-          cargo build --release --no-default-features --features native
+          cargo build --release
       - name: Prepare release
         run: |
           mkdir target/release/assets && cp -r assets target/release/assets

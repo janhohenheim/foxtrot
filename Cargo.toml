@@ -6,12 +6,8 @@ version = "0.3.0"
 license = "MIT OR Apache-2.0"
 exclude = [
     "dist",
-    "build",
-    "assets",
-    "credits",
     "saves",
     "resources",
-    "build.rs",
 ]
 description = "The all-in-one Bevy 3D game template for desktop."
 repository = "https://github.com/janhohenheim/foxtrot"

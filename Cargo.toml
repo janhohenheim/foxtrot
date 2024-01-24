@@ -5,9 +5,10 @@ name = "foxtrot"
 version = "0.3.0"
 license = "MIT OR Apache-2.0"
 exclude = [
-    "dist",
-    "saves",
-    "resources",
+    "dist/",
+    "saves/",
+    "assets/",
+    "resources/",
 ]
 description = "The all-in-one Bevy 3D game template for desktop."
 repository = "https://github.com/janhohenheim/foxtrot"

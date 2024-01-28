@@ -28,8 +28,8 @@ bevy_common_assets = { version = "0.9", features = ["ron", "toml"] }
 bevy_egui = "0.24"
 serde = { version = "1", features = ["derive"] }
 indexmap = { version = "2", features = ["serde"] }
-strum = "0.25"
-strum_macros = "0.25"
+strum = "0.26"
+strum_macros = "0.26"
 ron = "0.8"
 regex = "1"
 chrono = "0.4"
@@ -42,11 +42,12 @@ anyhow = "1"
 # Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
 leafwing-input-manager = { version = "0.11", features = [] }
 warbler_grass = "0.4"
-rand = { version = "0.8", features = ["small_rng", "nightly"] }
+rand = { version = "0.8", features = ["small_rng"] }
 bevy_dolly = "0.0.2"
 spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
+# https://github.com/TheGrimsey/oxidized_navigation/pull/21
 bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
@@ -59,30 +60,11 @@ image = { version = "0.24", default-features = false }
 
 [dependencies.bevy]
 version = "0.12"
-default-features = false
 features = [
-    "animation",
-    "bevy_asset",
-    "bevy_scene",
-    "bevy_winit",
-    "bevy_core_pipeline",
-    "bevy_pbr",
-    "bevy_gltf",
-    "bevy_render",
-    "bevy_sprite",
-    "bevy_text",
-    "bevy_ui",
-    "png",
     "jpeg",
-    "hdr",
-    "zstd",
-    "x11",
-    "ktx2",
-    "tonemapping_luts",
     "serialize",
     "dynamic_linking",
     "file_watcher",
-    "multi-threaded",
 ]
 
 [build-dependencies]

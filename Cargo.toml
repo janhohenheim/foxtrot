@@ -67,7 +67,7 @@ version = "0.12"
 features = [
     "jpeg",
     "serialize",
-    "dynamic_linking",
+    #"dynamic_linking", causes issues on Windows
     "file_watcher",
 ]
 

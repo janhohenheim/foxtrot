@@ -1,7 +1,6 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instantiation::spawning::GameObject;
 use crate::world_interaction::condition::ActiveConditions;
-use crate::world_interaction::dialog::CurrentDialog;
 use crate::world_interaction::interactions_ui::InteractionOpportunities;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -132,7 +131,6 @@ fn load_world(
         });
         commands.insert_resource(InteractionOpportunities::default());
         commands.insert_resource(ActiveConditions::default());
-        commands.remove_resource::<CurrentDialog>();
 
         info!("Successfully loaded scene \"{}\"", load.filename,)
     }

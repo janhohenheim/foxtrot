@@ -41,16 +41,19 @@ unicode-segmentation = "1"
 anyhow = "1"
 # Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
 leafwing-input-manager = { version = "0.11", features = [] }
-warbler_grass = "0.4"
 rand = { version = "0.8", features = ["small_rng"] }
 bevy_dolly = "0.0.2"
 spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
-# https://github.com/TheGrimsey/oxidized_navigation/pull/21
+# Using outdated version until oxidized_navigation updates: https://github.com/TheGrimsey/oxidized_navigation/pull/21
 bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
+
+# Using git dep until release: https://github.com/yarn-slinger/yarn-slinger/issues/172
+bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
+bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
 
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31
@@ -59,11 +62,11 @@ winit = { version = "0.28.7", default-features = false }
 image = { version = "0.24", default-features = false }
 
 [dependencies.bevy]
-version = "0.12"
+version = "0.12.1"
 features = [
     "jpeg",
     "serialize",
-    "dynamic_linking",
+    # "dynamic_linking", makes the builds MUCH faster, but causes issues on Windows
     "file_watcher",
 ]
 

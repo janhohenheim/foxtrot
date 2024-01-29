@@ -1,36 +1,32 @@
 # NOTE: For maximum performance, build using a nightly compiler
 # If you are using rust stable, remove the `"-Z", "share-generics=y"` below.
 
-# Uncomment the following lines for better link time performance. Requires lld on Windows, zld on macOS and clang on Linux.
+# You can uncomment some lines for better link time performance. Requires lld on Windows, zld on macOS and clang on Linux.
 
-# [target.x86_64-unknown-linux-gnu]
-# Uncomment for better performance. Requires clang.
-# linker = "clang"
-
-# Uncomment instead of default rustflags for better performance. Requires lld.
+# Use first version for faster compile times. Requires lld.
 # rustflags = ["-C", "link-arg=-fuse-ld=lld", "-Z", "share-generics=y"]
 rustflags = ["-Z", "share-generics=y"]
 
+# [target.x86_64-unknown-linux-gnu]
+# Uncomment for faster compile times. Requires clang.
+# linker = "clang"
+
 [target.x86_64-apple-darwin]
-# Uncomment instead of default rustflags for better performance. Requires zld via `brew install michaeleisel/zld/zld`
-# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld", "-Z", "share-generics=y"]
-rustflags = ["-Z", "share-generics=y"]
+# Uncomment for faster compile times. Requires zld via `brew install michaeleisel/zld/zld`
+# rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/zld"]
 
 [target.aarch64-apple-darwin]
-# Uncomment instead of default rustflags for better performance. Requires zld via `brew install michaeleisel/zld/zld`
-# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld", "-Z", "share-generics=y"]
-rustflags = ["-Z", "share-generics=y"]
+# Uncomment for faster compile times. Requires zld via `brew install michaeleisel/zld/zld`
+# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
 
 [target.x86_64-pc-windows-msvc]
-# Uncommentfor better performance. Requires lld via `cargo install -f cargo-binutils` and `rustup component add llvm-tools-preview`
+# Uncomment for faster compile times. Requires lld via `cargo install -f cargo-binutils` and `rustup component add llvm-tools-preview`
 # linker = "rust-lld.exe"
 rustflags = ["-Z", "share-generics=n"]
 
-# Enable no optimization in debug mode. You should probably bump this up for Wasm builds.
 [profile.dev]
-opt-level = 0
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'
-# In most cases the gains are negligible, but if you are on macos and have slow compile times you should see significant gains.
+# In most cases the gains are negligible, but if you are on macOS and have slow compile times you should see significant gains.
 # debug = 1
 
 # Enable some optimizations for dependencies (incl. Bevy), but not for our code.

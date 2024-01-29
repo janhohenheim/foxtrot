@@ -2,7 +2,6 @@ use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoa
 use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::player_embodiment::Player;
 use crate::world_interaction::condition::ActiveConditions;
-use crate::world_interaction::dialog::{CurrentDialog, DialogEvent};
 use crate::GameState;
 use anyhow::{Context, Error, Result};
 use bevy::prelude::*;
@@ -45,8 +44,6 @@ struct SaveModel {
     #[serde(default, skip_serializing_if = "ActiveConditions::is_empty")]
     conditions: ActiveConditions,
     player_transform: Transform,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    dialog_event: Option<DialogEvent>,
 }
 
 #[sysfail(log(level = "error"))]
@@ -55,7 +52,6 @@ fn handle_load_requests(
     mut load_events: EventReader<GameLoadRequest>,
     mut loader: EventWriter<WorldLoadRequest>,
     mut spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
-    mut dialog_event_writer: EventWriter<DialogEvent>,
 ) -> Result<()> {
     for load in load_events.read() {
         let path = match load
@@ -96,9 +92,6 @@ fn handle_load_requests(
         loader.send(WorldLoadRequest {
             filename: save_model.scene,
         });
-        if let Some(dialog_event) = save_model.dialog_event {
-            dialog_event_writer.send(dialog_event);
-        }
         commands.insert_resource(save_model.conditions);
 
         spawner.send(
@@ -128,22 +121,14 @@ fn read_last_save() -> Result<Option<PathBuf>, Error> {
 fn handle_save_requests(
     mut save_events: EventReader<GameSaveRequest>,
     conditions: Res<ActiveConditions>,
-    dialog: Option<Res<CurrentDialog>>,
     player_query: Query<&GlobalTransform, With<Player>>,
     current_level: Res<CurrentLevel>,
 ) -> Result<()> {
-    let dialog = dialog.map(|dialog| dialog.clone());
     for save in save_events.read() {
         for player in &player_query {
-            let dialog_event = dialog.clone().map(|dialog| DialogEvent {
-                dialog: dialog.id,
-                source: dialog.source,
-                page: Some(dialog.current_page),
-            });
             let save_model = SaveModel {
                 scene: current_level.scene.clone(),
                 conditions: conditions.clone(),
-                dialog_event,
                 player_transform: player.compute_transform(),
             };
             let serialized = match ron::to_string(&save_model) {

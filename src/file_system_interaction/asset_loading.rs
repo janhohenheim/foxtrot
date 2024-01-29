@@ -1,6 +1,5 @@
 use crate::file_system_interaction::config::GameConfig;
 use crate::file_system_interaction::level_serialization::SerializedLevel;
-use crate::world_interaction::dialog::Dialog;
 use crate::GameState;
 use anyhow::Result;
 use bevy::prelude::*;
@@ -16,7 +15,6 @@ use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub(crate) fn loading_plugin(app: &mut App) {
     app.add_plugins(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
-        .add_plugins(RonAssetPlugin::<Dialog>::new(&["dlg.ron"]))
         .add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
         .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
         .add_loading_state(
@@ -26,7 +24,6 @@ pub(crate) fn loading_plugin(app: &mut App) {
                 .load_collection::<SceneAssets>()
                 .load_collection::<AnimationAssets>()
                 .load_collection::<LevelAssets>()
-                .load_collection::<DialogAssets>()
                 .load_collection::<TextureAssets>()
                 .load_collection::<ConfigAssets>(),
         )
@@ -68,12 +65,6 @@ pub(crate) struct LevelAssets {
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub(crate) struct DialogAssets {
-    #[asset(path = "dialogs", collection(typed, mapped))]
-    pub(crate) dialogs: HashMap<String, Handle<Dialog>>,
-}
-
-#[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub(crate) glowy_interior: Handle<Image>,
@@ -96,7 +87,6 @@ fn show_progress(
     scene_assets: Option<Res<SceneAssets>>,
     animation_assets: Option<Res<AnimationAssets>>,
     level_assets: Option<Res<LevelAssets>>,
-    dialog_assets: Option<Res<DialogAssets>>,
     texture_assets: Option<Res<TextureAssets>>,
     config_assets: Option<Res<ConfigAssets>>,
 ) {
@@ -119,7 +109,6 @@ fn show_progress(
                     ui.checkbox(&mut scene_assets.is_some(), "Scenes");
                     ui.checkbox(&mut animation_assets.is_some(), "Animations");
                     ui.checkbox(&mut level_assets.is_some(), "Levels");
-                    ui.checkbox(&mut dialog_assets.is_some(), "Dialogs");
                     ui.checkbox(&mut texture_assets.is_some(), "Textures");
                     ui.checkbox(&mut config_assets.is_some(), "Config");
                 });

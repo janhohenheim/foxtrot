@@ -5,13 +5,14 @@ use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 use crate::util::smoothness_to_lerp_factor;
 use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
-use crate::world_interaction::dialog::CurrentDialog;
+use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
+use bevy_yarn_slinger_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;
@@ -27,7 +28,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
                 handle_jump,
                 handle_horizontal_movement,
                 handle_speed_effects,
-                rotate_to_speaker.run_if(resource_exists::<CurrentDialog>()),
+                rotate_to_speaker,
                 control_walking_sound,
                 handle_camera_kind,
             )
@@ -147,28 +148,35 @@ fn handle_speed_effects(
 fn rotate_to_speaker(
     time: Res<Time>,
     mut with_player: Query<(&mut Transform, &Velocity), With<Player>>,
-    without_player: Query<&Transform, Without<Player>>,
-    current_dialog: Res<CurrentDialog>,
+    speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
+    mut speaker_change_event: EventReader<SpeakerChangeEvent>,
     config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    let Ok(speaker_transform) = without_player.get(current_dialog.source) else {
-        return;
-    };
-    let dt = time.delta_seconds();
+    for speaker_change in speaker_change_event.read() {
+        if !speaker_change.speaking {
+            continue;
+        }
+        let dt = time.delta_seconds();
 
-    for (mut transform, velocity) in with_player.iter_mut() {
-        let horizontal_velocity = velocity.linvel.split(transform.up()).horizontal;
-        if horizontal_velocity.is_approx_zero() {
-            let up = transform.up();
-            let target_rotation = transform
-                .horizontally_looking_at(speaker_transform.translation, up)
-                .rotation;
-            let smoothness = config.player.rotate_to_speaker_smoothness;
-            let factor = smoothness_to_lerp_factor(smoothness, dt);
-            let rotation = transform.rotation.slerp(target_rotation, factor);
-            transform.rotation = rotation;
+        for (mut transform, velocity) in with_player.iter_mut() {
+            for (speaker_transform, dialog_target) in speakers.iter() {
+                if dialog_target.speaker != speaker_change.character_name {
+                    continue;
+                }
+                let horizontal_velocity = velocity.linvel.split(transform.up()).horizontal;
+                if horizontal_velocity.is_approx_zero() {
+                    let up = transform.up();
+                    let target_rotation = transform
+                        .horizontally_looking_at(speaker_transform.translation, up)
+                        .rotation;
+                    let smoothness = config.player.rotate_to_speaker_smoothness;
+                    let factor = smoothness_to_lerp_factor(smoothness, dt);
+                    let rotation = transform.rotation.slerp(target_rotation, factor);
+                    transform.rotation = rotation;
+                }
+            }
         }
     }
 }

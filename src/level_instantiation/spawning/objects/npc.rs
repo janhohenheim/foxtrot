@@ -3,7 +3,7 @@ use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::GameObject;
 use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::movement::navigation::Follower;
-use crate::world_interaction::dialog::{DialogId, DialogTarget};
+use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use std::f32::consts::TAU;
@@ -32,7 +32,8 @@ pub(crate) fn spawn(
                 aerial: animations.character_running.clone(),
             },
             DialogTarget {
-                dialog_id: DialogId::new("follower"),
+                speaker: "The Follower".to_string(),
+                node: "Follower".to_string(),
             },
             GameObject::Npc,
         ))

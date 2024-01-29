@@ -2,7 +2,7 @@ use crate::player_control::actions::PlayerAction;
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
-use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
+use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -11,6 +11,7 @@ use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
+use bevy_yarn_slinger::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
@@ -157,7 +158,7 @@ fn is_facing_target(
 #[sysfail(log(level = "error"))]
 fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
-    mut dialog_event_writer: EventWriter<DialogEvent>,
+    mut dialogue_runner: Query<&mut DialogueRunner>,
     mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
@@ -177,11 +178,8 @@ fn display_interaction_prompt(
             });
         if actions.just_pressed(PlayerAction::Interact) {
             if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
-                dialog_event_writer.send(DialogEvent {
-                    source: interaction_ui.source,
-                    dialog: dialog_target.dialog_id.clone(),
-                    page: None,
-                });
+                let mut dialogue_runner = dialogue_runner.single_mut();
+                dialogue_runner.start_node(&dialog_target.node);
             }
         }
     }

@@ -62,27 +62,6 @@ pub(crate) enum PlayerAction {
     NumberedChoice0,
 }
 
-impl PlayerAction {
-    pub(crate) fn numbered_choice(index: u8) -> Self {
-        match index {
-            0 => PlayerAction::NumberedChoice0,
-            1 => PlayerAction::NumberedChoice1,
-            2 => PlayerAction::NumberedChoice2,
-            3 => PlayerAction::NumberedChoice3,
-            4 => PlayerAction::NumberedChoice4,
-            5 => PlayerAction::NumberedChoice5,
-            6 => PlayerAction::NumberedChoice6,
-            7 => PlayerAction::NumberedChoice7,
-            8 => PlayerAction::NumberedChoice8,
-            9 => PlayerAction::NumberedChoice9,
-            _ => panic!(
-                "Numbered choice index out of range: got {}, expected 0-9",
-                index
-            ),
-        }
-    }
-}
-
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
 pub(crate) enum CameraAction {
     #[default]

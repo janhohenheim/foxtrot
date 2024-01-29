@@ -15,11 +15,9 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - Saving / loading levels
 - Saving / loading the game state
 - Animations
-- A custom dialog system
+- Dialogs via [`yarn_slinger`](https://github.com/yarn-slinger/yarn-slinger)
 - Shaders
 - GLTF imports, including auto-detection of colliders
-- Dynamic builds when developing
-- Grass blades using [`warbler_grass`](https://crates.io/crates/warbler_grass)
 - Smooth cameras via [`bevy_dolly`](https://github.com/BlackPhlox/bevy_dolly)
 - A skydome that follows the camera
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)

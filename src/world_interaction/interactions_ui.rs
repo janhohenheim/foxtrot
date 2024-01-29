@@ -1,8 +1,8 @@
-use crate::player_control::actions::PlayerAction;
+use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
-use crate::world_interaction::dialog::{DialogEvent, DialogTarget};
+use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -11,6 +11,7 @@ use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
+use bevy_yarn_slinger::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
@@ -26,9 +27,12 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         )
         .add_systems(
             Update,
-            display_interaction_prompt
-                .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
-                .run_if(in_state(GameState::Playing)),
+            display_interaction_prompt.run_if(
+                resource_exists::<InteractionUi>()
+                    .and_then(not(is_frozen))
+                    .and_then(in_state(GameState::Playing))
+                    .and_then(any_with_component::<DialogueRunner>()),
+            ),
         );
 }
 
@@ -157,11 +161,12 @@ fn is_facing_target(
 #[sysfail(log(level = "error"))]
 fn display_interaction_prompt(
     interaction_ui: Res<InteractionUi>,
-    mut dialog_event_writer: EventWriter<DialogEvent>,
+    mut dialogue_runner: Query<&mut DialogueRunner>,
     mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
     dialog_target_query: Query<&DialogTarget>,
+    mut freeze: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     for actions in actions.iter() {
         let window = primary_windows
@@ -177,11 +182,9 @@ fn display_interaction_prompt(
             });
         if actions.just_pressed(PlayerAction::Interact) {
             if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
-                dialog_event_writer.send(DialogEvent {
-                    source: interaction_ui.source,
-                    dialog: dialog_target.dialog_id.clone(),
-                    page: None,
-                });
+                let mut dialogue_runner = dialogue_runner.single_mut();
+                dialogue_runner.start_node(&dialog_target.node);
+                freeze.freeze();
             }
         }
     }

@@ -41,7 +41,6 @@ unicode-segmentation = "1"
 anyhow = "1"
 # Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
 leafwing-input-manager = { version = "0.11", features = [] }
-warbler_grass = "0.4"
 rand = { version = "0.8", features = ["small_rng"] }
 bevy_dolly = "0.0.2"
 spew = "0.4"
@@ -53,8 +52,8 @@ bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
 
 # https://github.com/yarn-slinger/yarn-slinger/issues/172
-bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "d0a4031e51622ad309b23b7dbc81230076af2bb4" }
-bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "d0a4031e51622ad309b23b7dbc81230076af2bb4" }
+bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
+bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
 
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31

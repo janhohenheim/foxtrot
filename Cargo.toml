@@ -52,6 +52,10 @@ bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
 
+# https://github.com/yarn-slinger/yarn-slinger/issues/172
+bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "d0a4031e51622ad309b23b7dbc81230076af2bb4" }
+bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "d0a4031e51622ad309b23b7dbc81230076af2bb4" }
+
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31
 winit = { version = "0.28.7", default-features = false }

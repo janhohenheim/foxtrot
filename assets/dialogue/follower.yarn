@@ -1,10 +1,8 @@
 title: Follower
 ---
-Hello World! To continue the dialogue, click with your mouse or press the spacebar.
-These are options. You can select one by clicking on it or pressing the corresponding number on your keyboard.
+The Follower: Hello World! To continue the dialogue, click with your mouse or press the spacebar.
+The Follower: These are options. You can select one by clicking on it or pressing the corresponding number on your keyboard.
 -> Some cool option
 -> Some other cool option
-Now we'll jump to another node!
-<<jump AnotherNode>>
-
+The Follower: Done!
 ===

@@ -1,4 +1,4 @@
-use crate::player_control::actions::PlayerAction;
+use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
@@ -163,6 +163,7 @@ fn display_interaction_prompt(
     actions: Query<&ActionState<PlayerAction>>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
     dialog_target_query: Query<&DialogTarget>,
+    mut freeze: ResMut<ActionsFrozen>,
 ) -> Result<()> {
     for actions in actions.iter() {
         let window = primary_windows
@@ -180,6 +181,7 @@ fn display_interaction_prompt(
             if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
                 let mut dialogue_runner = dialogue_runner.single_mut();
                 dialogue_runner.start_node(&dialog_target.node);
+                freeze.freeze();
             }
         }
     }

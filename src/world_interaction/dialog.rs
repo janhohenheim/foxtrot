@@ -1,6 +1,7 @@
 use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use bevy_yarn_slinger::events::DialogueCompleteEvent;
 use bevy_yarn_slinger::prelude::*;
 use bevy_yarn_slinger_example_dialogue_view::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -15,7 +16,7 @@ pub(crate) fn dialog_plugin(app: &mut App) {
         Update,
         (
             spawn_dialogue_runner.run_if(resource_added::<YarnProject>()),
-            unfreeze_after_dialog,
+            unfreeze_after_dialog.after(ExampleYarnSlingerDialogueViewSystemSet),
         ),
     );
 }
@@ -34,13 +35,10 @@ fn spawn_dialogue_runner(mut commands: Commands, project: Res<YarnProject>) {
 }
 
 fn unfreeze_after_dialog(
-    dialog_runner: Query<&DialogueRunner>,
-    mut speaker_change_event: EventReader<SpeakerChangeEvent>,
+    mut dialogue_complete_event: EventReader<DialogueCompleteEvent>,
     mut freeze: ResMut<ActionsFrozen>,
 ) {
-    for event in speaker_change_event.read() {
-        if !event.speaking && !dialog_runner.single().is_running() {
-            freeze.unfreeze();
-        }
+    for _event in dialogue_complete_event.read() {
+        freeze.unfreeze();
     }
 }

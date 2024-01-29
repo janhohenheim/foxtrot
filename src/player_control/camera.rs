@@ -6,6 +6,7 @@ use crate::player_control::camera::{
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
+use bevy_yarn_slinger_example_dialogue_view::ExampleYarnSlingerDialogueViewSystemSet;
 pub(crate) use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
 use ui::*;
@@ -63,7 +64,7 @@ pub(crate) fn camera_plugin(app: &mut App) {
             (
                 update_kind,
                 update_drivers,
-                set_camera_focus,
+                set_camera_focus.after(ExampleYarnSlingerDialogueViewSystemSet),
                 update_rig,
                 move_skydome,
             )

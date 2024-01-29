@@ -27,9 +27,12 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         )
         .add_systems(
             Update,
-            display_interaction_prompt
-                .run_if(resource_exists::<InteractionUi>().and_then(not(is_frozen)))
-                .run_if(in_state(GameState::Playing)),
+            display_interaction_prompt.run_if(
+                resource_exists::<InteractionUi>()
+                    .and_then(not(is_frozen))
+                    .and_then(in_state(GameState::Playing))
+                    .and_then(any_with_component::<DialogueRunner>()),
+            ),
         );
 }
 

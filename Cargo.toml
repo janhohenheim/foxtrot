@@ -46,12 +46,12 @@ bevy_dolly = "0.0.2"
 spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
-# https://github.com/TheGrimsey/oxidized_navigation/pull/21
+# Using outdated version until oxidized_navigation updates: https://github.com/TheGrimsey/oxidized_navigation/pull/21
 bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
 
-# https://github.com/yarn-slinger/yarn-slinger/issues/172
+# Using git dep until release: https://github.com/yarn-slinger/yarn-slinger/issues/172
 bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
 bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
 
@@ -62,11 +62,11 @@ winit = { version = "0.28.7", default-features = false }
 image = { version = "0.24", default-features = false }
 
 [dependencies.bevy]
-version = "0.12"
+version = "0.12.1"
 features = [
     "jpeg",
     "serialize",
-    #"dynamic_linking", causes issues on Windows
+    # "dynamic_linking", makes the builds MUCH faster, but causes issues on Windows
     "file_watcher",
 ]
 

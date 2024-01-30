@@ -12,7 +12,7 @@ use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
-use bevy_yarn_slinger_example_dialogue_view::SpeakerChangeEvent;
+use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::ops::DerefMut;

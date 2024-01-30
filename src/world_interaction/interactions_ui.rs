@@ -11,7 +11,7 @@ use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
 use bevy_rapier3d::prelude::*;
-use bevy_yarn_slinger::prelude::DialogueRunner;
+use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;

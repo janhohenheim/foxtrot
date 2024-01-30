@@ -51,9 +51,8 @@ bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
 
-# Using git dep until release: https://github.com/yarn-slinger/yarn-slinger/issues/172
-bevy_yarn_slinger = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
-bevy_yarn_slinger_example_dialogue_view = { git = "https://github.com/yarn-slinger/yarn-slinger", rev = "b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1" }
+bevy_yarnspinner = "0.1"
+bevy_yarnspinner_example_dialogue_view = "0.1"
 
 # keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31

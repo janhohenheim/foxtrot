@@ -1,22 +1,22 @@
 use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
-use bevy_yarn_slinger::events::DialogueCompleteEvent;
-use bevy_yarn_slinger::prelude::*;
-use bevy_yarn_slinger_example_dialogue_view::prelude::*;
+use bevy_yarnspinner::events::DialogueCompleteEvent;
+use bevy_yarnspinner::prelude::*;
+use bevy_yarnspinner_example_dialogue_view::prelude::*;
 use serde::{Deserialize, Serialize};
 
 pub(crate) fn dialog_plugin(app: &mut App) {
     app.add_plugins((
         EguiPlugin,
-        YarnSlingerPlugin::new(),
-        ExampleYarnSlingerDialogueViewPlugin::new(),
+        YarnSpinnerPlugin::new(),
+        ExampleYarnSpinnerDialogueViewPlugin::new(),
     ))
     .add_systems(
         Update,
         (
             spawn_dialogue_runner.run_if(resource_added::<YarnProject>()),
-            unfreeze_after_dialog.after(ExampleYarnSlingerDialogueViewSystemSet),
+            unfreeze_after_dialog.after(ExampleYarnSpinnerDialogueViewSystemSet),
         ),
     );
 }

@@ -1386,9 +1386,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_yarn_slinger"
+name = "bevy_yarnspinner"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "65361761fa6c3ff59266207bedeff31ddb51d5c0f92670dac5b2bd32f9cf376d"
 dependencies = [
  "anyhow",
  "bevy",
@@ -1398,16 +1399,17 @@ dependencies = [
  "seldom_fn_plugin",
  "serde",
  "sha2",
- "yarn_slinger",
+ "yarnspinner",
 ]
 
 [[package]]
-name = "bevy_yarn_slinger_example_dialogue_view"
+name = "bevy_yarnspinner_example_dialogue_view"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f6d2aa6957df8157ce24cb44b1fe47c0e451b90f887fb13e013fbbd95fc309b"
 dependencies = [
  "bevy",
- "bevy_yarn_slinger",
+ "bevy_yarnspinner",
  "seldom_fn_plugin",
  "unicode-segmentation",
 ]
@@ -2343,8 +2345,8 @@ dependencies = [
  "bevy_kira_audio",
  "bevy_mod_sysfail",
  "bevy_rapier3d",
- "bevy_yarn_slinger",
- "bevy_yarn_slinger_example_dialogue_view",
+ "bevy_yarnspinner",
+ "bevy_yarnspinner_example_dialogue_view",
  "bitflags 2.4.2",
  "chrono",
  "embed-resource",
@@ -2360,8 +2362,8 @@ dependencies = [
  "seldom_fn_plugin",
  "serde",
  "spew",
- "strum 0.26.1",
- "strum_macros 0.26.1",
+ "strum",
+ "strum_macros",
  "unicode-segmentation",
  "winit",
 ]
@@ -4576,28 +4578,9 @@ checksum = "9e08d8363704e6c71fc928674353e6b7c23dcea9d82d7012c8faf2a3a025f8d0"
 
 [[package]]
 name = "strum"
-version = "0.25.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "290d54ea6f91c969195bdbcd7442c8c2a2ba87da8bf60a7ee86a235d4bc1e125"
-
-[[package]]
-name = "strum"
 version = "0.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "723b93e8addf9aa965ebe2d11da6d7540fa2283fcea14b3371ff055f7ba13f5f"
-
-[[package]]
-name = "strum_macros"
-version = "0.25.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23dc1fa9ac9c169a78ba62f0b841814b7abae11bdd047b9c58f893439e309ea0"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn 2.0.48",
-]
 
 [[package]]
 name = "strum_macros"
@@ -5807,20 +5790,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fcb9cbac069e033553e8bb871be2fbdffcab578eb25bd0f7c508cedc6dcd75a"
 
 [[package]]
-name = "yarn_slinger"
-version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+name = "yarnspinner"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9cd9db1b2ed4f36bd2ae6c8fa715a768213fff39dc3aaaaa771e6e9669fd25b"
 dependencies = [
  "log",
- "yarn_slinger_compiler",
- "yarn_slinger_core",
- "yarn_slinger_runtime",
+ "yarnspinner_compiler",
+ "yarnspinner_core",
+ "yarnspinner_runtime",
 ]
 
 [[package]]
-name = "yarn_slinger_compiler"
+name = "yarnspinner_compiler"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc21827724cc512910d4001ac14f67cf17a8ff62c115cb0345af926eebd6564e"
 dependencies = [
  "annotate-snippets",
  "antlr-rust",
@@ -5829,32 +5814,34 @@ dependencies = [
  "rand",
  "regex",
  "serde",
- "strum 0.25.0",
- "strum_macros 0.25.3",
+ "strum",
+ "strum_macros",
  "thiserror",
- "yarn_slinger_core",
+ "yarnspinner_core",
 ]
 
 [[package]]
-name = "yarn_slinger_core"
+name = "yarnspinner_core"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "91ee6a78a9dd5098f7d94deddb0c2f88a1e90c71adc7acb9c9c629391b9c8d97"
 dependencies = [
  "bevy",
  "bytes",
  "paste",
  "prost",
  "serde",
- "strum 0.25.0",
- "strum_macros 0.25.3",
+ "strum",
+ "strum_macros",
  "thiserror",
- "yarn_slinger_macros",
+ "yarnspinner_macros",
 ]
 
 [[package]]
-name = "yarn_slinger_macros"
+name = "yarnspinner_macros"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c8ae8c98bd97e554fe9a4c593a1438492611d93a0b92075467984167cd896b30"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5862,9 +5849,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "yarn_slinger_runtime"
+name = "yarnspinner_runtime"
 version = "0.1.0"
-source = "git+https://github.com/yarn-slinger/yarn-slinger?rev=b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1#b6fb6d5f7f5982a165758fa4da61ea6ebf1ef6b1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a665c1aa5e408a096bfab762c6a854ea79e103b0157fb0138d239b4bf6d20bf5"
 dependencies = [
  "bevy",
  "fixed_decimal",
@@ -5877,7 +5865,7 @@ dependencies = [
  "thiserror",
  "unicode-normalization",
  "unicode-segmentation",
- "yarn_slinger_core",
+ "yarnspinner_core",
 ]
 
 [[package]]

@@ -4,8 +4,8 @@ use crate::world_interaction::dialog::DialogTarget;
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_yarn_slinger::events::DialogueCompleteEvent;
-use bevy_yarn_slinger_example_dialogue_view::SpeakerChangeEvent;
+use bevy_yarnspinner::events::DialogueCompleteEvent;
+use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn set_camera_focus(

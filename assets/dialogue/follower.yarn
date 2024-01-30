@@ -35,7 +35,7 @@ The Follower: What feature do you care about?
   The Follower: It's pretty smooth, thanks to bevy_dolly.
 -> Dialogue
   The Follower: You can talk to people. You can make them say things. You can make them say different things depending on what you've done.
-  The Follower: It's all based on yarn_slinger, which is a port of Yarn Spinner. Google that combination of words and you'll sure find all you need.
+  The Follower: It's all based on yarnspinner, which is a port of Yarn Spinner. Google that combination of words and you'll sure find all you need.
 -> Dev Editor
   The Follower: See the little stop button in the upper left corner? That opens bevy_editor_pls. In its list of windows, you'll find Foxtrot Dev.
   The Follower: It's a little editor that lets you edit the world. You can add and remove entities and so on. Extend it with whatever you need for debugging.

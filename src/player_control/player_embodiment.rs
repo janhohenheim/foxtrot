@@ -3,8 +3,8 @@ use crate::file_system_interaction::config::GameConfig;
 use crate::movement::general_movement::{GeneralMovementSystemSet, Jumping, Walking};
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
-use crate::util::smoothness_to_lerp_factor;
-use crate::util::trait_extension::{F32Ext, TransformExt, Vec3Ext};
+
+use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -65,11 +65,10 @@ fn handle_horizontal_movement(
     };
 
     for (actions, mut walk, player_transform) in &mut player_query {
-        if let Some(movement) = actions
-            .axis_pair(PlayerAction::Move)
-            .context("Player movement is not an axis pair")?
-            .max_normalized()
-        {
+        let Some(axis) = actions.axis_pair(PlayerAction::Move) else {
+            continue;
+        };
+        if let Some(movement) = axis.max_normalized() {
             let up = player_transform.up();
             let forward = if camera.kind == IngameCameraKind::FixedAngle {
                 camera_transform.up()
@@ -152,7 +151,7 @@ fn rotate_to_speaker(
     mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
     speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
     mut speaker_change_event: EventReader<SpeakerChangeEvent>,
-    config: Res<GameConfig>,
+    _config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
@@ -160,7 +159,7 @@ fn rotate_to_speaker(
         if !speaker_change.speaking {
             continue;
         }
-        let dt = time.delta_seconds();
+        let _dt = time.delta_seconds();
 
         for (player_transform, mut controller) in with_player.iter_mut() {
             for (speaker_transform, dialog_target) in speakers.iter() {

@@ -1,7 +1,7 @@
 use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::movement::general_movement::{AnimationState, CharacterAnimations};
 use bevy::animation::AnimationPlayer;
-use bevy::log::info_span;
+
 use bevy::prelude::Query;
 use bevy_mod_sysfail::sysfail;
 use bevy_tnua::builtins::TnuaBuiltinWalk;
@@ -64,7 +64,7 @@ pub(crate) fn play_animations(
                         )
                         .repeat();
                 }
-                AnimationState::Running(speed) => {
+                AnimationState::Running(_speed) => {
                     animation_player
                         .play_with_transition(
                             animations.walk.clone_weak(),

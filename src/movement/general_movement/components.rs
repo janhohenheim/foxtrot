@@ -40,21 +40,6 @@ pub(crate) struct Walking {
     pub(crate) sprinting: bool,
 }
 
-impl Walking {
-    pub(crate) fn get_acceleration(&self, grounded: bool) -> Option<Vec3> {
-        let acceleration = if grounded {
-            if self.sprinting {
-                self.sprinting_acceleration
-            } else {
-                self.ground_acceleration
-            }
-        } else {
-            self.aerial_acceleration
-        };
-        self.direction.map(|dir| dir * acceleration)
-    }
-}
-
 impl Default for Walking {
     fn default() -> Self {
         Self {

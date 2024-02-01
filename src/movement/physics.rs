@@ -1,3 +1,4 @@
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -24,16 +25,17 @@ pub(crate) fn read_colliders(
     let _span = info_span!("read_colliders").entered();
     for (entity, name) in &added_name {
         if name.to_lowercase().contains("[collider]") {
-            for (collider_entity, collider_mesh) in
-                Mesh::search_in_children(entity, &children, &meshes, &mesh_handles)
-            {
-                let collider = Collider::trimesh_from_mesh(&collider_mesh)
-                    .context("Failed to create collider from mesh")?;
+            let mesh = Mesh::find_mesh(entity, &children, &meshes, &mesh_handles)
+                .context("Failed to find mesh for collider")?;
+            let collider =
+                Collider::trimesh_from_mesh(mesh).context("Failed to create collider from mesh")?;
 
-                commands
-                    .entity(collider_entity)
-                    .insert((collider, NavMeshAffector));
-            }
+            commands.entity(entity).insert((
+                collider,
+                RigidBody::Static,
+                CollisionLayers::new([CollisionLayer::Solid], [CollisionLayer::Solid]),
+                NavMeshAffector,
+            ));
         }
     }
     Ok(())

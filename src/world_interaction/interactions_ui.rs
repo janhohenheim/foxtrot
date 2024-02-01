@@ -9,7 +9,6 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
-use bevy_xpbd_3d::parry::math::Translation;
 use bevy_xpbd_3d::prelude::*;
 use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
@@ -43,31 +42,32 @@ pub(crate) struct InteractionOpportunity(pub(crate) Option<Entity>);
 fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<&Transform, With<Player>>,
+    parents: Query<&Parent>,
     target_query: Query<&Transform, (With<DialogTarget>, Without<Player>, Without<IngameCamera>)>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
+    interaction_opportunity.0 = None;
     for Collision(ref contacts) in collisions.read() {
         // Check if we are colliding
-        let Some((player, target)) = get_player_and_target(
-            &player_query,
-            &target_query,
-            contacts.entity1,
-            contacts.entity2,
-        ) else {
+        let Some((player, sensor)) =
+            get_player_and_target(&player_query, contacts.entity1, contacts.entity2)
+        else {
             continue;
         };
-        warn!("Got an interaction!");
+        let Ok(target) = parents.get(sensor).map(Parent::get) else {
+            continue;
+        };
 
-        interaction_opportunity.0 = None;
+        let Ok(target_translation) = target_query.get(target).map(|t| t.translation) else {
+            continue;
+        };
+
         if !contacts.during_current_frame {
-            error!("Not ongoing!");
             continue;
         }
-        warn!("ongoing!");
 
         // Check if we are facing the right way
-        let target_translation = target_query.get(target).unwrap().translation;
         let player_translation = player_query.get(player).unwrap().translation;
         let Some((camera, camera_transform)) = camera_query.iter().next() else {
             continue;
@@ -87,13 +87,12 @@ fn update_interaction_opportunities(
 
 fn get_player_and_target(
     player_query: &Query<&Transform, With<Player>>,
-    target_query: &Query<&Transform, (With<DialogTarget>, Without<Player>, Without<IngameCamera>)>,
     entity_a: Entity,
     entity_b: Entity,
 ) -> Option<(Entity, Entity)> {
-    if player_query.get(entity_a).is_ok() && target_query.get(entity_b).is_ok() {
+    if player_query.get(entity_a).is_ok() {
         Some((entity_a, entity_b))
-    } else if player_query.get(entity_b).is_ok() && target_query.get(entity_a).is_ok() {
+    } else if player_query.get(entity_b).is_ok() {
         Some((entity_b, entity_a))
     } else {
         None

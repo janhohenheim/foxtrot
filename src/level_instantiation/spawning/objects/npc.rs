@@ -1,7 +1,9 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
+use crate::movement::general_movement::{
+    CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
+};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
@@ -52,7 +54,7 @@ pub(crate) fn spawn(
                 SceneBundle {
                     scene: scene_handles.character.clone(),
                     transform: Transform {
-                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
+                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS - FLOAT_HEIGHT, 0.),
                         scale: Vec3::splat(0.012),
                         rotation: Quat::from_rotation_y(TAU / 2.),
                     },

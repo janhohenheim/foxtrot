@@ -56,12 +56,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 #[sysfail(log(level = "error"))]
 fn handle_horizontal_movement(
     mut player_query: Query<
-        (
-            &ActionState<PlayerAction>,
-            &mut Walking,
-            &mut Sprinting,
-            &Transform,
-        ),
+        (&ActionState<PlayerAction>, &mut Walking, &mut Sprinting),
         With<Player>,
     >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
@@ -72,22 +67,20 @@ fn handle_horizontal_movement(
         return Ok(());
     };
 
-    for (actions, mut walk, mut sprint, player_transform) in &mut player_query {
+    for (actions, mut walk, mut sprint) in &mut player_query {
         let Some(axis) = actions.axis_pair(PlayerAction::Move) else {
             continue;
         };
         if let Some(movement) = axis.max_normalized() {
-            let up = player_transform.up();
             let forward = if camera.kind == IngameCameraKind::FixedAngle {
                 camera_transform.up()
             } else {
                 camera_transform.forward()
             }
-            .split(up)
-            .horizontal
+            .horizontal()
             .normalize();
 
-            let sideways = forward.cross(up);
+            let sideways = forward.cross(Vec3::Y);
             let forward_action = forward * movement.y;
             let sideways_action = sideways * movement.x;
 
@@ -117,10 +110,9 @@ fn handle_camera_kind(
         for (mut player_transform, mut visibility) in with_player.iter_mut() {
             match camera.kind {
                 IngameCameraKind::FirstPerson => {
-                    let up = player_transform.up();
-                    let horizontal_direction = camera_transform.forward().split(up).horizontal;
+                    let horizontal_direction = camera_transform.forward().horizontal();
                     let looking_target = player_transform.translation + horizontal_direction;
-                    player_transform.look_at(looking_target, up);
+                    player_transform.look_at(looking_target, Vec3::Y);
                     *visibility = Visibility::Hidden;
                 }
                 IngameCameraKind::ThirdPerson | IngameCameraKind::FixedAngle => {
@@ -139,7 +131,8 @@ fn handle_speed_effects(
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_speed_effects").entered();
     for velocity in velocities.iter() {
-        let speed_squared = velocity.length_squared();
+        let horizontal_velocity = velocity.horizontal();
+        let speed_squared = horizontal_velocity.length_squared();
         for mut projection in projections.iter_mut() {
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
                 let fov_saturation_speed = config.player.fov_saturation_speed;
@@ -187,17 +180,17 @@ fn rotate_to_speaker(
 #[sysfail(log(level = "error"))]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
-    character_query: Query<(&Transform, &LinearVelocity, &TnuaController), With<Player>>,
+    character_query: Query<(&LinearVelocity, &TnuaController), With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("control_walking_sound").entered();
-    for (transform, velocity, controller) in character_query.iter() {
+    for (velocity, controller) in character_query.iter() {
         let audio_instance = audio_instances
             .get_mut(&audio.walking)
             .context("Failed to get audio instance from handle")?;
-        let has_horizontal_movement = !velocity.split(transform.up()).horizontal.is_approx_zero();
+        let has_horizontal_movement = !velocity.horizontal().is_approx_zero();
         let is_moving_on_ground = has_horizontal_movement && !controller.is_airborne()?;
         if is_moving_on_ground && !time.is_paused() {
             audio_instance.resume(default());

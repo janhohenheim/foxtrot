@@ -22,6 +22,8 @@ pub(crate) struct CharacterControllerBundle {
     pub(crate) animation_state: TnuaAnimatingState<AnimationState>,
 }
 
+pub(crate) const FLOAT_HEIGHT: f32 = 0.1;
+
 impl CharacterControllerBundle {
     pub(crate) fn capsule(height: f32, radius: f32) -> Self {
         Self {
@@ -37,7 +39,7 @@ impl CharacterControllerBundle {
             ),
             tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(height * 0.9, radius * 0.9)),
             tnua_controller: default(),
-            float_height: FloatHeight(height / 2. + 0.001),
+            float_height: FloatHeight(FLOAT_HEIGHT),
             animation_state: default(),
         }
     }
@@ -97,7 +99,7 @@ pub(crate) struct FloatHeight(pub(crate) f32);
 impl Default for Jumping {
     fn default() -> Self {
         Self {
-            height: 3.,
+            height: 0.75,
             requested: false,
         }
     }

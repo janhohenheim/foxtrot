@@ -1,6 +1,8 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
+use crate::movement::general_movement::{
+    CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
+};
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
@@ -40,7 +42,7 @@ pub(crate) fn spawn(
                 SceneBundle {
                     scene: scene_handles.character.clone(),
                     transform: Transform {
-                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
+                        translation: Vec3::new(0., (-HEIGHT / 2. - RADIUS) - FLOAT_HEIGHT, 0.),
                         rotation: Quat::from_rotation_y(TAU / 2.),
                         scale: Vec3::splat(0.01),
                     },

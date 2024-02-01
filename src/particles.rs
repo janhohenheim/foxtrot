@@ -34,17 +34,14 @@ fn play_sprinting_effect(
     config: Res<GameConfig>,
 ) -> Result<()> {
     for (player_transform, controller, velocity) in with_player.iter() {
-        let horizontal_speed_squared = velocity
-            .split(player_transform.up())
-            .horizontal
-            .length_squared();
+        let horizontal_speed_squared = velocity.horizontal().length_squared();
         for (mut particle_transform, mut effect_spawner) in with_particle.iter_mut() {
             let threshold = config.player.sprint_effect_speed_threshold;
             if !controller.is_airborne().unwrap_or_default()
                 && horizontal_speed_squared > threshold.squared()
             {
-                let translation = player_transform.translation
-                    - player_transform.up() * (player::HEIGHT / 2. + player::RADIUS);
+                let translation = player_transform.translation.horizontal()
+                    - Vec3::Y * (player::HEIGHT / 2. + player::RADIUS);
                 *particle_transform = player_transform.with_translation(translation);
                 effect_spawner.set_active(true);
             } else {

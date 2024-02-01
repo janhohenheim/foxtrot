@@ -16,7 +16,11 @@ pub(crate) fn dev_plugin(app: &mut App) {
             .add_plugins(FrameTimeDiagnosticsPlugin)
             .fn_plugin(dev_editor_plugin)
             .add_plugins(LogDiagnosticsPlugin::filtered(vec![]))
-            .add_plugins(PhysicsDebugPlugin::default());
+            .add_plugins(PhysicsDebugPlugin::default())
+            .insert_resource(PhysicsDebugConfig {
+                enabled: false,
+                ..default()
+            });
     }
 }
 

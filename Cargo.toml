@@ -58,7 +58,7 @@ winit = { version = "0.28.7", default-features = false }
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_render/Cargo.toml#L57
 image = { version = "0.24", default-features = false }
 bevy-tnua-xpbd3d = "0.1"
-bevy_xpbd_3d = "0.3"
+bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
 bevy-tnua = "0.14.1"
 
 [dependencies.bevy]

@@ -40,8 +40,7 @@ pub(crate) fn spawn(
             parent.spawn((
                 Name::new("NPC Dialog Collider"),
                 Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
-                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Solid]),
-                RigidBody::Static,
+                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
                 Sensor,
                 DialogTarget {
                     speaker: "The Follower".to_string(),

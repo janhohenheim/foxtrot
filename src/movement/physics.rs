@@ -34,8 +34,8 @@ pub(crate) fn read_colliders(
                 collider,
                 RigidBody::Static,
                 CollisionLayers::new(
-                    [CollisionLayer::Solid, CollisionLayer::CameraObstacle],
-                    [CollisionLayer::Solid],
+                    [CollisionLayer::Terrain, CollisionLayer::CameraObstacle],
+                    [CollisionLayer::Character],
                 ),
                 NavMeshAffector,
             ));

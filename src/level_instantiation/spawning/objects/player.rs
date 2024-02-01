@@ -1,4 +1,5 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
 use crate::movement::general_movement::{
     CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
@@ -19,6 +20,11 @@ pub(crate) fn spawn(
     animations: Res<AnimationAssets>,
     scene_handles: Res<SceneAssets>,
 ) {
+    let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS);
+    controller.collision_layers = controller
+        .collision_layers
+        .add_group(CollisionLayer::Player);
+
     commands
         .spawn((
             PbrBundle {
@@ -27,7 +33,7 @@ pub(crate) fn spawn(
             },
             Player,
             Name::new("Player"),
-            CharacterControllerBundle::capsule(HEIGHT, RADIUS),
+            controller,
             CharacterAnimations {
                 idle: animations.character_idle.clone(),
                 walk: animations.character_walking.clone(),

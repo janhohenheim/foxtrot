@@ -34,8 +34,13 @@ impl CharacterControllerBundle {
             rigid_body: RigidBody::Dynamic,
             locked_axes: LockedAxes::new().lock_rotation_x().lock_rotation_z(),
             collision_layers: CollisionLayers::new(
-                [CollisionLayer::Solid],
-                [CollisionLayer::Solid],
+                [CollisionLayer::Character],
+                [
+                    CollisionLayer::Player,
+                    CollisionLayer::Character,
+                    CollisionLayer::Terrain,
+                    CollisionLayer::Sensor,
+                ],
             ),
             tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(height * 0.9, radius * 0.9)),
             tnua_controller: default(),

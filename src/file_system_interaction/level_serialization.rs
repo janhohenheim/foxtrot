@@ -1,10 +1,9 @@
 use crate::file_system_interaction::asset_loading::LevelAssets;
 use crate::level_instantiation::spawning::GameObject;
 use crate::world_interaction::condition::ActiveConditions;
-use crate::world_interaction::interactions_ui::InteractionOpportunities;
+use crate::world_interaction::interactions_ui::InteractionOpportunity;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-
 use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
@@ -129,7 +128,7 @@ fn load_world(
         commands.insert_resource(CurrentLevel {
             scene: load.filename.clone(),
         });
-        commands.insert_resource(InteractionOpportunities::default());
+        commands.insert_resource(InteractionOpportunity::default());
         commands.insert_resource(ActiveConditions::default());
 
         info!("Successfully loaded scene \"{}\"", load.filename,)

@@ -3,7 +3,7 @@ use bevy::render::mesh::{MeshVertexAttributeId, VertexAttributeValues};
 
 pub(crate) trait Vec3Ext: Copy {
     fn is_approx_zero(self) -> bool;
-    fn split(self, up: Vec3) -> SplitVec3;
+    fn horizontal(self) -> Vec3;
 }
 impl Vec3Ext for Vec3 {
     #[inline]
@@ -12,13 +12,8 @@ impl Vec3Ext for Vec3 {
     }
 
     #[inline]
-    fn split(self, up: Vec3) -> SplitVec3 {
-        let vertical = up * self.dot(up);
-        let horizontal = self - vertical;
-        SplitVec3 {
-            vertical,
-            horizontal,
-        }
+    fn horizontal(self) -> Vec3 {
+        Vec3::new(self.x, 0., self.z)
     }
 }
 

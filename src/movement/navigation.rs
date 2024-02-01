@@ -102,11 +102,7 @@ fn query_mesh(
                     }
                     let dir = path
                         .into_iter()
-                        .map(|next_point| {
-                            (next_point - from)
-                                .split(follower_transform.up())
-                                .horizontal
-                        })
+                        .map(|next_point| (next_point - from).horizontal())
                         .filter(|dir| dir.length_squared() > 1e-3f32.squared())
                         .filter_map(|dir| dir.try_normalize())
                         .next();

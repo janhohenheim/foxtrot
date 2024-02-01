@@ -71,7 +71,7 @@ pub(crate) fn play_animations(
                     animation_player
                         .play_with_transition(
                             animations.walk.clone_weak(),
-                            Duration::from_secs_f32(0.2),
+                            Duration::from_secs_f32(0.1),
                         )
                         .repeat();
                 }

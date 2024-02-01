@@ -33,15 +33,17 @@ pub(crate) enum AnimationState {
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub(crate) struct GeneralMovementSystemSet;
 
-pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &Jumping)>) {
+pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jumping)>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_jumping").entered();
-    for (mut controller, jump) in &mut character_query {
+    for (mut controller, mut jump) in &mut character_query {
         if jump.requested {
             controller.action(TnuaBuiltinJump {
                 height: jump.height,
+                takeoff_extra_gravity: 10.0,
                 ..Default::default()
             });
+            jump.requested = false;
         }
     }
 }
@@ -67,6 +69,7 @@ pub(crate) fn apply_walking(
             desired_velocity: direction * speed,
             desired_forward: direction.normalize_or_zero(),
             float_height: float_height.0,
+            cling_distance: float_height.0 * 2.0,
             ..Default::default()
         });
         walking.direction = None;

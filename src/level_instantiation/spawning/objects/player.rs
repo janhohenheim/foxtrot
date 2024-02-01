@@ -1,18 +1,11 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{
-    AnimationState, CharacterAnimations, CharacterControllerBundle, Model,
-};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
 use crate::player_control::player_embodiment::Player;
 use bevy::prelude::*;
-use bevy_tnua::prelude::*;
-use bevy_tnua::TnuaAnimatingState;
-use bevy_tnua_xpbd3d::TnuaXpbd3dSensorShape;
-use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 
 pub(crate) const HEIGHT: f32 = 0.4;

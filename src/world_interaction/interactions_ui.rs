@@ -6,7 +6,6 @@ use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::utils::HashSet;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
@@ -17,71 +16,54 @@ use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 pub(crate) fn interactions_ui_plugin(app: &mut App) {
-    app.register_type::<InteractionOpportunities>()
-        .init_resource::<InteractionOpportunities>()
+    app.register_type::<InteractionOpportunity>()
+        .init_resource::<InteractionOpportunity>()
         .add_systems(
             Update,
-            (update_interaction_opportunities, update_interaction_ui)
+            (update_interaction_opportunities)
                 .chain()
                 .run_if(in_state(GameState::Playing)),
         )
         .add_systems(
             Update,
             display_interaction_prompt.run_if(
-                resource_exists::<InteractionUi>()
-                    .and_then(not(is_frozen))
+                not(is_frozen)
                     .and_then(in_state(GameState::Playing))
                     .and_then(any_with_component::<DialogueRunner>()),
             ),
         );
 }
 
-#[derive(Resource, Debug)]
-pub(crate) struct InteractionUi {
-    source: Entity,
-}
-
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub(crate) struct InteractionOpportunities(pub(crate) HashSet<Entity>);
+pub(crate) struct InteractionOpportunity(pub(crate) Option<Entity>);
 
+#[sysfail(log(level = "error"))]
 fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<Entity, With<Player>>,
-    parent_query: Query<&Parent>,
-    mut interaction_opportunities: ResMut<InteractionOpportunities>,
-) {
-    for event in collisions.read() {
-        let (entity_a, entity_b, ongoing) = unpack_event(event);
-
-        let (_player_entity, target_entity) =
-            match determine_player_and_target(&player_query, &parent_query, entity_a, entity_b) {
-                Some((dialog_source, dialog_target)) => (dialog_source, dialog_target),
-                None => continue,
-            };
-        if ongoing {
-            interaction_opportunities.0.insert(target_entity);
-        } else {
-            interaction_opportunities.0.remove(&target_entity);
-        }
-    }
-}
-
-#[sysfail(log(level = "error"))]
-fn update_interaction_ui(
-    mut commands: Commands,
-    interaction_ui: Option<ResMut<InteractionUi>>,
+    player_transform_query: Query<&Transform, With<Player>>,
     non_player_query: Query<&Transform, (Without<Player>, Without<IngameCamera>)>,
-    player_query: Query<&Transform, (With<Player>, Without<IngameCamera>)>,
-    interaction_opportunities: Res<InteractionOpportunities>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
+    mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
-    let mut valid_target = None;
-    for entity in interaction_opportunities.0.iter() {
+    interaction_opportunity.0 = None;
+    for event in collisions.read() {
+        // Check if we are colliding
+        let (entity_a, entity_b, ongoing) = unpack_event(event);
+        if !ongoing {
+            continue;
+        }
+
+        let Some(target_entity) = get_target_entity(&player_query, entity_a, entity_b) else {
+            continue;
+        };
+
+        // Check if we are facing the right way
         let target_transform = non_player_query
-            .get(*entity)
+            .get(target_entity)
             .context("Failed to get transform of interaction target")?;
-        for player_transform in player_query.iter() {
+        for player_transform in player_transform_query.iter() {
             for (camera, camera_transform) in camera_query.iter() {
                 let is_facing_target = is_facing_target(
                     *player_transform,
@@ -90,24 +72,11 @@ fn update_interaction_ui(
                     camera,
                 );
                 if is_facing_target {
-                    valid_target = Some(*entity);
-                    break;
+                    interaction_opportunity.0.replace(target_entity);
                 }
             }
         }
     }
-    if let Some(mut interaction_ui) = interaction_ui {
-        if let Some(valid_target) = valid_target {
-            interaction_ui.source = valid_target;
-        } else {
-            commands.remove_resource::<InteractionUi>();
-        }
-    } else if let Some(valid_target) = valid_target {
-        commands.insert_resource(InteractionUi {
-            source: valid_target,
-        });
-    }
-
     Ok(())
 }
 
@@ -120,26 +89,15 @@ fn unpack_event(collision: &Collision) -> (Entity, Entity, bool) {
     )
 }
 
-fn determine_player_and_target(
+fn get_target_entity(
     player_query: &Query<Entity, With<Player>>,
-    parent_query: &Query<&Parent>,
     entity_a: Entity,
     entity_b: Entity,
-) -> Option<(Entity, Entity)> {
+) -> Option<Entity> {
     if player_query.get(entity_a).is_ok() {
-        let player_entity = entity_a;
-        let target_entity = parent_query
-            .get(entity_b)
-            .map(|parent| parent.get())
-            .unwrap_or(entity_b);
-        Some((player_entity, target_entity))
+        Some(entity_b)
     } else if player_query.get(entity_b).is_ok() {
-        let player_entity = entity_b;
-        let target_entity = parent_query
-            .get(entity_a)
-            .map(|parent| parent.get())
-            .unwrap_or(entity_a);
-        Some((player_entity, target_entity))
+        Some(entity_a)
     } else {
         None
     }
@@ -162,7 +120,7 @@ fn is_facing_target(
 
 #[sysfail(log(level = "error"))]
 fn display_interaction_prompt(
-    interaction_ui: Res<InteractionUi>,
+    interaction_opportunity: Res<InteractionOpportunity>,
     mut dialogue_runner: Query<&mut DialogueRunner>,
     mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
@@ -170,6 +128,12 @@ fn display_interaction_prompt(
     dialog_target_query: Query<&DialogTarget>,
     mut freeze: ResMut<ActionsFrozen>,
 ) -> Result<()> {
+    let Some(dialog_target) = interaction_opportunity
+        .0
+        .and_then(|e| dialog_target_query.get(e).ok())
+    else {
+        return Ok(());
+    };
     for actions in actions.iter() {
         let window = primary_windows
             .get_single()
@@ -183,11 +147,9 @@ fn display_interaction_prompt(
                 ui.label("E: Talk");
             });
         if actions.just_pressed(PlayerAction::Interact) {
-            if let Ok(dialog_target) = dialog_target_query.get(interaction_ui.source) {
-                let mut dialogue_runner = dialogue_runner.single_mut();
-                dialogue_runner.start_node(&dialog_target.node);
-                freeze.freeze();
-            }
+            let mut dialogue_runner = dialogue_runner.single_mut();
+            dialogue_runner.start_node(&dialog_target.node);
+            freeze.freeze();
         }
     }
     Ok(())

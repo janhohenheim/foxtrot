@@ -35,6 +35,10 @@ pub(crate) fn spawn(
                 aerial: animations.character_running.clone(),
             },
             GameObject::Npc,
+            DialogTarget {
+                speaker: "The Follower".to_string(),
+                node: "Follower".to_string(),
+            },
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -42,10 +46,6 @@ pub(crate) fn spawn(
                 Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
                 CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
                 Sensor,
-                DialogTarget {
-                    speaker: "The Follower".to_string(),
-                    node: "Follower".to_string(),
-                },
             ));
         })
         .with_children(|parent| {

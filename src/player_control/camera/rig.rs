@@ -7,7 +7,7 @@ use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
@@ -21,8 +21,8 @@ pub(crate) fn update_rig(
         &ActionState<CameraAction>,
         &Transform,
     )>,
-    rapier_context: Res<RapierContext>,
     config: Res<GameConfig>,
+    spatial_query: SpatialQuery,
 ) -> Result<()> {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
@@ -40,7 +40,7 @@ pub(crate) fn update_rig(
         }
 
         set_desired_distance(&mut camera, actions, &config);
-        let distance = get_arm_distance(&camera, transform, &rapier_context, &config);
+        let distance = get_arm_distance(&camera, transform, &spatial_query, &config);
         if let Some(distance) = distance {
             let zoom_smoothness = get_zoom_smoothness(&config, &camera, &rig, distance);
             set_arm(&mut rig, distance, zoom_smoothness, dt);

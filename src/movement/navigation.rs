@@ -9,7 +9,7 @@ use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::Collider;
+use bevy_xpbd_3d::prelude::Collider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{

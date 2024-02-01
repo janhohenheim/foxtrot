@@ -1,54 +1,17 @@
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Bundle)]
 pub(crate) struct CharacterControllerBundle {
-    pub(crate) gravity_scale: GravityScale,
-    pub(crate) mass: ColliderMassProperties,
-    pub(crate) read_mass: ReadMassProperties,
     pub(crate) walking: Walking,
     pub(crate) jumping: Jumping,
-    pub(crate) grounded: Grounded,
-    pub(crate) damping: Damping,
-    pub(crate) rigid_body: RigidBody,
-    pub(crate) locked_axes: LockedAxes,
-    pub(crate) collider: Collider,
-    pub(crate) force: ExternalForce,
-    pub(crate) impulse: ExternalImpulse,
-    pub(crate) velocity: Velocity,
-    pub(crate) dominance: Dominance,
 }
 
 impl Default for CharacterControllerBundle {
     fn default() -> Self {
         Self {
-            read_mass: default(),
-            gravity_scale: GravityScale(1.0),
-            force: default(),
-            mass: ColliderMassProperties::Mass(3.0),
             walking: default(),
             jumping: default(),
-            grounded: default(),
-            damping: Damping {
-                linear_damping: 1.5,
-                ..default()
-            },
-            collider: default(),
-            rigid_body: RigidBody::Dynamic,
-            locked_axes: LockedAxes::ROTATION_LOCKED,
-            impulse: default(),
-            velocity: default(),
-            dominance: default(),
-        }
-    }
-}
-
-impl CharacterControllerBundle {
-    pub(crate) fn capsule(height: f32, radius: f32) -> Self {
-        Self {
-            collider: Collider::capsule_y(height / 2., radius),
-            ..default()
         }
     }
 }
@@ -105,10 +68,6 @@ impl Default for Walking {
         }
     }
 }
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Default, Serialize, Deserialize)]
-#[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Grounded(pub(crate) bool);
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]

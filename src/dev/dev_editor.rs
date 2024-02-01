@@ -14,7 +14,7 @@ use bevy_editor_pls::{
 use bevy_egui::egui;
 use bevy_egui::egui::ScrollArea;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::PhysicsDebugConfig;
 
 use serde::{Deserialize, Serialize};
 use spew::prelude::*;
@@ -145,12 +145,18 @@ impl Default for DevEditorState {
 #[sysfail(log(level = "error"))]
 fn handle_debug_render(
     state: Res<Editor>,
-    mut debug_render_context: ResMut<DebugRenderContext>,
+    mut last_enabled: Local<bool>,
+    mut debug_config: ResMut<PhysicsDebugConfig>,
 ) -> Result<()> {
-    debug_render_context.enabled = state
+    let current_enabled = state
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
         .collider_render_enabled;
+    if current_enabled == *last_enabled {
+        return Ok(());
+    }
+    *last_enabled = current_enabled;
+    debug_config.enabled = current_enabled;
     Ok(())
 }
 

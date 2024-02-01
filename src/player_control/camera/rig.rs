@@ -3,11 +3,11 @@ use crate::player_control::actions::CameraAction;
 use crate::player_control::camera::rig::arm::{get_arm_distance, get_zoom_smoothness, set_arm};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::util::trait_extension::Vec2Ext;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
@@ -21,8 +21,8 @@ pub(crate) fn update_rig(
         &ActionState<CameraAction>,
         &Transform,
     )>,
-    rapier_context: Res<RapierContext>,
     config: Res<GameConfig>,
+    spatial_query: SpatialQuery,
 ) -> Result<()> {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
@@ -33,14 +33,14 @@ pub(crate) fn update_rig(
             yaw_pitch.yaw_degrees = 0.;
             yaw_pitch.pitch_degrees = config.camera.fixed_angle.pitch;
         } else {
-            let camera_movement = get_camera_movement(actions)?;
+            let camera_movement = get_camera_movement(actions);
             if !camera_movement.is_approx_zero() {
                 set_yaw_pitch(&mut rig, &camera, camera_movement, &config);
             }
         }
 
         set_desired_distance(&mut camera, actions, &config);
-        let distance = get_arm_distance(&camera, transform, &rapier_context, &config);
+        let distance = get_arm_distance(&camera, transform, &spatial_query, &config);
         if let Some(distance) = distance {
             let zoom_smoothness = get_zoom_smoothness(&config, &camera, &rig, distance);
             set_arm(&mut rig, distance, zoom_smoothness, dt);
@@ -51,11 +51,11 @@ pub(crate) fn update_rig(
     Ok(())
 }
 
-fn get_camera_movement(actions: &ActionState<CameraAction>) -> Result<Vec2> {
+fn get_camera_movement(actions: &ActionState<CameraAction>) -> Vec2 {
     actions
         .axis_pair(CameraAction::Orbit)
-        .context("Camera movement is not an axis pair")
         .map(|pair| pair.xy())
+        .unwrap_or_default()
 }
 
 fn set_yaw_pitch(rig: &mut Rig, camera: &IngameCamera, camera_movement: Vec2, config: &GameConfig) {

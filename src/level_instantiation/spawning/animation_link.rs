@@ -1,4 +1,3 @@
-use crate::movement::general_movement::Model;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -16,7 +15,6 @@ pub(crate) fn link_animations(
     player_query: Query<Entity, Added<AnimationPlayer>>,
     parent_query: Query<&Parent>,
     animations_entity_link_query: Query<&AnimationEntityLink>,
-    models: Query<&Model>,
     mut commands: Commands,
 ) {
     #[cfg(feature = "tracing")]
@@ -26,13 +24,8 @@ pub(crate) fn link_animations(
         if animations_entity_link_query.get(top_entity).is_ok() {
             warn!("Multiple `AnimationPlayer`s are ambiguous for the same top parent");
         } else {
-            let link_target = if let Ok(model) = models.get(top_entity) {
-                model.target
-            } else {
-                top_entity
-            };
             commands
-                .entity(link_target)
+                .entity(top_entity)
                 .insert(AnimationEntityLink(entity));
         }
     }

@@ -1,22 +1,15 @@
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub(crate) fn physics_plugin(app: &mut App) {
-    app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        .insert_resource(RapierConfiguration {
-            timestep_mode: TimestepMode::Variable {
-                max_dt: 1.0 / 20.0,
-                time_scale: 1.0,
-                substeps: 4,
-            },
-            ..default()
-        })
+    app.add_plugins(PhysicsPlugins::default())
         .add_systems(Update, read_colliders.run_if(in_state(GameState::Playing)));
 }
 
@@ -32,17 +25,20 @@ pub(crate) fn read_colliders(
     let _span = info_span!("read_colliders").entered();
     for (entity, name) in &added_name {
         if name.to_lowercase().contains("[collider]") {
-            for (collider_entity, collider_mesh) in
-                Mesh::search_in_children(entity, &children, &meshes, &mesh_handles)
-            {
-                let rapier_collider =
-                    Collider::from_bevy_mesh(collider_mesh, &ComputedColliderShape::TriMesh)
-                        .context("Failed to create collider from mesh")?;
+            let mesh = Mesh::find_mesh(entity, &children, &meshes, &mesh_handles)
+                .context("Failed to find mesh for collider")?;
+            let collider =
+                Collider::trimesh_from_mesh(mesh).context("Failed to create collider from mesh")?;
 
-                commands
-                    .entity(collider_entity)
-                    .insert((rapier_collider, NavMeshAffector));
-            }
+            commands.entity(entity).insert((
+                collider,
+                RigidBody::Static,
+                CollisionLayers::new(
+                    [CollisionLayer::Terrain, CollisionLayer::CameraObstacle],
+                    [CollisionLayer::Character],
+                ),
+                NavMeshAffector,
+            ));
         }
     }
     Ok(())

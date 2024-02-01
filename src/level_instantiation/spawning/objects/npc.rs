@@ -1,11 +1,11 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instantiation::spawning::objects::GameCollisionGroup;
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
 use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 
 pub(crate) const HEIGHT: f32 = 0.4;
@@ -24,7 +24,8 @@ pub(crate) fn spawn(
                 ..default()
             },
             Name::new("NPC"),
-            CharacterControllerBundle::capsule(HEIGHT, RADIUS),
+            CharacterControllerBundle::default(),
+            Collider::capsule(HEIGHT, RADIUS),
             Follower,
             CharacterAnimations {
                 idle: animations.character_idle.clone(),
@@ -41,13 +42,9 @@ pub(crate) fn spawn(
             parent.spawn((
                 Name::new("NPC Dialog Collider"),
                 Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
+                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
+                RigidBody::Static,
                 Sensor,
-                ActiveEvents::COLLISION_EVENTS,
-                ActiveCollisionTypes::DYNAMIC_DYNAMIC,
-                CollisionGroups::new(
-                    GameCollisionGroup::OTHER.into(),
-                    GameCollisionGroup::PLAYER.into(),
-                ),
             ));
         })
         .id();

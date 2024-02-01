@@ -1,13 +1,17 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instantiation::spawning::objects::GameCollisionGroup;
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
+use crate::movement::general_movement::{
+    AnimationState, CharacterAnimations, CharacterControllerBundle, Model,
+};
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
 use crate::player_control::player_embodiment::Player;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
+use bevy_tnua::prelude::*;
+use bevy_tnua::TnuaAnimatingState;
+use bevy_tnua_xpbd3d::TnuaXpbd3dSensorShape;
+use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 
 pub(crate) const HEIGHT: f32 = 0.4;
@@ -27,17 +31,17 @@ pub(crate) fn spawn(
             },
             Player,
             Name::new("Player"),
-            Ccd::enabled(),
-            CharacterControllerBundle::capsule(HEIGHT, RADIUS),
+            RigidBody::Dynamic,
+            CharacterControllerBundle::default(),
+            Collider::capsule(HEIGHT, RADIUS),
+            TnuaXpbd3dSensorShape(Collider::capsule(HEIGHT * 0.9, RADIUS * 0.9)),
+            TnuaAnimatingState::<AnimationState>::default(),
             CharacterAnimations {
                 idle: animations.character_idle.clone(),
                 walk: animations.character_walking.clone(),
                 aerial: animations.character_running.clone(),
             },
-            CollisionGroups::new(
-                GameCollisionGroup::PLAYER.into(),
-                GameCollisionGroup::ALL.into(),
-            ),
+            TnuaControllerBundle::default(),
             create_player_action_input_manager_bundle(),
             create_ui_action_input_manager_bundle(),
             GameObject::Player,

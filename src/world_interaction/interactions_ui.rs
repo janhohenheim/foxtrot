@@ -10,7 +10,7 @@ use bevy::utils::HashSet;
 use bevy::window::PrimaryWindow;
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::*;
+use bevy_xpbd_3d::prelude::*;
 use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -46,12 +46,12 @@ pub(crate) struct InteractionUi {
 pub(crate) struct InteractionOpportunities(pub(crate) HashSet<Entity>);
 
 fn update_interaction_opportunities(
-    mut collision_events: EventReader<CollisionEvent>,
+    mut collisions: EventReader<Collision>,
     player_query: Query<Entity, With<Player>>,
     parent_query: Query<&Parent>,
     mut interaction_opportunities: ResMut<InteractionOpportunities>,
 ) {
-    for event in collision_events.read() {
+    for event in collisions.read() {
         let (entity_a, entity_b, ongoing) = unpack_event(event);
 
         let (_player_entity, target_entity) =
@@ -111,11 +111,13 @@ fn update_interaction_ui(
     Ok(())
 }
 
-fn unpack_event(event: &CollisionEvent) -> (Entity, Entity, bool) {
-    match event {
-        CollisionEvent::Started(entity_a, entity_b, _kind) => (*entity_a, *entity_b, true),
-        CollisionEvent::Stopped(entity_a, entity_b, _kind) => (*entity_a, *entity_b, false),
-    }
+fn unpack_event(collision: &Collision) -> (Entity, Entity, bool) {
+    let contacts = &collision.0;
+    (
+        contacts.entity1,
+        contacts.entity2,
+        contacts.during_current_frame,
+    )
 }
 
 fn determine_player_and_target(

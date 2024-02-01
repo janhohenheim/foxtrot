@@ -20,11 +20,6 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         .register_type::<Despawn>()
         .register_type::<AnimationEntityLink>()
         .add_spawners((
-            (GameObject::Empty, objects::primitives::spawn_empty),
-            (GameObject::Box, objects::primitives::spawn_box),
-            (GameObject::Triangle, objects::primitives::spawn_triangle),
-            (GameObject::Sphere, objects::primitives::spawn_sphere),
-            (GameObject::Capsule, objects::primitives::spawn_capsule),
             (GameObject::Sunlight, objects::sunlight::spawn),
             (GameObject::PointLight, objects::point_light::spawn),
             (GameObject::Npc, objects::npc::spawn),
@@ -62,10 +57,6 @@ pub(crate) fn spawning_plugin(app: &mut App) {
 pub(crate) enum GameObject {
     #[default]
     Empty,
-    Box,
-    Triangle,
-    Sphere,
-    Capsule,
     Sunlight,
     PointLight,
     Npc,

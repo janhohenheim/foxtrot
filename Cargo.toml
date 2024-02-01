@@ -34,7 +34,7 @@ ron = "0.8"
 regex = "1"
 chrono = "0.4"
 glob = "0.3"
-oxidized_navigation = { version = "0.8", features = ["rapier", "debug_draw"] }
+oxidized_navigation = { version = "0.8", features = ["xpbd", "debug_draw"] }
 bitflags = "2"
 iyes_progress = "0.10"
 unicode-segmentation = "1"
@@ -46,8 +46,6 @@ bevy_dolly = "0.0.2"
 spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
-# Using outdated version until oxidized_navigation updates: https://github.com/TheGrimsey/oxidized_navigation/pull/21
-bevy_rapier3d = { version = "0.23", features = [ "serde-serialize", "simd-stable", "parallel" ] }
 bevy_editor_pls = { version = "0.7", optional = true }
 bevy_hanabi = "0.9"
 
@@ -59,6 +57,9 @@ bevy_yarnspinner_example_dialogue_view = "0.1"
 winit = { version = "0.28.7", default-features = false }
 ## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_render/Cargo.toml#L57
 image = { version = "0.24", default-features = false }
+bevy-tnua-xpbd3d = "0.1"
+bevy_xpbd_3d = "0.3"
+bevy-tnua = "0.14.1"
 
 [dependencies.bevy]
 version = "0.12.1"

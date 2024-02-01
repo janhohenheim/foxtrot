@@ -3,6 +3,7 @@ use crate::GameState;
 use bevy::app::AppExit;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
+use bevy_xpbd_3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
@@ -12,6 +13,7 @@ pub(crate) fn ingame_menu_plugin(app: &mut App) {
 
 fn handle_pause(
     mut time: ResMut<Time<Virtual>>,
+    mut physics_time: ResMut<Time<Physics>>,
     actions: Query<&ActionState<UiAction>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut actions_frozen: ResMut<ActionsFrozen>,
@@ -24,6 +26,7 @@ fn handle_pause(
             if toggled {
                 *paused = false;
                 time.unpause();
+                physics_time.unpause();
                 actions_frozen.unfreeze();
             } else {
                 egui::CentralPanel::default()
@@ -51,6 +54,7 @@ fn handle_pause(
         } else if toggled {
             *paused = true;
             time.pause();
+            physics_time.pause();
             actions_frozen.freeze();
         }
     }

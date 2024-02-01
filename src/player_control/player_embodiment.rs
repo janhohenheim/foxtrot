@@ -1,6 +1,6 @@
 use crate::file_system_interaction::audio::AudioHandles;
 use crate::file_system_interaction::config::GameConfig;
-use crate::movement::general_movement::{GeneralMovementSystemSet, Jumping, Walking};
+use crate::movement::general_movement::*;
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 
@@ -55,7 +55,15 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 
 #[sysfail(log(level = "error"))]
 fn handle_horizontal_movement(
-    mut player_query: Query<(&ActionState<PlayerAction>, &mut Walking, &Transform), With<Player>>,
+    mut player_query: Query<
+        (
+            &ActionState<PlayerAction>,
+            &mut Walking,
+            &mut Sprinting,
+            &Transform,
+        ),
+        With<Player>,
+    >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
@@ -64,7 +72,7 @@ fn handle_horizontal_movement(
         return Ok(());
     };
 
-    for (actions, mut walk, player_transform) in &mut player_query {
+    for (actions, mut walk, mut sprint, player_transform) in &mut player_query {
         let Some(axis) = actions.axis_pair(PlayerAction::Move) else {
             continue;
         };
@@ -93,7 +101,7 @@ fn handle_horizontal_movement(
             let direction = forward_action * modifier + sideways_action;
 
             walk.direction = Some(direction);
-            walk.sprinting = actions.pressed(PlayerAction::Sprint);
+            sprint.requested = actions.pressed(PlayerAction::Sprint);
         }
     }
     Ok(())

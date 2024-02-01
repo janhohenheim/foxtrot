@@ -27,6 +27,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         );
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum AnimationState {
     Standing,
     Airborne,
@@ -41,36 +42,38 @@ pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &Ju
     let _span = info_span!("apply_jumping").entered();
     for (mut controller, jump) in &mut character_query {
         if jump.requested {
-            // The jump action must be fed as long as the player holds the button.
             controller.action(TnuaBuiltinJump {
-                // The full height of the jump, if the player does not release the button:
-                height: 4.0,
-
-                // TnuaBuiltinJump too has other fields that can be configured:
+                height: jump.height,
                 ..Default::default()
             });
         }
     }
 }
 
-pub(crate) fn apply_walking(mut character_query: Query<(&mut TnuaController, &Walking)>) {
+pub(crate) fn apply_walking(
+    mut character_query: Query<(
+        &mut TnuaController,
+        &mut Walking,
+        Option<&Sprinting>,
+        &FloatHeight,
+    )>,
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_walking").entered();
-    for (mut controller, walking) in &mut character_query {
+    for (mut controller, mut walking, sprinting, float_height) in &mut character_query {
+        let direction = walking.direction.unwrap_or_default();
+        let sprinting_multiplier = sprinting
+            .filter(|s| s.requested)
+            .map(|s| s.multiplier)
+            .unwrap_or(1.);
+        let speed = walking.speed * sprinting_multiplier;
         controller.basis(TnuaBuiltinWalk {
-            // Move in the direction the player entered, at a speed of 10.0:
-            desired_velocity: walking.direction.unwrap_or_default() * 10.0,
-
-            // Turn the character in the movement direction:
-            desired_forward: walking.direction.unwrap_or_default(),
-
-            // Must be larger than the height of the entity's center from the bottom of its
-            // collider, or else the character will not float and Tnua will not work properly:
-            float_height: 2.0,
-
-            // TnuaBuiltinWalk has many other fields that can be configured:
+            desired_velocity: direction * speed,
+            desired_forward: direction.normalize_or_zero(),
+            float_height: float_height.0,
             ..Default::default()
         });
+        walking.direction = None;
     }
 }
 

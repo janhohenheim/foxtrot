@@ -68,7 +68,7 @@ fn update_interaction_opportunities(
 
         // Check if we are facing the right way
         let target_translation = target_query.get(target).unwrap().translation;
-        let player_translation = player_query.get(player).translation;
+        let player_translation = player_query.get(player).unwrap().translation;
         let Some((camera, camera_transform)) = camera_query.iter().next() else {
             continue;
         };

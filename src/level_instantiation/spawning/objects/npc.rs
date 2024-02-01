@@ -26,13 +26,7 @@ pub(crate) fn spawn(
                 ..default()
             },
             Name::new("NPC"),
-            CharacterControllerBundle::default(),
-            Collider::capsule(HEIGHT, RADIUS),
-            LockedAxes::new().lock_rotation_x().lock_rotation_z(),
-            CollisionLayers::new([CollisionLayer::Solid], [CollisionLayer::Solid]),
-            TnuaXpbd3dSensorShape(Collider::capsule(HEIGHT * 0.9, RADIUS * 0.9)),
-            TnuaControllerBundle::default(),
-            RigidBody::Dynamic,
+            CharacterControllerBundle::capsule(HEIGHT, RADIUS),
             Follower,
             CharacterAnimations {
                 idle: animations.character_idle.clone(),

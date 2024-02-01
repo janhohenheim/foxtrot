@@ -33,7 +33,10 @@ pub(crate) fn read_colliders(
             commands.entity(entity).insert((
                 collider,
                 RigidBody::Static,
-                CollisionLayers::new([CollisionLayer::Solid], [CollisionLayer::Solid]),
+                CollisionLayers::new(
+                    [CollisionLayer::Solid, CollisionLayer::CameraObstacle],
+                    [CollisionLayer::Solid],
+                ),
                 NavMeshAffector,
             ));
         }

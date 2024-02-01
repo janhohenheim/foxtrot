@@ -39,7 +39,7 @@ pub(crate) fn play_animations(
         }) {
             TnuaAnimatingStateDirective::Maintain { state } => {
                 if let AnimationState::Running(speed) = state {
-                    animation_player.set_speed(*speed);
+                    animation_player.set_speed(*speed * 0.2);
                 }
             }
             TnuaAnimatingStateDirective::Alter {

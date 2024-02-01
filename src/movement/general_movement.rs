@@ -31,6 +31,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
 pub(crate) enum AnimationState {
     Standing,
     Airborne,
+    Walking(f32),
     Running(f32),
 }
 

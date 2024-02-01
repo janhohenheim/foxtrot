@@ -31,15 +31,18 @@ pub(crate) fn play_animations(
             let speed = basis_state.running_velocity.length();
             if controller.is_airborne()? {
                 AnimationState::Airborne
-            } else if 0.01 < speed {
+            } else if speed > 10.0 {
                 AnimationState::Running(speed)
+            } else if speed > 0.01 {
+                AnimationState::Walking(speed)
             } else {
                 AnimationState::Standing
             }
         }) {
             TnuaAnimatingStateDirective::Maintain { state } => {
                 if let AnimationState::Running(speed) = state {
-                    animation_player.set_speed(*speed * 0.2);
+                    let anim_speed = (speed / 10.0).min(1.0);
+                    animation_player.set_speed(anim_speed);
                 }
             }
             TnuaAnimatingStateDirective::Alter {
@@ -48,7 +51,7 @@ pub(crate) fn play_animations(
                 old_state: _,
                 state,
             } => match state {
-                AnimationState::Airborne => {
+                AnimationState::Airborne | AnimationState::Running(..) => {
                     animation_player
                         .play_with_transition(
                             animations.aerial.clone_weak(),
@@ -64,7 +67,7 @@ pub(crate) fn play_animations(
                         )
                         .repeat();
                 }
-                AnimationState::Running(_speed) => {
+                AnimationState::Walking(_speed) => {
                     animation_player
                         .play_with_transition(
                             animations.walk.clone_weak(),

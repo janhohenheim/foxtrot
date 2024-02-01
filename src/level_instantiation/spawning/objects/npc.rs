@@ -1,11 +1,14 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
-use crate::level_instantiation::spawning::objects::GameCollisionGroup;
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
+use crate::movement::general_movement::{
+    CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
+};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
+
+use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 
 pub(crate) const HEIGHT: f32 = 0.4;
@@ -17,7 +20,7 @@ pub(crate) fn spawn(
     animations: Res<AnimationAssets>,
     scene_handles: Res<SceneAssets>,
 ) {
-    let entity = commands
+    commands
         .spawn((
             PbrBundle {
                 transform,
@@ -31,39 +34,26 @@ pub(crate) fn spawn(
                 walk: animations.character_walking.clone(),
                 aerial: animations.character_running.clone(),
             },
+            GameObject::Npc,
             DialogTarget {
                 speaker: "The Follower".to_string(),
                 node: "Follower".to_string(),
             },
-            GameObject::Npc,
         ))
         .with_children(|parent| {
             parent.spawn((
                 Name::new("NPC Dialog Collider"),
                 Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
+                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
                 Sensor,
-                ActiveEvents::COLLISION_EVENTS,
-                ActiveCollisionTypes::DYNAMIC_DYNAMIC,
-                CollisionGroups::new(
-                    GameCollisionGroup::OTHER.into(),
-                    GameCollisionGroup::PLAYER.into(),
-                ),
             ));
         })
-        .id();
-
-    commands
-        .spawn((
-            Model { target: entity },
-            SpatialBundle::default(),
-            Name::new("NPC Model Parent"),
-        ))
         .with_children(|parent| {
             parent.spawn((
                 SceneBundle {
                     scene: scene_handles.character.clone(),
                     transform: Transform {
-                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS, 0.),
+                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS - FLOAT_HEIGHT, 0.),
                         scale: Vec3::splat(0.012),
                         rotation: Quat::from_rotation_y(TAU / 2.),
                     },

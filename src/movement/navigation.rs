@@ -9,7 +9,7 @@ use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;
-use bevy_rapier3d::prelude::Collider;
+use bevy_xpbd_3d::prelude::Collider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{
@@ -102,11 +102,7 @@ fn query_mesh(
                     }
                     let dir = path
                         .into_iter()
-                        .map(|next_point| {
-                            (next_point - from)
-                                .split(follower_transform.up())
-                                .horizontal
-                        })
+                        .map(|next_point| (next_point - from).horizontal())
                         .filter(|dir| dir.length_squared() > 1e-3f32.squared())
                         .filter_map(|dir| dir.try_normalize())
                         .next();

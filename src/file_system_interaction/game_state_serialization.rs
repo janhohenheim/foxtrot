@@ -1,7 +1,6 @@
 use crate::file_system_interaction::level_serialization::{CurrentLevel, WorldLoadRequest};
 use crate::level_instantiation::spawning::GameObject;
 use crate::player_control::player_embodiment::Player;
-use crate::world_interaction::condition::ActiveConditions;
 use crate::GameState;
 use anyhow::{Context, Error, Result};
 use bevy::prelude::*;
@@ -41,14 +40,12 @@ pub(crate) struct GameLoadRequest {
 #[derive(Debug, Clone, PartialEq, Resource, Serialize, Deserialize, Default)]
 struct SaveModel {
     scene: String,
-    #[serde(default, skip_serializing_if = "ActiveConditions::is_empty")]
-    conditions: ActiveConditions,
     player_transform: Transform,
 }
 
 #[sysfail(log(level = "error"))]
 fn handle_load_requests(
-    mut commands: Commands,
+    _commands: Commands,
     mut load_events: EventReader<GameLoadRequest>,
     mut loader: EventWriter<WorldLoadRequest>,
     mut spawner: EventWriter<SpawnEvent<GameObject, Transform>>,
@@ -92,7 +89,6 @@ fn handle_load_requests(
         loader.send(WorldLoadRequest {
             filename: save_model.scene,
         });
-        commands.insert_resource(save_model.conditions);
 
         spawner.send(
             SpawnEvent::with_data(GameObject::Player, save_model.player_transform).delay_frames(2),
@@ -120,7 +116,6 @@ fn read_last_save() -> Result<Option<PathBuf>, Error> {
 #[sysfail(log(level = "error"))]
 fn handle_save_requests(
     mut save_events: EventReader<GameSaveRequest>,
-    conditions: Res<ActiveConditions>,
     player_query: Query<&GlobalTransform, With<Player>>,
     current_level: Res<CurrentLevel>,
 ) -> Result<()> {
@@ -128,7 +123,6 @@ fn handle_save_requests(
         for player in &player_query {
             let save_model = SaveModel {
                 scene: current_level.scene.clone(),
-                conditions: conditions.clone(),
                 player_transform: player.compute_transform(),
             };
             let serialized = match ron::to_string(&save_model) {

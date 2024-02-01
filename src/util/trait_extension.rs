@@ -129,28 +129,3 @@ impl F32Ext for f32 {
         self.mul_add(1. - ratio, other * ratio)
     }
 }
-
-pub(crate) trait TransformExt: Copy {
-    fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform;
-    fn lerp(self, other: Transform, ratio: f32) -> Transform;
-}
-
-impl TransformExt for Transform {
-    fn horizontally_looking_at(self, target: Vec3, up: Vec3) -> Transform {
-        let direction = target - self.translation;
-        let horizontal_direction = direction - up * direction.dot(up);
-        let look_target = self.translation + horizontal_direction;
-        self.looking_at(look_target, up)
-    }
-
-    fn lerp(self, other: Transform, ratio: f32) -> Transform {
-        let translation = self.translation.lerp(other.translation, ratio);
-        let rotation = self.rotation.slerp(other.rotation, ratio);
-        let scale = self.scale.lerp(other.scale, ratio);
-        Transform {
-            translation,
-            rotation,
-            scale,
-        }
-    }
-}

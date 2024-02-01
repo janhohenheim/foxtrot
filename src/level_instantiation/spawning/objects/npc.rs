@@ -1,7 +1,7 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
@@ -18,7 +18,7 @@ pub(crate) fn spawn(
     animations: Res<AnimationAssets>,
     scene_handles: Res<SceneAssets>,
 ) {
-    let entity = commands
+    commands
         .spawn((
             PbrBundle {
                 transform,
@@ -47,14 +47,6 @@ pub(crate) fn spawn(
                 Sensor,
             ));
         })
-        .id();
-
-    commands
-        .spawn((
-            Model { target: entity },
-            SpatialBundle::default(),
-            Name::new("NPC Model Parent"),
-        ))
         .with_children(|parent| {
             parent.spawn((
                 SceneBundle {

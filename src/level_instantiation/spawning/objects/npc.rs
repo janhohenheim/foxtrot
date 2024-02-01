@@ -5,8 +5,8 @@ use crate::movement::general_movement::{CharacterAnimations, CharacterController
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
-use bevy_tnua::prelude::*;
-use bevy_tnua_xpbd3d::*;
+
+
 use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 

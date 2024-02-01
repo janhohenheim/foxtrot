@@ -1,4 +1,5 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
+use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::level_instantiation::spawning::GameObject;
 use crate::movement::general_movement::{
     AnimationState, CharacterAnimations, CharacterControllerBundle, Model,
@@ -31,17 +32,19 @@ pub(crate) fn spawn(
             },
             Player,
             Name::new("Player"),
-            RigidBody::Dynamic,
             CharacterControllerBundle::default(),
             Collider::capsule(HEIGHT, RADIUS),
+            RigidBody::Dynamic,
+            LockedAxes::new().lock_rotation_x().lock_rotation_z(),
+            CollisionLayers::new([CollisionLayer::Solid], [CollisionLayer::Solid]),
             TnuaXpbd3dSensorShape(Collider::capsule(HEIGHT * 0.9, RADIUS * 0.9)),
+            TnuaControllerBundle::default(),
             TnuaAnimatingState::<AnimationState>::default(),
             CharacterAnimations {
                 idle: animations.character_idle.clone(),
                 walk: animations.character_walking.clone(),
                 aerial: animations.character_running.clone(),
             },
-            TnuaControllerBundle::default(),
             create_player_action_input_manager_bundle(),
             create_ui_action_input_manager_bundle(),
             GameObject::Player,

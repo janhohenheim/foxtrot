@@ -1,21 +1,17 @@
-use anyhow::{Context, Result};
-use bevy::prelude::*;
-use std::time::Duration;
-mod animations;
-mod components;
-
 use crate::file_system_interaction::config::GameConfig;
-use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::util::smoothness_to_lerp_factor;
-use crate::util::trait_extension::{TransformExt, Vec3Ext};
+use crate::util::trait_extension::TransformExt;
 use crate::GameState;
 pub(crate) use animations::*;
+use anyhow::Result;
+use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use bevy_tnua::prelude::*;
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 use bevy_tnua_xpbd3d::*;
-use bevy_xpbd_3d::{prelude as xpbd, prelude::*};
 pub(crate) use components::*;
+
+mod animations;
+mod components;
 
 pub(crate) fn general_movement_plugin(app: &mut App) {
     app.add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))

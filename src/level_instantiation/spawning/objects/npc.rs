@@ -5,6 +5,8 @@ use crate::movement::general_movement::{CharacterAnimations, CharacterController
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;
+use bevy_tnua::prelude::*;
+use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::prelude::*;
 use std::f32::consts::TAU;
 
@@ -26,6 +28,11 @@ pub(crate) fn spawn(
             Name::new("NPC"),
             CharacterControllerBundle::default(),
             Collider::capsule(HEIGHT, RADIUS),
+            LockedAxes::new().lock_rotation_x().lock_rotation_z(),
+            CollisionLayers::new([CollisionLayer::Solid], [CollisionLayer::Solid]),
+            TnuaXpbd3dSensorShape(Collider::capsule(HEIGHT * 0.9, RADIUS * 0.9)),
+            TnuaControllerBundle::default(),
+            RigidBody::Dynamic,
             Follower,
             CharacterAnimations {
                 idle: animations.character_idle.clone(),
@@ -42,7 +49,7 @@ pub(crate) fn spawn(
             parent.spawn((
                 Name::new("NPC Dialog Collider"),
                 Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
-                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
+                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Solid]),
                 RigidBody::Static,
                 Sensor,
             ));

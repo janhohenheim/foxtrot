@@ -64,11 +64,7 @@ fn get_distance_to_collision(
 
     let max_toi = camera.desired_distance;
     let solid = true;
-    let filter = SpatialQueryFilter::new().with_masks_from_bits(
-        CollisionLayers::all::<CollisionLayer>()
-            .remove_group(CollisionLayer::Sensor)
-            .masks_bits(),
-    );
+    let filter = SpatialQueryFilter::new().with_masks_from_bits(CollisionLayer::Solid.to_bits());
 
     let min_distance = match camera.kind {
         IngameCameraKind::ThirdPerson => config.camera.third_person.min_distance_to_objects,
@@ -77,7 +73,7 @@ fn get_distance_to_collision(
 
     spatial_query
         .cast_ray(origin, direction, max_toi, solid, filter)
-        .map(|(hit)| {
+        .map(|hit| {
             get_distance_such_that_min_distance_from_collision_is_ensured(
                 hit,
                 direction,

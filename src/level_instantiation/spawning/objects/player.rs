@@ -1,6 +1,6 @@
 use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
 use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle, Model};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
@@ -17,7 +17,7 @@ pub(crate) fn spawn(
     animations: Res<AnimationAssets>,
     scene_handles: Res<SceneAssets>,
 ) {
-    let entity = commands
+    commands
         .spawn((
             PbrBundle {
                 transform,
@@ -34,14 +34,6 @@ pub(crate) fn spawn(
             create_player_action_input_manager_bundle(),
             create_ui_action_input_manager_bundle(),
             GameObject::Player,
-        ))
-        .id();
-
-    commands
-        .spawn((
-            Model { target: entity },
-            SpatialBundle::default(),
-            Name::new("Player Model Parent"),
         ))
         .with_children(|parent| {
             parent.spawn((

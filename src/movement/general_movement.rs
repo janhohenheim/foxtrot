@@ -1,11 +1,6 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::util::smoothness_to_lerp_factor;
-use crate::util::trait_extension::TransformExt;
 use crate::GameState;
 pub(crate) use animations::*;
-use anyhow::Result;
 use bevy::prelude::*;
-use bevy_mod_sysfail::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 pub(crate) use components::*;
@@ -20,7 +15,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .register_type::<CharacterAnimations>()
         .add_systems(
             Update,
-            (apply_jumping, apply_walking, play_animations, sync_models)
+            (apply_jumping, apply_walking, play_animations)
                 .chain()
                 .in_set(GeneralMovementSystemSet)
                 .run_if(in_state(GameState::Playing)),
@@ -76,26 +71,4 @@ pub(crate) fn apply_walking(
         });
         walking.direction = None;
     }
-}
-
-#[sysfail(log(level = "error"))]
-fn sync_models(
-    time: Res<Time>,
-    mut commands: Commands,
-    without_model: Query<(&Transform, &Visibility), Without<Model>>,
-    mut with_model: Query<(Entity, &mut Transform, &mut Visibility, &Model)>,
-    game_config: Res<GameConfig>,
-) -> Result<()> {
-    let dt = time.delta_seconds();
-    for (model_entity, mut model_transform, mut visibility, model) in with_model.iter_mut() {
-        if let Ok((target_transform, target_visibility)) = without_model.get(model.target) {
-            let smoothness = game_config.characters.model_sync_smoothing;
-            let factor = smoothness_to_lerp_factor(smoothness, dt);
-            *model_transform = model_transform.lerp(*target_transform, factor);
-            *visibility = *target_visibility;
-        } else {
-            commands.entity(model_entity).despawn_recursive();
-        }
-    }
-    Ok(())
 }

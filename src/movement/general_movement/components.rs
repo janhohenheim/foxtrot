@@ -43,11 +43,6 @@ impl CharacterControllerBundle {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Component, Serialize, Deserialize)]
-pub(crate) struct Model {
-    pub(crate) target: Entity,
-}
-
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Walking {
@@ -87,7 +82,7 @@ pub(crate) struct Sprinting {
 impl Default for Sprinting {
     fn default() -> Self {
         Self {
-            multiplier: 1.7,
+            multiplier: 1.5,
             requested: false,
         }
     }

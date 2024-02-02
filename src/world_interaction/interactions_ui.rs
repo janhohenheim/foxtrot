@@ -20,17 +20,13 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         .init_resource::<InteractionOpportunity>()
         .add_systems(
             Update,
-            (update_interaction_opportunities)
+            (update_interaction_opportunities, display_interaction_prompt)
                 .chain()
-                .run_if(in_state(GameState::Playing)),
-        )
-        .add_systems(
-            Update,
-            display_interaction_prompt.run_if(
-                not(is_frozen)
-                    .and_then(in_state(GameState::Playing))
-                    .and_then(any_with_component::<DialogueRunner>()),
-            ),
+                .run_if(
+                    not(is_frozen)
+                        .and_then(in_state(GameState::Playing))
+                        .and_then(any_with_component::<DialogueRunner>()),
+                ),
         );
 }
 
@@ -55,9 +51,8 @@ fn update_interaction_opportunities(
         else {
             continue;
         };
-        let Ok(target) = parents.get(sensor).map(Parent::get) else {
-            continue;
-        };
+
+        let target = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
 
         let Ok(target_translation) = target_query.get(target).map(|t| t.translation) else {
             continue;
@@ -90,9 +85,9 @@ fn get_player_and_target(
     entity_a: Entity,
     entity_b: Entity,
 ) -> Option<(Entity, Entity)> {
-    if player_query.get(entity_a).is_ok() {
+    if player_query.contains(entity_a) {
         Some((entity_a, entity_b))
-    } else if player_query.get(entity_b).is_ok() {
+    } else if player_query.contains(entity_b) {
         Some((entity_b, entity_a))
     } else {
         None

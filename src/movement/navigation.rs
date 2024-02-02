@@ -1,4 +1,4 @@
-use crate::level_instantiation::spawning::objects::npc;
+use crate::level_instantiation::spawning::objects::player;
 use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
@@ -21,7 +21,7 @@ use crate::dev::dev_editor::DevEditorWindow;
 use serde::{Deserialize, Serialize};
 
 /// Manually tweaked
-const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
+const CELL_WIDTH: f32 = 0.4 * player::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
 pub(crate) fn navigation_plugin(app: &mut App) {

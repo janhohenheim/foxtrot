@@ -1,5 +1,5 @@
 use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
-use crate::shader::Materials;
+use crate::shader::ShaderMaterials;
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
 
@@ -21,7 +21,7 @@ pub(crate) fn spawn(
     orb: Query<Entity, Added<Orb>>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<Materials>,
+    materials: Res<ShaderMaterials>,
     children: Query<&Children>,
 ) {
     for entity in orb.iter() {

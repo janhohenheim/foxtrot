@@ -1,11 +1,9 @@
 use crate::file_system_interaction::config::GameConfig;
-use crate::file_system_interaction::level_serialization::SerializedLevel;
 use crate::GameState;
 use anyhow::Result;
+use bevy::gltf::Gltf;
 use bevy::prelude::*;
-use bevy::utils::HashMap;
 use bevy_asset_loader::prelude::*;
-use bevy_common_assets::ron::RonAssetPlugin;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::egui::ProgressBar;
 use bevy_egui::{egui, EguiContexts};
@@ -14,16 +12,14 @@ use bevy_mod_sysfail::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 pub(crate) fn loading_plugin(app: &mut App) {
-    app.add_plugins(RonAssetPlugin::<SerializedLevel>::new(&["lvl.ron"]))
-        .add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
+    app.add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
         .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
         .add_loading_state(
             LoadingState::new(GameState::Loading)
                 .continue_to_state(GameState::Menu)
                 .load_collection::<AudioAssets>()
-                .load_collection::<SceneAssets>()
                 .load_collection::<AnimationAssets>()
-                .load_collection::<LevelAssets>()
+                .load_collection::<GltfAssets>()
                 .load_collection::<TextureAssets>()
                 .load_collection::<ConfigAssets>(),
         )
@@ -41,27 +37,19 @@ pub(crate) struct AudioAssets {
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub(crate) struct SceneAssets {
-    #[asset(path = "scenes/Fox.glb#Scene0")]
-    pub(crate) character: Handle<Scene>,
-    #[asset(path = "scenes/old_town.glb#Scene0")]
-    pub(crate) level: Handle<Scene>,
+pub(crate) struct GltfAssets {
+    #[asset(path = "scenes/level.glb")]
+    pub(crate) level: Handle<Gltf>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct AnimationAssets {
-    #[asset(path = "scenes/Fox.glb#Animation0")]
+    #[asset(path = "scenes/level.glb#Animation0")]
     pub(crate) character_idle: Handle<AnimationClip>,
-    #[asset(path = "scenes/Fox.glb#Animation1")]
+    #[asset(path = "scenes/level.glb#Animation1")]
     pub(crate) character_walking: Handle<AnimationClip>,
-    #[asset(path = "scenes/Fox.glb#Animation2")]
+    #[asset(path = "scenes/level.glb#Animation2")]
     pub(crate) character_running: Handle<AnimationClip>,
-}
-
-#[derive(AssetCollection, Resource, Clone)]
-pub(crate) struct LevelAssets {
-    #[asset(path = "levels", collection(typed, mapped))]
-    pub(crate) levels: HashMap<String, Handle<SerializedLevel>>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
@@ -84,9 +72,8 @@ fn show_progress(
     mut egui_contexts: EguiContexts,
     mut last_done: Local<u32>,
     audio_assets: Option<Res<AudioAssets>>,
-    scene_assets: Option<Res<SceneAssets>>,
     animation_assets: Option<Res<AnimationAssets>>,
-    level_assets: Option<Res<LevelAssets>>,
+    gltf_assets: Option<Res<GltfAssets>>,
     texture_assets: Option<Res<TextureAssets>>,
     config_assets: Option<Res<ConfigAssets>>,
 ) {
@@ -106,9 +93,8 @@ fn show_progress(
                 ui.add_space(100.0);
                 ui.add_enabled_ui(false, |ui| {
                     ui.checkbox(&mut audio_assets.is_some(), "Audio");
-                    ui.checkbox(&mut scene_assets.is_some(), "Scenes");
                     ui.checkbox(&mut animation_assets.is_some(), "Animations");
-                    ui.checkbox(&mut level_assets.is_some(), "Levels");
+                    ui.checkbox(&mut gltf_assets.is_some(), "Models");
                     ui.checkbox(&mut texture_assets.is_some(), "Textures");
                     ui.checkbox(&mut config_assets.is_some(), "Config");
                 });

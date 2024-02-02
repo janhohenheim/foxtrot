@@ -1,5 +1,4 @@
 use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
-use crate::level_instantiation::spawning::GameObject;
 use crate::shader::Materials;
 
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
@@ -39,6 +38,5 @@ pub(crate) fn spawn(
             transform,
             ..default()
         },
-        GameObject::Skydome,
     ));
 }

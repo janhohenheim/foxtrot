@@ -47,7 +47,8 @@ pub(crate) fn navigation_plugin(app: &mut App) {
         query_mesh
             .before(GeneralMovementSystemSet)
             .run_if(in_state(GameState::Playing)),
-    );
+    )
+    .register_type::<Follower>();
     #[cfg(feature = "dev")]
     app.add_plugins(OxidizedNavigationDebugDrawPlugin)
         .add_systems(Update, draw_navmesh);

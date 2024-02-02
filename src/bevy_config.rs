@@ -12,7 +12,7 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
     let default_plugins = DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
             title: "Foxtrot".to_string(),
-            mode: WindowMode::BorderlessFullscreen,
+            // mode: WindowMode::BorderlessFullscreen,
             ..default()
         }),
         ..default()

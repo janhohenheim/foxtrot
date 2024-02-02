@@ -28,8 +28,6 @@ bevy_common_assets = { version = "0.9", features = ["ron", "toml"] }
 bevy_egui = "0.24"
 serde = { version = "1", features = ["derive"] }
 indexmap = { version = "2", features = ["serde"] }
-strum = "0.26"
-strum_macros = "0.26"
 ron = "0.8"
 regex = "1"
 chrono = "0.4"
@@ -43,7 +41,6 @@ anyhow = "1"
 leafwing-input-manager = { version = "0.11", features = [] }
 rand = { version = "0.8", features = ["small_rng"] }
 bevy_dolly = "0.0.2"
-spew = "0.4"
 bevy_mod_sysfail = "5"
 seldom_fn_plugin = "0.5"
 bevy_editor_pls = { version = "0.7", optional = true }
@@ -60,6 +57,7 @@ image = { version = "0.24", default-features = false }
 bevy-tnua-xpbd3d = "0.1"
 bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
 bevy-tnua = "0.14.1"
+bevy_gltf_components = "0.2.2"
 
 [dependencies.bevy]
 version = "0.12.1"

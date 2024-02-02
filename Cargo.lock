@@ -874,6 +874,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_components"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90704b2784f811412f07251a3c7f72180774838067d3c017007dfce5424711b9"
+dependencies = [
+ "bevy",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "bevy_hanabi"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2371,6 +2382,7 @@ dependencies = [
  "bevy_dolly",
  "bevy_editor_pls",
  "bevy_egui",
+ "bevy_gltf_components",
  "bevy_hanabi",
  "bevy_kira_audio",
  "bevy_mod_sysfail",
@@ -2391,9 +2403,6 @@ dependencies = [
  "ron",
  "seldom_fn_plugin",
  "serde",
- "spew",
- "strum",
- "strum_macros",
  "unicode-segmentation",
  "winit",
 ]
@@ -4574,15 +4583,6 @@ dependencies = [
  "num-traits",
  "robust",
  "smallvec",
-]
-
-[[package]]
-name = "spew"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c270bc754211a492fd8179f3e561e8280e08c6263f5e13990819cb37bae3186b"
-dependencies = [
- "bevy",
 ]
 
 [[package]]

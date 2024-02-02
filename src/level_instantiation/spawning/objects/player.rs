@@ -1,36 +1,28 @@
-use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
+use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{
-    CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
-};
+use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
 };
 use crate::player_control::player_embodiment::Player;
 use bevy::prelude::*;
-use std::f32::consts::TAU;
 
 pub(crate) const HEIGHT: f32 = 0.4;
 pub(crate) const RADIUS: f32 = 0.3;
 
 pub(crate) fn spawn(
-    In(transform): In<Transform>,
+    player: Query<Entity, Added<Player>>,
     mut commands: Commands,
     animations: Res<AnimationAssets>,
-    scene_handles: Res<SceneAssets>,
 ) {
-    let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS);
-    controller.collision_layers = controller
-        .collision_layers
-        .add_group(CollisionLayer::Player);
+    for entity in player.iter() {
+        let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS);
+        controller.collision_layers = controller
+            .collision_layers
+            .add_group(CollisionLayer::Player);
 
-    commands
-        .spawn((
-            PbrBundle {
-                transform,
-                ..default()
-            },
+        commands.entity(entity).insert((
+            PbrBundle::default(),
             Player,
             Name::new("Player"),
             controller,
@@ -41,20 +33,6 @@ pub(crate) fn spawn(
             },
             create_player_action_input_manager_bundle(),
             create_ui_action_input_manager_bundle(),
-            GameObject::Player,
-        ))
-        .with_children(|parent| {
-            parent.spawn((
-                SceneBundle {
-                    scene: scene_handles.character.clone(),
-                    transform: Transform {
-                        translation: Vec3::new(0., (-HEIGHT / 2. - RADIUS) - FLOAT_HEIGHT, 0.),
-                        rotation: Quat::from_rotation_y(TAU / 2.),
-                        scale: Vec3::splat(0.01),
-                    },
-                    ..default()
-                },
-                Name::new("Player Model"),
-            ));
-        });
+        ));
+    }
 }

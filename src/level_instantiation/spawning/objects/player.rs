@@ -29,7 +29,6 @@ pub(crate) fn spawn(
             .entity(entity)
             .insert((
                 PbrBundle::default(),
-                Player,
                 controller,
                 CharacterAnimations {
                     idle: animations.character_idle.clone(),

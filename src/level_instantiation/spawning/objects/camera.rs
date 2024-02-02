@@ -12,6 +12,7 @@ pub(crate) struct IngameCameraMarker;
 pub(crate) fn spawn(camera: Query<Entity, Added<IngameCameraMarker>>, mut commands: Commands) {
     for entity in camera.iter() {
         commands.entity(entity).insert((
+            Camera3dBundle::default(),
             IngameCamera::default(),
             Rig::builder()
                 .with(Position::new(default()))

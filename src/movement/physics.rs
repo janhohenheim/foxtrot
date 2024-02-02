@@ -1,5 +1,4 @@
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::util::trait_extension::MeshExt;
 use crate::GameState;
 use anyhow::{Context, Result};
 use bevy::prelude::*;
@@ -29,7 +28,7 @@ pub(crate) fn read_colliders(
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for entity in collider_marker.iter() {
-        let mesh = Mesh::find_mesh(entity, &children, &meshes, &mesh_handles)
+        let mesh = find_mesh(entity, &children, &meshes, &mesh_handles)
             .context("Failed to find mesh for collider")?;
         let collider =
             Collider::trimesh_from_mesh(mesh).context("Failed to create collider from mesh")?;
@@ -45,4 +44,22 @@ pub(crate) fn read_colliders(
         ));
     }
     Ok(())
+}
+
+fn find_mesh<'a>(
+    parent: Entity,
+    children_query: &'a Query<&Children>,
+    meshes: &'a Assets<Mesh>,
+    mesh_handles: &'a Query<&Handle<Mesh>>,
+) -> Option<&'a Mesh> {
+    if let Ok(children) = children_query.get(parent) {
+        for child in children.iter() {
+            if let Ok(mesh_handle) = mesh_handles.get(*child) {
+                if let Some(mesh) = meshes.get(mesh_handle) {
+                    return Some(mesh);
+                }
+            }
+        }
+    }
+    None
 }

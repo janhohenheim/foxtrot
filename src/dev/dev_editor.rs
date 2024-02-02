@@ -46,20 +46,11 @@ impl EditorWindow for DevEditorWindow {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize)]
 #[reflect(Resource, Serialize, Deserialize)]
+#[derive(Default)]
 pub(crate) struct DevEditorState {
     pub(crate) open: bool,
     pub(crate) collider_render_enabled: bool,
     pub(crate) navmesh_render_enabled: bool,
-}
-
-impl Default for DevEditorState {
-    fn default() -> Self {
-        Self {
-            collider_render_enabled: false,
-            navmesh_render_enabled: false,
-            open: false,
-        }
-    }
 }
 
 #[sysfail(log(level = "error"))]

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) struct GameConfig {
     pub(crate) camera: Camera,
     pub(crate) characters: Characters,
-    pub(crate) player: Player,
+    pub(crate) player: PlayerEffects,
 }
 
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
@@ -68,7 +68,7 @@ pub(crate) struct Characters {
 
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Serialize, Deserialize)]
-pub(crate) struct Player {
+pub(crate) struct PlayerEffects {
     pub(crate) rotate_to_speaker_smoothness: f32,
     pub(crate) sprint_effect_speed_threshold: f32,
     pub(crate) fov_saturation_speed: f32,

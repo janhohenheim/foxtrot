@@ -1,7 +1,6 @@
 use crate::player_control::camera::kind::update_drivers;
 use crate::player_control::camera::{
     cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
-    skydome::move_skydome,
 };
 use crate::GameState;
 use bevy::prelude::*;
@@ -15,7 +14,6 @@ mod cursor;
 pub(crate) mod focus;
 mod kind;
 mod rig;
-mod skydome;
 mod ui;
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
@@ -66,7 +64,6 @@ pub(crate) fn camera_plugin(app: &mut App) {
                 update_drivers,
                 set_camera_focus.after(ExampleYarnSpinnerDialogueViewSystemSet),
                 update_rig,
-                move_skydome,
             )
                 .chain()
                 .in_set(CameraUpdateSystemSet)

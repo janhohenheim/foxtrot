@@ -21,7 +21,6 @@ pub(crate) fn spawn(camera: Query<Entity, Added<IngameCameraMarker>>, mut comman
                 .with(LookAt::new(default()).tracking_predictive(true))
                 .build(),
             create_camera_action_input_manager_bundle(),
-            Name::new("Main Camera"),
             #[cfg(feature = "dev")]
             EditorCamera,
         ));

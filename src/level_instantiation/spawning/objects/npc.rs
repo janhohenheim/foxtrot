@@ -18,7 +18,6 @@ pub(crate) fn spawn(
         commands
             .entity(entity)
             .insert((
-                Name::new("NPC"),
                 CharacterControllerBundle::capsule(HEIGHT, RADIUS),
                 Follower,
                 CharacterAnimations {

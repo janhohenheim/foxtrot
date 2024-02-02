@@ -6,7 +6,6 @@ use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use bevy_mod_sysfail::sysfail;
 use bevy_tnua::prelude::*;
-use bevy_xpbd_3d::prelude::*;
 pub(crate) use creation::*;
 
 mod creation;
@@ -27,12 +26,15 @@ struct SprintingParticle;
 
 #[sysfail(log(level = "error"))]
 fn play_sprinting_effect(
-    with_player: Query<(&TnuaController, &LinearVelocity)>,
+    with_player: Query<&TnuaController>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,
     config: Res<GameConfig>,
 ) -> Result<()> {
-    for (controller, velocity) in with_player.iter() {
-        let horizontal_speed_squared = velocity.horizontal().length_squared();
+    for controller in with_player.iter() {
+        let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
+            continue;
+        };
+        let horizontal_speed_squared = basis_state.running_velocity.horizontal().length_squared();
         for mut effect_spawner in with_particle.iter_mut() {
             let threshold = config.player.sprint_effect_speed_threshold;
             let active = !controller.is_airborne().unwrap_or_default()

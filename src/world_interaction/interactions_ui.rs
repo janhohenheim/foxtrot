@@ -43,7 +43,6 @@ fn update_interaction_opportunities(
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
-    interaction_opportunity.0 = None;
     for Collision(ref contacts) in collisions.read() {
         // Check if we are colliding
         let Some((player, sensor)) =
@@ -51,6 +50,7 @@ fn update_interaction_opportunities(
         else {
             continue;
         };
+        interaction_opportunity.0 = None;
 
         let target = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
 
@@ -119,12 +119,10 @@ fn display_interaction_prompt(
     dialog_target_query: Query<&DialogTarget>,
     mut freeze: ResMut<ActionsFrozen>,
 ) -> Result<()> {
-    let Some(dialog_target) = interaction_opportunity
-        .0
-        .and_then(|e| dialog_target_query.get(e).ok())
-    else {
+    let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
+    let dialog_target = dialog_target_query.get(opportunity)?;
     let window = primary_windows
         .get_single()
         .context("Failed to get primary window")?;

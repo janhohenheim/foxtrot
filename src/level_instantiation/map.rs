@@ -16,7 +16,10 @@ pub(crate) fn map_plugin(app: &mut App) {
 
 fn spawn_level(mut commands: Commands, models: Res<Assets<Gltf>>, gltf_assets: Res<GltfAssets>) {
     let my_gltf = models.get(&gltf_assets.level).unwrap();
-    info!("spawning scene");
+    commands.insert_resource(AmbientLight {
+        color: Color::rgb(1., 0.65, 0.23),
+        ..default()
+    });
     commands.spawn((
         SceneBundle {
             scene: my_gltf.scenes[1].clone(),

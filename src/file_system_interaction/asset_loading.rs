@@ -44,11 +44,11 @@ pub(crate) struct GltfAssets {
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct AnimationAssets {
-    #[asset(path = "scenes/level.glb#Animation0")]
+    #[asset(path = "scenes/fox.glb#Animation0")]
     pub(crate) character_idle: Handle<AnimationClip>,
-    #[asset(path = "scenes/level.glb#Animation1")]
+    #[asset(path = "scenes/fox.glb#Animation1")]
     pub(crate) character_walking: Handle<AnimationClip>,
-    #[asset(path = "scenes/level.glb#Animation2")]
+    #[asset(path = "scenes/fox.glb#Animation2")]
     pub(crate) character_running: Handle<AnimationClip>,
 }
 

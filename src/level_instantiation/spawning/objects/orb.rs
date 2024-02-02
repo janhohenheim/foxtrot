@@ -37,7 +37,6 @@ pub(crate) fn spawn(
                     material: materials.glowy.clone(),
                     ..default()
                 },
-                Name::new("Orb"),
                 NotShadowCaster,
                 NotShadowReceiver,
             ))

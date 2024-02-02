@@ -13,7 +13,6 @@ use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
 use bevy_tnua::builtins::TnuaBuiltinWalk;
 use bevy_tnua::controller::TnuaController;
-use bevy_xpbd_3d::prelude::LinearVelocity;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
@@ -35,7 +34,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
                 handle_camera_kind,
             )
                 .chain()
-                .after(CameraUpdateSystemSet)
+                .before(CameraUpdateSystemSet)
                 .before(GeneralMovementSystemSet)
                 .run_if(in_state(GameState::Playing)),
         );
@@ -124,15 +123,17 @@ fn handle_camera_kind(
 }
 
 fn handle_speed_effects(
-    velocities: Query<&LinearVelocity, With<Player>>,
+    controllers: Query<&TnuaController, With<Player>>,
     mut projections: Query<&mut Projection, With<IngameCamera>>,
     config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_speed_effects").entered();
-    for velocity in velocities.iter() {
-        let horizontal_velocity = velocity.horizontal();
-        let speed_squared = horizontal_velocity.length_squared();
+    for controller in controllers.iter() {
+        let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
+            continue;
+        };
+        let speed_squared = basis_state.running_velocity.horizontal().length_squared();
         for mut projection in projections.iter_mut() {
             if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
                 let fov_saturation_speed = config.player.fov_saturation_speed;
@@ -180,17 +181,20 @@ fn rotate_to_speaker(
 #[sysfail(log(level = "error"))]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
-    character_query: Query<(&LinearVelocity, &TnuaController), With<Player>>,
+    character_query: Query<&TnuaController, With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("control_walking_sound").entered();
-    for (velocity, controller) in character_query.iter() {
+    for controller in character_query.iter() {
         let audio_instance = audio_instances
             .get_mut(&audio.walking)
             .context("Failed to get audio instance from handle")?;
-        let has_horizontal_movement = !velocity.horizontal().is_approx_zero();
+        let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
+            continue;
+        };
+        let has_horizontal_movement = !basis_state.running_velocity.horizontal().is_approx_zero();
         let is_moving_on_ground = has_horizontal_movement && !controller.is_airborne()?;
         if is_moving_on_ground && !time.is_paused() {
             audio_instance.resume(default());

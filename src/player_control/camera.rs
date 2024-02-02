@@ -5,6 +5,7 @@ use crate::player_control::camera::{
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
+use bevy_xpbd_3d::PhysicsSet;
 use bevy_yarnspinner_example_dialogue_view::ExampleYarnSpinnerDialogueViewSystemSet;
 pub(crate) use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
@@ -67,6 +68,7 @@ pub(crate) fn camera_plugin(app: &mut App) {
             )
                 .chain()
                 .in_set(CameraUpdateSystemSet)
+                .after(PhysicsSet::Sync)
                 .run_if(in_state(GameState::Playing)),
         );
 }

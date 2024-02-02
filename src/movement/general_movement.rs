@@ -3,6 +3,7 @@ pub(crate) use animations::*;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
+use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
 
 mod animations;
@@ -18,6 +19,7 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
             (apply_jumping, apply_walking, play_animations)
                 .chain()
                 .in_set(GeneralMovementSystemSet)
+                .before(PhysicsSet::Prepare)
                 .run_if(in_state(GameState::Playing)),
         );
 }

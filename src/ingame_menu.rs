@@ -22,40 +22,42 @@ fn handle_pause(
 ) {
     for action in actions.iter() {
         let toggled = action.just_pressed(UiAction::TogglePause);
-        if *paused {
-            if toggled {
+        if toggled {
+            if *paused {
                 *paused = false;
                 time.unpause();
                 physics_time.unpause();
                 actions_frozen.unfreeze();
             } else {
-                egui::CentralPanel::default()
-                    .frame(egui::Frame {
-                        fill: egui::Color32::from_black_alpha(240),
-                        ..default()
-                    })
-                    .show(egui_contexts.ctx_mut(), |ui| {
-                        ui.vertical_centered_justified(|ui| {
-                            ui.visuals_mut().override_text_color =
-                                Some(egui::Color32::from_gray(240));
-                            ui.add_space(100.0);
-                            ui.heading("Game Paused");
-                            ui.separator();
-                            ui.label("Press ESC to resume");
-
-                            ui.add_space(100.0);
-
-                            if ui.button("Quit Game").clicked() {
-                                app_exit_events.send(AppExit);
-                            }
-                        });
-                    });
+                *paused = true;
+                time.pause();
+                physics_time.pause();
+                actions_frozen.freeze();
             }
-        } else if toggled {
-            *paused = true;
-            time.pause();
-            physics_time.pause();
-            actions_frozen.freeze();
         }
     }
+    if !*paused {
+        return;
+    }
+
+    egui::CentralPanel::default()
+        .frame(egui::Frame {
+            fill: egui::Color32::from_black_alpha(240),
+            ..default()
+        })
+        .show(egui_contexts.ctx_mut(), |ui| {
+            ui.vertical_centered_justified(|ui| {
+                ui.visuals_mut().override_text_color = Some(egui::Color32::from_gray(240));
+                ui.add_space(100.0);
+                ui.heading("Game Paused");
+                ui.separator();
+                ui.label("Press ESC to resume");
+
+                ui.add_space(100.0);
+
+                if ui.button("Quit Game").clicked() {
+                    app_exit_events.send(AppExit);
+                }
+            });
+        });
 }

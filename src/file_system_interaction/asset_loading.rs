@@ -18,7 +18,6 @@ pub(crate) fn loading_plugin(app: &mut App) {
             LoadingState::new(GameState::Loading)
                 .continue_to_state(GameState::Menu)
                 .load_collection::<AudioAssets>()
-                .load_collection::<AnimationAssets>()
                 .load_collection::<GltfAssets>()
                 .load_collection::<TextureAssets>()
                 .load_collection::<ConfigAssets>(),
@@ -43,16 +42,6 @@ pub(crate) struct GltfAssets {
 }
 
 #[derive(AssetCollection, Resource, Clone)]
-pub(crate) struct AnimationAssets {
-    #[asset(path = "scenes/level.glb#Animation0")]
-    pub(crate) character_idle: Handle<AnimationClip>,
-    #[asset(path = "scenes/level.glb#Animation1")]
-    pub(crate) character_walking: Handle<AnimationClip>,
-    #[asset(path = "scenes/level.glb#Animation2")]
-    pub(crate) character_running: Handle<AnimationClip>,
-}
-
-#[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub(crate) glowy_interior: Handle<Image>,
@@ -70,7 +59,6 @@ fn show_progress(
     mut egui_contexts: EguiContexts,
     mut last_done: Local<u32>,
     audio_assets: Option<Res<AudioAssets>>,
-    animation_assets: Option<Res<AnimationAssets>>,
     gltf_assets: Option<Res<GltfAssets>>,
     texture_assets: Option<Res<TextureAssets>>,
     config_assets: Option<Res<ConfigAssets>>,
@@ -91,7 +79,6 @@ fn show_progress(
                 ui.add_space(100.0);
                 ui.add_enabled_ui(false, |ui| {
                     ui.checkbox(&mut audio_assets.is_some(), "Audio");
-                    ui.checkbox(&mut animation_assets.is_some(), "Animations");
                     ui.checkbox(&mut gltf_assets.is_some(), "Models");
                     ui.checkbox(&mut texture_assets.is_some(), "Textures");
                     ui.checkbox(&mut config_assets.is_some(), "Config");

@@ -1,10 +1,9 @@
 use crate::level_instantiation::spawning::objects::*;
 use crate::GameState;
-pub(crate) use animation_link::AnimationEntityLink;
 use anyhow::{Context, Result};
 use bevy::gltf::GltfExtras;
 use bevy::prelude::*;
-use bevy::reflect::serde::{TypedReflectDeserializer, UntypedReflectDeserializer};
+use bevy::reflect::serde::TypedReflectDeserializer;
 use bevy::utils::HashMap;
 
 use serde::de::DeserializeSeed;
@@ -12,12 +11,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::ops::Deref;
 
-mod animation_link;
 pub(crate) mod objects;
 
 pub(crate) fn spawning_plugin(app: &mut App) {
-    app.register_type::<AnimationEntityLink>()
-        .register_type::<camera::IngameCameraMarker>()
+    app.register_type::<camera::IngameCameraMarker>()
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()
         .register_type::<Hidden>()
@@ -30,7 +27,6 @@ pub(crate) fn spawning_plugin(app: &mut App) {
                 player::spawn,
                 npc::spawn,
                 sunlight::spawn,
-                //link_animations,
                 hide,
             )
                 .run_if(in_state(GameState::Playing)),

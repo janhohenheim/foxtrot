@@ -118,11 +118,9 @@ fn handle_camera_kind(
 }
 
 fn rotate_to_speaker(
-    time: Res<Time<Virtual>>,
     mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
     speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
     mut speaker_change_event: EventReader<SpeakerChangeEvent>,
-    _config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
@@ -130,7 +128,6 @@ fn rotate_to_speaker(
         if !speaker_change.speaking {
             continue;
         }
-        let _dt = time.delta_seconds();
 
         for (player_transform, mut controller) in with_player.iter_mut() {
             for (speaker_transform, dialog_target) in speakers.iter() {

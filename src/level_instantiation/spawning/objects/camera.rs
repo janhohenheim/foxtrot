@@ -4,9 +4,10 @@ use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 #[cfg(feature = "dev")]
 use bevy_editor_pls::default_windows::cameras::EditorCamera;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Reflect, Component)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct IngameCameraMarker;
 
 pub(crate) fn spawn(camera: Query<Entity, Added<IngameCameraMarker>>, mut commands: Commands) {

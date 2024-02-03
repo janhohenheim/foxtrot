@@ -2362,6 +2362,7 @@ dependencies = [
  "iyes_progress",
  "leafwing-input-manager",
  "oxidized_navigation",
+ "ron",
  "seldom_fn_plugin",
  "serde",
  "serde_json",

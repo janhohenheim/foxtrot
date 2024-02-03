@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use bevy_mod_sysfail::*;
 use bevy_xpbd_3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
+use serde::{Deserialize, Serialize};
 
 /// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
 pub(crate) fn physics_plugin(app: &mut App) {
@@ -15,8 +16,8 @@ pub(crate) fn physics_plugin(app: &mut App) {
         .add_systems(Update, read_colliders.run_if(in_state(GameState::Playing)));
 }
 
-#[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Reflect, Component)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct ColliderMarker;
 
 #[sysfail(log(level = "error"))]

@@ -2,10 +2,11 @@ use crate::level_instantiation::spawning::animation_link::link_animations;
 use crate::level_instantiation::spawning::objects::*;
 use crate::GameState;
 pub(crate) use animation_link::AnimationEntityLink;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use bevy::gltf::GltfExtras;
 use bevy::prelude::*;
 use bevy::reflect::serde::TypedReflectDeserializer;
+use bevy::utils::HashMap;
 use bevy_mod_sysfail::sysfail;
 use serde::de::DeserializeSeed;
 use serde::{Deserialize, Serialize};
@@ -21,10 +22,10 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()
         .register_type::<Hidden>()
+        .add_systems(Update, add_components_from_gltf_extras.map(Result::unwrap))
         .add_systems(
             Update,
             (
-                add_components_from_gltf_extras,
                 camera::spawn,
                 orb::spawn,
                 player::spawn,
@@ -40,36 +41,43 @@ pub(crate) fn spawning_plugin(app: &mut App) {
 // Reads the extras filed from the GLTF. In Blender, this is the "Custom Attributes" you can set on an object.
 // We treat each extra as a indication that we want to inject a marker struct for populating the object later.
 // See this as a simplified version of https://github.com/kaosat-dev/Blender_bevy_components_workflow/tree/main/crates/bevy_gltf_components
-#[sysfail(log(level = "error"))]
-fn add_components_from_gltf_extras(
-    mut commands: Commands,
-    extras: Query<(Entity, &GltfExtras), Added<GltfExtras>>,
-    type_registry: Res<AppTypeRegistry>,
-) -> Result<()> {
-    for (entity, extra) in extras.iter() {
+
+fn add_components_from_gltf_extras(world: &mut World) -> Result<()> {
+    let mut extras = world.query::<(Entity, &GltfExtras)>();
+    let mut components = HashMap::new();
+    for (entity, extra) in extras.iter(&world) {
         let Ok(json) = serde_json::from_str::<Value>(&extra.value) else {
             continue;
         };
         let Some(object) = json.as_object() else {
             continue;
         };
-        let type_registry = type_registry.read();
-        for component_name in object.keys() {
-            let Some(type_registration) = type_registry.get_with_short_type_path(component_name)
-            else {
-                warn!("No type or ambiguous registration found for component {component_name}");
-                continue;
+        let component_names: Vec<_> = object.keys().map(|k| k.to_string()).collect();
+        components.insert(entity, component_names);
+    }
+    for (entity, component_names) in components {
+        for component_name in component_names {
+            let (type_registration, component, component_name) = {
+                let type_registry: &AppTypeRegistry = world.resource();
+                let type_registry = type_registry.read();
+                let Some(type_registration) =
+                    type_registry.get_with_short_type_path(&component_name)
+                else {
+                    warn!("No type or ambiguous registration found for component {component_name}");
+                    continue;
+                };
+                let reflection_deserializer =
+                    TypedReflectDeserializer::new(&type_registration, type_registry.deref());
+                let mut ron_deserializer = ron::Deserializer::from_str(&component_name)?;
+                let component = reflection_deserializer.deserialize(&mut ron_deserializer)?;
+                (type_registration.clone(), component, component_name)
             };
-            let reflection_deserializer =
-                TypedReflectDeserializer::new(&type_registration, type_registry.deref());
-            let mut ron_deserializer = ron::Deserializer::from_str(&component_name)?;
-            let component = reflection_deserializer.deserialize(&mut ron_deserializer);
 
-            if let Ok(component) = component {
-                info!("Deserialized {component_name}");
-            } else {
-                warn!("Failed to deserialize component {component_name}");
-            }
+            let mut entity_mut = world.entity_mut(entity);
+            type_registration
+                .data::<ReflectComponent>()
+                .with_context(|| format!("{component_name} does not reflect Component"))?
+                .insert(&mut entity_mut, &*component);
         }
     }
     Ok(())

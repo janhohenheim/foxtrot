@@ -2,15 +2,14 @@ use crate::level_instantiation::spawning::animation_link::link_animations;
 use crate::level_instantiation::spawning::objects::*;
 use crate::GameState;
 pub(crate) use animation_link::AnimationEntityLink;
+use bevy::gltf::GltfExtras;
 use bevy::prelude::*;
-use bevy_gltf_components::ComponentsFromGltfPlugin;
-
+use serde_json::{Result, Value};
 mod animation_link;
 pub(crate) mod objects;
 
 pub(crate) fn spawning_plugin(app: &mut App) {
-    app.add_plugins(ComponentsFromGltfPlugin)
-        .register_type::<AnimationEntityLink>()
+    app.register_type::<AnimationEntityLink>()
         .register_type::<camera::IngameCameraMarker>()
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()
@@ -28,6 +27,17 @@ pub(crate) fn spawning_plugin(app: &mut App) {
             )
                 .run_if(in_state(GameState::Playing)),
         );
+}
+
+// Reads the extras filed from the GLTF. In Blender, this is the "Custom Attributes" you can set on an objest.
+// We treat each extra as a indication that wewant to inject a marker struct for populating the object later.
+fn add_components_from_gltf_extras(extras: Query<(Entity, &GltfExtras), Added<GltfExtras>>) {
+    for (entity, extra) in extras.iter() {
+        let Ok(json) = serde_json::from_str(extra.value) else {
+            continue;
+        };
+        let components = entity.keys();
+    }
 }
 
 #[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Reflect, Component)]

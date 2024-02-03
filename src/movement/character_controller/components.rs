@@ -105,7 +105,7 @@ pub(crate) struct FloatHeight(pub(crate) f32);
 impl Default for Jump {
     fn default() -> Self {
         Self {
-            height: 0.75,
+            height: 1.0,
             requested: false,
         }
     }

@@ -4,6 +4,7 @@ use crate::player_control::camera::{
 };
 use crate::GameState;
 use bevy::prelude::*;
+use bevy_atmosphere::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_xpbd_3d::PhysicsSet;
 use bevy_yarnspinner_example_dialogue_view::ExampleYarnSpinnerDialogueViewSystemSet;
@@ -50,7 +51,8 @@ pub(crate) enum IngameCameraKind {
 /// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
 /// third person or fixed angle camera is used.
 pub(crate) fn camera_plugin(app: &mut App) {
-    app.register_type::<UiCamera>()
+    app.add_plugins(AtmospherePlugin)
+        .register_type::<UiCamera>()
         .register_type::<IngameCamera>()
         .register_type::<IngameCameraKind>()
         .init_resource::<ForceCursorGrabMode>()

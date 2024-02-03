@@ -1,5 +1,5 @@
 use crate::level_instantiation::spawning::objects::player;
-use crate::movement::character_controller::{GeneralMovementSystemSet, Walking};
+use crate::movement::character_controller::{GeneralMovementSystemSet, Walk};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
@@ -61,7 +61,7 @@ pub(crate) struct Follower;
 #[sysfail(log(level = "error"))]
 fn query_mesh(
     #[cfg(feature = "dev")] mut commands: Commands,
-    mut with_follower: Query<(&Transform, &mut Walking), (With<Follower>, Without<Player>)>,
+    mut with_follower: Query<(&Transform, &mut Walk), (With<Follower>, Without<Player>)>,
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,

@@ -17,6 +17,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         .add_systems(
             Update,
             (
+                add_components_from_gltf_extras,
                 camera::spawn,
                 orb::spawn,
                 player::spawn,
@@ -29,8 +30,8 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         );
 }
 
-// Reads the extras filed from the GLTF. In Blender, this is the "Custom Attributes" you can set on an objest.
-// We treat each extra as a indication that wewant to inject a marker struct for populating the object later.
+// Reads the extras filed from the GLTF. In Blender, this is the "Custom Attributes" you can set on an object.
+// We treat each extra as a indication that we want to inject a marker struct for populating the object later.
 fn add_components_from_gltf_extras(extras: Query<(Entity, &GltfExtras), Added<GltfExtras>>) {
     for (entity, extra) in extras.iter() {
         let Ok(json) = serde_json::from_str(extra.value) else {

@@ -40,9 +40,13 @@ fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<&Transform, With<Player>>,
     parents: Query<&Parent>,
-    target_query: Query<&Transform, (With<DialogTarget>, Without<Player>, Without<IngameCamera>)>,
+    target_query: Query<
+        (Entity, &Transform),
+        (With<DialogTarget>, Without<Player>, Without<IngameCamera>),
+    >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
+    names: Query<&Name>,
 ) -> Result<()> {
     for Collision(ref contacts) in collisions.read() {
         // Check if the player is colliding with anything
@@ -53,10 +57,15 @@ fn update_interaction_opportunities(
         };
         interaction_opportunity.0 = None;
 
-        let target = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
+        // We might collide with the sensor or the dialog target itself.
+        // If we collide with the sensor, we need to take its parent to get the dialog target
+        let parent = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
 
         // Check if what we are colliding with is a dialog target
-        let Ok(target_translation) = target_query.get(target).map(|t| t.translation) else {
+        let Ok((target, target_transform)) = target_query
+            .get(sensor)
+            .or_else(|_| target_query.get(parent))
+        else {
             continue;
         };
 
@@ -71,7 +80,7 @@ fn update_interaction_opportunities(
         };
         let is_facing_target = is_facing_target(
             player_translation,
-            target_translation,
+            target_transform.translation,
             *camera_transform,
             camera,
         );

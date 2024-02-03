@@ -1,5 +1,5 @@
 use crate::level_instantiation::spawning::objects::player;
-use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
+use crate::movement::character_controller::{GeneralMovementSystemSet, Walking};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;

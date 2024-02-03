@@ -1,9 +1,9 @@
-pub(crate) mod general_movement;
+pub(crate) mod character_controller;
 
 pub(crate) mod navigation;
 pub(crate) mod physics;
 
-use crate::movement::general_movement::general_movement_plugin;
+use crate::movement::character_controller::general_movement_plugin;
 use crate::movement::navigation::navigation_plugin;
 use crate::movement::physics::physics_plugin;
 use bevy::prelude::*;

@@ -1,8 +1,7 @@
 use crate::level_instantiation::spawning::AnimationEntityLink;
-use crate::movement::general_movement::{AnimationState, CharacterAnimations};
+use crate::movement::character_controller::{AnimationState, CharacterAnimations};
 use bevy::animation::AnimationPlayer;
-
-use bevy::prelude::Query;
+use bevy::prelude::*;
 use bevy_mod_sysfail::sysfail;
 use bevy_tnua::builtins::TnuaBuiltinWalk;
 use bevy_tnua::controller::TnuaController;

@@ -5,9 +5,12 @@ use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
+pub(crate) use models::*;
 
 mod animations;
 mod components;
+
+mod models;
 
 pub(crate) fn general_movement_plugin(app: &mut App) {
     app.add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
@@ -16,7 +19,12 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .register_type::<CharacterAnimations>()
         .add_systems(
             Update,
-            (apply_jumping, apply_walking, play_animations)
+            (
+                apply_jumping,
+                apply_walking,
+                play_animations,
+                offset_models_to_character_controller,
+            )
                 .chain()
                 .in_set(GeneralMovementSystemSet)
                 .before(PhysicsSet::Prepare)

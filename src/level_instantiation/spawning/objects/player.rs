@@ -1,6 +1,6 @@
 use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
+use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
 use crate::particles;
 use crate::player_control::actions::{
     create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
@@ -13,24 +13,16 @@ pub(crate) const HEIGHT: f32 = 0.4;
 pub(crate) const RADIUS: f32 = 0.3;
 
 pub(crate) fn spawn(
-    player: Query<(Entity, &Transform, &Children), Added<Player>>,
+    player: Query<(Entity, &Transform), Added<Player>>,
     mut commands: Commands,
     animations: Res<AnimationAssets>,
     mut effects: ResMut<Assets<EffectAsset>>,
-    mut transforms: Query<&mut Transform, Without<Player>>,
 ) {
-    for (entity, transform, children) in player.iter() {
+    for (entity, transform) in player.iter() {
         let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS, transform.scale.y);
         controller.collision_layers = controller
             .collision_layers
             .add_group(CollisionLayer::Player);
-
-        let model_offset = -Vec3::Y * (HEIGHT / 2. + RADIUS) * transform.scale.y;
-        let controller_offset = model_offset * 2.;
-        for child in children.iter() {
-            let mut transform = transforms.get_mut(*child).unwrap();
-            transform.translation += controller_offset;
-        }
 
         commands
             .entity(entity)
@@ -46,11 +38,7 @@ pub(crate) fn spawn(
             ))
             .with_children(|parent| {
                 let particle_bundle = particles::create_sprint_particle_bundle(&mut effects);
-                parent
-                    .spawn(particle_bundle)
-                    .insert(SpatialBundle::from_transform(Transform::from_translation(
-                        controller_offset,
-                    )));
+                parent.spawn(particle_bundle);
             });
     }
 }

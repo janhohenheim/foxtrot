@@ -1,5 +1,5 @@
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::general_movement::AnimationState;
+use crate::movement::character_controller::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua::TnuaAnimatingState;

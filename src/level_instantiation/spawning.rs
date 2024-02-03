@@ -36,7 +36,6 @@ pub(crate) struct Hidden;
 
 fn hide(hidden: Query<Entity, Added<Hidden>>, mut commands: Commands) {
     for entity in hidden.iter() {
-        info!("hidin'");
         commands.entity(entity).insert(Visibility::Hidden);
     }
 }

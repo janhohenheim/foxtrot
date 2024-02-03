@@ -1,7 +1,7 @@
 use crate::file_system_interaction::asset_loading::AnimationAssets;
 use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::general_movement::{CharacterAnimations, CharacterControllerBundle};
+use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
 use bevy::prelude::*;

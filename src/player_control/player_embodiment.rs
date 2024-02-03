@@ -4,7 +4,7 @@ use crate::movement::character_controller::*;
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 
-use crate::util::trait_extension::{F32Ext, Vec3Ext};
+use crate::util::trait_extension::Vec3Ext;
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -16,7 +16,6 @@ use bevy_tnua::controller::TnuaController;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::ops::DerefMut;
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.

@@ -1,4 +1,3 @@
-use crate::level_instantiation::spawning::AnimationEntityLink;
 use crate::movement::character_controller::{AnimationState, CharacterAnimations};
 use bevy::animation::AnimationPlayer;
 use bevy::prelude::*;
@@ -10,7 +9,7 @@ use std::time::Duration;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn play_animations(
-    mut query: Query<(
+    query: Query<(
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
         &CharacterAnimations,

@@ -2,7 +2,7 @@ use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
-use crate::util::trait_extension::F32Ext;
+
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -46,7 +46,7 @@ fn update_interaction_opportunities(
     >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
-    names: Query<&Name>,
+    _names: Query<&Name>,
 ) -> Result<()> {
     for Collision(ref contacts) in collisions.read() {
         // Check if the player is colliding with anything

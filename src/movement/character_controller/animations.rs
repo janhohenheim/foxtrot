@@ -9,14 +9,13 @@ use std::time::Duration;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn play_animations(
-    query: Query<(
+    mut query: Query<(
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
         &CharacterAnimations,
         &mut AnimationPlayer,
     )>,
 ) -> anyhow::Result<()> {
-    return Ok(());
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
     for (mut animating_state, controller, animations, mut animation_player) in query.iter_mut() {

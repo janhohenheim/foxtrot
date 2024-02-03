@@ -1,18 +1,23 @@
-use crate::file_system_interaction::asset_loading::AnimationAssets;
+use crate::file_system_interaction::asset_loading::GltfAssets;
 use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::objects::CollisionLayer;
 use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
+use bevy::gltf::Gltf;
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
 pub(crate) fn spawn(
     follower: Query<(Entity, &Transform), Added<Follower>>,
+    gltf_assets: Res<GltfAssets>,
+    gltfs: Res<Assets<Gltf>>,
     mut commands: Commands,
-    animations: Res<AnimationAssets>,
 ) {
     for (entity, transform) in follower.iter() {
+        let level = gltfs.get(gltf_assets.level.clone()).unwrap();
+        let animations = &level.named_animations;
+
         commands
             .entity(entity)
             .insert((
@@ -23,9 +28,9 @@ pub(crate) fn spawn(
                 ),
                 Follower,
                 CharacterAnimations {
-                    idle: animations.character_idle.clone(),
-                    walk: animations.character_walking.clone(),
-                    aerial: animations.character_running.clone(),
+                    idle: animations["Idle"].clone(),
+                    walk: animations["Walk"].clone(),
+                    aerial: animations["Run"].clone(),
                 },
                 DialogTarget {
                     speaker: "The Follower".to_string(),

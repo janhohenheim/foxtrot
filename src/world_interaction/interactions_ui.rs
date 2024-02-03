@@ -21,7 +21,10 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         .init_resource::<InteractionOpportunity>()
         .add_systems(
             Update,
-            (update_interaction_opportunities, display_interaction_prompt)
+            (
+                update_interaction_opportunities.after(PhysicsSet::Sync),
+                display_interaction_prompt,
+            )
                 .chain()
                 .run_if(
                     not(is_frozen)
@@ -47,6 +50,8 @@ fn update_interaction_opportunities(
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
+    interaction_opportunity.0 = None;
+
     for Collision(ref contacts) in collisions.read() {
         // Check if the player is colliding with anything
         let Some((player, sensor)) =
@@ -54,7 +59,6 @@ fn update_interaction_opportunities(
         else {
             continue;
         };
-        interaction_opportunity.0 = None;
 
         // We might collide with the sensor or the dialog target itself.
         // If we collide with the sensor, we need to take its parent to get the dialog target

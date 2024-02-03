@@ -13,22 +13,28 @@ pub(crate) const HEIGHT: f32 = 0.4;
 pub(crate) const RADIUS: f32 = 0.3;
 
 pub(crate) fn spawn(
-    player: Query<(Entity, &Transform, &Parent), Added<Player>>,
+    player: Query<(Entity, &Transform, &Children), Added<Player>>,
     mut commands: Commands,
     animations: Res<AnimationAssets>,
     mut effects: ResMut<Assets<EffectAsset>>,
+    mut transforms: Query<&mut Transform, Without<Player>>,
 ) {
-    for (model_entity, transform, parent) in player.iter() {
+    for (entity, transform, children) in player.iter() {
         let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS, transform.scale.y);
         controller.collision_layers = controller
             .collision_layers
             .add_group(CollisionLayer::Player);
-        let particle_bundle = particles::create_sprint_particle_bundle(&mut effects);
 
-        let player_entity = commands
-            .spawn((
-                Name::new("Player"),
-                SpatialBundle::default(),
+        let model_offset = -Vec3::Y * (HEIGHT / 2. + RADIUS) * transform.scale.y;
+        let controller_offset = model_offset * 2.;
+        for child in children.iter() {
+            let mut transform = transforms.get_mut(*child).unwrap();
+            transform.translation += controller_offset;
+        }
+
+        commands
+            .entity(entity)
+            .insert((
                 controller,
                 CharacterAnimations {
                     idle: animations.character_idle.clone(),
@@ -39,13 +45,12 @@ pub(crate) fn spawn(
                 create_ui_action_input_manager_bundle(),
             ))
             .with_children(|parent| {
-                parent.spawn(particle_bundle).insert(SpatialBundle {
-                    transform: Transform::from_translation(-Vec3::Y * (HEIGHT / 2. + RADIUS)),
-                    ..default()
-                });
-            })
-            .id();
-        commands.entity(model_entity).set_parent(player_entity);
-        commands.entity(player_entity).set_parent(parent.get());
+                let particle_bundle = particles::create_sprint_particle_bundle(&mut effects);
+                parent
+                    .spawn(particle_bundle)
+                    .insert(SpatialBundle::from_transform(Transform::from_translation(
+                        controller_offset,
+                    )));
+            });
     }
 }

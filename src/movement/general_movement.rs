@@ -71,7 +71,7 @@ pub(crate) fn apply_walking(
             desired_velocity: direction * speed,
             desired_forward: direction.normalize_or_zero(),
             float_height: float_height.0,
-            cling_distance: float_height.0 * 2.0,
+            cling_distance: 0.1,
             ..Default::default()
         });
         walking.direction = None;

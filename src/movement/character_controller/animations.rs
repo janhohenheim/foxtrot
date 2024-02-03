@@ -10,19 +10,17 @@ use std::time::Duration;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn play_animations(
-    mut animation_player: Query<&mut AnimationPlayer>,
     mut query: Query<(
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
-        &AnimationEntityLink,
         &CharacterAnimations,
+        &mut AnimationPlayer,
     )>,
 ) -> anyhow::Result<()> {
+    return Ok(());
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
-    for (mut animating_state, controller, animation_entity_link, animations) in query.iter_mut() {
-        let mut animation_player = animation_player.get_mut(animation_entity_link.0)?;
-
+    for (mut animating_state, controller, animations, mut animation_player) in query.iter_mut() {
         match animating_state.update_by_discriminant({
             let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
                 continue;

@@ -34,7 +34,4 @@ zoom_out_smoothing = 1.2
 
 [player]
 sprint_effect_speed_threshold = 8.1
-fov_saturation_speed = 12.0
-min_fov = 0.75
-max_fov = 1.5
 

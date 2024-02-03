@@ -28,7 +28,6 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
             (
                 handle_jump,
                 handle_horizontal_movement,
-                handle_speed_effects,
                 rotate_to_speaker,
                 control_walking_sound,
                 handle_camera_kind,
@@ -117,32 +116,6 @@ fn handle_camera_kind(
                 IngameCameraKind::ThirdPerson | IngameCameraKind::FixedAngle => {
                     *visibility = Visibility::Inherited;
                 }
-            }
-        }
-    }
-}
-
-fn handle_speed_effects(
-    controllers: Query<&TnuaController, With<Player>>,
-    mut projections: Query<&mut Projection, With<IngameCamera>>,
-    config: Res<GameConfig>,
-) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("handle_speed_effects").entered();
-    for controller in controllers.iter() {
-        let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
-            continue;
-        };
-        let speed_squared = basis_state.running_velocity.horizontal().length_squared();
-        for mut projection in projections.iter_mut() {
-            if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
-                let fov_saturation_speed = config.player.fov_saturation_speed;
-                let min_fov = config.player.min_fov;
-                let max_fov = config.player.max_fov;
-                let scale = (speed_squared / fov_saturation_speed.squared())
-                    .min(1.0)
-                    .squared();
-                perspective.fov = min_fov + (max_fov - min_fov) * scale;
             }
         }
     }

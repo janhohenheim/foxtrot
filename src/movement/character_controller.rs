@@ -12,10 +12,12 @@ mod components;
 
 mod models;
 
-pub(crate) fn general_movement_plugin(app: &mut App) {
+/// This plugin communicates with the Tnua character controller by propagating settings found in
+/// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
+pub(crate) fn character_controller_plugin(app: &mut App) {
     app.add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
-        .register_type::<Jumping>()
-        .register_type::<Walking>()
+        .register_type::<Jump>()
+        .register_type::<Walk>()
         .register_type::<CharacterAnimations>()
         .add_systems(
             Update,
@@ -28,6 +30,10 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .add_systems(Update, offset_models_to_controller.after(PhysicsSet::Sync));
 }
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub(crate) struct GeneralMovementSystemSet;
+
+/// Managed by [`play_animations`]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum AnimationState {
     Standing,
@@ -36,13 +42,10 @@ pub(crate) enum AnimationState {
     Running(f32),
 }
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub(crate) struct GeneralMovementSystemSet;
-
 pub(crate) fn apply_walking(
     mut character_query: Query<(
         &mut TnuaController,
-        &mut Walking,
+        &mut Walk,
         Option<&Sprinting>,
         &FloatHeight,
     )>,
@@ -67,7 +70,7 @@ pub(crate) fn apply_walking(
     }
 }
 
-pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jumping)>) {
+pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jump)>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_jumping").entered();
     for (mut controller, mut jump) in &mut character_query {

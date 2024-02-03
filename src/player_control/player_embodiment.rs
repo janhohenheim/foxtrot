@@ -43,7 +43,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Player;
 
-fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping), With<Player>>) {
+fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), With<Player>>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
@@ -53,10 +53,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 
 #[sysfail(log(level = "error"))]
 fn handle_horizontal_movement(
-    mut player_query: Query<
-        (&ActionState<PlayerAction>, &mut Walking, &mut Sprinting),
-        With<Player>,
-    >,
+    mut player_query: Query<(&ActionState<PlayerAction>, &mut Walk, &mut Sprinting), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]

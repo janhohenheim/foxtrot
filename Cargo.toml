@@ -58,6 +58,7 @@ bevy-tnua-xpbd3d = "0.1"
 bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
 bevy-tnua = "0.14.1"
 bevy_gltf_components = "0.2.2"
+egui_plot = "0.24.0"
 
 [dependencies.bevy]
 version = "0.12.1"

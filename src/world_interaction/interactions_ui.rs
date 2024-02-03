@@ -2,6 +2,7 @@ use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
+
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -20,17 +21,16 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         .init_resource::<InteractionOpportunity>()
         .add_systems(
             Update,
-            (update_interaction_opportunities)
+            (
+                update_interaction_opportunities.after(PhysicsSet::Sync),
+                display_interaction_prompt,
+            )
                 .chain()
-                .run_if(in_state(GameState::Playing)),
-        )
-        .add_systems(
-            Update,
-            display_interaction_prompt.run_if(
-                not(is_frozen)
-                    .and_then(in_state(GameState::Playing))
-                    .and_then(any_with_component::<DialogueRunner>()),
-            ),
+                .run_if(
+                    not(is_frozen)
+                        .and_then(in_state(GameState::Playing))
+                        .and_then(any_with_component::<DialogueRunner>()),
+                ),
         );
 }
 
@@ -43,23 +43,32 @@ fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<&Transform, With<Player>>,
     parents: Query<&Parent>,
-    target_query: Query<&Transform, (With<DialogTarget>, Without<Player>, Without<IngameCamera>)>,
+    target_query: Query<
+        (Entity, &Transform),
+        (With<DialogTarget>, Without<Player>, Without<IngameCamera>),
+    >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
     interaction_opportunity.0 = None;
+
     for Collision(ref contacts) in collisions.read() {
-        // Check if we are colliding
+        // Check if the player is colliding with anything
         let Some((player, sensor)) =
             get_player_and_target(&player_query, contacts.entity1, contacts.entity2)
         else {
             continue;
         };
-        let Ok(target) = parents.get(sensor).map(Parent::get) else {
-            continue;
-        };
 
-        let Ok(target_translation) = target_query.get(target).map(|t| t.translation) else {
+        // We might collide with the sensor or the dialog target itself.
+        // If we collide with the sensor, we need to take its parent to get the dialog target
+        let parent = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
+
+        // Check if what we are colliding with is a dialog target
+        let Ok((target, target_transform)) = target_query
+            .get(sensor)
+            .or_else(|_| target_query.get(parent))
+        else {
             continue;
         };
 
@@ -74,7 +83,7 @@ fn update_interaction_opportunities(
         };
         let is_facing_target = is_facing_target(
             player_translation,
-            target_translation,
+            target_transform.translation,
             *camera_transform,
             camera,
         );
@@ -90,9 +99,9 @@ fn get_player_and_target(
     entity_a: Entity,
     entity_b: Entity,
 ) -> Option<(Entity, Entity)> {
-    if player_query.get(entity_a).is_ok() {
+    if player_query.contains(entity_a) {
         Some((entity_a, entity_b))
-    } else if player_query.get(entity_b).is_ok() {
+    } else if player_query.contains(entity_b) {
         Some((entity_b, entity_a))
     } else {
         None
@@ -124,12 +133,10 @@ fn display_interaction_prompt(
     dialog_target_query: Query<&DialogTarget>,
     mut freeze: ResMut<ActionsFrozen>,
 ) -> Result<()> {
-    let Some(dialog_target) = interaction_opportunity
-        .0
-        .and_then(|e| dialog_target_query.get(e).ok())
-    else {
+    let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
+    let dialog_target = dialog_target_query.get(opportunity)?;
     let window = primary_windows
         .get_single()
         .context("Failed to get primary window")?;

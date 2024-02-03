@@ -1,5 +1,5 @@
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::general_movement::AnimationState;
+use crate::movement::character_controller::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua::TnuaAnimatingState;
@@ -9,9 +9,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Bundle)]
 pub(crate) struct CharacterControllerBundle {
-    pub(crate) walking: Walking,
+    pub(crate) walking: Walk,
     pub(crate) sprinting: Sprinting,
-    pub(crate) jumping: Jumping,
+    pub(crate) jumping: Jump,
     pub(crate) collider: Collider,
     pub(crate) rigid_body: RigidBody,
     pub(crate) locked_axes: LockedAxes,
@@ -22,10 +22,8 @@ pub(crate) struct CharacterControllerBundle {
     pub(crate) animation_state: TnuaAnimatingState<AnimationState>,
 }
 
-pub(crate) const FLOAT_HEIGHT: f32 = 0.1;
-
 impl CharacterControllerBundle {
-    pub(crate) fn capsule(height: f32, radius: f32) -> Self {
+    pub(crate) fn capsule(height: f32, radius: f32, scale_y: f32) -> Self {
         Self {
             walking: default(),
             sprinting: default(),
@@ -42,9 +40,12 @@ impl CharacterControllerBundle {
                     CollisionLayer::Sensor,
                 ],
             ),
-            tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(height * 0.9, radius * 0.9)),
+            tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(
+                height * 0.95,
+                radius * 0.95,
+            )),
             tnua_controller: default(),
-            float_height: FloatHeight(FLOAT_HEIGHT),
+            float_height: FloatHeight((height / 2. + radius) * scale_y),
             animation_state: default(),
         }
     }
@@ -52,14 +53,14 @@ impl CharacterControllerBundle {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Walking {
+pub(crate) struct Walk {
     /// Top speed on the ground
     pub(crate) speed: f32,
     /// Direction in which we want to walk and turn this tick.
     pub(crate) direction: Option<Vec3>,
 }
 
-impl Default for Walking {
+impl Default for Walk {
     fn default() -> Self {
         Self {
             speed: 8.,
@@ -70,10 +71,10 @@ impl Default for Walking {
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Jumping {
-    /// The full height of the jump, if the player does not release the button:
+pub(crate) struct Jump {
+    /// The full height of the jump, if the player does not release the button
     pub(crate) height: f32,
-    /// Was jump requested?
+    /// Was jump requested this frame?
     pub(crate) requested: bool,
 }
 
@@ -98,13 +99,13 @@ impl Default for Sprinting {
 #[derive(Debug, Default, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 /// Must be larger than the height of the entity's center from the bottom of its
-/// collider, or else the character will not float and Tnua will not work properly:
+/// collider, or else the character will not float and Tnua will not work properly
 pub(crate) struct FloatHeight(pub(crate) f32);
 
-impl Default for Jumping {
+impl Default for Jump {
     fn default() -> Self {
         Self {
-            height: 0.75,
+            height: 1.0,
             requested: false,
         }
     }

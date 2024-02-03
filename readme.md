@@ -1,28 +1,24 @@
 # Foxtrot
-[![Live Demo](https://img.shields.io/badge/live%20demo-v0.2.0-blue)](https://janhohenheim.github.io/foxtrot/)
 
 The all-in-one Bevy 3D game template.  
 
 https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b1d1-ccc59b02fa7b.mov
 
 ## What does this template give you?
-- A 3D character controller
-- Physics via [`bevy_rapier`](https://crates.io/crates/bevy_rapier)
+- A 3D character controller via [`bevy-tnua`](https://crates.io/crates/bevy-tnua)
+- Physics via [`bevy_xpbd`](https://crates.io/crates/bevy_xpbd_3d)
 - Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
 - Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
 - [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) bound to 'G'
-- Custom editor for the game state found in the windows selection for `bevy_editor_pls`.
-- Saving / loading levels
-- Saving / loading the game state
+- Custom editor found in the windows selection for `bevy_editor_pls`.
 - Animations
-- Dialogs via [`Yarn Spinner for Rust`](https://github.com/YarnSpinnerTool/YarnSpinner-Rust)
-- Shaders
-- GLTF imports, including auto-detection of colliders
-- Smooth cameras via [`bevy_dolly`](https://github.com/BlackPhlox/bevy_dolly)
-- A skydome that follows the camera
+- Dialogs via [`Yarn Spinner for Rust`](https://crates.io/crates/bevy_yarnspinner)
+- Shaders, using the code from [DGriffin's tutorial](https://www.youtube.com/watch?v=O6A_nVmpvhc)
+- GLTF imports, including auto-insertion of markers via the GLTF extras field
+- Smooth cameras via [`bevy_dolly`](https://crates.io/crates/bevy_dolly)
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
 - Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
-- Particle effects via [`bevy_hanabi`](https://github.com/djeedai/bevy_hanabi)
+- Particle effects via [`bevy_hanabi`](https://crates.io/crates/bevy_hanabi)
 - Clean and extensible object spawning via [`spew`](https://crates.io/crates/spew)
 
 ## Usage
@@ -32,11 +28,6 @@ Then, replace all instances of the word `foxtrot` with the name of your game. Ch
 - `Cargo.toml`
 - `build/windows/installer/Package.wxs`
 - `build/macos/src/Game.app/Contents/Resources/Info.plist`
-
-### Running the game
-```bash
-cargo run
-```
 
 ### Updating assets
 

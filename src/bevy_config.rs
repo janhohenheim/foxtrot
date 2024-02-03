@@ -1,8 +1,6 @@
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy::window::PresentMode;
 use bevy::window::PrimaryWindow;
-use bevy::window::WindowMode;
 use bevy::winit::WinitWindows;
 use bevy_mod_sysfail::*;
 use std::io::Cursor;
@@ -12,12 +10,7 @@ use winit::window::Icon;
 pub(crate) fn bevy_config_plugin(app: &mut App) {
     let default_plugins = DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-            resolution: (800., 600.).into(),
             title: "Foxtrot".to_string(),
-            canvas: Some("#bevy".to_owned()),
-            present_mode: PresentMode::AutoVsync,
-            mode: WindowMode::BorderlessFullscreen,
-            fit_canvas_to_parent: true,
             ..default()
         }),
         ..default()

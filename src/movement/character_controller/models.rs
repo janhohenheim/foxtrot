@@ -3,6 +3,8 @@ use bevy::prelude::*;
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
 
+/// Shift models down because XPBD will make controllers float,
+/// but our models definitely should not be floating!
 pub(crate) fn offset_models_to_controller(
     controllers: Query<
         (&Transform, &FloatHeight, &Children),

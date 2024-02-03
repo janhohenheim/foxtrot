@@ -8,15 +8,19 @@ use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
 pub(crate) fn spawn(
-    follower: Query<Entity, Added<Follower>>,
+    follower: Query<(Entity, &Transform), Added<Follower>>,
     mut commands: Commands,
     animations: Res<AnimationAssets>,
 ) {
-    for entity in follower.iter() {
+    for (entity, transform) in follower.iter() {
         commands
             .entity(entity)
             .insert((
-                CharacterControllerBundle::capsule(player::HEIGHT, player::RADIUS),
+                CharacterControllerBundle::capsule(
+                    player::HEIGHT,
+                    player::RADIUS,
+                    transform.scale.y,
+                ),
                 Follower,
                 CharacterAnimations {
                     idle: animations.character_idle.clone(),

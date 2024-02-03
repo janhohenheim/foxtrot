@@ -13,21 +13,22 @@ pub(crate) const HEIGHT: f32 = 0.4;
 pub(crate) const RADIUS: f32 = 0.3;
 
 pub(crate) fn spawn(
-    player: Query<Entity, Added<Player>>,
+    player: Query<(Entity, &Transform, &Parent), Added<Player>>,
     mut commands: Commands,
     animations: Res<AnimationAssets>,
     mut effects: ResMut<Assets<EffectAsset>>,
 ) {
-    for entity in player.iter() {
-        let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS);
+    for (model_entity, transform, parent) in player.iter() {
+        let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS, transform.scale.y);
         controller.collision_layers = controller
             .collision_layers
             .add_group(CollisionLayer::Player);
         let particle_bundle = particles::create_sprint_particle_bundle(&mut effects);
 
-        commands
-            .entity(entity)
-            .insert((
+        let player_entity = commands
+            .spawn((
+                Name::new("Player"),
+                SpatialBundle::default(),
                 controller,
                 CharacterAnimations {
                     idle: animations.character_idle.clone(),
@@ -42,6 +43,9 @@ pub(crate) fn spawn(
                     transform: Transform::from_translation(-Vec3::Y * (HEIGHT / 2. + RADIUS)),
                     ..default()
                 });
-            });
+            })
+            .id();
+        commands.entity(model_entity).set_parent(player_entity);
+        commands.entity(player_entity).set_parent(parent.get());
     }
 }

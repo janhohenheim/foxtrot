@@ -23,7 +23,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
                 player::spawn,
                 npc::spawn,
                 sunlight::spawn,
-                link_animations,
+                //link_animations,
                 hide,
             )
                 .run_if(in_state(GameState::Playing)),
@@ -36,6 +36,7 @@ pub(crate) struct Hidden;
 
 fn hide(hidden: Query<Entity, Added<Hidden>>, mut commands: Commands) {
     for entity in hidden.iter() {
+        info!("hidin'");
         commands.entity(entity).insert(Visibility::Hidden);
     }
 }

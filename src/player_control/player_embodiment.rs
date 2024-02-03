@@ -149,7 +149,7 @@ fn handle_speed_effects(
 }
 
 fn rotate_to_speaker(
-    time: Res<Time>,
+    time: Res<Time<Virtual>>,
     mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
     speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
     mut speaker_change_event: EventReader<SpeakerChangeEvent>,

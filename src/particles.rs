@@ -1,4 +1,5 @@
 use crate::file_system_interaction::config::GameConfig;
+use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
 use anyhow::Result;
@@ -29,7 +30,7 @@ struct SprintingParticle;
 
 #[sysfail(log(level = "error"))]
 fn play_sprinting_effect(
-    with_player: Query<&TnuaController>,
+    with_player: Query<&TnuaController, With<Player>>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,
     config: Res<GameConfig>,
 ) -> Result<()> {

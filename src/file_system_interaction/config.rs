@@ -62,7 +62,4 @@ pub(crate) struct ThirdPerson {
 #[reflect(Serialize, Deserialize)]
 pub(crate) struct PlayerEffects {
     pub(crate) sprint_effect_speed_threshold: f32,
-    pub(crate) fov_saturation_speed: f32,
-    pub(crate) min_fov: f32,
-    pub(crate) max_fov: f32,
 }

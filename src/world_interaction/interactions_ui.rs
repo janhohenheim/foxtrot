@@ -2,6 +2,7 @@ use crate::player_control::actions::{ActionsFrozen, PlayerAction};
 use crate::player_control::camera::{IngameCamera, IngameCameraKind};
 use crate::player_control::player_embodiment::Player;
 use crate::util::criteria::is_frozen;
+use crate::util::trait_extension::F32Ext;
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -44,7 +45,7 @@ fn update_interaction_opportunities(
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) -> Result<()> {
     for Collision(ref contacts) in collisions.read() {
-        // Check if we are colliding
+        // Check if the player is colliding with anything
         let Some((player, sensor)) =
             get_player_and_target(&player_query, contacts.entity1, contacts.entity2)
         else {
@@ -54,6 +55,7 @@ fn update_interaction_opportunities(
 
         let target = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
 
+        // Check if what we are colliding with is a dialog target
         let Ok(target_translation) = target_query.get(target).map(|t| t.translation) else {
             continue;
         };

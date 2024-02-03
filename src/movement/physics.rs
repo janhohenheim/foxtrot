@@ -10,6 +10,8 @@ use oxidized_navigation::NavMeshAffector;
 pub(crate) fn physics_plugin(app: &mut App) {
     app.register_type::<ColliderMarker>()
         .add_plugins(PhysicsPlugins::default())
+        // Using the default fixed timestep causes issues on faster (165 Hz) machines.
+        .insert_resource(Time::new_with(Physics::variable(1.0 / 60.)))
         .add_systems(Update, read_colliders.run_if(in_state(GameState::Playing)));
 }
 

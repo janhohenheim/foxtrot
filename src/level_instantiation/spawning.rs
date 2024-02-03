@@ -1,13 +1,12 @@
-use crate::level_instantiation::spawning::animation_link::link_animations;
 use crate::level_instantiation::spawning::objects::*;
 use crate::GameState;
 pub(crate) use animation_link::AnimationEntityLink;
 use anyhow::{Context, Result};
 use bevy::gltf::GltfExtras;
 use bevy::prelude::*;
-use bevy::reflect::serde::TypedReflectDeserializer;
+use bevy::reflect::serde::{TypedReflectDeserializer, UntypedReflectDeserializer};
 use bevy::utils::HashMap;
-use bevy_mod_sysfail::sysfail;
+
 use serde::de::DeserializeSeed;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -45,7 +44,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
 fn add_components_from_gltf_extras(world: &mut World) -> Result<()> {
     let mut extras = world.query::<(Entity, &GltfExtras)>();
     let mut components = HashMap::new();
-    for (entity, extra) in extras.iter(&world) {
+    for (entity, extra) in extras.iter(world) {
         let Ok(json) = serde_json::from_str::<Value>(&extra.value) else {
             continue;
         };

@@ -1,7 +1,6 @@
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use bevy::window::WindowMode;
 use bevy::winit::WinitWindows;
 use bevy_mod_sysfail::*;
 use std::io::Cursor;
@@ -12,7 +11,6 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
     let default_plugins = DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
             title: "Foxtrot".to_string(),
-            // mode: WindowMode::BorderlessFullscreen,
             ..default()
         }),
         ..default()

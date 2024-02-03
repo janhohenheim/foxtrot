@@ -6,6 +6,7 @@ use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use bevy_mod_sysfail::sysfail;
 use bevy_tnua::prelude::*;
+use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use creation::*;
 
 mod creation;
@@ -16,7 +17,9 @@ pub(crate) fn particle_plugin(app: &mut App) {
         .add_plugins(HanabiPlugin)
         .add_systems(
             Update,
-            play_sprinting_effect.run_if(in_state(GameState::Playing)),
+            play_sprinting_effect
+                .run_if(in_state(GameState::Playing))
+                .after(PhysicsSet::Sync),
         );
 }
 

@@ -19,17 +19,13 @@ pub(crate) fn general_movement_plugin(app: &mut App) {
         .register_type::<CharacterAnimations>()
         .add_systems(
             Update,
-            (
-                apply_jumping,
-                apply_walking,
-                play_animations,
-                offset_models_to_character_controller,
-            )
+            (apply_jumping, apply_walking, play_animations)
                 .chain()
                 .in_set(GeneralMovementSystemSet)
                 .before(PhysicsSet::Prepare)
                 .run_if(in_state(GameState::Playing)),
-        );
+        )
+        .add_systems(Update, offset_models_to_controller.after(PhysicsSet::Sync));
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -42,21 +38,6 @@ pub(crate) enum AnimationState {
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub(crate) struct GeneralMovementSystemSet;
-
-pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jumping)>) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("apply_jumping").entered();
-    for (mut controller, mut jump) in &mut character_query {
-        if jump.requested {
-            controller.action(TnuaBuiltinJump {
-                height: jump.height,
-                takeoff_extra_gravity: 10.0,
-                ..Default::default()
-            });
-            jump.requested = false;
-        }
-    }
-}
 
 pub(crate) fn apply_walking(
     mut character_query: Query<(
@@ -83,5 +64,20 @@ pub(crate) fn apply_walking(
             ..Default::default()
         });
         walking.direction = None;
+    }
+}
+
+pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jumping)>) {
+    #[cfg(feature = "tracing")]
+    let _span = info_span!("apply_jumping").entered();
+    for (mut controller, mut jump) in &mut character_query {
+        if jump.requested {
+            controller.action(TnuaBuiltinJump {
+                height: jump.height,
+                takeoff_extra_gravity: 10.0,
+                ..Default::default()
+            });
+            jump.requested = false;
+        }
     }
 }

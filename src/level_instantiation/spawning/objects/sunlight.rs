@@ -1,7 +1,8 @@
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Reflect, Component)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Sun;
 
 pub(crate) fn spawn(

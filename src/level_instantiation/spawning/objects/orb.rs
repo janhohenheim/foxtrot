@@ -2,9 +2,10 @@ use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
 use crate::shader::ShaderMaterials;
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Clone, Copy, Eq, PartialEq, Reflect, Component)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Orb;
 
 fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {

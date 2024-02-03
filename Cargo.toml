@@ -50,6 +50,7 @@ bevy_yarnspinner_example_dialogue_view = "0.1"
 bevy-tnua-xpbd3d = "0.1"
 bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
 bevy-tnua = "0.14.1"
+ron = "0.8.1"
 
 [dependencies.bevy]
 version = "0.12.1"

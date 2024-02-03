@@ -1,10 +1,9 @@
 use crate::file_system_interaction::audio::AudioHandles;
-use crate::file_system_interaction::config::GameConfig;
-use crate::movement::general_movement::*;
+use crate::movement::character_controller::*;
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 
-use crate::util::trait_extension::{F32Ext, Vec3Ext};
+use crate::util::trait_extension::Vec3Ext;
 use crate::world_interaction::dialog::DialogTarget;
 use crate::GameState;
 use anyhow::{Context, Result};
@@ -13,11 +12,9 @@ use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
 use bevy_tnua::builtins::TnuaBuiltinWalk;
 use bevy_tnua::controller::TnuaController;
-use bevy_xpbd_3d::prelude::LinearVelocity;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
-use std::ops::DerefMut;
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
@@ -29,13 +26,12 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
             (
                 handle_jump,
                 handle_horizontal_movement,
-                handle_speed_effects,
                 rotate_to_speaker,
                 control_walking_sound,
                 handle_camera_kind,
             )
                 .chain()
-                .after(CameraUpdateSystemSet)
+                .before(CameraUpdateSystemSet)
                 .before(GeneralMovementSystemSet)
                 .run_if(in_state(GameState::Playing)),
         );
@@ -45,7 +41,7 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Player;
 
-fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping), With<Player>>) {
+fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), With<Player>>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
@@ -55,10 +51,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jumping
 
 #[sysfail(log(level = "error"))]
 fn handle_horizontal_movement(
-    mut player_query: Query<
-        (&ActionState<PlayerAction>, &mut Walking, &mut Sprinting),
-        With<Player>,
-    >,
+    mut player_query: Query<(&ActionState<PlayerAction>, &mut Walk, &mut Sprinting), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
@@ -123,36 +116,10 @@ fn handle_camera_kind(
     }
 }
 
-fn handle_speed_effects(
-    velocities: Query<&LinearVelocity, With<Player>>,
-    mut projections: Query<&mut Projection, With<IngameCamera>>,
-    config: Res<GameConfig>,
-) {
-    #[cfg(feature = "tracing")]
-    let _span = info_span!("handle_speed_effects").entered();
-    for velocity in velocities.iter() {
-        let horizontal_velocity = velocity.horizontal();
-        let speed_squared = horizontal_velocity.length_squared();
-        for mut projection in projections.iter_mut() {
-            if let Projection::Perspective(ref mut perspective) = projection.deref_mut() {
-                let fov_saturation_speed = config.player.fov_saturation_speed;
-                let min_fov = config.player.min_fov;
-                let max_fov = config.player.max_fov;
-                let scale = (speed_squared / fov_saturation_speed.squared())
-                    .min(1.0)
-                    .squared();
-                perspective.fov = min_fov + (max_fov - min_fov) * scale;
-            }
-        }
-    }
-}
-
 fn rotate_to_speaker(
-    time: Res<Time>,
     mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
     speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
     mut speaker_change_event: EventReader<SpeakerChangeEvent>,
-    _config: Res<GameConfig>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
@@ -160,7 +127,6 @@ fn rotate_to_speaker(
         if !speaker_change.speaking {
             continue;
         }
-        let _dt = time.delta_seconds();
 
         for (player_transform, mut controller) in with_player.iter_mut() {
             for (speaker_transform, dialog_target) in speakers.iter() {
@@ -180,17 +146,20 @@ fn rotate_to_speaker(
 #[sysfail(log(level = "error"))]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
-    character_query: Query<(&LinearVelocity, &TnuaController), With<Player>>,
+    character_query: Query<&TnuaController, With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("control_walking_sound").entered();
-    for (velocity, controller) in character_query.iter() {
+    for controller in character_query.iter() {
         let audio_instance = audio_instances
             .get_mut(&audio.walking)
             .context("Failed to get audio instance from handle")?;
-        let has_horizontal_movement = !velocity.horizontal().is_approx_zero();
+        let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
+            continue;
+        };
+        let has_horizontal_movement = !basis_state.running_velocity.horizontal().is_approx_zero();
         let is_moving_on_ground = has_horizontal_movement && !controller.is_airborne()?;
         if is_moving_on_ground && !time.is_paused() {
             audio_instance.resume(default());

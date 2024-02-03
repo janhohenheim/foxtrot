@@ -1,5 +1,5 @@
-use crate::level_instantiation::spawning::objects::npc;
-use crate::movement::general_movement::{GeneralMovementSystemSet, Walking};
+use crate::level_instantiation::spawning::objects::player;
+use crate::movement::character_controller::{GeneralMovementSystemSet, Walk};
 use crate::player_control::player_embodiment::Player;
 use crate::util::trait_extension::{F32Ext, Vec3Ext};
 use crate::GameState;
@@ -21,7 +21,7 @@ use crate::dev::dev_editor::DevEditorWindow;
 use serde::{Deserialize, Serialize};
 
 /// Manually tweaked
-const CELL_WIDTH: f32 = 0.4 * npc::RADIUS;
+const CELL_WIDTH: f32 = 0.4 * player::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Follower`] component will follow the [`Player`].
 pub(crate) fn navigation_plugin(app: &mut App) {
@@ -47,7 +47,8 @@ pub(crate) fn navigation_plugin(app: &mut App) {
         query_mesh
             .before(GeneralMovementSystemSet)
             .run_if(in_state(GameState::Playing)),
-    );
+    )
+    .register_type::<Follower>();
     #[cfg(feature = "dev")]
     app.add_plugins(OxidizedNavigationDebugDrawPlugin)
         .add_systems(Update, draw_navmesh);
@@ -60,7 +61,7 @@ pub(crate) struct Follower;
 #[sysfail(log(level = "error"))]
 fn query_mesh(
     #[cfg(feature = "dev")] mut commands: Commands,
-    mut with_follower: Query<(&Transform, &mut Walking), (With<Follower>, Without<Player>)>,
+    mut with_follower: Query<(&Transform, &mut Walk), (With<Follower>, Without<Player>)>,
     with_player: Query<&Transform, (With<Player>, Without<Follower>)>,
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,

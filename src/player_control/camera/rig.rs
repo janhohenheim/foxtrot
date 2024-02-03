@@ -14,7 +14,7 @@ mod arm;
 
 #[sysfail(log(level = "error"))]
 pub(crate) fn update_rig(
-    time: Res<Time>,
+    time: Res<Time<Virtual>>,
     mut camera_query: Query<(
         &mut IngameCamera,
         &mut Rig,

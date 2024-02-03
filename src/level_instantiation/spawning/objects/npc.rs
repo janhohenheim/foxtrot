@@ -1,65 +1,49 @@
-use crate::file_system_interaction::asset_loading::{AnimationAssets, SceneAssets};
+use crate::file_system_interaction::asset_loading::GltfAssets;
+use crate::level_instantiation::spawning::objects::player;
 use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::level_instantiation::spawning::GameObject;
-use crate::movement::general_movement::{
-    CharacterAnimations, CharacterControllerBundle, FLOAT_HEIGHT,
-};
+use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
 use crate::movement::navigation::Follower;
 use crate::world_interaction::dialog::DialogTarget;
+use bevy::gltf::Gltf;
 use bevy::prelude::*;
-
 use bevy_xpbd_3d::prelude::*;
-use std::f32::consts::TAU;
-
-pub(crate) const HEIGHT: f32 = 0.4;
-pub(crate) const RADIUS: f32 = 0.4;
 
 pub(crate) fn spawn(
-    In(transform): In<Transform>,
+    follower: Query<(Entity, &Transform), Added<Follower>>,
+    gltf_assets: Res<GltfAssets>,
+    gltfs: Res<Assets<Gltf>>,
     mut commands: Commands,
-    animations: Res<AnimationAssets>,
-    scene_handles: Res<SceneAssets>,
 ) {
-    commands
-        .spawn((
-            PbrBundle {
-                transform,
-                ..default()
-            },
-            Name::new("NPC"),
-            CharacterControllerBundle::capsule(HEIGHT, RADIUS),
-            Follower,
-            CharacterAnimations {
-                idle: animations.character_idle.clone(),
-                walk: animations.character_walking.clone(),
-                aerial: animations.character_running.clone(),
-            },
-            GameObject::Npc,
-            DialogTarget {
-                speaker: "The Follower".to_string(),
-                node: "Follower".to_string(),
-            },
-        ))
-        .with_children(|parent| {
-            parent.spawn((
-                Name::new("NPC Dialog Collider"),
-                Collider::cylinder(HEIGHT / 2., RADIUS * 5.),
-                CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
-                Sensor,
-            ));
-        })
-        .with_children(|parent| {
-            parent.spawn((
-                SceneBundle {
-                    scene: scene_handles.character.clone(),
-                    transform: Transform {
-                        translation: Vec3::new(0., -HEIGHT / 2. - RADIUS - FLOAT_HEIGHT, 0.),
-                        scale: Vec3::splat(0.012),
-                        rotation: Quat::from_rotation_y(TAU / 2.),
-                    },
-                    ..default()
+    for (entity, transform) in follower.iter() {
+        let level = gltfs.get(gltf_assets.level.clone()).unwrap();
+        let animations = &level.named_animations;
+
+        commands
+            .entity(entity)
+            .insert((
+                CharacterControllerBundle::capsule(
+                    player::HEIGHT,
+                    player::RADIUS,
+                    transform.scale.y,
+                ),
+                Follower,
+                CharacterAnimations {
+                    idle: animations["Idle"].clone(),
+                    walk: animations["Walk"].clone(),
+                    aerial: animations["Run"].clone(),
                 },
-                Name::new("NPC Model"),
-            ));
-        });
+                DialogTarget {
+                    speaker: "The Follower".to_string(),
+                    node: "Follower".to_string(),
+                },
+            ))
+            .with_children(|parent| {
+                parent.spawn((
+                    Name::new("NPC Dialog Collider"),
+                    Collider::cylinder(player::HEIGHT / 2., player::RADIUS * 5.),
+                    CollisionLayers::new([CollisionLayer::Sensor], [CollisionLayer::Player]),
+                    Sensor,
+                ));
+            });
+    }
 }

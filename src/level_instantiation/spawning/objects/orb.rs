@@ -1,8 +1,12 @@
 use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
-use crate::level_instantiation::spawning::GameObject;
-use crate::shader::Materials;
+use crate::shader::ShaderMaterials;
 use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub(crate) struct Orb;
 
 fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
     const MESH_HANDLE: Handle<Mesh> = Handle::weak_from_u128(0x1f40128bac02a9b);
@@ -15,35 +19,39 @@ fn get_or_add_mesh_handle(mesh_assets: &mut Assets<Mesh>) -> Handle<Mesh> {
 }
 
 pub(crate) fn spawn(
-    In(transform): In<Transform>,
+    orb: Query<Entity, Added<Orb>>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    materials: Res<Materials>,
+    materials: Res<ShaderMaterials>,
+    children: Query<&Children>,
 ) {
-    let mesh_handle = get_or_add_mesh_handle(&mut meshes);
-    commands
-        .spawn((
-            MaterialMeshBundle {
-                mesh: mesh_handle,
-                material: materials.glowy.clone(),
-                transform,
-                ..default()
-            },
-            Name::new("Orb"),
-            NotShadowCaster,
-            NotShadowReceiver,
-            GameObject::Orb,
-        ))
-        .with_children(|parent| {
-            parent.spawn((PointLightBundle {
-                point_light: PointLight {
-                    intensity: 10_000.,
-                    radius: 1.,
-                    color: Color::rgb(0.5, 0.1, 0.),
-                    shadows_enabled: true,
+    for entity in orb.iter() {
+        let mesh_handle = get_or_add_mesh_handle(&mut meshes);
+        children.iter_descendants(entity).for_each(|child| {
+            commands.entity(child).despawn_recursive();
+        });
+        commands
+            .entity(entity)
+            .insert((
+                MaterialMeshBundle {
+                    mesh: mesh_handle,
+                    material: materials.glowy.clone(),
                     ..default()
                 },
-                ..default()
-            },));
-        });
+                NotShadowCaster,
+                NotShadowReceiver,
+            ))
+            .with_children(|parent| {
+                parent.spawn((PointLightBundle {
+                    point_light: PointLight {
+                        intensity: 10_000.,
+                        radius: 1.,
+                        color: Color::rgb(0.5, 0.1, 0.),
+                        shadows_enabled: true,
+                        ..default()
+                    },
+                    ..default()
+                },));
+            });
+    }
 }

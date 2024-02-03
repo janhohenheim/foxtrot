@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub(crate) struct UiCamera;
 
 pub(crate) fn spawn_ui_camera(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), UiCamera, Name::new("Camera")));
+    commands.spawn((Camera2dBundle::default(), UiCamera, Name::new("UI Camera")));
 }
 
 pub(crate) fn despawn_ui_camera(mut commands: Commands, query: Query<Entity, With<UiCamera>>) {

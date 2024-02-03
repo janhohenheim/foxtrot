@@ -17,6 +17,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
     app.register_type::<camera::IngameCameraMarker>()
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()
+        .register_type::<grass::Grass>()
         .register_type::<Hidden>()
         .add_systems(Update, add_components_from_gltf_extras.map(Result::unwrap))
         .add_systems(
@@ -27,6 +28,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
                 player::spawn,
                 npc::spawn,
                 sunlight::spawn,
+                grass::spawn,
                 hide,
             )
                 .run_if(in_state(GameState::Playing)),

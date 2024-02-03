@@ -6,6 +6,7 @@ use bevy::prelude::*;
 use bevy::reflect::serde::TypedReflectDeserializer;
 use bevy::utils::HashMap;
 
+use bevy_xpbd_3d::PhysicsSet;
 use serde::de::DeserializeSeed;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -29,7 +30,7 @@ pub(crate) fn spawning_plugin(app: &mut App) {
                 npc::spawn,
                 sunlight::spawn,
                 grass::spawn,
-                hide,
+                hide.after(PhysicsSet::Sync),
             )
                 .run_if(in_state(GameState::Playing)),
         );

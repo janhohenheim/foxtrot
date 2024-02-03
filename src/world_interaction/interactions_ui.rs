@@ -46,7 +46,6 @@ fn update_interaction_opportunities(
     >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
-    _names: Query<&Name>,
 ) -> Result<()> {
     for Collision(ref contacts) in collisions.read() {
         // Check if the player is colliding with anything

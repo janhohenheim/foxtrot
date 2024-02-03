@@ -12,7 +12,6 @@ use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
 use bevy_tnua::builtins::TnuaBuiltinWalk;
 use bevy_tnua::controller::TnuaController;
-use bevy_yarnspinner::prelude::DialogueRunner;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};

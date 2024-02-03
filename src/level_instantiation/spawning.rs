@@ -62,7 +62,7 @@ fn add_components_from_gltf_extras(world: &mut World) -> Result<()> {
                     continue;
                 };
                 let reflection_deserializer =
-                    TypedReflectDeserializer::new(&type_registration, type_registry.deref());
+                    TypedReflectDeserializer::new(type_registration, type_registry.deref());
                 let mut ron_deserializer = ron::Deserializer::from_str(&component_name)?;
                 let component = reflection_deserializer.deserialize(&mut ron_deserializer)?;
                 (type_registration.clone(), component, component_name)

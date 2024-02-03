@@ -1,6 +1,6 @@
 use crate::file_system_interaction::audio::AudioHandles;
 use crate::file_system_interaction::config::GameConfig;
-use crate::movement::general_movement::*;
+use crate::movement::character_controller::*;
 use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
 use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
 

@@ -1,17 +1,21 @@
+use crate::movement::character_controller::FloatHeight;
 use bevy::prelude::*;
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
 
-pub(crate) fn offset_models_to_character_controller(
-    controllers: Query<(&Children, &Collider, &Transform), Added<TnuaController>>,
-    mut transforms: Query<&mut Transform, Without<TnuaController>>,
+pub(crate) fn offset_models_to_controller(
+    controllers: Query<
+        (&Transform, &FloatHeight, &Children),
+        (Added<TnuaController>, With<Collider>),
+    >,
+    mut transforms: Query<&mut Transform, Without<Collider>>,
 ) {
-    for (children, collider, transform) in controllers.iter() {
-        let aabb = collider.shape_scaled().compute_local_aabb();
-        let height = (aabb.maxs.y - aabb.mins.y) * transform.scale.y;
+    for (transform, float_height, children) in controllers.iter() {
+        let offset = (float_height.0 / transform.scale.y) * 2.;
         for child in children.iter() {
-            let mut transform = transforms.get_mut(*child).unwrap();
-            transform.translation.y -= height;
+            if let Ok(mut model_transform) = transforms.get_mut(*child) {
+                model_transform.translation.y -= offset;
+            }
         }
     }
 }

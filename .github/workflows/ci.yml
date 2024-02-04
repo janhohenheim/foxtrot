@@ -5,7 +5,7 @@ on:
     types: [ labeled, opened, synchronize, reopened ]
 env:
   CARGO_TERM_COLOR: always
-  NIGHTLY_TOOLCHAIN: nightly-2023-05-19
+  NIGHTLY_TOOLCHAIN: nightly
   # Sparse cargo registry for faster updates
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 

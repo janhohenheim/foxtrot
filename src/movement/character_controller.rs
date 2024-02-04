@@ -27,7 +27,10 @@ pub(crate) fn character_controller_plugin(app: &mut App) {
                 .before(PhysicsSet::Prepare)
                 .run_if(in_state(GameState::Playing)),
         )
-        .add_systems(Update, offset_models_to_controller.after(PhysicsSet::Sync));
+        .add_systems(
+            Update,
+            prepare_models_of_controllers.after(PhysicsSet::Sync),
+        );
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]

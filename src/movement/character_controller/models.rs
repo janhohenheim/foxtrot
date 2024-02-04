@@ -4,15 +4,16 @@ use bevy::render::view::NoFrustumCulling;
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
 
-/// Shift models down because XPBD will make controllers float,
-/// but our models definitely should not be floating!
-pub(crate) fn offset_models_to_controller(
+pub(crate) fn prepare_models_of_controllers(
     mut commands: Commands,
     controllers: Query<(Entity, &Transform, &FloatHeight), (Added<TnuaController>, With<Collider>)>,
     mut transforms: Query<&mut Transform, Without<Collider>>,
     children_q: Query<&Children>,
+    meshes: Query<&Handle<Mesh>>,
 ) {
     for (entity, transform, float_height) in controllers.iter() {
+        // Shift models down because XPBD will make controllers float,
+        // but our models definitely should not be floating!
         let offset = (float_height.0 / transform.scale.y) * 2.;
         let children = children_q.get(entity).unwrap();
         for child in children.iter() {
@@ -21,10 +22,11 @@ pub(crate) fn offset_models_to_controller(
             }
         }
 
-        // Frustum culling is erroneous for animated models because the AABB is not updated.
-        commands.entity(entity).insert(NoFrustumCulling);
+        // Frustum culling is erroneous for animated models because the AABB can be too small
         for entity in children_q.iter_descendants(entity) {
-            commands.entity(entity).insert(NoFrustumCulling);
+            if meshes.contains(entity) {
+                commands.entity(entity).insert(NoFrustumCulling);
+            }
         }
     }
 }

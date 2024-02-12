@@ -15,6 +15,19 @@
 //! Instead, decide for yourself which features you like and which one's you don't and simply trim the code accordingly.
 //! Feel free to [file an issue](https://github.com/janhohenheim/foxtrot/issues/new) if you need help!
 //! The docs are organized such that you can click through the plugins to explore the systems at play.
+
+#[cfg(feature = "dev")]
+use crate::dev::dev_plugin;
+use crate::{
+    bevy_config::bevy_config_plugin, file_system_interaction::file_system_interaction_plugin,
+    ingame_menu::ingame_menu_plugin, level_instantiation::level_instantiation_plugin,
+    menu::menu_plugin, movement::movement_plugin, particles::particle_plugin,
+    player_control::player_control_plugin, shader::shader_plugin,
+    world_interaction::world_interaction_plugin,
+};
+use bevy::prelude::*;
+use seldom_fn_plugin::FnPluginExt;
+
 pub(crate) mod bevy_config;
 #[cfg(feature = "dev")]
 pub(crate) mod dev;
@@ -28,21 +41,6 @@ pub(crate) mod player_control;
 pub(crate) mod shader;
 pub(crate) mod util;
 pub(crate) mod world_interaction;
-
-use crate::bevy_config::bevy_config_plugin;
-#[cfg(feature = "dev")]
-use crate::dev::dev_plugin;
-use crate::file_system_interaction::file_system_interaction_plugin;
-use crate::ingame_menu::ingame_menu_plugin;
-use crate::level_instantiation::level_instantiation_plugin;
-use crate::menu::menu_plugin;
-use crate::movement::movement_plugin;
-use crate::particles::particle_plugin;
-use crate::player_control::player_control_plugin;
-use crate::shader::shader_plugin;
-use crate::world_interaction::world_interaction_plugin;
-use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {

@@ -3,9 +3,10 @@ pub(crate) mod character_controller;
 pub(crate) mod navigation;
 pub(crate) mod physics;
 
-use crate::movement::character_controller::character_controller_plugin;
-use crate::movement::navigation::navigation_plugin;
-use crate::movement::physics::physics_plugin;
+use crate::movement::{
+    character_controller::character_controller_plugin, navigation::navigation_plugin,
+    physics::physics_plugin,
+};
 use bevy::prelude::*;
 use seldom_fn_plugin::FnPluginExt;
 

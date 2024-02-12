@@ -1,7 +1,5 @@
-use crate::level_instantiation::spawning::objects::player;
-use crate::particles::SprintingParticle;
-use bevy::pbr::NotShadowReceiver;
-use bevy::prelude::*;
+use crate::{level_instantiation::spawning::objects::player, particles::SprintingParticle};
+use bevy::{pbr::NotShadowReceiver, prelude::*};
 use bevy_hanabi::prelude::*;
 
 pub(crate) fn create_sprint_particle_bundle(effects: &mut Assets<EffectAsset>) -> impl Bundle {

@@ -1,7 +1,8 @@
-use crate::level_instantiation::spawning::objects::util::MeshAssetsExt;
-use crate::shader::ShaderMaterials;
-use bevy::pbr::{NotShadowCaster, NotShadowReceiver};
-use bevy::prelude::*;
+use crate::{level_instantiation::spawning::objects::util::MeshAssetsExt, shader::ShaderMaterials};
+use bevy::{
+    pbr::{NotShadowCaster, NotShadowReceiver},
+    prelude::*,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]

@@ -1,6 +1,5 @@
 use crate::movement::character_controller::FloatHeight;
-use bevy::prelude::*;
-use bevy::render::view::NoFrustumCulling;
+use bevy::{prelude::*, render::view::NoFrustumCulling};
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
 

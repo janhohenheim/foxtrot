@@ -1,6 +1,10 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::actions::CameraAction;
-use crate::player_control::camera::{IngameCamera, IngameCameraKind};
+use crate::{
+    file_system_interaction::config::GameConfig,
+    player_control::{
+        actions::CameraAction,
+        camera::{IngameCamera, IngameCameraKind},
+    },
+};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use leafwing_input_manager::prelude::*;

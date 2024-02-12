@@ -1,17 +1,18 @@
-use crate::file_system_interaction::audio::AudioHandles;
-use crate::movement::character_controller::*;
-use crate::player_control::actions::{DualAxisDataExt, PlayerAction};
-use crate::player_control::camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind};
+use crate::{
+    file_system_interaction::audio::AudioHandles,
+    movement::character_controller::*,
+    player_control::{
+        actions::{DualAxisDataExt, PlayerAction},
+        camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind},
+    },
+};
 
-use crate::util::trait_extension::Vec3Ext;
-use crate::world_interaction::dialog::DialogTarget;
-use crate::GameState;
+use crate::{util::trait_extension::Vec3Ext, world_interaction::dialog::DialogTarget, GameState};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::*;
-use bevy_tnua::builtins::TnuaBuiltinWalk;
-use bevy_tnua::controller::TnuaController;
+use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};

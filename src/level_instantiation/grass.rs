@@ -1,11 +1,12 @@
-use crate::level_instantiation::spawning::objects::ground::Grass;
-use crate::{file_system_interaction::asset_loading::GrassAssets, GameState};
-use bevy::app::App;
-use bevy::{prelude::*, render::primitives::Aabb};
-use warbler_grass::prelude::*;
+use crate::{
+    file_system_interaction::asset_loading::GrassAssets,
+    level_instantiation::spawning::objects::ground::Grass, GameState,
+};
+use bevy::{app::App, prelude::*, render::primitives::Aabb};
 use warbler_grass::{
     bundle::{GrassColor, WarblerHeight, WarblersBundle},
     map::DensityMap,
+    prelude::*,
 };
 pub(crate) fn grass_plugin(app: &mut App) {
     app.add_systems(Update, spawn.run_if(in_state(GameState::Playing)))

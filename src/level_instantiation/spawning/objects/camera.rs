@@ -1,5 +1,6 @@
-use crate::player_control::actions::create_camera_action_input_manager_bundle;
-use crate::player_control::camera::IngameCamera;
+use crate::player_control::{
+    actions::create_camera_action_input_manager_bundle, camera::IngameCamera,
+};
 use bevy::prelude::*;
 use bevy_atmosphere::prelude::*;
 use bevy_dolly::prelude::*;

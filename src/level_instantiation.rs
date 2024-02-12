@@ -1,12 +1,10 @@
+use crate::level_instantiation::{grass::grass_plugin, map::map_plugin, spawning::spawning_plugin};
+use bevy::prelude::*;
+use seldom_fn_plugin::FnPluginExt;
+
 pub(crate) mod grass;
 pub(crate) mod map;
 pub(crate) mod spawning;
-
-use crate::level_instantiation::grass::grass_plugin;
-use crate::level_instantiation::map::map_plugin;
-use crate::level_instantiation::spawning::spawning_plugin;
-use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 /// Handles creation of levels and objects. Split into the following sub-plugins:
 /// - [`map_plugin`] handles loading of level files and orchestrates the spawning of the objects therein.

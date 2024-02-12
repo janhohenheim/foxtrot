@@ -1,14 +1,11 @@
-use crate::level_instantiation::spawning::objects::*;
-use crate::GameState;
+use crate::{level_instantiation::spawning::objects::*, GameState};
 use anyhow::{Context, Result};
-use bevy::gltf::GltfExtras;
-use bevy::prelude::*;
-use bevy::reflect::serde::TypedReflectDeserializer;
-use bevy::utils::HashMap;
+use bevy::{
+    gltf::GltfExtras, prelude::*, reflect::serde::TypedReflectDeserializer, utils::HashMap,
+};
 
 use bevy_xpbd_3d::PhysicsSet;
-use serde::de::DeserializeSeed;
-use serde::{Deserialize, Serialize};
+use serde::{de::DeserializeSeed, Deserialize, Serialize};
 use serde_json::Value;
 use std::ops::Deref;
 

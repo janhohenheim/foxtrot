@@ -1,13 +1,15 @@
-use crate::player_control::actions::{ActionsFrozen, PlayerAction};
-use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::player_control::player_embodiment::Player;
-use crate::util::criteria::is_frozen;
+use crate::{
+    player_control::{
+        actions::{ActionsFrozen, PlayerAction},
+        camera::{IngameCamera, IngameCameraKind},
+        player_embodiment::Player,
+    },
+    util::criteria::is_frozen,
+};
 
-use crate::world_interaction::dialog::DialogTarget;
-use crate::GameState;
+use crate::{world_interaction::dialog::DialogTarget, GameState};
 use anyhow::{Context, Result};
-use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
+use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::*;
 use bevy_xpbd_3d::prelude::*;

@@ -1,7 +1,9 @@
 use crate::player_control::actions::ActionsFrozen;
 use anyhow::{Context, Result};
-use bevy::prelude::*;
-use bevy::window::{CursorGrabMode, PrimaryWindow};
+use bevy::{
+    prelude::*,
+    window::{CursorGrabMode, PrimaryWindow},
+};
 use bevy_mod_sysfail::*;
 use serde::{Deserialize, Serialize};
 

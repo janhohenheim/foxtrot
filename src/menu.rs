@@ -1,9 +1,14 @@
 use crate::GameState;
 use bevy::prelude::*;
-use bevy_egui::egui::FontFamily::Proportional;
-use bevy_egui::egui::FontId;
-use bevy_egui::egui::TextStyle::{Body, Button, Heading};
-use bevy_egui::{egui, EguiContexts};
+use bevy_egui::{
+    egui,
+    egui::{
+        FontFamily::Proportional,
+        FontId,
+        TextStyle::{Body, Button, Heading},
+    },
+    EguiContexts,
+};
 
 /// This plugin is responsible for the game menu
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.

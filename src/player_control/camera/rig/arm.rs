@@ -1,8 +1,9 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::util::smoothness_to_lerp_factor;
-use crate::util::trait_extension::F32Ext;
+use crate::{
+    file_system_interaction::config::GameConfig,
+    level_instantiation::spawning::objects::CollisionLayer,
+    player_control::camera::{IngameCamera, IngameCameraKind},
+    util::{smoothness_to_lerp_factor, trait_extension::F32Ext},
+};
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_xpbd_3d::prelude::*;

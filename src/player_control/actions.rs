@@ -1,8 +1,6 @@
 use crate::util::criteria::is_frozen;
 use bevy::prelude::*;
-use leafwing_input_manager::axislike::DualAxisData;
-use leafwing_input_manager::plugin::InputManagerSystem;
-use leafwing_input_manager::prelude::*;
+use leafwing_input_manager::{axislike::DualAxisData, plugin::InputManagerSystem, prelude::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(Resource, Default, Reflect, Serialize, Deserialize)]

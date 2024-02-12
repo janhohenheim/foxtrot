@@ -1,10 +1,10 @@
 use crate::movement::character_controller::{AnimationState, CharacterAnimations};
-use bevy::animation::AnimationPlayer;
-use bevy::prelude::*;
+use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_mod_sysfail::sysfail;
-use bevy_tnua::builtins::TnuaBuiltinWalk;
-use bevy_tnua::controller::TnuaController;
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
+use bevy_tnua::{
+    builtins::TnuaBuiltinWalk, controller::TnuaController, TnuaAnimatingState,
+    TnuaAnimatingStateDirective,
+};
 use std::time::Duration;
 
 #[sysfail(log(level = "error"))]

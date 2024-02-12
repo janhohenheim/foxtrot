@@ -1,7 +1,9 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::player_embodiment::Player;
-use crate::util::trait_extension::{F32Ext, Vec3Ext};
-use crate::GameState;
+use crate::{
+    file_system_interaction::config::GameConfig,
+    player_control::player_embodiment::Player,
+    util::trait_extension::{F32Ext, Vec3Ext},
+    GameState,
+};
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;

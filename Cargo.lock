@@ -2392,6 +2392,7 @@ dependencies = [
  "serde",
  "serde_json",
  "unicode-segmentation",
+ "warbler_grass",
  "winit",
 ]
 
@@ -5148,6 +5149,17 @@ checksum = "d71d857dc86794ca4c280d616f7da00d2dbfd8cd788846559a6813e6aa4b54ee"
 dependencies = [
  "same-file",
  "winapi-util",
+]
+
+[[package]]
+name = "warbler_grass"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "378327eb9556daf8ef9a81e610145508948842c63ce8dd032a209918a0c41765"
+dependencies = [
+ "bevy",
+ "bitflags 2.4.2",
+ "bytemuck",
 ]
 
 [[package]]

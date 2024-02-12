@@ -14,6 +14,7 @@ pub(crate) fn spawn(
         for child in children.iter() {
             if let Ok(material_handle) = material_handles.get(*child) {
                 let material = materials.get_mut(material_handle).unwrap();
+                // Blender doesn't export this unfortunately, so we'll have to fix the glossy ground manually
                 material.reflectance = 0.05;
             }
         }

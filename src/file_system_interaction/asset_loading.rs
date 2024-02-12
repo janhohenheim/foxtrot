@@ -20,6 +20,7 @@ pub(crate) fn loading_plugin(app: &mut App) {
                 .load_collection::<AudioAssets>()
                 .load_collection::<GltfAssets>()
                 .load_collection::<TextureAssets>()
+                .load_collection::<GrassAssets>()
                 .load_collection::<ConfigAssets>(),
         )
         .add_systems(Update, show_progress.run_if(in_state(GameState::Loading)))
@@ -46,7 +47,11 @@ pub(crate) struct TextureAssets {
     #[asset(path = "textures/stone_alley_2.jpg")]
     pub(crate) glowy_interior: Handle<Image>,
 }
-
+#[derive(AssetCollection, Resource, Clone)]
+pub(crate) struct GrassAssets {
+    #[asset(path = "textures/grass_density_map.png")]
+    pub(crate) density_map: Handle<Image>,
+}
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct ConfigAssets {
     #[allow(dead_code)]

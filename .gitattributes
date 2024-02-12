@@ -1,1 +1,2 @@
 * text=auto eol=lf
+*.sln text eol=crlf

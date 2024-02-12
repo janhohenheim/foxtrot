@@ -1,8 +1,7 @@
 use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
-use bevy_yarnspinner::events::DialogueCompleteEvent;
-use bevy_yarnspinner::prelude::*;
+use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 use bevy_yarnspinner_example_dialogue_view::prelude::*;
 use serde::{Deserialize, Serialize};
 

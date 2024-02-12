@@ -1,6 +1,7 @@
-use crate::player_control::camera::IngameCamera;
-use crate::player_control::player_embodiment::Player;
-use crate::world_interaction::dialog::DialogTarget;
+use crate::{
+    player_control::{camera::IngameCamera, player_embodiment::Player},
+    world_interaction::dialog::DialogTarget,
+};
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;

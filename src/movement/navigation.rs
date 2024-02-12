@@ -1,8 +1,10 @@
-use crate::level_instantiation::spawning::objects::player;
-use crate::movement::character_controller::{GeneralMovementSystemSet, Walk};
-use crate::player_control::player_embodiment::Player;
-use crate::util::trait_extension::{F32Ext, Vec3Ext};
-use crate::GameState;
+use crate::{
+    level_instantiation::spawning::objects::player,
+    movement::character_controller::{GeneralMovementSystemSet, Walk},
+    player_control::player_embodiment::Player,
+    util::trait_extension::{F32Ext, Vec3Ext},
+    GameState,
+};
 
 #[cfg(feature = "dev")]
 use anyhow::Context;

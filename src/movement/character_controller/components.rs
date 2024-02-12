@@ -1,8 +1,9 @@
-use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::character_controller::AnimationState;
+use crate::{
+    level_instantiation::spawning::objects::CollisionLayer,
+    movement::character_controller::AnimationState,
+};
 use bevy::prelude::*;
-use bevy_tnua::prelude::*;
-use bevy_tnua::TnuaAnimatingState;
+use bevy_tnua::{prelude::*, TnuaAnimatingState};
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::prelude::*;
 use serde::{Deserialize, Serialize};

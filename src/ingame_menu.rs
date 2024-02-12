@@ -1,7 +1,8 @@
-use crate::player_control::actions::{ActionsFrozen, UiAction};
-use crate::GameState;
-use bevy::app::AppExit;
-use bevy::prelude::*;
+use crate::{
+    player_control::actions::{ActionsFrozen, UiAction},
+    GameState,
+};
+use bevy::{app::AppExit, prelude::*};
 use bevy_egui::{egui, EguiContexts};
 use bevy_xpbd_3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;

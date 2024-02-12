@@ -1,8 +1,12 @@
-use crate::player_control::camera::kind::update_drivers;
-use crate::player_control::camera::{
-    cursor::grab_cursor, focus::set_camera_focus, kind::update_kind, rig::update_rig,
+use crate::{
+    player_control::camera::{
+        cursor::grab_cursor,
+        focus::set_camera_focus,
+        kind::{update_drivers, update_kind},
+        rig::update_rig,
+    },
+    GameState,
 };
-use crate::GameState;
 use bevy::prelude::*;
 use bevy_atmosphere::prelude::*;
 use bevy_dolly::prelude::*;

@@ -1,6 +1,8 @@
 use crate::dev::dev_editor::dev_editor_plugin;
-use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
-use bevy::prelude::*;
+use bevy::{
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
+    prelude::*,
+};
 use bevy_editor_pls::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 use seldom_fn_plugin::FnPluginExt;

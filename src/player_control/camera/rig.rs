@@ -1,8 +1,14 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::player_control::actions::CameraAction;
-use crate::player_control::camera::rig::arm::{get_arm_distance, get_zoom_smoothness, set_arm};
-use crate::player_control::camera::{IngameCamera, IngameCameraKind};
-use crate::util::trait_extension::Vec2Ext;
+use crate::{
+    file_system_interaction::config::GameConfig,
+    player_control::{
+        actions::CameraAction,
+        camera::{
+            rig::arm::{get_arm_distance, get_zoom_smoothness, set_arm},
+            IngameCamera, IngameCameraKind,
+        },
+    },
+    util::trait_extension::Vec2Ext,
+};
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;

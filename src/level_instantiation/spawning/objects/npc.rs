@@ -1,11 +1,13 @@
-use crate::file_system_interaction::asset_loading::GltfAssets;
-use crate::level_instantiation::spawning::objects::player;
-use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
-use crate::movement::navigation::Follower;
-use crate::world_interaction::dialog::DialogTarget;
-use bevy::gltf::Gltf;
-use bevy::prelude::*;
+use crate::{
+    file_system_interaction::asset_loading::GltfAssets,
+    level_instantiation::spawning::objects::{player, CollisionLayer},
+    movement::{
+        character_controller::{CharacterAnimations, CharacterControllerBundle},
+        navigation::Follower,
+    },
+    world_interaction::dialog::DialogTarget,
+};
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_xpbd_3d::prelude::*;
 
 pub(crate) fn spawn(

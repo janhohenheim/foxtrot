@@ -1,12 +1,9 @@
-use crate::file_system_interaction::config::GameConfig;
-use crate::GameState;
+use crate::{file_system_interaction::config::GameConfig, GameState};
 use anyhow::Result;
-use bevy::gltf::Gltf;
-use bevy::prelude::*;
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::toml::TomlAssetPlugin;
-use bevy_egui::egui::ProgressBar;
-use bevy_egui::{egui, EguiContexts};
+use bevy_egui::{egui, egui::ProgressBar, EguiContexts};
 use bevy_kira_audio::AudioSource;
 use bevy_mod_sysfail::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};

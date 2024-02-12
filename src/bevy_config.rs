@@ -1,7 +1,5 @@
 use anyhow::{Context, Result};
-use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
-use bevy::winit::WinitWindows;
+use bevy::{prelude::*, window::PrimaryWindow, winit::WinitWindows};
 use bevy_mod_sysfail::*;
 use std::io::Cursor;
 use winit::window::Icon;

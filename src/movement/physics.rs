@@ -1,5 +1,4 @@
-use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::GameState;
+use crate::{level_instantiation::spawning::objects::CollisionLayer, GameState};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
 use bevy_mod_sysfail::*;

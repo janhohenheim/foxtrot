@@ -1,8 +1,8 @@
-use crate::file_system_interaction::asset_loading::GltfAssets;
-use crate::player_control::player_embodiment::Player;
-use crate::GameState;
-use bevy::gltf::Gltf;
-use bevy::prelude::*;
+use crate::{
+    file_system_interaction::asset_loading::GltfAssets, player_control::player_embodiment::Player,
+    GameState,
+};
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_egui::{egui, EguiContexts};
 
 pub(crate) fn map_plugin(app: &mut App) {

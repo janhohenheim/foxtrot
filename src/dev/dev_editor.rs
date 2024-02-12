@@ -1,11 +1,9 @@
-use crate::player_control::camera::ForceCursorGrabMode;
-use crate::GameState;
+use crate::{player_control::camera::ForceCursorGrabMode, GameState};
 use anyhow::{Context, Result};
-use bevy::prelude::*;
-use bevy::window::CursorGrabMode;
-use bevy_editor_pls::editor_window::EditorWindow;
+use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_editor_pls::{
     editor::{Editor, EditorEvent},
+    editor_window::EditorWindow,
     AddEditorWindow,
 };
 use bevy_egui::egui;

@@ -1,13 +1,16 @@
-use crate::file_system_interaction::asset_loading::GltfAssets;
-use crate::level_instantiation::spawning::objects::CollisionLayer;
-use crate::movement::character_controller::{CharacterAnimations, CharacterControllerBundle};
-use crate::particles;
-use crate::player_control::actions::{
-    create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+use crate::{
+    file_system_interaction::asset_loading::GltfAssets,
+    level_instantiation::spawning::objects::CollisionLayer,
+    movement::character_controller::{CharacterAnimations, CharacterControllerBundle},
+    particles,
+    player_control::{
+        actions::{
+            create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+        },
+        player_embodiment::Player,
+    },
 };
-use crate::player_control::player_embodiment::Player;
-use bevy::gltf::Gltf;
-use bevy::prelude::*;
+use bevy::{gltf::Gltf, prelude::*};
 use bevy_hanabi::EffectAsset;
 
 pub(crate) const HEIGHT: f32 = 0.4;

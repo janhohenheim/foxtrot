@@ -19,10 +19,12 @@ pub(crate) fn spawning_plugin(app: &mut App) {
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()
         .register_type::<Hidden>()
+        .register_type::<ground::Grass>()
         .add_systems(Update, add_components_from_gltf_extras.map(Result::unwrap))
         .add_systems(
             Update,
             (
+                ground::spawn,
                 camera::spawn,
                 orb::spawn,
                 player::spawn,

@@ -1,23 +1,16 @@
+use crate::level_instantiation::spawning::objects::ground::Grass;
+use crate::{file_system_interaction::asset_loading::GrassAssets, GameState};
 use bevy::app::App;
-use warbler_grass::prelude::*;
-
 use bevy::{prelude::*, render::primitives::Aabb};
-use serde::{Deserialize, Serialize};
+use warbler_grass::prelude::*;
 use warbler_grass::{
     bundle::{GrassColor, WarblerHeight, WarblersBundle},
     map::DensityMap,
 };
-
-use crate::{file_system_interaction::asset_loading::GrassAssets, GameState};
 pub(crate) fn grass_plugin(app: &mut App) {
-    app.register_type::<super::grass::Grass>()
-        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)))
+    app.add_systems(Update, spawn.run_if(in_state(GameState::Playing)))
         .add_plugins(WarblersPlugin);
 }
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Grass;
 
 // Spawns the grass using the ground as a base
 pub(crate) fn spawn(

@@ -1,5 +1,4 @@
 pub(crate) mod camera;
-pub(crate) mod grass;
 pub(crate) mod npc;
 pub(crate) mod orb;
 pub(crate) mod player;

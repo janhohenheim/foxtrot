@@ -21,6 +21,7 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - Particle effects via [`bevy_hanabi`](https://crates.io/crates/bevy_hanabi)
 - Clean and extensible object spawning via [`spew`](https://crates.io/crates/spew)
 - Procedural skies via [`bevy_athmospere`](https://crates.io/crates/bevy_atmosphere)
+- Grass via [`warbler_grass`](https://crates.io/crates/warbler_grass)
 
 ## Usage
 

@@ -6,6 +6,16 @@ use serde::{Deserialize, Serialize};
 
 pub(crate) mod objects;
 
+/// Handles the runtime spawning of objects loaded from GLTFs.
+/// Through the [`ComponentsFromGltfPlugin`], components can be deserialized from the "extras" field of the GLTF.
+/// In Blender, this corresponds to the "Custom Properties" of an object. The workflow used in Foxtrot
+/// is as follows:
+/// - Create a scene in Blender
+/// - Add marker components to objects in Blender as a custom property, e.g. `ColliderMarker`
+/// - Export the scene as a GLTF
+/// - Load the GLTF in Bevy
+/// - React to objects being spawned with a marker component via a query like `Query<Entity, Added<ColliderMarker>>`
+/// - Add the appropriate components to the entity, e.g. `Collider` and `RigidBody` for a `ColliderMarker`
 pub(crate) fn spawning_plugin(app: &mut App) {
     app.add_plugins(ComponentsFromGltfPlugin::default())
         .register_type::<camera::IngameCameraMarker>()

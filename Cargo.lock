@@ -892,6 +892,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_components"
+version = "0.3.1"
+source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow?rev=de543727ed64e0d493b8eeb032bdd2e79c7ac6a1#de543727ed64e0d493b8eeb032bdd2e79c7ac6a1"
+dependencies = [
+ "bevy",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "bevy_hanabi"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2376,6 +2386,7 @@ dependencies = [
  "bevy_dolly",
  "bevy_editor_pls",
  "bevy_egui",
+ "bevy_gltf_components",
  "bevy_hanabi",
  "bevy_kira_audio",
  "bevy_mod_sysfail",
@@ -2387,10 +2398,8 @@ dependencies = [
  "iyes_progress",
  "leafwing-input-manager",
  "oxidized_navigation",
- "ron",
  "seldom_fn_plugin",
  "serde",
- "serde_json",
  "unicode-segmentation",
  "warbler_grass",
  "winit",

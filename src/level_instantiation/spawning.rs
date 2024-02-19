@@ -1,10 +1,8 @@
 use crate::{level_instantiation::spawning::objects::*, GameState};
-use bevy::{
-    prelude::*,
-};
+use bevy::prelude::*;
+use bevy_gltf_components::ComponentsFromGltfPlugin;
 use bevy_xpbd_3d::PhysicsSet;
 use serde::{Deserialize, Serialize};
-use bevy_gltf_components::ComponentsFromGltfPlugin;
 
 pub(crate) mod objects;
 

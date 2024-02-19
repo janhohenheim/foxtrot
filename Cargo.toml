@@ -33,7 +33,6 @@ bevy_asset_loader = { version = "0.19", features = ["progress_tracking"] }
 bevy_common_assets = { version = "0.9", features = ["ron", "toml"] }
 bevy_egui = "0.24"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
 oxidized_navigation = { version = "0.8", features = ["xpbd", "debug_draw"] }
 iyes_progress = "0.10"
 unicode-segmentation = "1"
@@ -50,9 +49,9 @@ bevy_yarnspinner_example_dialogue_view = "0.1"
 bevy-tnua-xpbd3d = "0.1"
 bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
 bevy-tnua = "0.14.1"
-ron = "0.8.1"
 bevy_atmosphere = "0.8.1"
 warbler_grass = "0.5.0"
+bevy_gltf_components = {git = "https://github.com/kaosat-dev/Blender_bevy_components_workflow", rev = "de543727ed64e0d493b8eeb032bdd2e79c7ac6a1" }
 
 [dependencies.bevy]
 version = "0.12.1"

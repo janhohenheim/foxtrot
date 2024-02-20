@@ -1,0 +1,10 @@
+({
+    "world":File (path: "scenes/World.glb"),
+    "library": Folder (
+        path: "scenes/library",
+    ),
+    "audio_walking": File (path: "audio/walking.ogg"),
+    "texture_glowy_interior": File (path: "textures/stone_alley_2.jpg"),
+    "grass_density_map": File (path: "textures/grass_density_map.png"),
+    "game_config": File (path: "config/config.game.toml"),
+})

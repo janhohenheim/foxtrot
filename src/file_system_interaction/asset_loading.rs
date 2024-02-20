@@ -1,6 +1,6 @@
 use crate::{file_system_interaction::config::GameConfig, GameState};
 use anyhow::Result;
-use bevy::{gltf::Gltf, prelude::*};
+use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::{egui, egui::ProgressBar, EguiContexts};
@@ -8,12 +8,15 @@ use bevy_kira_audio::AudioSource;
 use bevy_mod_sysfail::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
+/// Loads resources and assets for the game.
+/// See assets/main.assets.ron for the actual paths used.
 pub(crate) fn loading_plugin(app: &mut App) {
     app.add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
         .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
         .add_loading_state(
             LoadingState::new(GameState::Loading)
                 .continue_to_state(GameState::Menu)
+                .with_dynamic_assets_file::<StandardDynamicAssetCollection>("main.assets.ron")
                 .load_collection::<AudioAssets>()
                 .load_collection::<GltfAssets>()
                 .load_collection::<TextureAssets>()
@@ -29,31 +32,34 @@ pub(crate) fn loading_plugin(app: &mut App) {
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct AudioAssets {
-    #[asset(path = "audio/walking.ogg")]
+    #[asset(key = "audio_walking")]
     pub(crate) walking: Handle<AudioSource>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct GltfAssets {
-    #[asset(path = "scenes/level.glb")]
+    #[asset(key = "world")]
     pub(crate) level: Handle<Gltf>,
+    #[asset(key = "library", collection(typed, mapped))]
+    pub(crate) _library: HashMap<String, Handle<Gltf>>,
 }
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct TextureAssets {
-    #[asset(path = "textures/stone_alley_2.jpg")]
+    #[asset(key = "texture_glowy_interior")]
     pub(crate) glowy_interior: Handle<Image>,
 }
+
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct GrassAssets {
-    #[asset(path = "textures/grass_density_map.png")]
+    #[asset(key = "grass_density_map")]
     pub(crate) density_map: Handle<Image>,
 }
+
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct ConfigAssets {
-    #[allow(dead_code)]
-    #[asset(path = "config/config.game.toml")]
-    pub(crate) game: Handle<GameConfig>,
+    #[asset(key = "game_config")]
+    pub(crate) _game: Handle<GameConfig>,
 }
 
 fn show_progress(
@@ -97,7 +103,7 @@ fn update_config(
     mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
-    let _span = info_span!("update_config").entered();
+        let _span = info_span!("update_config").entered();
     for event in config_asset_events.read() {
         match event {
             AssetEvent::Modified { id } | AssetEvent::LoadedWithDependencies { id } => {

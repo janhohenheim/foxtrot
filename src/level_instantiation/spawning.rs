@@ -1,23 +1,38 @@
 use crate::{level_instantiation::spawning::objects::*, GameState};
 use bevy::prelude::*;
-use bevy_gltf_components::ComponentsFromGltfPlugin;
+use bevy_gltf_blueprints::{BlueprintsPlugin, GltfFormat};
+use bevy_registry_export::ExportRegistryPlugin;
 use bevy_xpbd_3d::PhysicsSet;
 use serde::{Deserialize, Serialize};
 
 pub(crate) mod objects;
 
 /// Handles the runtime spawning of objects loaded from GLTFs.
-/// Through the [`ComponentsFromGltfPlugin`], components can be deserialized from the "extras" field of the GLTF.
-/// In Blender, this corresponds to the "Custom Properties" of an object. The workflow used in Foxtrot
-/// is as follows:
+/// Through the [`BlueprintsPlugin`], components can be deserialized from the "extras" field of the GLTF.
+/// In Blender, you should use the newest [Bevy Components Addon](https://github.com/kaosat-dev/Blender_bevy_components_workflow/releases?q=bevy_components&expanded=true).
+/// See the linked repo for usage instructions.
+///
+/// The basic workflow is as follows:
 /// - Create a scene in Blender
-/// - Add marker components to objects in Blender as a custom property, e.g. `ColliderMarker`
+/// - Add marker components to objects via the Bevy Components Addon, e.g. `ColliderMarker`
 /// - Export the scene as a GLTF
 /// - Load the GLTF in Bevy
 /// - React to objects being spawned with a marker component via a query like `Query<Entity, Added<ColliderMarker>>`
-/// - Add the appropriate components to the entity, e.g. `Collider` and `RigidBody` for a `ColliderMarker`
+/// - Add the rest of the appropriate components to the entity, e.g. `Collider` and `RigidBody` for a `ColliderMarker`
 pub(crate) fn spawning_plugin(app: &mut App) {
-    app.add_plugins(ComponentsFromGltfPlugin::default())
+    app.add_plugins((
+        BlueprintsPlugin {
+            library_folder: "scenes/library".into(),
+            format: GltfFormat::GLB,
+            aabbs: true,
+            legacy_mode: false,
+            ..Default::default()
+        },
+        ExportRegistryPlugin {
+            save_path: "assets/scenes/registry.json".into(),
+            ..Default::default()
+        },
+    ))
         .register_type::<camera::IngameCameraMarker>()
         .register_type::<orb::Orb>()
         .register_type::<sunlight::Sun>()

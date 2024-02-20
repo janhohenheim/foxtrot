@@ -22,7 +22,7 @@ fn spawn_level(mut commands: Commands, models: Res<Assets<Gltf>>, gltf_assets: R
     });
     commands.spawn((
         SceneBundle {
-            scene: gltf.named_scenes["World"].clone(),
+            scene: gltf.scenes[0].clone(),
             ..default()
         },
         Name::new("Level"),

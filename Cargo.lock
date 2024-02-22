@@ -569,8 +569,10 @@ dependencies = [
  "anyhow",
  "bevy",
  "bevy_asset_loader_derive",
+ "bevy_common_assets 0.8.0",
  "iyes_progress",
  "path-slash",
+ "serde",
 ]
 
 [[package]]
@@ -614,7 +616,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f68c0aa6b4b15865131b6948ceee51ca86ab02a675ce26f908dbcaf4d012efbb"
 dependencies = [
  "bevy_macro_utils",
- "proc-macro-crate 2.0.2",
+ "proc-macro-crate 2.0.0",
  "proc-macro2",
  "quote",
  "syn 2.0.48",
@@ -636,6 +638,19 @@ dependencies = [
  "bevy_utils",
  "oboe",
  "rodio",
+]
+
+[[package]]
+name = "bevy_common_assets"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9397adf1558aa3f08e20aa567538a7238b451362fc8c6b678d409c040c221799"
+dependencies = [
+ "anyhow",
+ "bevy",
+ "ron",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -892,9 +907,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_gltf_blueprints"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f77935716f0bef8fd720587d0b7063526445a25bfdb21ffa861706a8493f5d4"
+dependencies = [
+ "bevy",
+ "bevy_gltf_components",
+]
+
+[[package]]
 name = "bevy_gltf_components"
-version = "0.3.1"
-source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow?rev=de543727ed64e0d493b8eeb032bdd2e79c7ac6a1#de543727ed64e0d493b8eeb032bdd2e79c7ac6a1"
+version = "0.3.2"
+source = "git+https://github.com/janhohenheim/Blender_bevy_components_workflow?rev=6313c2f695e9e64dbd797c45ef7d6402062094ca#6313c2f695e9e64dbd797c45ef7d6402062094ca"
 dependencies = [
  "bevy",
  "ron",
@@ -1155,6 +1180,19 @@ dependencies = [
  "quote",
  "syn 2.0.48",
  "uuid 1.7.0",
+]
+
+[[package]]
+name = "bevy_registry_export"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f94f17b5f98e27decb819e1ebcdf0853338abd06a08a1f3b3d7797d3270c1434"
+dependencies = [
+ "bevy",
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_reflect",
+ "serde_json",
 ]
 
 [[package]]
@@ -2382,14 +2420,15 @@ dependencies = [
  "bevy-tnua-xpbd3d",
  "bevy_asset_loader",
  "bevy_atmosphere",
- "bevy_common_assets",
+ "bevy_common_assets 0.9.0",
  "bevy_dolly",
  "bevy_editor_pls",
  "bevy_egui",
- "bevy_gltf_components",
+ "bevy_gltf_blueprints",
  "bevy_hanabi",
  "bevy_kira_audio",
  "bevy_mod_sysfail",
+ "bevy_registry_export",
  "bevy_xpbd_3d",
  "bevy_yarnspinner",
  "bevy_yarnspinner_example_dialogue_view",
@@ -2400,7 +2439,6 @@ dependencies = [
  "oxidized_navigation",
  "seldom_fn_plugin",
  "serde",
- "unicode-segmentation",
  "warbler_grass",
  "winit",
 ]
@@ -3144,7 +3182,7 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cde8ae98d45607e4015d0b772d4a234788ebd7a41f09879f408c7f772b81e5bf"
 dependencies = [
- "proc-macro-crate 2.0.2",
+ "proc-macro-crate 2.0.0",
  "proc-macro2",
  "quote",
  "syn 2.0.48",
@@ -4035,11 +4073,10 @@ dependencies = [
 
 [[package]]
 name = "proc-macro-crate"
-version = "2.0.2"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b00f26d3400549137f92511a46ac1cd8ce37cb5598a96d382381458b992a5d24"
+checksum = "7e8366a6159044a37876a2b9817124296703c586a5c92e2c53751fa06d8d43e8"
 dependencies = [
- "toml_datetime",
  "toml_edit 0.20.2",
 ]
 
@@ -4852,9 +4889,9 @@ dependencies = [
 
 [[package]]
 name = "toml_datetime"
-version = "0.6.3"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cda73e2f1397b1262d6dfdcef8aafae14d1de7748d66822d3bfeeb6d03e5e4b"
+checksum = "3550f4e9685620ac18a50ed434eb3aec30db8ba93b0287467bca5826ea25baf1"
 dependencies = [
  "serde",
 ]

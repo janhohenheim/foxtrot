@@ -115,7 +115,7 @@ impl Default for Jump {
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default)]
 #[reflect(Component)]
 pub(crate) struct CharacterAnimations {
-    pub(crate) idle: Handle<AnimationClip>,
-    pub(crate) walk: Handle<AnimationClip>,
-    pub(crate) aerial: Handle<AnimationClip>,
+    pub(crate) idle: String,
+    pub(crate) walk: String,
+    pub(crate) aerial: String,
 }

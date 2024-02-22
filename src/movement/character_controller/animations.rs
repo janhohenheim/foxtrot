@@ -20,7 +20,7 @@ pub(crate) fn play_animations(
     mut animation_players: Query<&mut AnimationPlayer>,
 ) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
-        let _span = info_span!("play_animations").entered();
+    let _span = info_span!("play_animations").entered();
     for (mut animating_state, controller, animation_names, link, animations) in query.iter_mut() {
         let mut animation_player = animation_players.get_mut(link.0)?;
         match animating_state.update_by_discriminant({

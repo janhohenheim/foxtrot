@@ -103,7 +103,7 @@ fn update_config(
     mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
 ) -> Result<()> {
     #[cfg(feature = "tracing")]
-        let _span = info_span!("update_config").entered();
+    let _span = info_span!("update_config").entered();
     for event in config_asset_events.read() {
         match event {
             AssetEvent::Modified { id } | AssetEvent::LoadedWithDependencies { id } => {

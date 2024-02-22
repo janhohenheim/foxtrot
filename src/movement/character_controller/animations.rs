@@ -1,5 +1,6 @@
 use crate::movement::character_controller::{AnimationState, CharacterAnimations};
 use bevy::{animation::AnimationPlayer, prelude::*};
+use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
 use bevy_mod_sysfail::sysfail;
 use bevy_tnua::{
     builtins::TnuaBuiltinWalk, controller::TnuaController, TnuaAnimatingState,
@@ -13,12 +14,15 @@ pub(crate) fn play_animations(
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
         &CharacterAnimations,
-        &mut AnimationPlayer,
+        &AnimationPlayerLink,
+        &Animations,
     )>,
+    mut animation_players: Query<&mut AnimationPlayer>,
 ) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
-    for (mut animating_state, controller, animations, mut animation_player) in query.iter_mut() {
+    for (mut animating_state, controller, animation_names, link, animations) in query.iter_mut() {
+        let mut animation_player = animation_players.get_mut(link.0)?;
         match animating_state.update_by_discriminant({
             let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
                 continue;
@@ -49,7 +53,11 @@ pub(crate) fn play_animations(
                 AnimationState::Airborne | AnimationState::Running(..) => {
                     animation_player
                         .play_with_transition(
-                            animations.aerial.clone_weak(),
+                            animations
+                                .named_animations
+                                .get(&animation_names.aerial)
+                                .unwrap()
+                                .clone_weak(),
                             Duration::from_secs_f32(0.2),
                         )
                         .repeat();
@@ -57,7 +65,11 @@ pub(crate) fn play_animations(
                 AnimationState::Standing => {
                     animation_player
                         .play_with_transition(
-                            animations.idle.clone_weak(),
+                            animations
+                                .named_animations
+                                .get(&animation_names.idle)
+                                .unwrap()
+                                .clone_weak(),
                             Duration::from_secs_f32(0.2),
                         )
                         .repeat();
@@ -65,7 +77,11 @@ pub(crate) fn play_animations(
                 AnimationState::Walking(_speed) => {
                     animation_player
                         .play_with_transition(
-                            animations.walk.clone_weak(),
+                            animations
+                                .named_animations
+                                .get(&animation_names.walk)
+                                .unwrap()
+                                .clone_weak(),
                             Duration::from_secs_f32(0.1),
                         )
                         .repeat();

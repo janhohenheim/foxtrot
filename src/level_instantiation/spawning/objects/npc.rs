@@ -1,5 +1,4 @@
 use crate::{
-    file_system_interaction::asset_loading::GltfAssets,
     level_instantiation::spawning::objects::{player, CollisionLayer},
     movement::{
         character_controller::{CharacterAnimations, CharacterControllerBundle},
@@ -7,19 +6,14 @@ use crate::{
     },
     world_interaction::dialog::DialogTarget,
 };
-use bevy::{gltf::Gltf, prelude::*};
+use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
 pub(crate) fn spawn(
     follower: Query<(Entity, &Transform), Added<Follower>>,
-    gltf_assets: Res<GltfAssets>,
-    gltfs: Res<Assets<Gltf>>,
     mut commands: Commands,
 ) {
     for (entity, transform) in follower.iter() {
-        let level = gltfs.get(gltf_assets.level.clone()).unwrap();
-        let animations = &level.named_animations;
-
         commands
             .entity(entity)
             .insert((
@@ -29,10 +23,11 @@ pub(crate) fn spawn(
                     transform.scale.y,
                 ),
                 Follower,
+                // Use the same names as in Blender
                 CharacterAnimations {
-                    idle: animations["Idle"].clone(),
-                    walk: animations["Walk"].clone(),
-                    aerial: animations["Run"].clone(),
+                    idle: "Idle".into(),
+                    walk: "Walk".into(),
+                    aerial: "Run".into(),
                 },
                 DialogTarget {
                     speaker: "The Follower".to_string(),

@@ -69,4 +69,5 @@ features = [
 embed-resource = "2"
 
 [patch.crates-io]
+# Remove when https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/143 has been merged
 bevy_gltf_components = { git = "https://github.com/janhohenheim/Blender_bevy_components_workflow", rev = "6313c2f695e9e64dbd797c45ef7d6402062094ca" }

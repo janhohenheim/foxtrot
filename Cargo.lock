@@ -1464,20 +1464,6 @@ dependencies = [
 [[package]]
 name = "bevy_yarnspinner"
 version = "0.2.0"
-dependencies = [
- "anyhow",
- "bevy",
- "csv",
- "glob",
- "rand",
- "serde",
- "sha2",
- "yarnspinner 0.2.0",
-]
-
-[[package]]
-name = "bevy_yarnspinner"
-version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b31a28cad3a545ebcac1347e107e06c6bc81228841fe1b60d94db82c6e6d31ad"
 dependencies = [
@@ -1488,15 +1474,17 @@ dependencies = [
  "rand",
  "serde",
  "sha2",
- "yarnspinner 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "yarnspinner",
 ]
 
 [[package]]
 name = "bevy_yarnspinner_example_dialogue_view"
-version = "0.2.0"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79ef048b716e03413534048f307310d39783659755bceb4b7f9f8360c1c67581"
 dependencies = [
  "bevy",
- "bevy_yarnspinner 0.2.0",
+ "bevy_yarnspinner",
  "unicode-segmentation",
 ]
 
@@ -2484,7 +2472,7 @@ dependencies = [
  "bevy_mod_sysfail",
  "bevy_registry_export",
  "bevy_xpbd_3d",
- "bevy_yarnspinner 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bevy_yarnspinner",
  "bevy_yarnspinner_example_dialogue_view",
  "embed-resource",
  "image",
@@ -5918,41 +5906,13 @@ checksum = "0fcb9cbac069e033553e8bb871be2fbdffcab578eb25bd0f7c508cedc6dcd75a"
 [[package]]
 name = "yarnspinner"
 version = "0.2.0"
-dependencies = [
- "log",
- "yarnspinner_compiler 0.2.1",
- "yarnspinner_core 0.2.0",
- "yarnspinner_runtime 0.2.0",
-]
-
-[[package]]
-name = "yarnspinner"
-version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d39473a37f93e84dadb0be4c3df88d7a614e90df98bb852b847c7624e6794e38"
 dependencies = [
  "log",
- "yarnspinner_compiler 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "yarnspinner_core 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "yarnspinner_runtime 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "yarnspinner_compiler"
-version = "0.2.1"
-dependencies = [
- "annotate-snippets",
- "antlr-rust",
- "better_any",
- "bevy",
- "instant",
- "rand",
- "regex",
- "serde",
- "strum",
- "strum_macros",
- "thiserror",
- "yarnspinner_core 0.2.0",
+ "yarnspinner_compiler",
+ "yarnspinner_core",
+ "yarnspinner_runtime",
 ]
 
 [[package]]
@@ -5972,22 +5932,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "thiserror",
- "yarnspinner_core 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "yarnspinner_core"
-version = "0.2.0"
-dependencies = [
- "bevy",
- "bytes",
- "paste",
- "prost",
- "serde",
- "strum",
- "strum_macros",
- "thiserror",
- "yarnspinner_macros 0.1.0",
+ "yarnspinner_core",
 ]
 
 [[package]]
@@ -6004,16 +5949,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "thiserror",
- "yarnspinner_macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "yarnspinner_macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.51",
+ "yarnspinner_macros",
 ]
 
 [[package]]
@@ -6025,24 +5961,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.51",
-]
-
-[[package]]
-name = "yarnspinner_runtime"
-version = "0.2.0"
-dependencies = [
- "bevy",
- "fixed_decimal",
- "icu_locid",
- "icu_plurals",
- "log",
- "once_cell",
- "regex",
- "serde",
- "thiserror",
- "unicode-normalization",
- "unicode-segmentation",
- "yarnspinner_core 0.2.0",
 ]
 
 [[package]]
@@ -6062,7 +5980,7 @@ dependencies = [
  "thiserror",
  "unicode-normalization",
  "unicode-segmentation",
- "yarnspinner_core 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "yarnspinner_core",
 ]
 
 [[package]]

@@ -18,7 +18,9 @@ use seldom_fn_plugin::FnPluginExt;
 /// Contrast this with pure rigidbodies like a ball, a crate, etc.
 /// - [`navigation_plugin`]: Handles npc pathfinding via bevy_pathmesh integration.
 pub(crate) fn movement_plugin(app: &mut App) {
-    app.fn_plugin(physics_plugin)
-        .fn_plugin(character_controller_plugin)
-        .fn_plugin(navigation_plugin);
+    app.add_plugins((
+        physics_plugin,
+        character_controller_plugin,
+        navigation_plugin,
+    ));
 }

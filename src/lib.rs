@@ -73,18 +73,19 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<GameState>()
-            .fn_plugin(bevy_config_plugin)
-            .fn_plugin(menu_plugin)
-            .fn_plugin(movement_plugin)
-            .fn_plugin(player_control_plugin)
-            .fn_plugin(world_interaction_plugin)
-            .fn_plugin(level_instantiation_plugin)
-            .fn_plugin(file_system_interaction_plugin)
-            .fn_plugin(shader_plugin)
-            .fn_plugin(ingame_menu_plugin)
-            .fn_plugin(particle_plugin);
-        #[cfg(feature = "dev")]
-        app.fn_plugin(dev_plugin);
+        app.init_state::<GameState>().add_plugins((
+            bevy_config_plugin,
+            menu_plugin,
+            movement_plugin,
+            player_control_plugin,
+            world_interaction_plugin,
+            level_instantiation_plugin,
+            file_system_interaction_plugin,
+            shader_plugin,
+            ingame_menu_plugin,
+            particle_plugin,
+            #[cfg(feature = "dev")]
+            dev_plugin,
+        ));
     }
 }

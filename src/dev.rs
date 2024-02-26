@@ -15,10 +15,12 @@ pub(crate) fn dev_plugin(app: &mut App) {
     {
         app.add_plugins(EditorPlugin::new())
             .insert_resource(default_editor_controls())
-            .add_plugins(FrameTimeDiagnosticsPlugin)
-            .fn_plugin(dev_editor_plugin)
-            .add_plugins(LogDiagnosticsPlugin::filtered(vec![]))
-            .add_plugins(PhysicsDebugPlugin::default())
+            .add_plugins((
+                FrameTimeDiagnosticsPlugin,
+                dev_editor_plugin,
+                LogDiagnosticsPlugin::filtered(vec![]),
+                PhysicsDebugPlugin::default(),
+            ))
             .insert_gizmo_group(
                 PhysicsGizmos {
                     aabb_color: Some(Color::WHITE),

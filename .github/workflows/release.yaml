@@ -42,7 +42,7 @@ jobs:
           target: aarch64-apple-darwin
       - name: Build release for Apple Silicon
         run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) RUSTFLAGS="-C link-arg=-fuse-ld=/usr/local/bin/zld -Z share-generics=y" cargo build --release --target=aarch64-apple-darwin
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --target=aarch64-apple-darwin
       - name: Install rust toolchain for Apple x86
         uses: dtolnay/rust-toolchain@master
         with:

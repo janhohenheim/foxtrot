@@ -10,3 +10,5 @@ blender_assets.cats.txt*
 *.blend1
 
 trace-*.json
+
+.cargo/config.toml

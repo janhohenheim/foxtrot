@@ -365,6 +365,7 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "611dd99f412e862610adb43e2243b16436c6d8009f6d9dbe8ce3d6d840b34029"
 dependencies = [
+ "bevy_dylib",
  "bevy_internal",
 ]
 
@@ -686,6 +687,15 @@ dependencies = [
  "bevy",
  "dolly",
  "leafwing-input-manager",
+]
+
+[[package]]
+name = "bevy_dylib"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3b3b76f0d7a4da8f944e5316f2d2d2af3bbb40d87508355993ea69afbc9411c"
+dependencies = [
+ "bevy_internal",
 ]
 
 [[package]]

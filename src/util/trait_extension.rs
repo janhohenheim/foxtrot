@@ -36,9 +36,4 @@ impl F32Ext for f32 {
     fn squared(self) -> f32 {
         self * self
     }
-
-    #[inline]
-    fn lerp(self, other: f32, ratio: f32) -> f32 {
-        self.mul_add(1. - ratio, other * ratio)
-    }
 }

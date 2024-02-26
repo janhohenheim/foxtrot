@@ -76,3 +76,10 @@ opt-level = 1
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
+
+# High optimizations for distributing the game
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

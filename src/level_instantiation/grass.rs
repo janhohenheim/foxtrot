@@ -10,6 +10,7 @@ use warbler_grass::{
 };
 pub(crate) fn grass_plugin(app: &mut App) {
     if cfg!(not(feature = "grass")) {
+        // Waiting for https://github.com/EmiOnGit/warbler_grass/pull/76
         return;
     }
     app.add_plugins(WarblersPlugin)

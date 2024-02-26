@@ -55,7 +55,7 @@ pub(crate) struct DevEditorState {
 fn handle_debug_render(
     state: Res<Editor>,
     mut last_enabled: Local<bool>,
-    mut physics_gizmos: Gizmos<PhysicsGizmos>,
+    mut config_store: ResMut<GizmoConfigStore>,
 ) {
     let current_enabled = state
         .window_state::<DevEditorWindow>()
@@ -65,7 +65,8 @@ fn handle_debug_render(
         return Ok(());
     }
     *last_enabled = current_enabled;
-    physics_gizmos.config.enabled = current_enabled;
+    let config = config_store.config_mut::<PhysicsGizmos>().0;
+    config.enabled = current_enabled;
 }
 
 fn set_cursor_grab_mode(

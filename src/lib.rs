@@ -1,10 +1,4 @@
-#![feature(stmt_expr_attributes)]
 #![feature(let_chains)]
-#![feature(fs_try_exists)]
-#![feature(never_type)]
-#![feature(if_let_guard)]
-#![feature(lazy_cell)]
-#![feature(iter_array_chunks)]
 // These two generate a lot of false positives for Bevy systems
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::type_complexity)]

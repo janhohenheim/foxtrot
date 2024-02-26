@@ -10,7 +10,7 @@ pub(crate) fn map_plugin(app: &mut App) {
         .add_systems(
             Update,
             show_loading_screen
-                .run_if(not(any_with_component::<Player>()).and_then(in_state(GameState::Playing))),
+                .run_if(not(any_with_component::<Player>).and_then(in_state(GameState::Playing))),
         );
 }
 

@@ -11,6 +11,7 @@ pub(crate) mod spawning;
 /// - [`spawning_plugin`] handles the spawning of objects in general.
 /// - [`grass_plugin`] handles the spawning of grass on top of marked meshes.
 pub(crate) fn level_instantiation_plugin(app: &mut App) {
-    app.fn_plugin(map_plugin).fn_plugin(spawning_plugin);
-    //.fn_plugin(grass_plugin);
+    app.fn_plugin(map_plugin)
+        .fn_plugin(spawning_plugin)
+        .fn_plugin(grass_plugin);
 }

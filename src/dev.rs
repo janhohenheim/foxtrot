@@ -24,7 +24,10 @@ pub(crate) fn dev_plugin(app: &mut App) {
                     aabb_color: Some(Color::WHITE),
                     ..default()
                 },
-                GizmoConfig::default(),
+                GizmoConfig {
+                    enabled: false,
+                    ..default()
+                },
             );
     }
 }

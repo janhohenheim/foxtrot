@@ -131,7 +131,9 @@ pub(crate) fn remove_actions_when_frozen(
         camera_actions
             .action_data_mut_or_default(&CameraAction::Orbit)
             .axis_pair = Some(default());
-        camera_actions.action_data_mut_or_default(&CameraAction::Zoom).value = default();
+        camera_actions
+            .action_data_mut_or_default(&CameraAction::Zoom)
+            .value = default();
     }
 }
 

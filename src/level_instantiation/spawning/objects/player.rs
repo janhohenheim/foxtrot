@@ -22,9 +22,7 @@ pub(crate) fn spawn(
 ) {
     for (entity, transform) in player.iter() {
         let mut controller = CharacterControllerBundle::capsule(HEIGHT, RADIUS, transform.scale.y);
-        controller.collision_layers = controller
-            .collision_layers
-            .add_group(CollisionLayer::Player);
+        controller.collision_layers.memberships |= CollisionLayer::Player;
 
         commands
             .entity(entity)

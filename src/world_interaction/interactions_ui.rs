@@ -31,7 +31,7 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
                 .run_if(
                     not(is_frozen)
                         .and_then(in_state(GameState::Playing))
-                        .and_then(any_with_component::<DialogueRunner>()),
+                        .and_then(any_with_component::<DialogueRunner>),
                 ),
         );
 }
@@ -135,7 +135,7 @@ fn display_interaction_prompt(
     mut freeze: ResMut<ActionsFrozen>,
 ) {
     let Some(opportunity) = interaction_opportunity.0 else {
-        return;
+        return Ok(());
     };
     let dialog_target = dialog_target_query.get(opportunity)?;
     let window = primary_windows
@@ -150,7 +150,7 @@ fn display_interaction_prompt(
             ui.label("E: Talk");
         });
     for actions in actions.iter() {
-        if actions.just_pressed(PlayerAction::Interact) {
+        if actions.just_pressed(&PlayerAction::Interact) {
             let mut dialogue_runner = dialogue_runner.single_mut();
             dialogue_runner.start_node(&dialog_target.node);
             freeze.freeze();

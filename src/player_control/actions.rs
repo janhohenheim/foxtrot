@@ -119,16 +119,18 @@ pub(crate) fn remove_actions_when_frozen(
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     for mut player_actions in player_actions_query.iter_mut() {
-        player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
-        player_actions.release(PlayerAction::Jump);
-        player_actions.release(PlayerAction::Interact);
-        player_actions.release(PlayerAction::Sprint);
+        player_actions
+            .action_data_mut(&PlayerAction::Move)
+            .axis_pair = Some(default());
+        player_actions.release(&PlayerAction::Jump);
+        player_actions.release(&PlayerAction::Interact);
+        player_actions.release(&PlayerAction::Sprint);
     }
     for mut camera_actions in camera_actions_query.iter_mut() {
         camera_actions
-            .action_data_mut(CameraAction::Orbit)
+            .action_data_mut(&CameraAction::Orbit)
             .axis_pair = Some(default());
-        camera_actions.action_data_mut(CameraAction::Zoom).value = default();
+        camera_actions.action_data_mut(&CameraAction::Zoom).value = default();
     }
 }
 

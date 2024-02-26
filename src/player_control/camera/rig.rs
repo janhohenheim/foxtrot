@@ -58,7 +58,7 @@ pub(crate) fn update_rig(
 
 fn get_camera_movement(actions: &ActionState<CameraAction>) -> Vec2 {
     actions
-        .axis_pair(CameraAction::Orbit)
+        .axis_pair(&CameraAction::Orbit)
         .map(|pair| pair.xy())
         .unwrap_or_default()
 }
@@ -112,7 +112,7 @@ fn set_desired_distance(
     actions: &ActionState<CameraAction>,
     config: &GameConfig,
 ) {
-    let zoom = actions.clamped_value(CameraAction::Zoom) * config.camera.third_person.zoom_speed;
+    let zoom = actions.clamped_value(&CameraAction::Zoom) * config.camera.third_person.zoom_speed;
     let (min_distance, max_distance) = match camera.kind {
         IngameCameraKind::ThirdPerson => (
             config.camera.third_person.min_distance,

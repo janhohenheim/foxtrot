@@ -46,7 +46,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), 
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
-        jump.requested |= actions.pressed(PlayerAction::Jump);
+        jump.requested |= actions.pressed(&PlayerAction::Jump);
     }
 }
 
@@ -58,11 +58,11 @@ fn handle_horizontal_movement(
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
     let Some((camera, camera_transform)) = camera_query.iter().next() else {
-        return;
+        return Ok(());
     };
 
     for (actions, mut walk, mut sprint) in &mut player_query {
-        let Some(axis) = actions.axis_pair(PlayerAction::Move) else {
+        let Some(axis) = actions.axis_pair(&PlayerAction::Move) else {
             continue;
         };
         if let Some(movement) = axis.max_normalized() {
@@ -88,7 +88,7 @@ fn handle_horizontal_movement(
             let direction = forward_action * modifier + sideways_action;
 
             walk.direction = Some(direction);
-            sprint.requested = actions.pressed(PlayerAction::Sprint);
+            sprint.requested = actions.pressed(&PlayerAction::Sprint);
         }
     }
 }

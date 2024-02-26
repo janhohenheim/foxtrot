@@ -14,7 +14,7 @@ pub(crate) fn dialog_plugin(app: &mut App) {
     .add_systems(
         Update,
         (
-            spawn_dialogue_runner.run_if(resource_added::<YarnProject>()),
+            spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
             unfreeze_after_dialog.after(ExampleYarnSpinnerDialogueViewSystemSet),
         ),
     );

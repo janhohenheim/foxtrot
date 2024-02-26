@@ -76,20 +76,20 @@ pub(crate) enum UiAction {
 pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
     InputManagerBundle {
         input_map: InputMap::new([
-            (QwertyScanCode::Space, PlayerAction::Jump),
-            (QwertyScanCode::ShiftLeft, PlayerAction::Sprint),
-            (QwertyScanCode::E, PlayerAction::Interact),
-            (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
-            (QwertyScanCode::Key1, PlayerAction::NumberedChoice1),
-            (QwertyScanCode::Key2, PlayerAction::NumberedChoice2),
-            (QwertyScanCode::Key3, PlayerAction::NumberedChoice3),
-            (QwertyScanCode::Key4, PlayerAction::NumberedChoice4),
-            (QwertyScanCode::Key5, PlayerAction::NumberedChoice5),
-            (QwertyScanCode::Key6, PlayerAction::NumberedChoice6),
-            (QwertyScanCode::Key7, PlayerAction::NumberedChoice7),
-            (QwertyScanCode::Key8, PlayerAction::NumberedChoice8),
-            (QwertyScanCode::Key9, PlayerAction::NumberedChoice9),
-            (QwertyScanCode::Key0, PlayerAction::NumberedChoice0),
+            (KeyCode::Space, PlayerAction::Jump),
+            (KeyCode::ShiftLeft, PlayerAction::Sprint),
+            (KeyCode::KeyE, PlayerAction::Interact),
+            (KeyCode::Space, PlayerAction::SpeedUpDialog),
+            (KeyCode::Digit1, PlayerAction::NumberedChoice1),
+            (KeyCode::Digit2, PlayerAction::NumberedChoice2),
+            (KeyCode::Digit3, PlayerAction::NumberedChoice3),
+            (KeyCode::Digit4, PlayerAction::NumberedChoice4),
+            (KeyCode::Digit5, PlayerAction::NumberedChoice5),
+            (KeyCode::Digit6, PlayerAction::NumberedChoice6),
+            (KeyCode::Digit7, PlayerAction::NumberedChoice7),
+            (KeyCode::Digit8, PlayerAction::NumberedChoice8),
+            (KeyCode::Digit9, PlayerAction::NumberedChoice9),
+            (KeyCode::Digit0, PlayerAction::NumberedChoice0),
         ])
         .insert(VirtualDPad::wasd(), PlayerAction::Move)
         .build(),
@@ -109,7 +109,7 @@ pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<
 
 pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
-        input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
+        input_map: InputMap::new([(KeyCode::Escape, UiAction::TogglePause)]),
         ..default()
     }
 }

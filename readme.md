@@ -20,9 +20,9 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
 - Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
 - Particle effects via [`bevy_hanabi`](https://crates.io/crates/bevy_hanabi)
-- Procedural skies via [`bevy_athmospere`](https://crates.io/crates/bevy_atmosphere)
+- Procedural skies via [`bevy_atmosphere`](https://crates.io/crates/bevy_atmosphere)
 - Grass via [`warbler_grass`](https://crates.io/crates/warbler_grass)
-- Integrathion with Blender as an editor via
+- Integration with Blender as an editor via
   the [`Blender_bevy_components_workflow`](https://github.com/kaosat-dev/Blender_bevy_components_workflow) set of tools
 
 ## Usage

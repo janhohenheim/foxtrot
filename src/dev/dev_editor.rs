@@ -1,5 +1,5 @@
 use crate::{player_control::camera::ForceCursorGrabMode, GameState};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_editor_pls::{
     editor::{Editor, EditorEvent},
@@ -7,8 +7,8 @@ use bevy_editor_pls::{
     AddEditorWindow,
 };
 use bevy_egui::egui;
-use bevy_mod_sysfail::*;
-use bevy_xpbd_3d::prelude::PhysicsDebugConfig;
+use bevy_mod_sysfail::prelude::*;
+use bevy_xpbd_3d::prelude::PhysicsGizmos;
 use serde::{Deserialize, Serialize};
 
 pub(crate) fn dev_editor_plugin(app: &mut App) {
@@ -51,12 +51,12 @@ pub(crate) struct DevEditorState {
     pub(crate) navmesh_render_enabled: bool,
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn handle_debug_render(
     state: Res<Editor>,
     mut last_enabled: Local<bool>,
-    mut debug_config: ResMut<PhysicsDebugConfig>,
-) -> Result<()> {
+    mut config_store: ResMut<GizmoConfigStore>,
+) {
     let current_enabled = state
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
@@ -65,8 +65,8 @@ fn handle_debug_render(
         return Ok(());
     }
     *last_enabled = current_enabled;
-    debug_config.enabled = current_enabled;
-    Ok(())
+    let config = config_store.config_mut::<PhysicsGizmos>().0;
+    config.enabled = current_enabled;
 }
 
 fn set_cursor_grab_mode(

@@ -8,10 +8,10 @@ use crate::{
 };
 
 use crate::{util::trait_extension::Vec3Ext, world_interaction::dialog::DialogTarget, GameState};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
@@ -46,15 +46,15 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), 
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_jump").entered();
     for (actions, mut jump) in &mut player_query {
-        jump.requested |= actions.pressed(PlayerAction::Jump);
+        jump.requested |= actions.pressed(&PlayerAction::Jump);
     }
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walk, &mut Sprinting), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
     let Some((camera, camera_transform)) = camera_query.iter().next() else {
@@ -62,7 +62,7 @@ fn handle_horizontal_movement(
     };
 
     for (actions, mut walk, mut sprint) in &mut player_query {
-        let Some(axis) = actions.axis_pair(PlayerAction::Move) else {
+        let Some(axis) = actions.axis_pair(&PlayerAction::Move) else {
             continue;
         };
         if let Some(movement) = axis.max_normalized() {
@@ -88,10 +88,9 @@ fn handle_horizontal_movement(
             let direction = forward_action * modifier + sideways_action;
 
             walk.direction = Some(direction);
-            sprint.requested = actions.pressed(PlayerAction::Sprint);
+            sprint.requested = actions.pressed(&PlayerAction::Sprint);
         }
     }
-    Ok(())
 }
 
 fn handle_camera_kind(
@@ -144,13 +143,13 @@ fn rotate_to_speaker(
     }
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
     character_query: Query<&TnuaController, With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("control_walking_sound").entered();
     for controller in character_query.iter() {
@@ -168,5 +167,4 @@ fn control_walking_sound(
             audio_instance.pause(default());
         }
     }
-    Ok(())
 }

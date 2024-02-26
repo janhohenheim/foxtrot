@@ -1,13 +1,6 @@
-#![feature(stmt_expr_attributes)]
 #![feature(let_chains)]
-#![feature(fs_try_exists)]
-#![feature(never_type)]
-#![feature(if_let_guard)]
-#![feature(lazy_cell)]
-#![feature(iter_array_chunks)]
 // These two generate a lot of false positives for Bevy systems
-#![allow(clippy::too_many_arguments)]
-#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
 //! Foxtrot is split into many plugins with their own set of responsibilities.
 //! This is an organizational measure and not meant to be imply that you can turn them on or off at will,
@@ -26,7 +19,6 @@ use crate::{
     world_interaction::world_interaction_plugin,
 };
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod bevy_config;
 #[cfg(feature = "dev")]
@@ -67,24 +59,23 @@ enum GameState {
 /// - [`dev_plugin`]: Handles the dev tools.
 /// - [`ingame_menu_plugin`]: Handles the ingame menu accessed via ESC.
 /// - [`particle_plugin`]: Handles the particle system.
-///
-/// Because Foxtrot uses `seldom_fn_plugin`, these are all functions.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<GameState>()
-            .fn_plugin(bevy_config_plugin)
-            .fn_plugin(menu_plugin)
-            .fn_plugin(movement_plugin)
-            .fn_plugin(player_control_plugin)
-            .fn_plugin(world_interaction_plugin)
-            .fn_plugin(level_instantiation_plugin)
-            .fn_plugin(file_system_interaction_plugin)
-            .fn_plugin(shader_plugin)
-            .fn_plugin(ingame_menu_plugin)
-            .fn_plugin(particle_plugin);
-        #[cfg(feature = "dev")]
-        app.fn_plugin(dev_plugin);
+        app.init_state::<GameState>().add_plugins((
+            bevy_config_plugin,
+            menu_plugin,
+            movement_plugin,
+            player_control_plugin,
+            world_interaction_plugin,
+            level_instantiation_plugin,
+            file_system_interaction_plugin,
+            shader_plugin,
+            ingame_menu_plugin,
+            particle_plugin,
+            #[cfg(feature = "dev")]
+            dev_plugin,
+        ));
     }
 }

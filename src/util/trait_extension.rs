@@ -28,17 +28,11 @@ impl Vec2Ext for Vec2 {
 
 pub(crate) trait F32Ext: Copy {
     fn squared(self) -> f32;
-    fn lerp(self, other: f32, ratio: f32) -> f32;
 }
 
 impl F32Ext for f32 {
     #[inline]
     fn squared(self) -> f32 {
         self * self
-    }
-
-    #[inline]
-    fn lerp(self, other: f32, ratio: f32) -> f32 {
-        self.mul_add(1. - ratio, other * ratio)
     }
 }

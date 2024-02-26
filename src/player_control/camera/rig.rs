@@ -9,16 +9,16 @@ use crate::{
     },
     util::trait_extension::Vec2Ext,
 };
-use anyhow::Result;
+
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn update_rig(
     time: Res<Time<Virtual>>,
     mut camera_query: Query<(
@@ -29,7 +29,7 @@ pub(crate) fn update_rig(
     )>,
     config: Res<GameConfig>,
     spatial_query: SpatialQuery,
-) -> Result<()> {
+) {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
         set_look_at(&mut rig, &camera);
@@ -54,12 +54,11 @@ pub(crate) fn update_rig(
 
         set_smoothness(&mut rig, &config, &camera);
     }
-    Ok(())
 }
 
 fn get_camera_movement(actions: &ActionState<CameraAction>) -> Vec2 {
     actions
-        .axis_pair(CameraAction::Orbit)
+        .axis_pair(&CameraAction::Orbit)
         .map(|pair| pair.xy())
         .unwrap_or_default()
 }
@@ -113,7 +112,7 @@ fn set_desired_distance(
     actions: &ActionState<CameraAction>,
     config: &GameConfig,
 ) {
-    let zoom = actions.clamped_value(CameraAction::Zoom) * config.camera.third_person.zoom_speed;
+    let zoom = actions.clamped_value(&CameraAction::Zoom) * config.camera.third_person.zoom_speed;
     let (min_distance, max_distance) = match camera.kind {
         IngameCameraKind::ThirdPerson => (
             config.camera.third_person.min_distance,

@@ -2,7 +2,7 @@ use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::spawning::objects::CollisionLayer,
     player_control::camera::{IngameCamera, IngameCameraKind},
-    util::{smoothness_to_lerp_factor, trait_extension::F32Ext},
+    util::smoothness_to_lerp_factor,
 };
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -65,8 +65,7 @@ fn get_distance_to_collision(
 
     let max_toi = camera.desired_distance;
     let solid = true;
-    let filter =
-        SpatialQueryFilter::new().with_masks_from_bits(CollisionLayer::CameraObstacle.to_bits());
+    let filter = SpatialQueryFilter::from_mask(CollisionLayer::CameraObstacle.to_bits());
 
     let min_distance = match camera.kind {
         IngameCameraKind::ThirdPerson => config.camera.third_person.min_distance_to_objects,
@@ -87,7 +86,7 @@ fn get_distance_to_collision(
 
 fn get_distance_such_that_min_distance_from_collision_is_ensured(
     hit: RayHitData,
-    direction: Vec3,
+    direction: Direction3d,
     min_distance: f32,
 ) -> f32 {
     //  Wall

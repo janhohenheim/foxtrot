@@ -2,14 +2,9 @@
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
-version = "0.4.0"
+version = "0.5.0"
 license = "MIT OR Apache-2.0"
-exclude = [
-    "dist/",
-    "saves/",
-    "assets/",
-    "resources/",
-]
+exclude = ["assets/"]
 description = "The all-in-one Bevy 3D game template for desktop."
 repository = "https://github.com/janhohenheim/foxtrot"
 keywords = ["gamedev", "bevy", "template", "game"]
@@ -21,11 +16,20 @@ default = ["dev"]
 dev = ["dep:bevy_editor_pls"]
 tracing = ["bevy/trace_chrome"]
 
+[dependencies.bevy]
+version = "0.13"
+features = [
+    "jpeg",
+    "serialize",
+    "file_watcher",
+    "dynamic_linking", # disable this for releases
+]
+
 [dependencies]
 # keep the following two in sync with Bevy's dependencies
-## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_winit/Cargo.toml#L31
-winit = { version = "0.28.7", default-features = false }
-## https://github.com/bevyengine/bevy/blob/v0.12.1/crates/bevy_render/Cargo.toml#L57
+## https://github.com/bevyengine/bevy/blob/v0.13.0/crates/bevy_winit/Cargo.toml#L32
+winit = { version = "0.29", default-features = false }
+## https://github.com/bevyengine/bevy/blob/v0.13.0/crates/bevy_render/Cargo.toml#L61
 image = { version = "0.24", default-features = false }
 
 # generic dependencies
@@ -33,41 +37,42 @@ serde = { version = "1", features = ["derive"] }
 anyhow = "1"
 
 # Bevy plugins
-bevy_kira_audio = "0.18"
-bevy_asset_loader = { version = "0.19", features = ["progress_tracking", "standard_dynamic_assets"] }
-bevy_common_assets = { version = "0.9", features = ["ron", "toml"] }
-bevy_egui = "0.24"
-oxidized_navigation = { version = "0.8", features = ["xpbd", "debug_draw"] }
-iyes_progress = "0.10"
-# Activate the egui feature when https://github.com/Leafwing-Studios/leafwing-input-manager/pull/442 lands
-leafwing-input-manager = { version = "0.11", features = [] }
-bevy_dolly = "0.0.2"
-bevy_mod_sysfail = "5"
-seldom_fn_plugin = "0.5"
-bevy_editor_pls = { version = "0.7", optional = true }
-bevy_hanabi = "0.9"
-bevy_yarnspinner = "0.1"
-bevy_yarnspinner_example_dialogue_view = "0.1"
-bevy-tnua-xpbd3d = "0.1"
-bevy_xpbd_3d = { version = "0.3", features = ["simd"] }
-bevy-tnua = "0.14"
-bevy_atmosphere = "0.8"
-warbler_grass = "0.5"
-bevy_gltf_blueprints = "0.7"
-bevy_registry_export = "0.1"
+bevy_kira_audio = "0.19"
+bevy_asset_loader = { version = "0.20", features = ["progress_tracking", "standard_dynamic_assets"] }
+bevy_common_assets = { version = "0.10", features = ["ron", "toml"] }
+bevy_egui = "0.25"
+oxidized_navigation = { version = "0.10", features = ["xpbd", "debug_draw"] }
+iyes_progress = "0.11"
+leafwing-input-manager = { version = "0.13", features = ["egui"] }
+## Waiting for https://github.com/BlackPhlox/bevy_dolly/pull/51
+bevy_dolly = { git = "https://github.com/rparrett/bevy_dolly/", branch = "bevy-0.13" }
+bevy_mod_sysfail = "7"
+bevy_editor_pls = { version = "0.8", optional = true }
+bevy_hanabi = "0.10"
+bevy_yarnspinner = "0.2"
+bevy_yarnspinner_example_dialogue_view = "0.2.1"
+bevy-tnua-xpbd3d = "0.2"
+bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
+bevy-tnua = "0.15"
+bevy_atmosphere = "0.9"
+## Waiting for https://github.com/EmiOnGit/warbler_grass/pull/76
+warbler_grass = { git = "https://github.com/EmiOnGit/warbler_grass", branch = "75-update-to-bevy-013" }
+## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/136
+bevy_gltf_blueprints = { git = "https://github.com/kaosat-dev/Blender_bevy_components_workflow/", branch = "bevy_main" }
+## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/136
+bevy_registry_export = { git = "https://github.com/kaosat-dev/Blender_bevy_components_workflow/", branch = "bevy_main" }
 
-[dependencies.bevy]
-version = "0.12.1"
-features = [
-    "jpeg",
-    "serialize",
-    # "dynamic_linking", makes the builds MUCH faster, but causes issues on Windows
-    "file_watcher",
-]
+[patch."https://github.com/rparrett/bevy_dolly/"]
+## Waiting for https://github.com/BlackPhlox/bevy_dolly/pull/51
+dolly = { git = "https://github.com/janhohenheim/dolly", branch = "bevy-0.13" }
 
 [build-dependencies]
 embed-resource = "2"
 
-[patch.crates-io]
-# Remove when https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/143 has been merged
-bevy_gltf_components = { git = "https://github.com/janhohenheim/Blender_bevy_components_workflow", rev = "6313c2f695e9e64dbd797c45ef7d6402062094ca" }
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3

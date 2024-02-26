@@ -1,6 +1,6 @@
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::{prelude::*, window::PrimaryWindow, winit::WinitWindows};
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use std::io::Cursor;
 use winit::window::Icon;
 
@@ -20,11 +20,11 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
 }
 
 // Sets the icon on Windows and X11
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn set_window_icon(
     windows: NonSend<WinitWindows>,
     primary_windows: Query<Entity, With<PrimaryWindow>>,
-) -> Result<()> {
+) {
     let primary_entity = primary_windows.single();
     let primary = windows
         .get_window(primary_entity)
@@ -39,5 +39,4 @@ fn set_window_icon(
         let icon = Icon::from_rgba(rgba, width, height)?;
         primary.set_window_icon(Some(icon));
     };
-    Ok(())
 }

@@ -8,10 +8,10 @@ use crate::{
 };
 
 use crate::{world_interaction::dialog::DialogTarget, GameState};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
@@ -31,7 +31,7 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
                 .run_if(
                     not(is_frozen)
                         .and_then(in_state(GameState::Playing))
-                        .and_then(any_with_component::<DialogueRunner>()),
+                        .and_then(any_with_component::<DialogueRunner>),
                 ),
         );
 }
@@ -40,7 +40,7 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
 #[reflect(Resource, Serialize, Deserialize)]
 pub(crate) struct InteractionOpportunity(pub(crate) Option<Entity>);
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<&Transform, With<Player>>,
@@ -51,7 +51,7 @@ fn update_interaction_opportunities(
     >,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
-) -> Result<()> {
+) {
     interaction_opportunity.0 = None;
 
     for Collision(ref contacts) in collisions.read() {
@@ -93,7 +93,6 @@ fn update_interaction_opportunities(
             interaction_opportunity.0.replace(target);
         }
     }
-    Ok(())
 }
 
 fn get_player_and_target(
@@ -125,7 +124,7 @@ fn is_facing_target(
     angle < TAU / 8.
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn display_interaction_prompt(
     interaction_opportunity: Res<InteractionOpportunity>,
     mut dialogue_runner: Query<&mut DialogueRunner>,
@@ -134,7 +133,7 @@ fn display_interaction_prompt(
     primary_windows: Query<&Window, With<PrimaryWindow>>,
     dialog_target_query: Query<&DialogTarget>,
     mut freeze: ResMut<ActionsFrozen>,
-) -> Result<()> {
+) {
     let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
@@ -151,11 +150,10 @@ fn display_interaction_prompt(
             ui.label("E: Talk");
         });
     for actions in actions.iter() {
-        if actions.just_pressed(PlayerAction::Interact) {
+        if actions.just_pressed(&PlayerAction::Interact) {
             let mut dialogue_runner = dialogue_runner.single_mut();
             dialogue_runner.start_node(&dialog_target.node);
             freeze.freeze();
         }
     }
-    Ok(())
 }

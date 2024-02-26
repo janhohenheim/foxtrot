@@ -20,7 +20,7 @@ pub(crate) fn bevy_config_plugin(app: &mut App) {
 }
 
 // Sets the icon on Windows and X11
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn set_window_icon(
     windows: NonSend<WinitWindows>,
     primary_windows: Query<Entity, With<PrimaryWindow>>,

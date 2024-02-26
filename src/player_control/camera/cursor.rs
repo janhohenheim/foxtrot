@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
 pub(crate) struct ForceCursorGrabMode(pub(crate) Option<CursorGrabMode>);
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn grab_cursor(
     mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,

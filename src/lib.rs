@@ -26,7 +26,6 @@ use crate::{
     world_interaction::world_interaction_plugin,
 };
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod bevy_config;
 #[cfg(feature = "dev")]

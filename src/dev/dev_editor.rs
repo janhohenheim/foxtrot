@@ -51,7 +51,7 @@ pub(crate) struct DevEditorState {
     pub(crate) navmesh_render_enabled: bool,
 }
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn handle_debug_render(
     state: Res<Editor>,
     mut last_enabled: Local<bool>,

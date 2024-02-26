@@ -50,7 +50,7 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), 
     }
 }
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walk, &mut Sprinting), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
@@ -143,7 +143,7 @@ fn rotate_to_speaker(
     }
 }
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
     character_query: Query<&TnuaController, With<Player>>,

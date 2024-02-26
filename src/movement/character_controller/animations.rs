@@ -1,14 +1,14 @@
 use crate::movement::character_controller::{AnimationState, CharacterAnimations};
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
-use bevy_mod_sysfail::sysfail;
+use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{
     builtins::TnuaBuiltinWalk, controller::TnuaController, TnuaAnimatingState,
     TnuaAnimatingStateDirective,
 };
 use std::time::Duration;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<AnimationState>,

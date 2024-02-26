@@ -1,6 +1,5 @@
 use crate::level_instantiation::{grass::grass_plugin, map::map_plugin, spawning::spawning_plugin};
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod grass;
 pub(crate) mod map;

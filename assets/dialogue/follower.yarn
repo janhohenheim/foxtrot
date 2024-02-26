@@ -29,7 +29,7 @@ title: Features
 The Follower: What feature do you care about?
 -> Movement
   The Follower: You can move around with WASD. You can jump with space. You can look around with the mouse. You can interact with the world with E. Shift makes you sprint past all your problems.
-  The Follower: The character controller is a custom thing on top of Rapier. Ideally, we should switch to tnua, but you know how it is.
+  The Follower: The character controller's name is Tnua. Heard that's Hebrew for "motion" or something. Uses XPBD for physics.
 -> Camera
   The Follower: Zoom in and out to fling the camera around. You'll notice that this changed the view from third to first person or top down.
   The Follower: It's pretty smooth, thanks to bevy_dolly.

@@ -2,7 +2,7 @@ use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::spawning::objects::CollisionLayer,
     player_control::camera::{IngameCamera, IngameCameraKind},
-    util::{smoothness_to_lerp_factor, trait_extension::F32Ext},
+    util::smoothness_to_lerp_factor,
 };
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;

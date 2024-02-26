@@ -8,7 +8,7 @@ use crate::{
 
 #[cfg(feature = "dev")]
 use anyhow::Context;
-use anyhow::Result;
+
 use bevy::prelude::*;
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::Collider;

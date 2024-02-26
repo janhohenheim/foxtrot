@@ -1,5 +1,5 @@
 use crate::player_control::actions::ActionsFrozen;
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::{
     prelude::*,
     window::{CursorGrabMode, PrimaryWindow},

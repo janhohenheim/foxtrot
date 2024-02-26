@@ -2,7 +2,7 @@
     <Package
         Name="Foxtrot"
         Manufacturer="Jan Hohenheim"
-        Version="0.2.0"
+        Version="0.5.0"
 
         UpgradeCode="5b55f5ef-3eba-4782-8bd5-7711d414728d"
         Scope="perUserOrMachine">

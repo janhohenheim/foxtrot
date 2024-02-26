@@ -5,7 +5,6 @@ use bevy::{
 };
 use bevy_editor_pls::prelude::*;
 use bevy_xpbd_3d::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod dev_editor;
 
@@ -15,14 +14,22 @@ pub(crate) fn dev_plugin(app: &mut App) {
     {
         app.add_plugins(EditorPlugin::new())
             .insert_resource(default_editor_controls())
-            .add_plugins(FrameTimeDiagnosticsPlugin)
-            .fn_plugin(dev_editor_plugin)
-            .add_plugins(LogDiagnosticsPlugin::filtered(vec![]))
-            .add_plugins(PhysicsDebugPlugin::default())
-            .insert_resource(PhysicsDebugConfig {
-                enabled: false,
-                ..default()
-            });
+            .add_plugins((
+                FrameTimeDiagnosticsPlugin,
+                dev_editor_plugin,
+                LogDiagnosticsPlugin::filtered(vec![]),
+                PhysicsDebugPlugin::default(),
+            ))
+            .insert_gizmo_group(
+                PhysicsGizmos {
+                    aabb_color: Some(Color::WHITE),
+                    ..default()
+                },
+                GizmoConfig {
+                    enabled: false,
+                    ..default()
+                },
+            );
     }
 }
 
@@ -33,7 +40,7 @@ fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
     editor_controls.insert(
         Action::PlayPauseEditor,
         Binding {
-            input: UserInput::Single(Button::Keyboard(KeyCode::G)),
+            input: UserInput::Single(Button::Keyboard(KeyCode::KeyG)),
             conditions: vec![BindingCondition::ListeningForText(false)],
         },
     );

@@ -24,16 +24,29 @@
       "type": "string",
       "typeInfo": "Value"
     },
-    "alloc::vec::Vec<bevy_ecs::Entity>": {
+    "alloc::vec::Vec<bevy_animation::VariableCurve>": {
       "isComponent": false,
       "isResource": false,
       "items": {
         "type": {
-          "$ref": "#/$defs/bevy_ecs::Entity"
+          "$ref": "#/$defs/bevy_animation::VariableCurve"
+        }
+      },
+      "short_name": "Vec<VariableCurve>",
+      "title": "alloc::vec::Vec<bevy_animation::VariableCurve>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<bevy_ecs::entity::Entity>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ecs::entity::Entity"
         }
       },
       "short_name": "Vec<Entity>",
-      "title": "alloc::vec::Vec<bevy_ecs::Entity>",
+      "title": "alloc::vec::Vec<bevy_ecs::entity::Entity>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -47,6 +60,45 @@
       },
       "short_name": "Vec<TextSection>",
       "title": "alloc::vec::Vec<bevy_text::text::TextSection>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<f32>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/f32"
+        }
+      },
+      "short_name": "Vec<f32>",
+      "title": "alloc::vec::Vec<f32>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<glam::Quat>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/glam::Quat"
+        }
+      },
+      "short_name": "Vec<Quat>",
+      "title": "alloc::vec::Vec<glam::Quat>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<glam::Vec3>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/glam::Vec3"
+        }
+      },
+      "short_name": "Vec<Vec3>",
+      "title": "alloc::vec::Vec<glam::Vec3>",
       "type": "array",
       "typeInfo": "List"
     },
@@ -103,6 +155,116 @@
       ],
       "short_name": "AnimationPlayer",
       "title": "bevy_animation::AnimationPlayer",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_animation::Interpolation": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Linear",
+        "Step",
+        "CubicSpline"
+      ],
+      "short_name": "Interpolation",
+      "title": "bevy_animation::Interpolation",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_animation::Keyframes": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<glam::Quat>"
+              }
+            }
+          ],
+          "short_name": "Rotation",
+          "title": "Rotation",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<glam::Vec3>"
+              }
+            }
+          ],
+          "short_name": "Translation",
+          "title": "Translation",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<glam::Vec3>"
+              }
+            }
+          ],
+          "short_name": "Scale",
+          "title": "Scale",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<f32>"
+              }
+            }
+          ],
+          "short_name": "Weights",
+          "title": "Weights",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Keyframes",
+      "title": "bevy_animation::Keyframes",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_animation::VariableCurve": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "interpolation": {
+          "type": {
+            "$ref": "#/$defs/bevy_animation::Interpolation"
+          }
+        },
+        "keyframe_timestamps": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<f32>"
+          }
+        },
+        "keyframes": {
+          "type": {
+            "$ref": "#/$defs/bevy_animation::Keyframes"
+          }
+        }
+      },
+      "required": [
+        "keyframe_timestamps",
+        "keyframes",
+        "interpolation"
+      ],
+      "short_name": "VariableCurve",
+      "title": "bevy_animation::VariableCurve",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -1056,7 +1218,7 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlas>": {
+    "bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlasLayout>": {
       "isComponent": true,
       "isResource": false,
       "oneOf": [
@@ -1079,7 +1241,7 @@
           "prefixItems": [
             {
               "type": {
-                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>"
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlasLayout>"
               }
             }
           ],
@@ -1089,8 +1251,8 @@
           "typeInfo": "Tuple"
         }
       ],
-      "short_name": "Handle<TextureAtlas>",
-      "title": "bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlas>",
+      "short_name": "Handle<TextureAtlasLayout>",
+      "title": "bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlasLayout>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -1281,44 +1443,6 @@
       ],
       "short_name": "Handle<GlowyMaterial>",
       "title": "bevy_asset::handle::Handle<foxtrot::shader::GlowyMaterial>",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
-    "bevy_asset::handle::Handle<warbler_grass::dithering::DitheredBuffer>": {
-      "isComponent": true,
-      "isResource": false,
-      "oneOf": [
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
-              }
-            }
-          ],
-          "short_name": "Strong",
-          "title": "Strong",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_asset::id::AssetId<warbler_grass::dithering::DitheredBuffer>"
-              }
-            }
-          ],
-          "short_name": "Weak",
-          "title": "Weak",
-          "type": "array",
-          "typeInfo": "Tuple"
-        }
-      ],
-      "short_name": "Handle<DitheredBuffer>",
-      "title": "bevy_asset::handle::Handle<warbler_grass::dithering::DitheredBuffer>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -2472,7 +2596,7 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>": {
+    "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlasLayout>": {
       "isComponent": false,
       "isResource": false,
       "oneOf": [
@@ -2513,8 +2637,8 @@
           "typeInfo": "Struct"
         }
       ],
-      "short_name": "AssetId<TextureAtlas>",
-      "title": "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlas>",
+      "short_name": "AssetId<TextureAtlasLayout>",
+      "title": "bevy_asset::id::AssetId<bevy_sprite::texture_atlas::TextureAtlasLayout>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -2748,51 +2872,13 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::id::AssetId<warbler_grass::dithering::DitheredBuffer>": {
+    "bevy_asset::path::AssetPath<'static>": {
       "isComponent": false,
       "isResource": false,
-      "oneOf": [
-        {
-          "additionalProperties": false,
-          "properties": {
-            "index": {
-              "title": "index",
-              "type": {
-                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
-              }
-            }
-          },
-          "required": [
-            "index"
-          ],
-          "short_name": "Index",
-          "title": "Index",
-          "type": "object",
-          "typeInfo": "Struct"
-        },
-        {
-          "additionalProperties": false,
-          "properties": {
-            "uuid": {
-              "title": "uuid",
-              "type": {
-                "$ref": "#/$defs/bevy_utils::Uuid"
-              }
-            }
-          },
-          "required": [
-            "uuid"
-          ],
-          "short_name": "Uuid",
-          "title": "Uuid",
-          "type": "object",
-          "typeInfo": "Struct"
-        }
-      ],
-      "short_name": "AssetId<DitheredBuffer>",
-      "title": "bevy_asset::id::AssetId<warbler_grass::dithering::DitheredBuffer>",
+      "short_name": "AssetPath<'static>",
+      "title": "bevy_asset::path::AssetPath<'static>",
       "type": "object",
-      "typeInfo": "Enum"
+      "typeInfo": "Value"
     },
     "bevy_atmosphere::collection::gradient::Gradient": {
       "additionalProperties": false,
@@ -2897,6 +2983,144 @@
       "title": "bevy_atmosphere::collection::nishita::Nishita",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_audio::audio::DefaultSpatialScale": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_audio::audio::SpatialScale"
+          }
+        }
+      ],
+      "short_name": "DefaultSpatialScale",
+      "title": "bevy_audio::audio::DefaultSpatialScale",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_audio::audio::GlobalVolume": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "volume": {
+          "type": {
+            "$ref": "#/$defs/bevy_audio::audio::Volume"
+          }
+        }
+      },
+      "required": [
+        "volume"
+      ],
+      "short_name": "GlobalVolume",
+      "title": "bevy_audio::audio::GlobalVolume",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_audio::audio::PlaybackMode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Once",
+        "Loop",
+        "Despawn",
+        "Remove"
+      ],
+      "short_name": "PlaybackMode",
+      "title": "bevy_audio::audio::PlaybackMode",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_audio::audio::PlaybackSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "mode": {
+          "type": {
+            "$ref": "#/$defs/bevy_audio::audio::PlaybackMode"
+          }
+        },
+        "paused": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "spatial": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "spatial_scale": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_audio::audio::SpatialScale>"
+          }
+        },
+        "speed": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "volume": {
+          "type": {
+            "$ref": "#/$defs/bevy_audio::audio::Volume"
+          }
+        }
+      },
+      "required": [
+        "mode",
+        "volume",
+        "speed",
+        "paused",
+        "spatial"
+      ],
+      "short_name": "PlaybackSettings",
+      "title": "bevy_audio::audio::PlaybackSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_audio::audio::SpatialListener": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "left_ear_offset": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        },
+        "right_ear_offset": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        }
+      },
+      "required": [
+        "left_ear_offset",
+        "right_ear_offset"
+      ],
+      "short_name": "SpatialListener",
+      "title": "bevy_audio::audio::SpatialListener",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_audio::audio::Volume": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "Volume",
+      "title": "bevy_audio::audio::Volume",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_core::name::Name": {
       "additionalProperties": false,
@@ -3009,52 +3233,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_core_pipeline::clear_color::ClearColor": {
-      "isComponent": false,
-      "isResource": true,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
-          }
-        }
-      ],
-      "short_name": "ClearColor",
-      "title": "bevy_core_pipeline::clear_color::ClearColor",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_core_pipeline::clear_color::ClearColorConfig": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        {
-          "title": "Default"
-        },
-        {
-          "items": false,
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/bevy_render::color::Color"
-              }
-            }
-          ],
-          "short_name": "Custom",
-          "title": "Custom",
-          "type": "array",
-          "typeInfo": "Tuple"
-        },
-        {
-          "title": "None"
-        }
-      ],
-      "short_name": "ClearColorConfig",
-      "title": "bevy_core_pipeline::clear_color::ClearColorConfig",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
     "bevy_core_pipeline::contrast_adaptive_sharpening::ContrastAdaptiveSharpeningSettings": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3090,16 +3268,8 @@
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "properties": {
-        "clear_color": {
-          "type": {
-            "$ref": "#/$defs/bevy_core_pipeline::clear_color::ClearColorConfig"
-          }
-        }
-      },
-      "required": [
-        "clear_color"
-      ],
+      "properties": {},
+      "required": [],
       "short_name": "Camera2d",
       "title": "bevy_core_pipeline::core_2d::camera_2d::Camera2d",
       "type": "object",
@@ -3110,11 +3280,6 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
-        "clear_color": {
-          "type": {
-            "$ref": "#/$defs/bevy_core_pipeline::clear_color::ClearColorConfig"
-          }
-        },
         "depth_load_op": {
           "type": {
             "$ref": "#/$defs/bevy_core_pipeline::core_3d::camera_3d::Camera3dDepthLoadOp"
@@ -3137,7 +3302,6 @@
         }
       },
       "required": [
-        "clear_color",
         "depth_load_op",
         "depth_texture_usages",
         "screen_space_specular_transmission_steps",
@@ -3175,6 +3339,36 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_core_pipeline::core_3d::camera_3d::Camera3dDepthTextureUsage": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        }
+      ],
+      "short_name": "Camera3dDepthTextureUsage",
+      "title": "bevy_core_pipeline::core_3d::camera_3d::Camera3dDepthTextureUsage",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_core_pipeline::core_3d::camera_3d::ScreenSpaceTransmissionQuality": {
+      "isComponent": false,
+      "isResource": true,
+      "oneOf": [
+        "Low",
+        "Medium",
+        "High",
+        "Ultra"
+      ],
+      "short_name": "ScreenSpaceTransmissionQuality",
+      "title": "bevy_core_pipeline::core_3d::camera_3d::ScreenSpaceTransmissionQuality",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "bevy_core_pipeline::fxaa::Fxaa": {
       "additionalProperties": false,
       "isComponent": true,
@@ -3206,6 +3400,17 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_core_pipeline::prepass::DeferredPrepass": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "DeferredPrepass",
+      "title": "bevy_core_pipeline::prepass::DeferredPrepass",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_core_pipeline::prepass::DepthPrepass": {
       "additionalProperties": false,
       "isComponent": false,
@@ -3214,6 +3419,17 @@
       "required": [],
       "short_name": "DepthPrepass",
       "title": "bevy_core_pipeline::prepass::DepthPrepass",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_core_pipeline::prepass::MotionVectorPrepass": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "MotionVectorPrepass",
+      "title": "bevy_core_pipeline::prepass::MotionVectorPrepass",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -3258,11 +3474,71 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "bevy_ecs::Entity": {
+    "bevy_ecs::component::ComponentId": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      ],
+      "short_name": "ComponentId",
+      "title": "bevy_ecs::component::ComponentId",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_ecs::component::ComponentTicks": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "added": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::component::Tick"
+          }
+        },
+        "changed": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::component::Tick"
+          }
+        }
+      },
+      "required": [
+        "added",
+        "changed"
+      ],
+      "short_name": "ComponentTicks",
+      "title": "bevy_ecs::component::ComponentTicks",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_ecs::component::Tick": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "tick": {
+          "type": {
+            "$ref": "#/$defs/u32"
+          }
+        }
+      },
+      "required": [
+        "tick"
+      ],
+      "short_name": "Tick",
+      "title": "bevy_ecs::component::Tick",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_ecs::entity::Entity": {
       "isComponent": false,
       "isResource": false,
       "short_name": "Entity",
-      "title": "bevy_ecs::Entity",
+      "title": "bevy_ecs::entity::Entity",
       "type": "object",
       "typeInfo": "Value"
     },
@@ -3278,7 +3554,7 @@
         },
         "scale_factor": {
           "type": {
-            "$ref": "#/$defs/f64"
+            "$ref": "#/$defs/f32"
           }
         }
       },
@@ -3287,6 +3563,73 @@
       ],
       "short_name": "EguiSettings",
       "title": "bevy_egui::EguiSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gizmos::aabb::AabbGizmoConfigGroup": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "default_color": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_render::color::Color>"
+          }
+        },
+        "draw_all": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "draw_all"
+      ],
+      "short_name": "AabbGizmoConfigGroup",
+      "title": "bevy_gizmos::aabb::AabbGizmoConfigGroup",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gizmos::config::GizmoConfig": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "depth_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "enabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "line_perspective": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "line_width": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "render_layers": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::view::visibility::render_layers::RenderLayers"
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "line_width",
+        "line_perspective",
+        "depth_bias",
+        "render_layers"
+      ],
+      "short_name": "GizmoConfig",
+      "title": "bevy_gizmos::config::GizmoConfig",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -3551,7 +3894,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/smallvec::SmallVec<[bevy_ecs::Entity; 8]>"
+            "$ref": "#/$defs/bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>"
           }
         }
       ],
@@ -3567,7 +3910,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       ],
@@ -3980,177 +4323,1580 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_input::keyboard::Key": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/smol_str::SmolStr"
+              }
+            }
+          ],
+          "short_name": "Character",
+          "title": "Character",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::keyboard::NativeKey"
+              }
+            }
+          ],
+          "short_name": "Unidentified",
+          "title": "Unidentified",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/core::option::Option<char>"
+              }
+            }
+          ],
+          "short_name": "Dead",
+          "title": "Dead",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Alt"
+        },
+        {
+          "title": "AltGraph"
+        },
+        {
+          "title": "CapsLock"
+        },
+        {
+          "title": "Control"
+        },
+        {
+          "title": "Fn"
+        },
+        {
+          "title": "FnLock"
+        },
+        {
+          "title": "NumLock"
+        },
+        {
+          "title": "ScrollLock"
+        },
+        {
+          "title": "Shift"
+        },
+        {
+          "title": "Symbol"
+        },
+        {
+          "title": "SymbolLock"
+        },
+        {
+          "title": "Meta"
+        },
+        {
+          "title": "Hyper"
+        },
+        {
+          "title": "Super"
+        },
+        {
+          "title": "Enter"
+        },
+        {
+          "title": "Tab"
+        },
+        {
+          "title": "Space"
+        },
+        {
+          "title": "ArrowDown"
+        },
+        {
+          "title": "ArrowLeft"
+        },
+        {
+          "title": "ArrowRight"
+        },
+        {
+          "title": "ArrowUp"
+        },
+        {
+          "title": "End"
+        },
+        {
+          "title": "Home"
+        },
+        {
+          "title": "PageDown"
+        },
+        {
+          "title": "PageUp"
+        },
+        {
+          "title": "Backspace"
+        },
+        {
+          "title": "Clear"
+        },
+        {
+          "title": "Copy"
+        },
+        {
+          "title": "CrSel"
+        },
+        {
+          "title": "Cut"
+        },
+        {
+          "title": "Delete"
+        },
+        {
+          "title": "EraseEof"
+        },
+        {
+          "title": "ExSel"
+        },
+        {
+          "title": "Insert"
+        },
+        {
+          "title": "Paste"
+        },
+        {
+          "title": "Redo"
+        },
+        {
+          "title": "Undo"
+        },
+        {
+          "title": "Accept"
+        },
+        {
+          "title": "Again"
+        },
+        {
+          "title": "Attn"
+        },
+        {
+          "title": "Cancel"
+        },
+        {
+          "title": "ContextMenu"
+        },
+        {
+          "title": "Escape"
+        },
+        {
+          "title": "Execute"
+        },
+        {
+          "title": "Find"
+        },
+        {
+          "title": "Help"
+        },
+        {
+          "title": "Pause"
+        },
+        {
+          "title": "Play"
+        },
+        {
+          "title": "Props"
+        },
+        {
+          "title": "Select"
+        },
+        {
+          "title": "ZoomIn"
+        },
+        {
+          "title": "ZoomOut"
+        },
+        {
+          "title": "BrightnessDown"
+        },
+        {
+          "title": "BrightnessUp"
+        },
+        {
+          "title": "Eject"
+        },
+        {
+          "title": "LogOff"
+        },
+        {
+          "title": "Power"
+        },
+        {
+          "title": "PowerOff"
+        },
+        {
+          "title": "PrintScreen"
+        },
+        {
+          "title": "Hibernate"
+        },
+        {
+          "title": "Standby"
+        },
+        {
+          "title": "WakeUp"
+        },
+        {
+          "title": "AllCandidates"
+        },
+        {
+          "title": "Alphanumeric"
+        },
+        {
+          "title": "CodeInput"
+        },
+        {
+          "title": "Compose"
+        },
+        {
+          "title": "Convert"
+        },
+        {
+          "title": "FinalMode"
+        },
+        {
+          "title": "GroupFirst"
+        },
+        {
+          "title": "GroupLast"
+        },
+        {
+          "title": "GroupNext"
+        },
+        {
+          "title": "GroupPrevious"
+        },
+        {
+          "title": "ModeChange"
+        },
+        {
+          "title": "NextCandidate"
+        },
+        {
+          "title": "NonConvert"
+        },
+        {
+          "title": "PreviousCandidate"
+        },
+        {
+          "title": "Process"
+        },
+        {
+          "title": "SingleCandidate"
+        },
+        {
+          "title": "HangulMode"
+        },
+        {
+          "title": "HanjaMode"
+        },
+        {
+          "title": "JunjaMode"
+        },
+        {
+          "title": "Eisu"
+        },
+        {
+          "title": "Hankaku"
+        },
+        {
+          "title": "Hiragana"
+        },
+        {
+          "title": "HiraganaKatakana"
+        },
+        {
+          "title": "KanaMode"
+        },
+        {
+          "title": "KanjiMode"
+        },
+        {
+          "title": "Katakana"
+        },
+        {
+          "title": "Romaji"
+        },
+        {
+          "title": "Zenkaku"
+        },
+        {
+          "title": "ZenkakuHankaku"
+        },
+        {
+          "title": "Soft1"
+        },
+        {
+          "title": "Soft2"
+        },
+        {
+          "title": "Soft3"
+        },
+        {
+          "title": "Soft4"
+        },
+        {
+          "title": "ChannelDown"
+        },
+        {
+          "title": "ChannelUp"
+        },
+        {
+          "title": "Close"
+        },
+        {
+          "title": "MailForward"
+        },
+        {
+          "title": "MailReply"
+        },
+        {
+          "title": "MailSend"
+        },
+        {
+          "title": "MediaClose"
+        },
+        {
+          "title": "MediaFastForward"
+        },
+        {
+          "title": "MediaPause"
+        },
+        {
+          "title": "MediaPlay"
+        },
+        {
+          "title": "MediaPlayPause"
+        },
+        {
+          "title": "MediaRecord"
+        },
+        {
+          "title": "MediaRewind"
+        },
+        {
+          "title": "MediaStop"
+        },
+        {
+          "title": "MediaTrackNext"
+        },
+        {
+          "title": "MediaTrackPrevious"
+        },
+        {
+          "title": "New"
+        },
+        {
+          "title": "Open"
+        },
+        {
+          "title": "Print"
+        },
+        {
+          "title": "Save"
+        },
+        {
+          "title": "SpellCheck"
+        },
+        {
+          "title": "Key11"
+        },
+        {
+          "title": "Key12"
+        },
+        {
+          "title": "AudioBalanceLeft"
+        },
+        {
+          "title": "AudioBalanceRight"
+        },
+        {
+          "title": "AudioBassBoostDown"
+        },
+        {
+          "title": "AudioBassBoostToggle"
+        },
+        {
+          "title": "AudioBassBoostUp"
+        },
+        {
+          "title": "AudioFaderFront"
+        },
+        {
+          "title": "AudioFaderRear"
+        },
+        {
+          "title": "AudioSurroundModeNext"
+        },
+        {
+          "title": "AudioTrebleDown"
+        },
+        {
+          "title": "AudioTrebleUp"
+        },
+        {
+          "title": "AudioVolumeDown"
+        },
+        {
+          "title": "AudioVolumeUp"
+        },
+        {
+          "title": "AudioVolumeMute"
+        },
+        {
+          "title": "MicrophoneToggle"
+        },
+        {
+          "title": "MicrophoneVolumeDown"
+        },
+        {
+          "title": "MicrophoneVolumeUp"
+        },
+        {
+          "title": "MicrophoneVolumeMute"
+        },
+        {
+          "title": "SpeechCorrectionList"
+        },
+        {
+          "title": "SpeechInputToggle"
+        },
+        {
+          "title": "LaunchApplication1"
+        },
+        {
+          "title": "LaunchApplication2"
+        },
+        {
+          "title": "LaunchCalendar"
+        },
+        {
+          "title": "LaunchContacts"
+        },
+        {
+          "title": "LaunchMail"
+        },
+        {
+          "title": "LaunchMediaPlayer"
+        },
+        {
+          "title": "LaunchMusicPlayer"
+        },
+        {
+          "title": "LaunchPhone"
+        },
+        {
+          "title": "LaunchScreenSaver"
+        },
+        {
+          "title": "LaunchSpreadsheet"
+        },
+        {
+          "title": "LaunchWebBrowser"
+        },
+        {
+          "title": "LaunchWebCam"
+        },
+        {
+          "title": "LaunchWordProcessor"
+        },
+        {
+          "title": "BrowserBack"
+        },
+        {
+          "title": "BrowserFavorites"
+        },
+        {
+          "title": "BrowserForward"
+        },
+        {
+          "title": "BrowserHome"
+        },
+        {
+          "title": "BrowserRefresh"
+        },
+        {
+          "title": "BrowserSearch"
+        },
+        {
+          "title": "BrowserStop"
+        },
+        {
+          "title": "AppSwitch"
+        },
+        {
+          "title": "Call"
+        },
+        {
+          "title": "Camera"
+        },
+        {
+          "title": "CameraFocus"
+        },
+        {
+          "title": "EndCall"
+        },
+        {
+          "title": "GoBack"
+        },
+        {
+          "title": "GoHome"
+        },
+        {
+          "title": "HeadsetHook"
+        },
+        {
+          "title": "LastNumberRedial"
+        },
+        {
+          "title": "Notification"
+        },
+        {
+          "title": "MannerMode"
+        },
+        {
+          "title": "VoiceDial"
+        },
+        {
+          "title": "TV"
+        },
+        {
+          "title": "TV3DMode"
+        },
+        {
+          "title": "TVAntennaCable"
+        },
+        {
+          "title": "TVAudioDescription"
+        },
+        {
+          "title": "TVAudioDescriptionMixDown"
+        },
+        {
+          "title": "TVAudioDescriptionMixUp"
+        },
+        {
+          "title": "TVContentsMenu"
+        },
+        {
+          "title": "TVDataService"
+        },
+        {
+          "title": "TVInput"
+        },
+        {
+          "title": "TVInputComponent1"
+        },
+        {
+          "title": "TVInputComponent2"
+        },
+        {
+          "title": "TVInputComposite1"
+        },
+        {
+          "title": "TVInputComposite2"
+        },
+        {
+          "title": "TVInputHDMI1"
+        },
+        {
+          "title": "TVInputHDMI2"
+        },
+        {
+          "title": "TVInputHDMI3"
+        },
+        {
+          "title": "TVInputHDMI4"
+        },
+        {
+          "title": "TVInputVGA1"
+        },
+        {
+          "title": "TVMediaContext"
+        },
+        {
+          "title": "TVNetwork"
+        },
+        {
+          "title": "TVNumberEntry"
+        },
+        {
+          "title": "TVPower"
+        },
+        {
+          "title": "TVRadioService"
+        },
+        {
+          "title": "TVSatellite"
+        },
+        {
+          "title": "TVSatelliteBS"
+        },
+        {
+          "title": "TVSatelliteCS"
+        },
+        {
+          "title": "TVSatelliteToggle"
+        },
+        {
+          "title": "TVTerrestrialAnalog"
+        },
+        {
+          "title": "TVTerrestrialDigital"
+        },
+        {
+          "title": "TVTimer"
+        },
+        {
+          "title": "AVRInput"
+        },
+        {
+          "title": "AVRPower"
+        },
+        {
+          "title": "ColorF0Red"
+        },
+        {
+          "title": "ColorF1Green"
+        },
+        {
+          "title": "ColorF2Yellow"
+        },
+        {
+          "title": "ColorF3Blue"
+        },
+        {
+          "title": "ColorF4Grey"
+        },
+        {
+          "title": "ColorF5Brown"
+        },
+        {
+          "title": "ClosedCaptionToggle"
+        },
+        {
+          "title": "Dimmer"
+        },
+        {
+          "title": "DisplaySwap"
+        },
+        {
+          "title": "DVR"
+        },
+        {
+          "title": "Exit"
+        },
+        {
+          "title": "FavoriteClear0"
+        },
+        {
+          "title": "FavoriteClear1"
+        },
+        {
+          "title": "FavoriteClear2"
+        },
+        {
+          "title": "FavoriteClear3"
+        },
+        {
+          "title": "FavoriteRecall0"
+        },
+        {
+          "title": "FavoriteRecall1"
+        },
+        {
+          "title": "FavoriteRecall2"
+        },
+        {
+          "title": "FavoriteRecall3"
+        },
+        {
+          "title": "FavoriteStore0"
+        },
+        {
+          "title": "FavoriteStore1"
+        },
+        {
+          "title": "FavoriteStore2"
+        },
+        {
+          "title": "FavoriteStore3"
+        },
+        {
+          "title": "Guide"
+        },
+        {
+          "title": "GuideNextDay"
+        },
+        {
+          "title": "GuidePreviousDay"
+        },
+        {
+          "title": "Info"
+        },
+        {
+          "title": "InstantReplay"
+        },
+        {
+          "title": "Link"
+        },
+        {
+          "title": "ListProgram"
+        },
+        {
+          "title": "LiveContent"
+        },
+        {
+          "title": "Lock"
+        },
+        {
+          "title": "MediaApps"
+        },
+        {
+          "title": "MediaAudioTrack"
+        },
+        {
+          "title": "MediaLast"
+        },
+        {
+          "title": "MediaSkipBackward"
+        },
+        {
+          "title": "MediaSkipForward"
+        },
+        {
+          "title": "MediaStepBackward"
+        },
+        {
+          "title": "MediaStepForward"
+        },
+        {
+          "title": "MediaTopMenu"
+        },
+        {
+          "title": "NavigateIn"
+        },
+        {
+          "title": "NavigateNext"
+        },
+        {
+          "title": "NavigateOut"
+        },
+        {
+          "title": "NavigatePrevious"
+        },
+        {
+          "title": "NextFavoriteChannel"
+        },
+        {
+          "title": "NextUserProfile"
+        },
+        {
+          "title": "OnDemand"
+        },
+        {
+          "title": "Pairing"
+        },
+        {
+          "title": "PinPDown"
+        },
+        {
+          "title": "PinPMove"
+        },
+        {
+          "title": "PinPToggle"
+        },
+        {
+          "title": "PinPUp"
+        },
+        {
+          "title": "PlaySpeedDown"
+        },
+        {
+          "title": "PlaySpeedReset"
+        },
+        {
+          "title": "PlaySpeedUp"
+        },
+        {
+          "title": "RandomToggle"
+        },
+        {
+          "title": "RcLowBattery"
+        },
+        {
+          "title": "RecordSpeedNext"
+        },
+        {
+          "title": "RfBypass"
+        },
+        {
+          "title": "ScanChannelsToggle"
+        },
+        {
+          "title": "ScreenModeNext"
+        },
+        {
+          "title": "Settings"
+        },
+        {
+          "title": "SplitScreenToggle"
+        },
+        {
+          "title": "STBInput"
+        },
+        {
+          "title": "STBPower"
+        },
+        {
+          "title": "Subtitle"
+        },
+        {
+          "title": "Teletext"
+        },
+        {
+          "title": "VideoModeNext"
+        },
+        {
+          "title": "Wink"
+        },
+        {
+          "title": "ZoomToggle"
+        },
+        {
+          "title": "F1"
+        },
+        {
+          "title": "F2"
+        },
+        {
+          "title": "F3"
+        },
+        {
+          "title": "F4"
+        },
+        {
+          "title": "F5"
+        },
+        {
+          "title": "F6"
+        },
+        {
+          "title": "F7"
+        },
+        {
+          "title": "F8"
+        },
+        {
+          "title": "F9"
+        },
+        {
+          "title": "F10"
+        },
+        {
+          "title": "F11"
+        },
+        {
+          "title": "F12"
+        },
+        {
+          "title": "F13"
+        },
+        {
+          "title": "F14"
+        },
+        {
+          "title": "F15"
+        },
+        {
+          "title": "F16"
+        },
+        {
+          "title": "F17"
+        },
+        {
+          "title": "F18"
+        },
+        {
+          "title": "F19"
+        },
+        {
+          "title": "F20"
+        },
+        {
+          "title": "F21"
+        },
+        {
+          "title": "F22"
+        },
+        {
+          "title": "F23"
+        },
+        {
+          "title": "F24"
+        },
+        {
+          "title": "F25"
+        },
+        {
+          "title": "F26"
+        },
+        {
+          "title": "F27"
+        },
+        {
+          "title": "F28"
+        },
+        {
+          "title": "F29"
+        },
+        {
+          "title": "F30"
+        },
+        {
+          "title": "F31"
+        },
+        {
+          "title": "F32"
+        },
+        {
+          "title": "F33"
+        },
+        {
+          "title": "F34"
+        },
+        {
+          "title": "F35"
+        }
+      ],
+      "short_name": "Key",
+      "title": "bevy_input::keyboard::Key",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_input::keyboard::KeyCode": {
       "isComponent": false,
       "isResource": false,
       "oneOf": [
-        "Key1",
-        "Key2",
-        "Key3",
-        "Key4",
-        "Key5",
-        "Key6",
-        "Key7",
-        "Key8",
-        "Key9",
-        "Key0",
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
-        "X",
-        "Y",
-        "Z",
-        "Escape",
-        "F1",
-        "F2",
-        "F3",
-        "F4",
-        "F5",
-        "F6",
-        "F7",
-        "F8",
-        "F9",
-        "F10",
-        "F11",
-        "F12",
-        "F13",
-        "F14",
-        "F15",
-        "F16",
-        "F17",
-        "F18",
-        "F19",
-        "F20",
-        "F21",
-        "F22",
-        "F23",
-        "F24",
-        "Snapshot",
-        "Scroll",
-        "Pause",
-        "Insert",
-        "Home",
-        "Delete",
-        "End",
-        "PageDown",
-        "PageUp",
-        "Left",
-        "Up",
-        "Right",
-        "Down",
-        "Back",
-        "Return",
-        "Space",
-        "Compose",
-        "Caret",
-        "Numlock",
-        "Numpad0",
-        "Numpad1",
-        "Numpad2",
-        "Numpad3",
-        "Numpad4",
-        "Numpad5",
-        "Numpad6",
-        "Numpad7",
-        "Numpad8",
-        "Numpad9",
-        "AbntC1",
-        "AbntC2",
-        "NumpadAdd",
-        "Apostrophe",
-        "Apps",
-        "Asterisk",
-        "Plus",
-        "At",
-        "Ax",
-        "Backslash",
-        "Calculator",
-        "Capital",
-        "Colon",
-        "Comma",
-        "Convert",
-        "NumpadDecimal",
-        "NumpadDivide",
-        "Equals",
-        "Grave",
-        "Kana",
-        "Kanji",
-        "AltLeft",
-        "BracketLeft",
-        "ControlLeft",
-        "ShiftLeft",
-        "SuperLeft",
-        "Mail",
-        "MediaSelect",
-        "MediaStop",
-        "Minus",
-        "NumpadMultiply",
-        "Mute",
-        "MyComputer",
-        "NavigateForward",
-        "NavigateBackward",
-        "NextTrack",
-        "NoConvert",
-        "NumpadComma",
-        "NumpadEnter",
-        "NumpadEquals",
-        "Oem102",
-        "Period",
-        "PlayPause",
-        "Power",
-        "PrevTrack",
-        "AltRight",
-        "BracketRight",
-        "ControlRight",
-        "ShiftRight",
-        "SuperRight",
-        "Semicolon",
-        "Slash",
-        "Sleep",
-        "Stop",
-        "NumpadSubtract",
-        "Sysrq",
-        "Tab",
-        "Underline",
-        "Unlabeled",
-        "VolumeDown",
-        "VolumeUp",
-        "Wake",
-        "WebBack",
-        "WebFavorites",
-        "WebForward",
-        "WebHome",
-        "WebRefresh",
-        "WebSearch",
-        "WebStop",
-        "Yen",
-        "Copy",
-        "Paste",
-        "Cut"
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::keyboard::NativeKeyCode"
+              }
+            }
+          ],
+          "short_name": "Unidentified",
+          "title": "Unidentified",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "Backquote"
+        },
+        {
+          "title": "Backslash"
+        },
+        {
+          "title": "BracketLeft"
+        },
+        {
+          "title": "BracketRight"
+        },
+        {
+          "title": "Comma"
+        },
+        {
+          "title": "Digit0"
+        },
+        {
+          "title": "Digit1"
+        },
+        {
+          "title": "Digit2"
+        },
+        {
+          "title": "Digit3"
+        },
+        {
+          "title": "Digit4"
+        },
+        {
+          "title": "Digit5"
+        },
+        {
+          "title": "Digit6"
+        },
+        {
+          "title": "Digit7"
+        },
+        {
+          "title": "Digit8"
+        },
+        {
+          "title": "Digit9"
+        },
+        {
+          "title": "Equal"
+        },
+        {
+          "title": "IntlBackslash"
+        },
+        {
+          "title": "IntlRo"
+        },
+        {
+          "title": "IntlYen"
+        },
+        {
+          "title": "KeyA"
+        },
+        {
+          "title": "KeyB"
+        },
+        {
+          "title": "KeyC"
+        },
+        {
+          "title": "KeyD"
+        },
+        {
+          "title": "KeyE"
+        },
+        {
+          "title": "KeyF"
+        },
+        {
+          "title": "KeyG"
+        },
+        {
+          "title": "KeyH"
+        },
+        {
+          "title": "KeyI"
+        },
+        {
+          "title": "KeyJ"
+        },
+        {
+          "title": "KeyK"
+        },
+        {
+          "title": "KeyL"
+        },
+        {
+          "title": "KeyM"
+        },
+        {
+          "title": "KeyN"
+        },
+        {
+          "title": "KeyO"
+        },
+        {
+          "title": "KeyP"
+        },
+        {
+          "title": "KeyQ"
+        },
+        {
+          "title": "KeyR"
+        },
+        {
+          "title": "KeyS"
+        },
+        {
+          "title": "KeyT"
+        },
+        {
+          "title": "KeyU"
+        },
+        {
+          "title": "KeyV"
+        },
+        {
+          "title": "KeyW"
+        },
+        {
+          "title": "KeyX"
+        },
+        {
+          "title": "KeyY"
+        },
+        {
+          "title": "KeyZ"
+        },
+        {
+          "title": "Minus"
+        },
+        {
+          "title": "Period"
+        },
+        {
+          "title": "Quote"
+        },
+        {
+          "title": "Semicolon"
+        },
+        {
+          "title": "Slash"
+        },
+        {
+          "title": "AltLeft"
+        },
+        {
+          "title": "AltRight"
+        },
+        {
+          "title": "Backspace"
+        },
+        {
+          "title": "CapsLock"
+        },
+        {
+          "title": "ContextMenu"
+        },
+        {
+          "title": "ControlLeft"
+        },
+        {
+          "title": "ControlRight"
+        },
+        {
+          "title": "Enter"
+        },
+        {
+          "title": "SuperLeft"
+        },
+        {
+          "title": "SuperRight"
+        },
+        {
+          "title": "ShiftLeft"
+        },
+        {
+          "title": "ShiftRight"
+        },
+        {
+          "title": "Space"
+        },
+        {
+          "title": "Tab"
+        },
+        {
+          "title": "Convert"
+        },
+        {
+          "title": "KanaMode"
+        },
+        {
+          "title": "Lang1"
+        },
+        {
+          "title": "Lang2"
+        },
+        {
+          "title": "Lang3"
+        },
+        {
+          "title": "Lang4"
+        },
+        {
+          "title": "Lang5"
+        },
+        {
+          "title": "NonConvert"
+        },
+        {
+          "title": "Delete"
+        },
+        {
+          "title": "End"
+        },
+        {
+          "title": "Help"
+        },
+        {
+          "title": "Home"
+        },
+        {
+          "title": "Insert"
+        },
+        {
+          "title": "PageDown"
+        },
+        {
+          "title": "PageUp"
+        },
+        {
+          "title": "ArrowDown"
+        },
+        {
+          "title": "ArrowLeft"
+        },
+        {
+          "title": "ArrowRight"
+        },
+        {
+          "title": "ArrowUp"
+        },
+        {
+          "title": "NumLock"
+        },
+        {
+          "title": "Numpad0"
+        },
+        {
+          "title": "Numpad1"
+        },
+        {
+          "title": "Numpad2"
+        },
+        {
+          "title": "Numpad3"
+        },
+        {
+          "title": "Numpad4"
+        },
+        {
+          "title": "Numpad5"
+        },
+        {
+          "title": "Numpad6"
+        },
+        {
+          "title": "Numpad7"
+        },
+        {
+          "title": "Numpad8"
+        },
+        {
+          "title": "Numpad9"
+        },
+        {
+          "title": "NumpadAdd"
+        },
+        {
+          "title": "NumpadBackspace"
+        },
+        {
+          "title": "NumpadClear"
+        },
+        {
+          "title": "NumpadClearEntry"
+        },
+        {
+          "title": "NumpadComma"
+        },
+        {
+          "title": "NumpadDecimal"
+        },
+        {
+          "title": "NumpadDivide"
+        },
+        {
+          "title": "NumpadEnter"
+        },
+        {
+          "title": "NumpadEqual"
+        },
+        {
+          "title": "NumpadHash"
+        },
+        {
+          "title": "NumpadMemoryAdd"
+        },
+        {
+          "title": "NumpadMemoryClear"
+        },
+        {
+          "title": "NumpadMemoryRecall"
+        },
+        {
+          "title": "NumpadMemoryStore"
+        },
+        {
+          "title": "NumpadMemorySubtract"
+        },
+        {
+          "title": "NumpadMultiply"
+        },
+        {
+          "title": "NumpadParenLeft"
+        },
+        {
+          "title": "NumpadParenRight"
+        },
+        {
+          "title": "NumpadStar"
+        },
+        {
+          "title": "NumpadSubtract"
+        },
+        {
+          "title": "Escape"
+        },
+        {
+          "title": "Fn"
+        },
+        {
+          "title": "FnLock"
+        },
+        {
+          "title": "PrintScreen"
+        },
+        {
+          "title": "ScrollLock"
+        },
+        {
+          "title": "Pause"
+        },
+        {
+          "title": "BrowserBack"
+        },
+        {
+          "title": "BrowserFavorites"
+        },
+        {
+          "title": "BrowserForward"
+        },
+        {
+          "title": "BrowserHome"
+        },
+        {
+          "title": "BrowserRefresh"
+        },
+        {
+          "title": "BrowserSearch"
+        },
+        {
+          "title": "BrowserStop"
+        },
+        {
+          "title": "Eject"
+        },
+        {
+          "title": "LaunchApp1"
+        },
+        {
+          "title": "LaunchApp2"
+        },
+        {
+          "title": "LaunchMail"
+        },
+        {
+          "title": "MediaPlayPause"
+        },
+        {
+          "title": "MediaSelect"
+        },
+        {
+          "title": "MediaStop"
+        },
+        {
+          "title": "MediaTrackNext"
+        },
+        {
+          "title": "MediaTrackPrevious"
+        },
+        {
+          "title": "Power"
+        },
+        {
+          "title": "Sleep"
+        },
+        {
+          "title": "AudioVolumeDown"
+        },
+        {
+          "title": "AudioVolumeMute"
+        },
+        {
+          "title": "AudioVolumeUp"
+        },
+        {
+          "title": "WakeUp"
+        },
+        {
+          "title": "Meta"
+        },
+        {
+          "title": "Hyper"
+        },
+        {
+          "title": "Turbo"
+        },
+        {
+          "title": "Abort"
+        },
+        {
+          "title": "Resume"
+        },
+        {
+          "title": "Suspend"
+        },
+        {
+          "title": "Again"
+        },
+        {
+          "title": "Copy"
+        },
+        {
+          "title": "Cut"
+        },
+        {
+          "title": "Find"
+        },
+        {
+          "title": "Open"
+        },
+        {
+          "title": "Paste"
+        },
+        {
+          "title": "Props"
+        },
+        {
+          "title": "Select"
+        },
+        {
+          "title": "Undo"
+        },
+        {
+          "title": "Hiragana"
+        },
+        {
+          "title": "Katakana"
+        },
+        {
+          "title": "F1"
+        },
+        {
+          "title": "F2"
+        },
+        {
+          "title": "F3"
+        },
+        {
+          "title": "F4"
+        },
+        {
+          "title": "F5"
+        },
+        {
+          "title": "F6"
+        },
+        {
+          "title": "F7"
+        },
+        {
+          "title": "F8"
+        },
+        {
+          "title": "F9"
+        },
+        {
+          "title": "F10"
+        },
+        {
+          "title": "F11"
+        },
+        {
+          "title": "F12"
+        },
+        {
+          "title": "F13"
+        },
+        {
+          "title": "F14"
+        },
+        {
+          "title": "F15"
+        },
+        {
+          "title": "F16"
+        },
+        {
+          "title": "F17"
+        },
+        {
+          "title": "F18"
+        },
+        {
+          "title": "F19"
+        },
+        {
+          "title": "F20"
+        },
+        {
+          "title": "F21"
+        },
+        {
+          "title": "F22"
+        },
+        {
+          "title": "F23"
+        },
+        {
+          "title": "F24"
+        },
+        {
+          "title": "F25"
+        },
+        {
+          "title": "F26"
+        },
+        {
+          "title": "F27"
+        },
+        {
+          "title": "F28"
+        },
+        {
+          "title": "F29"
+        },
+        {
+          "title": "F30"
+        },
+        {
+          "title": "F31"
+        },
+        {
+          "title": "F32"
+        },
+        {
+          "title": "F33"
+        },
+        {
+          "title": "F34"
+        },
+        {
+          "title": "F35"
+        }
       ],
       "short_name": "KeyCode",
       "title": "bevy_input::keyboard::KeyCode",
-      "type": "string",
+      "type": "object",
       "typeInfo": "Enum"
     },
     "bevy_input::keyboard::KeyboardInput": {
@@ -4160,12 +5906,12 @@
       "properties": {
         "key_code": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_input::keyboard::KeyCode>"
+            "$ref": "#/$defs/bevy_input::keyboard::KeyCode"
           }
         },
-        "scan_code": {
+        "logical_key": {
           "type": {
-            "$ref": "#/$defs/u32"
+            "$ref": "#/$defs/bevy_input::keyboard::Key"
           }
         },
         "state": {
@@ -4175,12 +5921,13 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
       "required": [
-        "scan_code",
+        "key_code",
+        "logical_key",
         "state",
         "window"
       ],
@@ -4189,21 +5936,157 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_input::keyboard::ScanCode": {
+    "bevy_input::keyboard::NativeKey": {
       "isComponent": false,
       "isResource": false,
-      "items": false,
-      "prefixItems": [
+      "oneOf": [
         {
-          "type": {
-            "$ref": "#/$defs/u32"
-          }
+          "title": "Unidentified"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Android",
+          "title": "Android",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u16"
+              }
+            }
+          ],
+          "short_name": "MacOS",
+          "title": "MacOS",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u16"
+              }
+            }
+          ],
+          "short_name": "Windows",
+          "title": "Windows",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Xkb",
+          "title": "Xkb",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/smol_str::SmolStr"
+              }
+            }
+          ],
+          "short_name": "Web",
+          "title": "Web",
+          "type": "array",
+          "typeInfo": "Tuple"
         }
       ],
-      "short_name": "ScanCode",
-      "title": "bevy_input::keyboard::ScanCode",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "short_name": "NativeKey",
+      "title": "bevy_input::keyboard::NativeKey",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_input::keyboard::NativeKeyCode": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Unidentified"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Android",
+          "title": "Android",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u16"
+              }
+            }
+          ],
+          "short_name": "MacOS",
+          "title": "MacOS",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u16"
+              }
+            }
+          ],
+          "short_name": "Windows",
+          "title": "Windows",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Xkb",
+          "title": "Xkb",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "NativeKeyCode",
+      "title": "bevy_input::keyboard::NativeKeyCode",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "bevy_input::mouse::MouseButton": {
       "isComponent": false,
@@ -4217,6 +6100,12 @@
         },
         {
           "title": "Middle"
+        },
+        {
+          "title": "Back"
+        },
+        {
+          "title": "Forward"
         },
         {
           "items": false,
@@ -4255,7 +6144,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -4312,7 +6201,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         },
         "x": {
@@ -4416,11 +6305,17 @@
           "type": {
             "$ref": "#/$defs/glam::Vec2"
           }
+        },
+        "window": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
         }
       },
       "required": [
         "phase",
         "position",
+        "window",
         "id"
       ],
       "short_name": "TouchInput",
@@ -4560,30 +6455,101 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_pbr::environment_map::EnvironmentMapLight": {
-      "additionalProperties": false,
+    "bevy_pbr::fog::FogFalloff": {
       "isComponent": false,
       "isResource": false,
-      "properties": {
-        "diffuse_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
-          }
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "end": {
+              "title": "end",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            },
+            "start": {
+              "title": "start",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "short_name": "Linear",
+          "title": "Linear",
+          "type": "object",
+          "typeInfo": "Struct"
         },
-        "specular_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
-          }
+        {
+          "additionalProperties": false,
+          "properties": {
+            "density": {
+              "title": "density",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "density"
+          ],
+          "short_name": "Exponential",
+          "title": "Exponential",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "density": {
+              "title": "density",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "density"
+          ],
+          "short_name": "ExponentialSquared",
+          "title": "ExponentialSquared",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "extinction": {
+              "title": "extinction",
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            },
+            "inscattering": {
+              "title": "inscattering",
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            }
+          },
+          "required": [
+            "extinction",
+            "inscattering"
+          ],
+          "short_name": "Atmospheric",
+          "title": "Atmospheric",
+          "type": "object",
+          "typeInfo": "Struct"
         }
-      },
-      "required": [
-        "diffuse_map",
-        "specular_map"
       ],
-      "short_name": "EnvironmentMapLight",
-      "title": "bevy_pbr::environment_map::EnvironmentMapLight",
+      "short_name": "FogFalloff",
+      "title": "bevy_pbr::fog::FogFalloff",
       "type": "object",
-      "typeInfo": "Struct"
+      "typeInfo": "Enum"
     },
     "bevy_pbr::fog::FogSettings": {
       "additionalProperties": false,
@@ -4722,7 +6688,7 @@
       "properties": {
         "cascades": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<bevy_ecs::Entity, alloc::vec::Vec<bevy_pbr::light::Cascade>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<bevy_ecs::entity::Entity, alloc::vec::Vec<bevy_pbr::light::Cascade>, bevy_ecs::entity::hash::EntityHash>"
           }
         }
       },
@@ -5111,6 +7077,73 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_pbr::light_probe::LightProbe": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "LightProbe",
+      "title": "bevy_pbr::light_probe::LightProbe",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::light_probe::environment_map::EnvironmentMapLight": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "diffuse_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
+          }
+        },
+        "intensity": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "specular_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
+          }
+        }
+      },
+      "required": [
+        "diffuse_map",
+        "specular_map",
+        "intensity"
+      ],
+      "short_name": "EnvironmentMapLight",
+      "title": "bevy_pbr::light_probe::environment_map::EnvironmentMapLight",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_pbr::light_probe::irradiance_volume::IrradianceVolume": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "intensity": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "voxels": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
+          }
+        }
+      },
+      "required": [
+        "voxels",
+        "intensity"
+      ],
+      "short_name": "IrradianceVolume",
+      "title": "bevy_pbr::light_probe::irradiance_volume::IrradianceVolume",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_pbr::material::DefaultOpaqueRendererMethod": {
       "isComponent": false,
       "isResource": false,
@@ -5126,6 +7159,50 @@
       "title": "bevy_pbr::material::DefaultOpaqueRendererMethod",
       "type": "array",
       "typeInfo": "TupleStruct"
+    },
+    "bevy_pbr::material::OpaqueRendererMethod": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Forward",
+        "Deferred",
+        "Auto"
+      ],
+      "short_name": "OpaqueRendererMethod",
+      "title": "bevy_pbr::material::OpaqueRendererMethod",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_pbr::parallax::ParallaxMappingMethod": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Occlusion"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "max_steps": {
+              "title": "max_steps",
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          },
+          "required": [
+            "max_steps"
+          ],
+          "short_name": "Relief",
+          "title": "Relief",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "ParallaxMappingMethod",
+      "title": "bevy_pbr::parallax::ParallaxMappingMethod",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "bevy_pbr::pbr_material::StandardMaterial": {
       "additionalProperties": false,
@@ -5203,6 +7280,11 @@
           }
         },
         "ior": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "lightmap_exposure": {
           "type": {
             "$ref": "#/$defs/f32"
           }
@@ -5294,6 +7376,7 @@
         "parallax_depth_scale",
         "parallax_mapping_method",
         "max_parallax_layer_count",
+        "lightmap_exposure",
         "opaque_render_method",
         "deferred_lighting_pass_id"
       ],
@@ -5343,6 +7426,25 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_pbr::wireframe::WireframeColor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        }
+      },
+      "required": [
+        "color"
+      ],
+      "short_name": "WireframeColor",
+      "title": "bevy_pbr::wireframe::WireframeColor",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_pbr::wireframe::WireframeConfig": {
       "additionalProperties": false,
       "isComponent": false,
@@ -5373,6 +7475,11 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
+        "clear_color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::camera::clear_color::ClearColorConfig"
+          }
+        },
         "hdr": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -5403,28 +7510,37 @@
         "order",
         "is_active",
         "hdr",
-        "msaa_writeback"
+        "msaa_writeback",
+        "clear_color"
       ],
       "short_name": "Camera",
       "title": "bevy_render::camera::camera::Camera",
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_render::camera::camera::CameraMainTextureUsages": {
+      "isComponent": true,
+      "isResource": false,
+      "short_name": "CameraMainTextureUsages",
+      "title": "bevy_render::camera::camera::CameraMainTextureUsages",
+      "type": "object",
+      "typeInfo": "Value"
+    },
     "bevy_render::camera::camera::CameraRenderGraph": {
       "isComponent": true,
       "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/alloc::borrow::Cow<str>"
-          }
-        }
-      ],
       "short_name": "CameraRenderGraph",
       "title": "bevy_render::camera::camera::CameraRenderGraph",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "bevy_render::camera::camera::Exposure": {
+      "isComponent": true,
+      "isResource": false,
+      "short_name": "Exposure",
+      "title": "bevy_render::camera::camera::Exposure",
+      "type": "object",
+      "typeInfo": "Value"
     },
     "bevy_render::camera::camera::RenderTarget": {
       "isComponent": false,
@@ -5508,6 +7624,52 @@
       "title": "bevy_render::camera::camera::Viewport",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_render::camera::clear_color::ClearColor": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        }
+      ],
+      "short_name": "ClearColor",
+      "title": "bevy_render::camera::clear_color::ClearColor",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_render::camera::clear_color::ClearColorConfig": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "title": "Default"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_render::color::Color"
+              }
+            }
+          ],
+          "short_name": "Custom",
+          "title": "Custom",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "title": "None"
+        }
+      ],
+      "short_name": "ClearColorConfig",
+      "title": "bevy_render::camera::clear_color::ClearColorConfig",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "bevy_render::camera::projection::OrthographicProjection": {
       "additionalProperties": false,
@@ -6000,6 +8162,11 @@
       "isComponent": false,
       "isResource": false,
       "properties": {
+        "asset_usage": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::render_asset::RenderAssetUsages"
+          }
+        },
         "indices": {
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_render::mesh::mesh::Indices>"
@@ -6016,7 +8183,9 @@
           }
         }
       },
-      "required": [],
+      "required": [
+        "asset_usage"
+      ],
       "short_name": "Mesh",
       "title": "bevy_render::mesh::mesh::Mesh",
       "type": "object",
@@ -6034,7 +8203,7 @@
         },
         "joints": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_ecs::Entity>"
+            "$ref": "#/$defs/alloc::vec::Vec<bevy_ecs::entity::Entity>"
           }
         }
       },
@@ -6381,6 +8550,62 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_sprite::sprite::ImageScaleMode": {
+      "isComponent": true,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_sprite::texture_slice::slicer::TextureSlicer"
+              }
+            }
+          ],
+          "short_name": "Sliced",
+          "title": "Sliced",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "stretch_value": {
+              "title": "stretch_value",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            },
+            "tile_x": {
+              "title": "tile_x",
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            },
+            "tile_y": {
+              "title": "tile_y",
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            }
+          },
+          "required": [
+            "tile_x",
+            "tile_y",
+            "stretch_value"
+          ],
+          "short_name": "Tiled",
+          "title": "Tiled",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "ImageScaleMode",
+      "title": "bevy_sprite::sprite::ImageScaleMode",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_sprite::sprite::Sprite": {
       "additionalProperties": false,
       "isComponent": true,
@@ -6433,14 +8658,34 @@
       "isComponent": false,
       "isResource": false,
       "properties": {
+        "index": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "layout": {
+          "type": {
+            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_sprite::texture_atlas::TextureAtlasLayout>"
+          }
+        }
+      },
+      "required": [
+        "layout",
+        "index"
+      ],
+      "short_name": "TextureAtlas",
+      "title": "bevy_sprite::texture_atlas::TextureAtlas",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_sprite::texture_atlas::TextureAtlasLayout": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
         "size": {
           "type": {
             "$ref": "#/$defs/glam::Vec2"
-          }
-        },
-        "texture": {
-          "type": {
-            "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_render::texture::image::Image>"
           }
         },
         "texture_handles": {
@@ -6455,60 +8700,48 @@
         }
       },
       "required": [
-        "texture",
         "size",
         "textures"
       ],
-      "short_name": "TextureAtlas",
-      "title": "bevy_sprite::texture_atlas::TextureAtlas",
+      "short_name": "TextureAtlasLayout",
+      "title": "bevy_sprite::texture_atlas::TextureAtlasLayout",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_sprite::texture_atlas::TextureAtlasSprite": {
+    "bevy_sprite::texture_slice::slicer::TextureSlicer": {
       "additionalProperties": false,
-      "isComponent": true,
+      "isComponent": false,
       "isResource": false,
       "properties": {
-        "anchor": {
+        "border": {
           "type": {
-            "$ref": "#/$defs/bevy_sprite::sprite::Anchor"
+            "$ref": "#/$defs/bevy_sprite::texture_slice::border_rect::BorderRect"
           }
         },
-        "color": {
+        "center_scale_mode": {
           "type": {
-            "$ref": "#/$defs/bevy_render::color::Color"
+            "$ref": "#/$defs/bevy_sprite::texture_slice::slicer::SliceScaleMode"
           }
         },
-        "custom_size": {
+        "max_corner_scale": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<glam::Vec2>"
+            "$ref": "#/$defs/f32"
           }
         },
-        "flip_x": {
+        "sides_scale_mode": {
           "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "flip_y": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "index": {
-          "type": {
-            "$ref": "#/$defs/usize"
+            "$ref": "#/$defs/bevy_sprite::texture_slice::slicer::SliceScaleMode"
           }
         }
       },
       "required": [
-        "color",
-        "index",
-        "flip_x",
-        "flip_y",
-        "anchor"
+        "border",
+        "center_scale_mode",
+        "sides_scale_mode",
+        "max_corner_scale"
       ],
-      "short_name": "TextureAtlasSprite",
-      "title": "bevy_sprite::texture_atlas::TextureAtlasSprite",
+      "short_name": "TextureSlicer",
+      "title": "bevy_sprite::texture_slice::slicer::TextureSlicer",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -6569,14 +8802,27 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "bevy_text::text::JustifyText": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Left",
+        "Center",
+        "Right"
+      ],
+      "short_name": "JustifyText",
+      "title": "bevy_text::text::JustifyText",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "bevy_text::text::Text": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {
-        "alignment": {
+        "justify": {
           "type": {
-            "$ref": "#/$defs/bevy_text::text::TextAlignment"
+            "$ref": "#/$defs/bevy_text::text::JustifyText"
           }
         },
         "linebreak_behavior": {
@@ -6592,26 +8838,13 @@
       },
       "required": [
         "sections",
-        "alignment",
+        "justify",
         "linebreak_behavior"
       ],
       "short_name": "Text",
       "title": "bevy_text::text::Text",
       "type": "object",
       "typeInfo": "Struct"
-    },
-    "bevy_text::text::TextAlignment": {
-      "isComponent": false,
-      "isResource": false,
-      "oneOf": [
-        "Left",
-        "Center",
-        "Right"
-      ],
-      "short_name": "TextAlignment",
-      "title": "bevy_text::text::TextAlignment",
-      "type": "string",
-      "typeInfo": "Enum"
     },
     "bevy_text::text::TextSection": {
       "additionalProperties": false,
@@ -7302,7 +9535,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/f64"
+            "$ref": "#/$defs/f32"
           }
         }
       ],
@@ -7310,25 +9543,6 @@
       "title": "bevy_ui::UiScale",
       "type": "array",
       "typeInfo": "TupleStruct"
-    },
-    "bevy_ui::camera_config::UiCameraConfig": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {
-        "show_ui": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "show_ui"
-      ],
-      "short_name": "UiCameraConfig",
-      "title": "bevy_ui::camera_config::UiCameraConfig",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "bevy_ui::focus::FocusPolicy": {
       "isComponent": true,
@@ -7937,7 +10151,7 @@
         },
         "tracks": {
           "type": {
-            "$ref": "#/$defs/smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>"
+            "$ref": "#/$defs/bevy_utils::smallvec::SmallVec<[bevy_ui::ui_node::GridTrack; 1]>"
           }
         }
       },
@@ -8190,6 +10404,22 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_ui::ui_node::TargetCamera": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        }
+      ],
+      "short_name": "TargetCamera",
+      "title": "bevy_ui::ui_node::TargetCamera",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
     "bevy_ui::ui_node::UiImage": {
       "additionalProperties": false,
       "isComponent": true,
@@ -8218,37 +10448,6 @@
       ],
       "short_name": "UiImage",
       "title": "bevy_ui::ui_node::UiImage",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_ui::ui_node::UiTextureAtlasImage": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {
-        "flip_x": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "flip_y": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
-        "index": {
-          "type": {
-            "$ref": "#/$defs/usize"
-          }
-        }
-      },
-      "required": [
-        "index",
-        "flip_x",
-        "flip_y"
-      ],
-      "short_name": "UiTextureAtlasImage",
-      "title": "bevy_ui::ui_node::UiTextureAtlasImage",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -8388,31 +10587,40 @@
       "type": "object",
       "typeInfo": "Value"
     },
+    "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/bevy_ecs::entity::Entity"
+        }
+      },
+      "short_name": "SmallVec<[Entity; 8]>",
+      "title": "bevy_utils::smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "bevy_window::cursor::CursorIcon": {
       "isComponent": false,
       "isResource": false,
       "oneOf": [
         "Default",
-        "Crosshair",
-        "Hand",
-        "Arrow",
-        "Move",
-        "Text",
-        "Wait",
-        "Help",
-        "Progress",
-        "NotAllowed",
         "ContextMenu",
+        "Help",
+        "Pointer",
+        "Progress",
+        "Wait",
         "Cell",
+        "Crosshair",
+        "Text",
         "VerticalText",
         "Alias",
         "Copy",
+        "Move",
         "NoDrop",
+        "NotAllowed",
         "Grab",
         "Grabbing",
-        "AllScroll",
-        "ZoomIn",
-        "ZoomOut",
         "EResize",
         "NResize",
         "NeResize",
@@ -8426,7 +10634,10 @@
         "NeswResize",
         "NwseResize",
         "ColResize",
-        "RowResize"
+        "RowResize",
+        "AllScroll",
+        "ZoomIn",
+        "ZoomOut"
       ],
       "short_name": "CursorIcon",
       "title": "bevy_window::cursor::CursorIcon",
@@ -8453,7 +10664,7 @@
       "properties": {
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8472,7 +10683,7 @@
       "properties": {
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8489,6 +10700,11 @@
       "isComponent": false,
       "isResource": false,
       "properties": {
+        "delta": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<glam::Vec2>"
+          }
+        },
         "position": {
           "type": {
             "$ref": "#/$defs/glam::Vec2"
@@ -8496,7 +10712,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8525,7 +10741,7 @@
             "window": {
               "title": "window",
               "type": {
-                "$ref": "#/$defs/bevy_ecs::Entity"
+                "$ref": "#/$defs/bevy_ecs::entity::Entity"
               }
             }
           },
@@ -8550,7 +10766,7 @@
             "window": {
               "title": "window",
               "type": {
-                "$ref": "#/$defs/bevy_ecs::Entity"
+                "$ref": "#/$defs/bevy_ecs::entity::Entity"
               }
             }
           },
@@ -8569,7 +10785,7 @@
             "window": {
               "title": "window",
               "type": {
-                "$ref": "#/$defs/bevy_ecs::Entity"
+                "$ref": "#/$defs/bevy_ecs::entity::Entity"
               }
             }
           },
@@ -8594,12 +10810,12 @@
       "properties": {
         "char": {
           "type": {
-            "$ref": "#/$defs/char"
+            "$ref": "#/$defs/smol_str::SmolStr"
           }
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8635,7 +10851,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8655,7 +10871,7 @@
       "properties": {
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8674,7 +10890,7 @@
       "properties": {
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8693,7 +10909,7 @@
       "properties": {
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8717,7 +10933,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8735,23 +10951,48 @@
       "isComponent": false,
       "isResource": false,
       "properties": {
-        "entity": {
-          "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
-          }
-        },
         "position": {
           "type": {
             "$ref": "#/$defs/glam::IVec2"
           }
+        },
+        "window": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
         }
       },
       "required": [
-        "entity",
+        "window",
         "position"
       ],
       "short_name": "WindowMoved",
       "title": "bevy_window::event::WindowMoved",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_window::event::WindowOccluded": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "occluded": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "window": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        }
+      },
+      "required": [
+        "window",
+        "occluded"
+      ],
+      "short_name": "WindowOccluded",
+      "title": "bevy_window::event::WindowOccluded",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -8772,7 +11013,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8798,7 +11039,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -8823,7 +11064,7 @@
         },
         "window": {
           "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
           }
         }
       },
@@ -9046,11 +11287,6 @@
             "$ref": "#/$defs/bevy_window::window::EnabledButtons"
           }
         },
-        "fit_canvas_to_parent": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
         "focused": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -9074,6 +11310,11 @@
         "mode": {
           "type": {
             "$ref": "#/$defs/bevy_window::window::WindowMode"
+          }
+        },
+        "name": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
           }
         },
         "position": {
@@ -9147,7 +11388,6 @@
         "transparent",
         "focused",
         "window_level",
-        "fit_canvas_to_parent",
         "prevent_default_event_handling",
         "internal",
         "ime_enabled",
@@ -9281,12 +11521,12 @@
         },
         "scale_factor": {
           "type": {
-            "$ref": "#/$defs/f64"
+            "$ref": "#/$defs/f32"
           }
         },
         "scale_factor_override": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<f64>"
+            "$ref": "#/$defs/core::option::Option<f32>"
           }
         }
       },
@@ -9609,80 +11849,6 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "bevy_xpbd_3d::components::collider::ColliderParent": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/bevy_ecs::Entity"
-          }
-        }
-      ],
-      "short_name": "ColliderParent",
-      "title": "bevy_xpbd_3d::components::collider::ColliderParent",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_xpbd_3d::components::collider::ColliderTransform": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": false,
-      "properties": {
-        "rotation": {
-          "type": {
-            "$ref": "#/$defs/bevy_xpbd_3d::components::rotation::Rotation"
-          }
-        },
-        "scale": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        },
-        "translation": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec3"
-          }
-        }
-      },
-      "required": [
-        "translation",
-        "rotation",
-        "scale"
-      ],
-      "short_name": "ColliderTransform",
-      "title": "bevy_xpbd_3d::components::collider::ColliderTransform",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_xpbd_3d::components::collider::CollidingEntities": {
-      "isComponent": true,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::HashSet<bevy_ecs::Entity>"
-          }
-        }
-      ],
-      "short_name": "CollidingEntities",
-      "title": "bevy_xpbd_3d::components::collider::CollidingEntities",
-      "type": "array",
-      "typeInfo": "TupleStruct"
-    },
-    "bevy_xpbd_3d::components::collider::Sensor": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Sensor",
-      "title": "bevy_xpbd_3d::components::collider::Sensor",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "bevy_xpbd_3d::components::forces::ExternalAngularImpulse": {
       "additionalProperties": false,
       "isComponent": true,
@@ -9800,20 +11966,20 @@
       "isComponent": true,
       "isResource": false,
       "properties": {
-        "groups": {
+        "filters": {
           "type": {
-            "$ref": "#/$defs/u32"
+            "$ref": "#/$defs/bevy_xpbd_3d::components::layers::LayerMask"
           }
         },
-        "masks": {
+        "memberships": {
           "type": {
-            "$ref": "#/$defs/u32"
+            "$ref": "#/$defs/bevy_xpbd_3d::components::layers::LayerMask"
           }
         }
       },
       "required": [
-        "groups",
-        "masks"
+        "memberships",
+        "filters"
       ],
       "short_name": "CollisionLayers",
       "title": "bevy_xpbd_3d::components::layers::CollisionLayers",
@@ -10014,12 +12180,102 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<(bevy_ecs::Entity, bevy_ecs::Entity)>"
+            "$ref": "#/$defs/alloc::vec::Vec<(bevy_ecs::entity::Entity, bevy_ecs::entity::Entity)>"
           }
         }
       ],
       "short_name": "BroadCollisionPairs",
       "title": "bevy_xpbd_3d::plugins::collision::broad_phase::BroadCollisionPairs",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_xpbd_3d::plugins::collision::collider::ColliderParent": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        }
+      ],
+      "short_name": "ColliderParent",
+      "title": "bevy_xpbd_3d::plugins::collision::collider::ColliderParent",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_xpbd_3d::plugins::collision::collider::ColliderTransform": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "rotation": {
+          "type": {
+            "$ref": "#/$defs/bevy_xpbd_3d::components::rotation::Rotation"
+          }
+        },
+        "scale": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        },
+        "translation": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        }
+      },
+      "required": [
+        "translation",
+        "rotation",
+        "scale"
+      ],
+      "short_name": "ColliderTransform",
+      "title": "bevy_xpbd_3d::plugins::collision::collider::ColliderTransform",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_xpbd_3d::plugins::collision::collider::CollidingEntities": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::HashSet<bevy_ecs::entity::Entity>"
+          }
+        }
+      ],
+      "short_name": "CollidingEntities",
+      "title": "bevy_xpbd_3d::plugins::collision::collider::CollidingEntities",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_xpbd_3d::plugins::collision::collider::Sensor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Sensor",
+      "title": "bevy_xpbd_3d::plugins::collision::collider::Sensor",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_xpbd_3d::plugins::collision::collider_backend::PreviousColliderTransform": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_xpbd_3d::plugins::collision::collider::ColliderTransform"
+          }
+        }
+      ],
+      "short_name": "PreviousColliderTransform",
+      "title": "bevy_xpbd_3d::plugins::collision::collider_backend::PreviousColliderTransform",
       "type": "array",
       "typeInfo": "TupleStruct"
     },
@@ -10081,10 +12337,10 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_xpbd_3d::plugins::debug::configuration::PhysicsDebugConfig": {
+    "bevy_xpbd_3d::plugins::debug::configuration::PhysicsGizmos": {
       "additionalProperties": false,
       "isComponent": false,
-      "isResource": true,
+      "isResource": false,
       "properties": {
         "aabb_color": {
           "type": {
@@ -10101,14 +12357,19 @@
             "$ref": "#/$defs/core::option::Option<bevy_render::color::Color>"
           }
         },
-        "contact_color": {
+        "contact_normal_color": {
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_render::color::Color>"
           }
         },
-        "enabled": {
+        "contact_normal_scale": {
           "type": {
-            "$ref": "#/$defs/bool"
+            "$ref": "#/$defs/bevy_xpbd_3d::plugins::debug::configuration::ContactGizmoScale"
+          }
+        },
+        "contact_point_color": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_render::color::Color>"
           }
         },
         "hide_meshes": {
@@ -10168,29 +12429,38 @@
         }
       },
       "required": [
-        "enabled",
+        "contact_normal_scale",
         "hide_meshes"
       ],
-      "short_name": "PhysicsDebugConfig",
-      "title": "bevy_xpbd_3d::plugins::debug::configuration::PhysicsDebugConfig",
+      "short_name": "PhysicsGizmos",
+      "title": "bevy_xpbd_3d::plugins::debug::configuration::PhysicsGizmos",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_xpbd_3d::plugins::prepare::PreviousColliderTransform": {
-      "isComponent": true,
-      "isResource": false,
-      "items": false,
-      "prefixItems": [
-        {
+    "bevy_xpbd_3d::plugins::prepare::PrepareConfig": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "position_to_transform": {
           "type": {
-            "$ref": "#/$defs/bevy_xpbd_3d::components::collider::ColliderTransform"
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "transform_to_position": {
+          "type": {
+            "$ref": "#/$defs/bool"
           }
         }
+      },
+      "required": [
+        "position_to_transform",
+        "transform_to_position"
       ],
-      "short_name": "PreviousColliderTransform",
-      "title": "bevy_xpbd_3d::plugins::prepare::PreviousColliderTransform",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "short_name": "PrepareConfig",
+      "title": "bevy_xpbd_3d::plugins::prepare::PrepareConfig",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "bevy_xpbd_3d::plugins::sync::PreviousGlobalTransform": {
       "isComponent": true,
@@ -10988,7 +13258,7 @@
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_ecs::Entity>"
+            "$ref": "#/$defs/core::option::Option<bevy_ecs::entity::Entity>"
           }
         }
       ],
@@ -11948,6 +14218,48 @@
       "type": "int",
       "typeInfo": "Value"
     },
+    "leafwing_input_manager::action_state::ActionData": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "axis_pair": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<leafwing_input_manager::axislike::DualAxisData>"
+          }
+        },
+        "consumed": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "state": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::buttonlike::ButtonState"
+          }
+        },
+        "timing": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::timing::Timing"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "state",
+        "value",
+        "timing",
+        "consumed"
+      ],
+      "short_name": "ActionData",
+      "title": "leafwing_input_manager::action_state::ActionData",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "leafwing_input_manager::action_state::ActionState<foxtrot::player_control::actions::CameraAction>": {
       "additionalProperties": false,
       "isComponent": false,
@@ -11955,7 +14267,7 @@
       "properties": {
         "action_data": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<leafwing_input_manager::action_state::ActionData>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::CameraAction, leafwing_input_manager::action_state::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       },
@@ -11974,7 +14286,7 @@
       "properties": {
         "action_data": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<leafwing_input_manager::action_state::ActionData>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::PlayerAction, leafwing_input_manager::action_state::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       },
@@ -11993,7 +14305,7 @@
       "properties": {
         "action_data": {
           "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<leafwing_input_manager::action_state::ActionData>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::UiAction, leafwing_input_manager::action_state::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       },
@@ -12004,6 +14316,634 @@
       "title": "leafwing_input_manager::action_state::ActionState<foxtrot::player_control::actions::UiAction>",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::axislike::AxisType": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::gamepad::GamepadAxisType"
+              }
+            }
+          ],
+          "short_name": "Gamepad",
+          "title": "Gamepad",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::MouseWheelAxisType"
+              }
+            }
+          ],
+          "short_name": "MouseWheel",
+          "title": "MouseWheel",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::MouseMotionAxisType"
+              }
+            }
+          ],
+          "short_name": "MouseMotion",
+          "title": "MouseMotion",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "AxisType",
+      "title": "leafwing_input_manager::axislike::AxisType",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::axislike::DeadZoneShape": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "horizontal_width": {
+              "title": "horizontal_width",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            },
+            "vertical_width": {
+              "title": "vertical_width",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "horizontal_width",
+            "vertical_width"
+          ],
+          "short_name": "Cross",
+          "title": "Cross",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "radius_x": {
+              "title": "radius_x",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            },
+            "radius_y": {
+              "title": "radius_y",
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          },
+          "required": [
+            "radius_x",
+            "radius_y"
+          ],
+          "short_name": "Ellipse",
+          "title": "Ellipse",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "DeadZoneShape",
+      "title": "leafwing_input_manager::axislike::DeadZoneShape",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::axislike::DualAxis": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "deadzone": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::axislike::DeadZoneShape"
+          }
+        },
+        "x": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::axislike::SingleAxis"
+          }
+        },
+        "y": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::axislike::SingleAxis"
+          }
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "deadzone"
+      ],
+      "short_name": "DualAxis",
+      "title": "leafwing_input_manager::axislike::DualAxis",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::axislike::DualAxisData": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "xy": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        }
+      },
+      "required": [
+        "xy"
+      ],
+      "short_name": "DualAxisData",
+      "title": "leafwing_input_manager::axislike::DualAxisData",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::axislike::MouseMotionAxisType": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "X",
+        "Y"
+      ],
+      "short_name": "MouseMotionAxisType",
+      "title": "leafwing_input_manager::axislike::MouseMotionAxisType",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::axislike::MouseWheelAxisType": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "X",
+        "Y"
+      ],
+      "short_name": "MouseWheelAxisType",
+      "title": "leafwing_input_manager::axislike::MouseWheelAxisType",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::axislike::SingleAxis": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "axis_type": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::axislike::AxisType"
+          }
+        },
+        "inverted": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "negative_low": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "positive_low": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "sensitivity": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<f32>"
+          }
+        }
+      },
+      "required": [
+        "axis_type",
+        "positive_low",
+        "negative_low",
+        "inverted",
+        "sensitivity"
+      ],
+      "short_name": "SingleAxis",
+      "title": "leafwing_input_manager::axislike::SingleAxis",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::axislike::VirtualAxis": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "negative": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        },
+        "positive": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        }
+      },
+      "required": [
+        "negative",
+        "positive"
+      ],
+      "short_name": "VirtualAxis",
+      "title": "leafwing_input_manager::axislike::VirtualAxis",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::axislike::VirtualDPad": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "down": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        },
+        "left": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        },
+        "right": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        },
+        "up": {
+          "type": {
+            "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+          }
+        }
+      },
+      "required": [
+        "up",
+        "down",
+        "left",
+        "right"
+      ],
+      "short_name": "VirtualDPad",
+      "title": "leafwing_input_manager::axislike::VirtualDPad",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::buttonlike::MouseMotionDirection": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Up",
+        "Down",
+        "Right",
+        "Left"
+      ],
+      "short_name": "MouseMotionDirection",
+      "title": "leafwing_input_manager::buttonlike::MouseMotionDirection",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::buttonlike::MouseWheelDirection": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Up",
+        "Down",
+        "Right",
+        "Left"
+      ],
+      "short_name": "MouseWheelDirection",
+      "title": "leafwing_input_manager::buttonlike::MouseWheelDirection",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::CameraAction>": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "associated_gamepad": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_input::gamepad::Gamepad>"
+          }
+        },
+        "map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::CameraAction, alloc::vec::Vec<leafwing_input_manager::user_input::UserInput>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "short_name": "InputMap<CameraAction>",
+      "title": "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::CameraAction>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::PlayerAction>": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "associated_gamepad": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_input::gamepad::Gamepad>"
+          }
+        },
+        "map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::PlayerAction, alloc::vec::Vec<leafwing_input_manager::user_input::UserInput>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "short_name": "InputMap<PlayerAction>",
+      "title": "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::PlayerAction>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::UiAction>": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "associated_gamepad": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_input::gamepad::Gamepad>"
+          }
+        },
+        "map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player_control::actions::UiAction, alloc::vec::Vec<leafwing_input_manager::user_input::UserInput>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "map"
+      ],
+      "short_name": "InputMap<UiAction>",
+      "title": "leafwing_input_manager::input_map::InputMap<foxtrot::player_control::actions::UiAction>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::timing::Timing": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "properties": {
+        "current_duration": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "instant_started": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_utils::Instant>"
+          }
+        },
+        "previous_duration": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        }
+      },
+      "required": [
+        "current_duration",
+        "previous_duration"
+      ],
+      "short_name": "Timing",
+      "title": "leafwing_input_manager::timing::Timing",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "leafwing_input_manager::user_input::InputKind": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::gamepad::GamepadButtonType"
+              }
+            }
+          ],
+          "short_name": "GamepadButton",
+          "title": "GamepadButton",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::SingleAxis"
+              }
+            }
+          ],
+          "short_name": "SingleAxis",
+          "title": "SingleAxis",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::DualAxis"
+              }
+            }
+          ],
+          "short_name": "DualAxis",
+          "title": "DualAxis",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::keyboard::KeyCode"
+              }
+            }
+          ],
+          "short_name": "PhysicalKey",
+          "title": "PhysicalKey",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::user_input::Modifier"
+              }
+            }
+          ],
+          "short_name": "Modifier",
+          "title": "Modifier",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_input::mouse::MouseButton"
+              }
+            }
+          ],
+          "short_name": "Mouse",
+          "title": "Mouse",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::buttonlike::MouseWheelDirection"
+              }
+            }
+          ],
+          "short_name": "MouseWheel",
+          "title": "MouseWheel",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::buttonlike::MouseMotionDirection"
+              }
+            }
+          ],
+          "short_name": "MouseMotion",
+          "title": "MouseMotion",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "InputKind",
+      "title": "leafwing_input_manager::user_input::InputKind",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::user_input::Modifier": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        "Alt",
+        "Control",
+        "Shift",
+        "Super"
+      ],
+      "short_name": "Modifier",
+      "title": "leafwing_input_manager::user_input::Modifier",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "leafwing_input_manager::user_input::UserInput": {
+      "isComponent": false,
+      "isResource": false,
+      "oneOf": [
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::user_input::InputKind"
+              }
+            }
+          ],
+          "short_name": "Single",
+          "title": "Single",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<leafwing_input_manager::user_input::InputKind>"
+              }
+            }
+          ],
+          "short_name": "Chord",
+          "title": "Chord",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::VirtualDPad"
+              }
+            }
+          ],
+          "short_name": "VirtualDPad",
+          "title": "VirtualDPad",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/leafwing_input_manager::axislike::VirtualAxis"
+              }
+            }
+          ],
+          "short_name": "VirtualAxis",
+          "title": "VirtualAxis",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "UserInput",
+      "title": "leafwing_input_manager::user_input::UserInput",
+      "type": "object",
+      "typeInfo": "Enum"
     },
     "oxidized_navigation::NavMeshAffector": {
       "additionalProperties": false,
@@ -12047,19 +14987,6 @@
       "title": "oxidized_navigation::debug_draw::DrawNavMesh",
       "type": "array",
       "typeInfo": "TupleStruct"
-    },
-    "smallvec::SmallVec<[bevy_ecs::Entity; 8]>": {
-      "isComponent": false,
-      "isResource": false,
-      "items": {
-        "type": {
-          "$ref": "#/$defs/bevy_ecs::Entity"
-        }
-      },
-      "short_name": "SmallVec<[Entity; 8]>",
-      "title": "smallvec::SmallVec<[bevy_ecs::Entity; 8]>",
-      "type": "array",
-      "typeInfo": "List"
     },
     "std::ffi::OsString": {
       "isComponent": false,
@@ -12124,25 +15051,6 @@
       "title": "usize",
       "type": "uint",
       "typeInfo": "Value"
-    },
-    "warbler_grass::GrassConfiguration": {
-      "additionalProperties": false,
-      "isComponent": false,
-      "isResource": true,
-      "properties": {
-        "wind": {
-          "type": {
-            "$ref": "#/$defs/glam::Vec2"
-          }
-        }
-      },
-      "required": [
-        "wind"
-      ],
-      "short_name": "GrassConfiguration",
-      "title": "warbler_grass::GrassConfiguration",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "yarnspinner_compiler::compiler::CompilationType": {
       "isComponent": false,

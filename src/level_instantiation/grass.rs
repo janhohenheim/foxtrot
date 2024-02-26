@@ -9,11 +9,15 @@ use warbler_grass::{
     prelude::*,
 };
 pub(crate) fn grass_plugin(app: &mut App) {
-    app.add_systems(Update, spawn.run_if(in_state(GameState::Playing)))
-        .add_plugins(WarblersPlugin);
+    if cfg!(not(feature = "grass")) {
+        // Waiting for https://github.com/EmiOnGit/warbler_grass/pull/76
+        return;
+    }
+    app.add_plugins(WarblersPlugin)
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }
 
-// Spawns the grass using the ground as a base
+/// Spawns the grass using the ground as a base
 pub(crate) fn spawn(
     mut commands: Commands,
     ground: Query<&Transform, Added<Grass>>,

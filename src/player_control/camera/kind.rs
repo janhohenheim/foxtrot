@@ -14,7 +14,7 @@ pub(crate) fn update_kind(
     config: Res<GameConfig>,
 ) {
     for (mut camera, actions) in camera_query.iter_mut() {
-        let zoom = actions.clamped_value(CameraAction::Zoom);
+        let zoom = actions.clamped_value(&CameraAction::Zoom);
         let zoomed_out = zoom < -1e-5;
         let zoomed_in = zoom > 1e-5;
         let new_kind = match camera.kind {

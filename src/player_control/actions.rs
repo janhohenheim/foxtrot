@@ -76,22 +76,22 @@ pub(crate) enum UiAction {
 pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<PlayerAction> {
     InputManagerBundle {
         input_map: InputMap::new([
-            (QwertyScanCode::Space, PlayerAction::Jump),
-            (QwertyScanCode::ShiftLeft, PlayerAction::Sprint),
-            (QwertyScanCode::E, PlayerAction::Interact),
-            (QwertyScanCode::Space, PlayerAction::SpeedUpDialog),
-            (QwertyScanCode::Key1, PlayerAction::NumberedChoice1),
-            (QwertyScanCode::Key2, PlayerAction::NumberedChoice2),
-            (QwertyScanCode::Key3, PlayerAction::NumberedChoice3),
-            (QwertyScanCode::Key4, PlayerAction::NumberedChoice4),
-            (QwertyScanCode::Key5, PlayerAction::NumberedChoice5),
-            (QwertyScanCode::Key6, PlayerAction::NumberedChoice6),
-            (QwertyScanCode::Key7, PlayerAction::NumberedChoice7),
-            (QwertyScanCode::Key8, PlayerAction::NumberedChoice8),
-            (QwertyScanCode::Key9, PlayerAction::NumberedChoice9),
-            (QwertyScanCode::Key0, PlayerAction::NumberedChoice0),
+            (PlayerAction::Jump, KeyCode::Space),
+            (PlayerAction::Sprint, KeyCode::ShiftLeft),
+            (PlayerAction::Interact, KeyCode::KeyE),
+            (PlayerAction::SpeedUpDialog, KeyCode::Space),
+            (PlayerAction::NumberedChoice1, KeyCode::Digit1),
+            (PlayerAction::NumberedChoice2, KeyCode::Digit2),
+            (PlayerAction::NumberedChoice3, KeyCode::Digit3),
+            (PlayerAction::NumberedChoice4, KeyCode::Digit4),
+            (PlayerAction::NumberedChoice5, KeyCode::Digit5),
+            (PlayerAction::NumberedChoice6, KeyCode::Digit6),
+            (PlayerAction::NumberedChoice7, KeyCode::Digit7),
+            (PlayerAction::NumberedChoice8, KeyCode::Digit8),
+            (PlayerAction::NumberedChoice9, KeyCode::Digit9),
+            (PlayerAction::NumberedChoice0, KeyCode::Digit0),
         ])
-        .insert(VirtualDPad::wasd(), PlayerAction::Move)
+        .insert(PlayerAction::Move, VirtualDPad::wasd())
         .build(),
         ..default()
     }
@@ -100,8 +100,8 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
 pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<CameraAction> {
     InputManagerBundle {
         input_map: InputMap::default()
-            .insert(DualAxis::mouse_motion(), CameraAction::Orbit)
-            .insert(SingleAxis::mouse_wheel_y(), CameraAction::Zoom)
+            .insert(CameraAction::Orbit, DualAxis::mouse_motion())
+            .insert(CameraAction::Zoom, SingleAxis::mouse_wheel_y())
             .build(),
         ..default()
     }
@@ -109,7 +109,7 @@ pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<
 
 pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
-        input_map: InputMap::new([(QwertyScanCode::Escape, UiAction::TogglePause)]),
+        input_map: InputMap::new([(UiAction::TogglePause, KeyCode::Escape)]),
         ..default()
     }
 }
@@ -119,16 +119,20 @@ pub(crate) fn remove_actions_when_frozen(
     mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     for mut player_actions in player_actions_query.iter_mut() {
-        player_actions.action_data_mut(PlayerAction::Move).axis_pair = Some(default());
-        player_actions.release(PlayerAction::Jump);
-        player_actions.release(PlayerAction::Interact);
-        player_actions.release(PlayerAction::Sprint);
+        player_actions
+            .action_data_mut_or_default(&PlayerAction::Move)
+            .axis_pair = Some(default());
+        player_actions.release(&PlayerAction::Jump);
+        player_actions.release(&PlayerAction::Interact);
+        player_actions.release(&PlayerAction::Sprint);
     }
     for mut camera_actions in camera_actions_query.iter_mut() {
         camera_actions
-            .action_data_mut(CameraAction::Orbit)
+            .action_data_mut_or_default(&CameraAction::Orbit)
             .axis_pair = Some(default());
-        camera_actions.action_data_mut(CameraAction::Zoom).value = default();
+        camera_actions
+            .action_data_mut_or_default(&CameraAction::Zoom)
+            .value = default();
     }
 }
 

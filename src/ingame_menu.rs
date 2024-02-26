@@ -22,7 +22,7 @@ fn handle_pause(
     mut paused: Local<bool>,
 ) {
     for action in actions.iter() {
-        let toggled = action.just_pressed(UiAction::TogglePause);
+        let toggled = action.just_pressed(&UiAction::TogglePause);
         if toggled {
             if *paused {
                 *paused = false;

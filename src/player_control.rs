@@ -2,7 +2,6 @@ pub(crate) use crate::player_control::{
     actions::actions_plugin, camera::camera_plugin, player_embodiment::player_embodiment_plugin,
 };
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod actions;
 pub(crate) mod camera;
@@ -14,7 +13,5 @@ pub(crate) mod player_embodiment;
 /// - [`player_embodiment_plugin`]: Tells the components from [`super::movement_plugin`] about the desired player [`actions::Actions`].
 /// Also handles other systems that change how the player is physically represented in the world.
 pub(crate) fn player_control_plugin(app: &mut App) {
-    app.fn_plugin(actions_plugin)
-        .fn_plugin(camera_plugin)
-        .fn_plugin(player_embodiment_plugin);
+    app.add_plugins((actions_plugin, camera_plugin, player_embodiment_plugin));
 }

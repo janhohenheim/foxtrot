@@ -59,8 +59,6 @@ enum GameState {
 /// - [`dev_plugin`]: Handles the dev tools.
 /// - [`ingame_menu_plugin`]: Handles the ingame menu accessed via ESC.
 /// - [`particle_plugin`]: Handles the particle system.
-///
-/// Because Foxtrot uses `seldom_fn_plugin`, these are all functions.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {

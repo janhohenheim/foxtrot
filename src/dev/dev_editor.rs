@@ -8,7 +8,7 @@ use bevy_editor_pls::{
 };
 use bevy_egui::egui;
 use bevy_mod_sysfail::prelude::*;
-use bevy_xpbd_3d::prelude::PhysicsDebugConfig;
+use bevy_xpbd_3d::prelude::PhysicsGizmos;
 use serde::{Deserialize, Serialize};
 
 pub(crate) fn dev_editor_plugin(app: &mut App) {
@@ -55,17 +55,17 @@ pub(crate) struct DevEditorState {
 fn handle_debug_render(
     state: Res<Editor>,
     mut last_enabled: Local<bool>,
-    mut debug_config: ResMut<PhysicsDebugConfig>,
+    mut physics_gizmos: Gizmos<PhysicsGizmos>,
 ) {
     let current_enabled = state
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
         .collider_render_enabled;
     if current_enabled == *last_enabled {
-        return;
+        return Ok(());
     }
     *last_enabled = current_enabled;
-    debug_config.enabled = current_enabled;
+    physics_gizmos.config.enabled = current_enabled;
 }
 
 fn set_cursor_grab_mode(

@@ -19,10 +19,13 @@ pub(crate) fn dev_plugin(app: &mut App) {
             .fn_plugin(dev_editor_plugin)
             .add_plugins(LogDiagnosticsPlugin::filtered(vec![]))
             .add_plugins(PhysicsDebugPlugin::default())
-            .insert_resource(PhysicsDebugConfig {
-                enabled: false,
-                ..default()
-            });
+            .insert_gizmo_group(
+                PhysicsGizmos {
+                    aabb_color: Some(Color::WHITE),
+                    ..default()
+                },
+                GizmoConfig::default(),
+            );
     }
 }
 

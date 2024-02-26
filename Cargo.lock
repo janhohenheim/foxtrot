@@ -2479,7 +2479,6 @@ dependencies = [
  "iyes_progress",
  "leafwing-input-manager",
  "oxidized_navigation",
- "seldom_fn_plugin",
  "serde",
  "warbler_grass",
  "winit",
@@ -4495,15 +4494,6 @@ name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
-
-[[package]]
-name = "seldom_fn_plugin"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00fd8740b7ae942148d215d90a323d164f899bc54dea43f1492b162d2295b439"
-dependencies = [
- "bevy",
-]
 
 [[package]]
 name = "semver"

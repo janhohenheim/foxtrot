@@ -47,7 +47,6 @@ leafwing-input-manager = { version = "0.13", features = ["egui"] }
 ## Waiting for https://github.com/BlackPhlox/bevy_dolly/pull/51
 bevy_dolly = { git = "https://github.com/rparrett/bevy_dolly/", branch = "bevy-0.13" }
 bevy_mod_sysfail = "7"
-seldom_fn_plugin = "0.6"
 bevy_editor_pls = { version = "0.8", optional = true }
 bevy_hanabi = "0.10"
 bevy_yarnspinner = "0.2"

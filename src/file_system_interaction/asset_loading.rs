@@ -1,5 +1,4 @@
 use crate::{file_system_interaction::config::GameConfig, GameState};
-
 use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::toml::TomlAssetPlugin;
@@ -96,7 +95,7 @@ fn show_progress(
     }
 }
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn update_config(
     mut commands: Commands,
     config: Res<Assets<GameConfig>>,

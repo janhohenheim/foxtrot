@@ -4,10 +4,9 @@ use crate::{
     util::trait_extension::{F32Ext, Vec3Ext},
     GameState,
 };
-
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
-use bevy_mod_sysfail::sysfail;
+use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use creation::*;
@@ -30,7 +29,7 @@ pub(crate) fn particle_plugin(app: &mut App) {
 #[reflect(Component)]
 struct SprintingParticle;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn play_sprinting_effect(
     with_player: Query<&TnuaController, With<Player>>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,

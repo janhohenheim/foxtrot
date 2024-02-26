@@ -18,7 +18,7 @@ use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn update_rig(
     time: Res<Time<Virtual>>,
     mut camera_query: Query<(

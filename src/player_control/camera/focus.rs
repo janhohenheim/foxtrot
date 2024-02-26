@@ -8,7 +8,7 @@ use bevy_mod_sysfail::prelude::*;
 use bevy_yarnspinner::events::DialogueCompleteEvent;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     mut speaker_change_events: EventReader<SpeakerChangeEvent>,

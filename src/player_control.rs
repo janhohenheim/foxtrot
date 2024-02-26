@@ -2,7 +2,6 @@ pub(crate) use crate::player_control::{
     actions::actions_plugin, camera::camera_plugin, player_embodiment::player_embodiment_plugin,
 };
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod actions;
 pub(crate) mod camera;

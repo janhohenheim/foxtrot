@@ -5,10 +5,8 @@ use crate::{
     util::trait_extension::{F32Ext, Vec3Ext},
     GameState,
 };
-
 #[cfg(feature = "dev")]
 use anyhow::Context;
-
 use bevy::prelude::*;
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::Collider;
@@ -60,7 +58,7 @@ pub(crate) fn navigation_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Follower;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn query_mesh(
     #[cfg(feature = "dev")] mut commands: Commands,
     mut with_follower: Query<(&Transform, &mut Walk), (With<Follower>, Without<Player>)>,
@@ -117,7 +115,7 @@ fn query_mesh(
 }
 
 #[cfg(feature = "dev")]
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn draw_navmesh(
     editor: Res<bevy_editor_pls::editor::Editor>,
     mut draw_nav_mesh: ResMut<DrawNavMesh>,

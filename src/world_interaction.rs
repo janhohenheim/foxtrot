@@ -1,6 +1,5 @@
 use crate::world_interaction::{dialog::dialog_plugin, interactions_ui::interactions_ui_plugin};
 use bevy::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod dialog;
 pub(crate) mod interactions_ui;

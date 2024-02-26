@@ -5,7 +5,6 @@ use bevy::{
 };
 use bevy_editor_pls::prelude::*;
 use bevy_xpbd_3d::prelude::*;
-use seldom_fn_plugin::FnPluginExt;
 
 pub(crate) mod dev_editor;
 

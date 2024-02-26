@@ -40,7 +40,7 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
 #[reflect(Resource, Serialize, Deserialize)]
 pub(crate) struct InteractionOpportunity(pub(crate) Option<Entity>);
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
     player_query: Query<&Transform, With<Player>>,
@@ -124,7 +124,7 @@ fn is_facing_target(
     angle < TAU / 8.
 }
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 fn display_interaction_prompt(
     interaction_opportunity: Res<InteractionOpportunity>,
     mut dialogue_runner: Query<&mut DialogueRunner>,

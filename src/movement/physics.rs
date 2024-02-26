@@ -19,7 +19,7 @@ pub(crate) fn physics_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct ColliderMarker;
 
-#[sysfail]
+#[sysfail(Log<anyhow::Error, Error>)]
 pub(crate) fn read_colliders(
     collider_marker: Query<Entity, Added<ColliderMarker>>,
     mut commands: Commands,

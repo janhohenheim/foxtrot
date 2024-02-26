@@ -4,7 +4,7 @@ use crate::{
     util::trait_extension::{F32Ext, Vec3Ext},
     GameState,
 };
-use anyhow::Result;
+
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use bevy_mod_sysfail::sysfail;

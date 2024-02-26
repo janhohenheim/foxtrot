@@ -8,7 +8,7 @@ use crate::{
 };
 
 use crate::{world_interaction::dialog::DialogTarget, GameState};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;

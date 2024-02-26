@@ -9,7 +9,7 @@ use crate::{
     },
     util::trait_extension::Vec2Ext,
 };
-use anyhow::Result;
+
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_mod_sysfail::prelude::*;

@@ -60,24 +60,20 @@ bevy_gltf_blueprints = { git = "https://github.com/kaosat-dev/Blender_bevy_compo
 bevy_registry_export = { git = "https://github.com/kaosat-dev/Blender_bevy_components_workflow/", branch = "bevy_main" }
 
 
-[target.'cfg(target_os = "windows")'.dependencies.bevy]
+[dependencies.bevy]
 version = "0.13"
 features = [
     "jpeg",
     "serialize",
-    # "dynamic_linking", makes the builds MUCH faster, but causes issues on Windows
     "file_watcher",
 ]
 
 [target.'cfg(not(target_os = "windows"))'.dependencies.bevy]
 version = "0.13"
 features = [
-    "jpeg",
-    "serialize",
+    # Improves compile times massively, but regularly fails on Windows
     "dynamic_linking",
-    "file_watcher",
 ]
-
 
 [build-dependencies]
 embed-resource = "2"

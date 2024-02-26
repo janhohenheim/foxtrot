@@ -1,6 +1,6 @@
 use crate::util::criteria::is_frozen;
 use bevy::prelude::*;
-use bevy_mod_sysfail::sysfail;
+
 use leafwing_input_manager::{axislike::DualAxisData, plugin::InputManagerSystem, prelude::*};
 use serde::{Deserialize, Serialize};
 

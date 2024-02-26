@@ -8,7 +8,7 @@ use crate::{
 };
 
 use crate::{util::trait_extension::Vec3Ext, world_interaction::dialog::DialogTarget, GameState};
-use anyhow::{Context, Result};
+use anyhow::Context;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::prelude::*;

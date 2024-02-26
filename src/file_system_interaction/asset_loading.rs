@@ -5,7 +5,7 @@ use bevy_asset_loader::prelude::*;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::{egui, egui::ProgressBar, EguiContexts};
 use bevy_kira_audio::AudioSource;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 /// Loads resources and assets for the game.
@@ -96,12 +96,12 @@ fn show_progress(
     }
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 fn update_config(
     mut commands: Commands,
     config: Res<Assets<GameConfig>>,
     mut config_asset_events: EventReader<AssetEvent<GameConfig>>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("update_config").entered();
     for event in config_asset_events.read() {
@@ -114,5 +114,4 @@ fn update_config(
             _ => {}
         }
     }
-    Ok(())
 }

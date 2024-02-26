@@ -4,18 +4,18 @@ use bevy::{
     prelude::*,
     window::{CursorGrabMode, PrimaryWindow},
 };
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Resource, Serialize, Deserialize, Default)]
 pub(crate) struct ForceCursorGrabMode(pub(crate) Option<CursorGrabMode>);
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 pub(crate) fn grab_cursor(
     mut primary_windows: Query<&mut Window, With<PrimaryWindow>>,
     actions_frozen: Res<ActionsFrozen>,
     force_cursor_grab: Res<ForceCursorGrabMode>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("cursor_grab_system").entered();
     let mut window = primary_windows
@@ -32,5 +32,4 @@ pub(crate) fn grab_cursor(
         cursor.grab_mode = CursorGrabMode::Locked;
         cursor.visible = false;
     }
-    Ok(())
 }

@@ -4,18 +4,18 @@ use crate::{
 };
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_yarnspinner::events::DialogueCompleteEvent;
 use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 pub(crate) fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     mut speaker_change_events: EventReader<SpeakerChangeEvent>,
     player_query: Query<&Transform, With<Player>>,
     dialog_targets: Query<(&Transform, &DialogTarget), Without<Player>>,
     mut dialogue_complete_event: EventReader<DialogueCompleteEvent>,
-) -> Result<()> {
+) {
     for mut camera in camera_query.iter_mut() {
         for player_transform in player_query.iter() {
             for event in speaker_change_events.read() {
@@ -35,5 +35,4 @@ pub(crate) fn set_camera_focus(
             camera.secondary_target = None;
         }
     }
-    Ok(())
 }

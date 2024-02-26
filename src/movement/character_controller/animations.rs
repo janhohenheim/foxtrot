@@ -8,7 +8,7 @@ use bevy_tnua::{
 };
 use std::time::Duration;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 pub(crate) fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<AnimationState>,
@@ -18,7 +18,7 @@ pub(crate) fn play_animations(
         &Animations,
     )>,
     mut animation_players: Query<&mut AnimationPlayer>,
-) -> anyhow::Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
     for (mut animating_state, controller, animation_names, link, animations) in query.iter_mut() {
@@ -89,5 +89,4 @@ pub(crate) fn play_animations(
             },
         }
     }
-    Ok(())
 }

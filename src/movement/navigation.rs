@@ -10,7 +10,7 @@ use crate::{
 use anyhow::Context;
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::Collider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
@@ -60,7 +60,7 @@ pub(crate) fn navigation_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Follower;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 fn query_mesh(
     #[cfg(feature = "dev")] mut commands: Commands,
     mut with_follower: Query<(&Transform, &mut Walk), (With<Follower>, Without<Player>)>,
@@ -68,7 +68,7 @@ fn query_mesh(
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
     #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("query_mesh").entered();
     if let Ok(nav_mesh) = nav_mesh.get().read() {
@@ -114,20 +114,17 @@ fn query_mesh(
             }
         }
     }
-
-    Ok(())
 }
 
 #[cfg(feature = "dev")]
-#[sysfail(log(level = "error"))]
+#[sysfail]
 fn draw_navmesh(
     editor: Res<bevy_editor_pls::editor::Editor>,
     mut draw_nav_mesh: ResMut<DrawNavMesh>,
-) -> Result<()> {
+) {
     let nav_render_enabled = editor
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
         .navmesh_render_enabled;
     draw_nav_mesh.0 = nav_render_enabled;
-    Ok(())
 }

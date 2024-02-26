@@ -1,7 +1,7 @@
 use crate::{level_instantiation::spawning::objects::CollisionLayer, GameState};
 use anyhow::{Context, Result};
 use bevy::prelude::*;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
@@ -19,14 +19,14 @@ pub(crate) fn physics_plugin(app: &mut App) {
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct ColliderMarker;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 pub(crate) fn read_colliders(
     collider_marker: Query<Entity, Added<ColliderMarker>>,
     mut commands: Commands,
     children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
-) -> Result<()> {
+) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for entity in collider_marker.iter() {
@@ -45,7 +45,6 @@ pub(crate) fn read_colliders(
             NavMeshAffector,
         ));
     }
-    Ok(())
 }
 
 fn find_mesh<'a>(

@@ -18,7 +18,6 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - GLTF imports, including auto-insertion of markers via the GLTF extras field
 - Smooth cameras via [`bevy_dolly`](https://crates.io/crates/bevy_dolly)
 - Simple error handling via [`bevy_mod_sysfail`](https://crates.io/crates/bevy_mod_sysfail)
-- Simple plugin creation via [`seldom_fn_plugin`](https://crates.io/crates/seldom_fn_plugin)
 - Particle effects via [`bevy_hanabi`](https://crates.io/crates/bevy_hanabi)
 - Procedural skies via [`bevy_atmosphere`](https://crates.io/crates/bevy_atmosphere)
 - Grass via [`warbler_grass`](https://crates.io/crates/warbler_grass)

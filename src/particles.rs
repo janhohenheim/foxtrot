@@ -30,12 +30,12 @@ pub(crate) fn particle_plugin(app: &mut App) {
 #[reflect(Component)]
 struct SprintingParticle;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 fn play_sprinting_effect(
     with_player: Query<&TnuaController, With<Player>>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,
     config: Res<GameConfig>,
-) -> Result<()> {
+) {
     for controller in with_player.iter() {
         let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
             continue;
@@ -48,5 +48,4 @@ fn play_sprinting_effect(
             effect_spawner.set_active(active);
         }
     }
-    Ok(())
 }

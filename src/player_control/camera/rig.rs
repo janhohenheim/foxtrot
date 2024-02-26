@@ -12,13 +12,13 @@ use crate::{
 use anyhow::Result;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 pub(crate) fn update_rig(
     time: Res<Time<Virtual>>,
     mut camera_query: Query<(
@@ -29,7 +29,7 @@ pub(crate) fn update_rig(
     )>,
     config: Res<GameConfig>,
     spatial_query: SpatialQuery,
-) -> Result<()> {
+) {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
         set_look_at(&mut rig, &camera);
@@ -54,7 +54,6 @@ pub(crate) fn update_rig(
 
         set_smoothness(&mut rig, &config, &camera);
     }
-    Ok(())
 }
 
 fn get_camera_movement(actions: &ActionState<CameraAction>) -> Vec2 {

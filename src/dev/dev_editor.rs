@@ -7,7 +7,7 @@ use bevy_editor_pls::{
     AddEditorWindow,
 };
 use bevy_egui::egui;
-use bevy_mod_sysfail::*;
+use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::PhysicsDebugConfig;
 use serde::{Deserialize, Serialize};
 
@@ -51,22 +51,21 @@ pub(crate) struct DevEditorState {
     pub(crate) navmesh_render_enabled: bool,
 }
 
-#[sysfail(log(level = "error"))]
+#[sysfail]
 fn handle_debug_render(
     state: Res<Editor>,
     mut last_enabled: Local<bool>,
     mut debug_config: ResMut<PhysicsDebugConfig>,
-) -> Result<()> {
+) {
     let current_enabled = state
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
         .collider_render_enabled;
     if current_enabled == *last_enabled {
-        return Ok(());
+        return;
     }
     *last_enabled = current_enabled;
     debug_config.enabled = current_enabled;
-    Ok(())
 }
 
 fn set_cursor_grab_mode(

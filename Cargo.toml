@@ -51,7 +51,7 @@ seldom_fn_plugin = "0.6"
 bevy_editor_pls = { version = "0.8", optional = true }
 bevy_hanabi = "0.10"
 bevy_yarnspinner = "0.2"
-bevy_yarnspinner_example_dialogue_view = "0.2"
+bevy_yarnspinner_example_dialogue_view = "0.2.1"
 bevy-tnua-xpbd3d = "0.2"
 bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
 bevy-tnua = "0.15"

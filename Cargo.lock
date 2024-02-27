@@ -80,9 +80,9 @@ checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
 name = "ahash"
-version = "0.8.9"
+version = "0.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d713b3834d76b85304d4d525563c1276e2e30dc97cc67bfb4585a4a29fc2c89f"
+checksum = "8b79b82693f705137f8fb9b37871d99e4f9a7df12b917eed79c3d3954830a60b"
 dependencies = [
  "cfg-if",
  "getrandom",
@@ -878,7 +878,7 @@ dependencies = [
 [[package]]
 name = "bevy_gltf_blueprints"
 version = "0.8.0"
-source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#453b0b5d5590cc152b751f6c48a411ec822afb5c"
+source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#a705a238fd13c87d5c5710067f40f26600fa2efd"
 dependencies = [
  "bevy",
  "bevy_gltf_components",
@@ -887,7 +887,7 @@ dependencies = [
 [[package]]
 name = "bevy_gltf_components"
 version = "0.4.0"
-source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#453b0b5d5590cc152b751f6c48a411ec822afb5c"
+source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#a705a238fd13c87d5c5710067f40f26600fa2efd"
 dependencies = [
  "bevy",
  "ron",
@@ -1152,7 +1152,7 @@ dependencies = [
 [[package]]
 name = "bevy_registry_export"
 version = "0.2.0"
-source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#453b0b5d5590cc152b751f6c48a411ec822afb5c"
+source = "git+https://github.com/kaosat-dev/Blender_bevy_components_workflow/?branch=bevy_main#a705a238fd13c87d5c5710067f40f26600fa2efd"
 dependencies = [
  "bevy",
  "bevy_app",
@@ -2285,9 +2285,9 @@ dependencies = [
 
 [[package]]
 name = "error-code"
-version = "3.1.0"
+version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26a147e1a6641a55d994b3e4e9fa4d9b180c8d652c09b363af8c9bf1b8e04139"
+checksum = "a0474425d51df81997e2f90a21591180b38eccf27292d755f3e30750225c175b"
 
 [[package]]
 name = "euclid"
@@ -4688,9 +4688,9 @@ checksum = "8fb1df15f412ee2e9dfc1c504260fa695c1c3f10fe9f4a6ee2d2184d7d6450e2"
 
 [[package]]
 name = "symphonia"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62e48dba70095f265fdb269b99619b95d04c89e619538138383e63310b14d941"
+checksum = "815c942ae7ee74737bb00f965fa5b5a2ac2ce7b6c01c0cc169bbeaf7abd5f5a9"
 dependencies = [
  "lazy_static",
  "symphonia-codec-vorbis",
@@ -4701,9 +4701,9 @@ dependencies = [
 
 [[package]]
 name = "symphonia-codec-vorbis"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3953397e3506aa01350c4205817e4f95b58d476877a42f0458d07b665749e203"
+checksum = "5a98765fb46a0a6732b007f7e2870c2129b6f78d87db7987e6533c8f164a9f30"
 dependencies = [
  "log",
  "symphonia-core",
@@ -4712,9 +4712,9 @@ dependencies = [
 
 [[package]]
 name = "symphonia-core"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7c73eb88fee79705268cc7b742c7bc93a7b76e092ab751d0833866970754142"
+checksum = "798306779e3dc7d5231bd5691f5a813496dc79d3f56bf82e25789f2094e022c3"
 dependencies = [
  "arrayvec",
  "bitflags 1.3.2",
@@ -4725,9 +4725,9 @@ dependencies = [
 
 [[package]]
 name = "symphonia-format-ogg"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bf1a00ccd11452d44048a0368828040f778ae650418dbd9d8765b7ee2574c8d"
+checksum = "ada3505789516bcf00fc1157c67729eded428b455c27ca370e41f4d785bfa931"
 dependencies = [
  "log",
  "symphonia-core",
@@ -4737,9 +4737,9 @@ dependencies = [
 
 [[package]]
 name = "symphonia-metadata"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89c3e1937e31d0e068bbe829f66b2f2bfaa28d056365279e0ef897172c3320c0"
+checksum = "bc622b9841a10089c5b18e99eb904f4341615d5aa55bbf4eedde1be721a4023c"
 dependencies = [
  "encoding_rs",
  "lazy_static",
@@ -4749,9 +4749,9 @@ dependencies = [
 
 [[package]]
 name = "symphonia-utils-xiph"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a450ca645b80d69aff8b35576cbfdc7f20940b29998202aab910045714c951f8"
+checksum = "484472580fa49991afda5f6550ece662237b00c6f562c7d9638d1b086ed010fe"
 dependencies = [
  "symphonia-core",
  "symphonia-metadata",
@@ -5222,7 +5222,7 @@ dependencies = [
 [[package]]
 name = "warbler_grass"
 version = "0.5.0"
-source = "git+https://github.com/EmiOnGit/warbler_grass?branch=75-update-to-bevy-013#ee9590092a99a2285d222296eb77ab60f5e43340"
+source = "git+https://github.com/EmiOnGit/warbler_grass?branch=75-update-to-bevy-013#d052aa3a9a3da1805fba4d3211317e3ef013adc7"
 dependencies = [
  "bevy",
  "bitflags 2.4.2",

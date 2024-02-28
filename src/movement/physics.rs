@@ -30,12 +30,13 @@ pub(crate) fn read_colliders(
     mut commands: Commands,
     children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
-    mesh_handles: Query<&Handle<Mesh>>,
+    mesh_handles: Query<&Handle<Mesh>, Without<RigidBody>>,
     global_transforms: Query<&GlobalTransform>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for entity in collider_marker.iter() {
+        let mut all_children_loaded = true;
         for child in children.iter_descendants(entity) {
             if let Ok(mesh_handle) = mesh_handles.get(child) {
                 if let Some(mesh) = meshes.get(mesh_handle) {
@@ -55,10 +56,13 @@ pub(crate) fn read_colliders(
                         ),
                         NavMeshAffector,
                     ));
+                } else {
+                    all_children_loaded = false;
                 }
             }
         }
-
-        commands.entity(entity).remove::<ColliderMarker>();
+        if all_children_loaded {
+            commands.entity(entity).remove::<ColliderMarker>();
+        }
     }
 }

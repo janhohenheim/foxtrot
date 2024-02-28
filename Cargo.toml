@@ -55,8 +55,7 @@ bevy-tnua-xpbd3d = "0.2"
 bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
 bevy-tnua = "0.15"
 bevy_atmosphere = "0.9"
-## Waiting for https://github.com/EmiOnGit/warbler_grass/pull/76
-warbler_grass = { git = "https://github.com/EmiOnGit/warbler_grass", branch = "75-update-to-bevy-013" }
+warbler_grass = "0.6"
 ## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/136
 bevy_gltf_blueprints = { git = "https://github.com/kaosat-dev/Blender_bevy_components_workflow/", branch = "bevy_main" }
 ## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/136

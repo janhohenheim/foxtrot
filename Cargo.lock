@@ -5221,8 +5221,9 @@ dependencies = [
 
 [[package]]
 name = "warbler_grass"
-version = "0.5.0"
-source = "git+https://github.com/EmiOnGit/warbler_grass?branch=75-update-to-bevy-013#d052aa3a9a3da1805fba4d3211317e3ef013adc7"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3396a5626f5b56a7014adba030aa78ef9f1adda26c2f28fed0281f5ebabbac26"
 dependencies = [
  "bevy",
  "bitflags 2.4.2",

@@ -13,16 +13,17 @@ homepage = "https://janhohenheim.github.io/foxtrot/"
 
 [features]
 default = ["dev"]
-dev = ["dep:bevy_editor_pls"]
+dev = [
+    "dep:bevy_editor_pls",
+    "bevy/file_watcher",
+    "bevy/dynamic_linking",
+]
 tracing = ["bevy/trace_chrome"]
 
 [dependencies.bevy]
 version = "0.13"
 features = [
     "jpeg",
-    "serialize",
-    "file_watcher",
-    "dynamic_linking", # disable this for releases
 ]
 
 [dependencies]

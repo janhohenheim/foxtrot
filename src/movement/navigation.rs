@@ -16,7 +16,7 @@ use oxidized_navigation::{
     query::{find_polygon_path, perform_string_pulling_on_path},
     NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
 };
-
+#[cfg(feature = "dev")]
 use crate::dev::dev_editor::DevEditorWindow;
 use serde::{Deserialize, Serialize};
 

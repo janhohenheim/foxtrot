@@ -9,7 +9,7 @@ use crate::{
 
 use crate::{world_interaction::dialog::DialogTarget, GameState};
 use anyhow::Context;
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{prelude::*, transform::TransformSystem::TransformPropagate, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;
@@ -24,7 +24,9 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         .add_systems(
             Update,
             (
-                update_interaction_opportunities.after(PhysicsSet::Sync),
+                update_interaction_opportunities
+                    .after(PhysicsSet::Sync)
+                    .after(TransformPropagate),
                 display_interaction_prompt,
             )
                 .chain()
@@ -43,13 +45,13 @@ pub(crate) struct InteractionOpportunity(pub(crate) Option<Entity>);
 #[sysfail(Log<anyhow::Error, Error>)]
 fn update_interaction_opportunities(
     mut collisions: EventReader<Collision>,
-    player_query: Query<&Transform, With<Player>>,
+    player_query: Query<&GlobalTransform, With<Player>>,
     parents: Query<&Parent>,
     target_query: Query<
-        (Entity, &Transform),
+        (Entity, &GlobalTransform),
         (With<DialogTarget>, Without<Player>, Without<IngameCamera>),
     >,
-    camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
+    camera_query: Query<(&IngameCamera, &GlobalTransform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
 ) {
     interaction_opportunity.0 = None;
@@ -79,14 +81,14 @@ fn update_interaction_opportunities(
         }
 
         // Check if we are facing the right way
-        let player_translation = player_query.get(player).unwrap().translation;
+        let player_translation = player_query.get(player).unwrap().translation();
         let Some((camera, camera_transform)) = camera_query.iter().next() else {
             continue;
         };
         let is_facing_target = is_facing_target(
             player_translation,
-            target_transform.translation,
-            *camera_transform,
+            target_transform.translation(),
+            camera_transform.compute_transform(),
             camera,
         );
         if is_facing_target {
@@ -96,7 +98,7 @@ fn update_interaction_opportunities(
 }
 
 fn get_player_and_target(
-    player_query: &Query<&Transform, With<Player>>,
+    player_query: &Query<&GlobalTransform, With<Player>>,
     entity_a: Entity,
     entity_b: Entity,
 ) -> Option<(Entity, Entity)> {

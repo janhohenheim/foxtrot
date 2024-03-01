@@ -8,7 +8,8 @@ use crate::{
 };
 
 use crate::{
-    util::trait_extension::Vec3Ext, world_interaction::dialog::CurrentDialogTarget, GameState,
+    level_instantiation::on_spawn::Player, util::trait_extension::Vec3Ext,
+    world_interaction::dialog::CurrentDialogTarget, GameState,
 };
 use anyhow::Context;
 use bevy::prelude::*;
@@ -16,7 +17,6 @@ use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
 use leafwing_input_manager::prelude::ActionState;
-use serde::{Deserialize, Serialize};
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
@@ -38,10 +38,6 @@ pub(crate) fn player_embodiment_plugin(app: &mut App) {
                 .run_if(in_state(GameState::Playing)),
         );
 }
-
-#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
-#[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Player;
 
 fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), With<Player>>) {
     #[cfg(feature = "tracing")]

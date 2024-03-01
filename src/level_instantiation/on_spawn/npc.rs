@@ -1,18 +1,26 @@
 use crate::{
-    level_instantiation::spawning::objects::{player, CollisionLayer},
+    level_instantiation::on_spawn::player,
     movement::{
         character_controller::{CharacterAnimations, CharacterControllerBundle},
-        navigation::Follower,
+        physics::CollisionLayer,
     },
     world_interaction::dialog::YarnNode,
+    GameState,
 };
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
+use serde::{Deserialize, Serialize};
 
-pub(crate) fn spawn(
-    follower: Query<(Entity, &Transform), Added<Follower>>,
-    mut commands: Commands,
-) {
+#[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]
+#[reflect(Component, Serialize, Deserialize)]
+pub(crate) struct Npc;
+
+pub(crate) fn plugin(app: &mut App) {
+    app.register_type::<Npc>()
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
+}
+
+fn spawn(follower: Query<(Entity, &Transform), Added<Npc>>, mut commands: Commands) {
     for (entity, transform) in follower.iter() {
         commands
             .entity(entity)
@@ -22,7 +30,7 @@ pub(crate) fn spawn(
                     player::RADIUS,
                     transform.scale.y,
                 ),
-                Follower,
+                Npc,
                 // Use the same names as in Blender
                 CharacterAnimations {
                     idle: "Idle".into(),

@@ -1,7 +1,4 @@
-use crate::{
-    level_instantiation::spawning::objects::CollisionLayer,
-    movement::character_controller::AnimationState,
-};
+use crate::movement::{character_controller::AnimationState, physics::CollisionLayer};
 use bevy::prelude::*;
 use bevy_tnua::{prelude::*, TnuaAnimatingState};
 use bevy_tnua_xpbd3d::*;

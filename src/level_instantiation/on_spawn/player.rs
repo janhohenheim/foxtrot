@@ -1,21 +1,31 @@
 use crate::{
-    level_instantiation::spawning::objects::CollisionLayer,
-    movement::character_controller::{CharacterAnimations, CharacterControllerBundle},
-    particles,
-    player_control::{
-        actions::{
-            create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
-        },
-        player_embodiment::Player,
+    movement::{
+        character_controller::{CharacterAnimations, CharacterControllerBundle},
+        physics::CollisionLayer,
     },
+    particles,
+    player_control::actions::{
+        create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
+    },
+    GameState,
 };
 use bevy::prelude::*;
 use bevy_hanabi::EffectAsset;
+use serde::{Deserialize, Serialize};
 
 pub(crate) const HEIGHT: f32 = 0.4;
 pub(crate) const RADIUS: f32 = 0.3;
 
-pub(crate) fn spawn(
+#[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Component, Serialize, Deserialize)]
+pub(crate) struct Player;
+
+pub(crate) fn plugin(app: &mut App) {
+    app.register_type::<Player>()
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
+}
+
+fn spawn(
     player: Query<(Entity, &Transform), Added<Player>>,
     mut commands: Commands,
     mut effects: ResMut<Assets<EffectAsset>>,

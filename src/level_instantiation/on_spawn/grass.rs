@@ -1,6 +1,6 @@
 use crate::{
-    file_system_interaction::asset_loading::GrassAssets,
-    level_instantiation::spawning::objects::ground::Grass, GameState,
+    file_system_interaction::asset_loading::GrassAssets, level_instantiation::on_spawn::Ground,
+    GameState,
 };
 use bevy::{app::App, prelude::*, render::primitives::Aabb};
 use warbler_grass::{
@@ -8,15 +8,16 @@ use warbler_grass::{
     map::DensityMap,
     prelude::*,
 };
-pub(crate) fn grass_plugin(app: &mut App) {
+
+pub(crate) fn plugin(app: &mut App) {
     app.add_plugins(WarblersPlugin)
         .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }
 
 /// Spawns the grass using the ground as a base
-pub(crate) fn spawn(
+fn spawn(
     mut commands: Commands,
-    ground: Query<&Transform, Added<Grass>>,
+    ground: Query<&Transform, Added<Ground>>,
     grass_assets: Res<GrassAssets>,
 ) {
     for transform in ground.iter() {

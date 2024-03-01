@@ -1,6 +1,6 @@
 use crate::{
     file_system_interaction::config::GameConfig,
-    player_control::player_embodiment::Player,
+    level_instantiation::on_spawn::Player,
     util::trait_extension::{F32Ext, Vec3Ext},
     GameState,
 };

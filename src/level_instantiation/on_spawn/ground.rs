@@ -1,12 +1,18 @@
+use crate::GameState;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Grass;
+pub(crate) struct Ground;
 
-pub(crate) fn spawn(
-    sun: Query<&Children, Added<Grass>>,
+pub(crate) fn plugin(app: &mut App) {
+    app.register_type::<Ground>()
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
+}
+
+fn spawn(
+    sun: Query<&Children, Added<Ground>>,
     material_handles: Query<&Handle<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {

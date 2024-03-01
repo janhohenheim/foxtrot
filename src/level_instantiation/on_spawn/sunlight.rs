@@ -1,3 +1,4 @@
+use crate::GameState;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -5,10 +6,11 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Sun;
 
-pub(crate) fn spawn(
-    sun: Query<&Children, Added<Sun>>,
-    mut directional_lights: Query<&mut DirectionalLight>,
-) {
+pub(crate) fn plugin(app: &mut App) {
+    app.register_type::<Sun>()
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
+}
+fn spawn(sun: Query<&Children, Added<Sun>>, mut directional_lights: Query<&mut DirectionalLight>) {
     for children in sun.iter() {
         for child in children.iter() {
             if let Ok(mut light) = directional_lights.get_mut(*child) {

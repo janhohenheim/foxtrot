@@ -1,6 +1,6 @@
 use crate::{
     file_system_interaction::config::GameConfig,
-    level_instantiation::spawning::objects::CollisionLayer,
+    movement::physics::CollisionLayer,
     player_control::camera::{IngameCamera, IngameCameraKind},
     util::smoothness_to_lerp_factor,
 };

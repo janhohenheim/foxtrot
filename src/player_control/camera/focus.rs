@@ -1,6 +1,6 @@
 use crate::{
-    level_instantiation::spawning::objects::player,
-    player_control::{camera::IngameCamera, player_embodiment::Player},
+    level_instantiation::on_spawn::{player, Player},
+    player_control::camera::IngameCamera,
     world_interaction::dialog::CurrentDialogTarget,
 };
 use bevy::prelude::*;

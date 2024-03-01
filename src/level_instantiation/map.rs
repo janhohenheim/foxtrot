@@ -1,5 +1,5 @@
 use crate::{
-    file_system_interaction::asset_loading::GltfAssets, player_control::player_embodiment::Player,
+    file_system_interaction::asset_loading::GltfAssets, level_instantiation::on_spawn::Player,
     GameState,
 };
 use bevy::{gltf::Gltf, prelude::*};

@@ -4,7 +4,7 @@ use crate::{
         character_controller::{CharacterAnimations, CharacterControllerBundle},
         navigation::Follower,
     },
-    world_interaction::dialog::DialogTarget,
+    world_interaction::dialog::YarnNode,
 };
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
@@ -29,10 +29,7 @@ pub(crate) fn spawn(
                     walk: "Walk".into(),
                     aerial: "Run".into(),
                 },
-                DialogTarget {
-                    speaker: "The Follower".to_string(),
-                    node: "Follower".to_string(),
-                },
+                YarnNode("Follower".to_string()),
             ))
             .with_children(|parent| {
                 parent.spawn((

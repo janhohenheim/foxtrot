@@ -60,7 +60,7 @@ fn get_distance_to_collision(
     camera: &IngameCamera,
     camera_transform: &Transform,
 ) -> f32 {
-    let origin = camera.target.translation;
+    let origin = camera.target;
     let direction = camera_transform.back();
 
     let max_toi = camera.desired_distance;

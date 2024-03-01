@@ -13281,12 +13281,12 @@
         },
         "secondary_target": {
           "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_transform::components::transform::Transform>"
+            "$ref": "#/$defs/core::option::Option<glam::Vec3>"
           }
         },
         "target": {
           "type": {
-            "$ref": "#/$defs/bevy_transform::components::transform::Transform"
+            "$ref": "#/$defs/glam::Vec3"
           }
         }
       },
@@ -13334,6 +13334,38 @@
       "title": "foxtrot::player_control::player_embodiment::Player",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "foxtrot::world_interaction::dialog::CurrentDialogTarget": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_ecs::entity::Entity>"
+          }
+        }
+      ],
+      "short_name": "CurrentDialogTarget",
+      "title": "foxtrot::world_interaction::dialog::CurrentDialogTarget",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::world_interaction::dialog::YarnNode": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      ],
+      "short_name": "YarnNode",
+      "title": "foxtrot::world_interaction::dialog::YarnNode",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "foxtrot::world_interaction::interactions_ui::InteractionOpportunity": {
       "isComponent": false,

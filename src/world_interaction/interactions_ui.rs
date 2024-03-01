@@ -9,7 +9,11 @@ use crate::{
 
 use crate::{world_interaction::dialog::DialogTarget, GameState};
 use anyhow::Context;
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{
+    prelude::*, 
+    transform::TransformSystem::TransformPropagate
+    window::PrimaryWindow, 
+};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;
@@ -24,7 +28,9 @@ pub(crate) fn interactions_ui_plugin(app: &mut App) {
         .add_systems(
             Update,
             (
-                update_interaction_opportunities.after(PhysicsSet::Sync),
+                update_interaction_opportunities
+                    .after(PhysicsSet::Sync)
+                    .after(TransformPropagate),
                 display_interaction_prompt,
             )
                 .chain()

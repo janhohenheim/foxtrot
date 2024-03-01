@@ -25,8 +25,8 @@ mod ui;
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Serialize, Deserialize)]
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct IngameCamera {
-    pub(crate) target: Transform,
-    pub(crate) secondary_target: Option<Transform>,
+    pub(crate) target: Vec3,
+    pub(crate) secondary_target: Option<Vec3>,
     pub(crate) desired_distance: f32,
     pub(crate) kind: IngameCameraKind,
 }

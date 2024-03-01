@@ -7,13 +7,14 @@ use crate::{
     },
 };
 
-use crate::{util::trait_extension::Vec3Ext, world_interaction::dialog::DialogTarget, GameState};
+use crate::{
+    util::trait_extension::Vec3Ext, world_interaction::dialog::CurrentDialogTarget, GameState,
+};
 use anyhow::Context;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
-use bevy_yarnspinner_example_dialogue_view::SpeakerChangeEvent;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 
@@ -116,31 +117,25 @@ fn handle_camera_kind(
     }
 }
 
+#[sysfail(Log<anyhow::Error, Error>)]
 fn rotate_to_speaker(
+    dialog_target: Res<CurrentDialogTarget>,
     mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
-    speakers: Query<(&Transform, &DialogTarget), Without<Player>>,
-    mut speaker_change_event: EventReader<SpeakerChangeEvent>,
+    speakers: Query<&Transform, Without<Player>>,
 ) {
+    let Some(dialog_target) = dialog_target.0 else {
+        return Ok(());
+    };
+
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    for speaker_change in speaker_change_event.read() {
-        if !speaker_change.speaking {
-            continue;
-        }
-
-        for (player_transform, mut controller) in with_player.iter_mut() {
-            for (speaker_transform, dialog_target) in speakers.iter() {
-                if dialog_target.speaker != speaker_change.character_name {
-                    continue;
-                }
-                let direction = speaker_transform.translation - player_transform.translation;
-                controller.basis(TnuaBuiltinWalk {
-                    desired_forward: direction,
-                    ..Default::default()
-                });
-            }
-        }
-    }
+    let (player_transform, mut controller) = with_player.get_single_mut()?;
+    let speaker_transform = speakers.get(dialog_target)?;
+    let direction = speaker_transform.translation - player_transform.translation;
+    controller.basis(TnuaBuiltinWalk {
+        desired_forward: direction,
+        ..Default::default()
+    });
 }
 
 #[sysfail(Log<anyhow::Error, Error>)]

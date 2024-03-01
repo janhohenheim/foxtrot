@@ -22,14 +22,19 @@ pub(crate) fn dialog_plugin(app: &mut App) {
             set_ui_target_camera,
         )
             .after(ExampleYarnSpinnerDialogueViewSystemSet),
-    );
+    )
+    .init_resource::<CurrentDialogTarget>()
+    .register_type::<YarnNode>()
+    .register_type::<CurrentDialogTarget>();
 }
 
 #[derive(Component, Debug, Clone, Eq, PartialEq, Reflect, Serialize, Deserialize)]
-pub(crate) struct DialogTarget {
-    pub(crate) speaker: String,
-    pub(crate) node: String,
-}
+#[reflect(Component, Serialize, Deserialize)]
+pub(crate) struct YarnNode(pub(crate) String);
+
+#[derive(Resource, Debug, Clone, Copy, Eq, PartialEq, Reflect, Serialize, Deserialize, Default)]
+#[reflect(Resource, Serialize, Deserialize)]
+pub(crate) struct CurrentDialogTarget(pub(crate) Option<Entity>);
 
 fn spawn_dialogue_runner(mut commands: Commands, project: Res<YarnProject>) {
     // Create a dialogue runner from the project.
@@ -40,9 +45,11 @@ fn spawn_dialogue_runner(mut commands: Commands, project: Res<YarnProject>) {
 
 fn unfreeze_after_dialog(
     mut dialogue_complete_event: EventReader<DialogueCompleteEvent>,
+    mut dialog_target: ResMut<CurrentDialogTarget>,
     mut freeze: ResMut<ActionsFrozen>,
 ) {
     for _event in dialogue_complete_event.read() {
+        dialog_target.0 = None;
         freeze.unfreeze();
     }
 }

@@ -7,7 +7,10 @@ use crate::{
     util::criteria::is_frozen,
 };
 
-use crate::{world_interaction::dialog::DialogTarget, GameState};
+use crate::{
+    world_interaction::dialog::{CurrentDialogTarget, YarnNode},
+    GameState,
+};
 use anyhow::Context;
 use bevy::{prelude::*, transform::TransformSystem::TransformPropagate, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
@@ -49,7 +52,7 @@ fn update_interaction_opportunities(
     parents: Query<&Parent>,
     target_query: Query<
         (Entity, &GlobalTransform),
-        (With<DialogTarget>, Without<Player>, Without<IngameCamera>),
+        (With<YarnNode>, Without<Player>, Without<IngameCamera>),
     >,
     camera_query: Query<(&IngameCamera, &GlobalTransform), Without<Player>>,
     mut interaction_opportunity: ResMut<InteractionOpportunity>,
@@ -133,13 +136,14 @@ fn display_interaction_prompt(
     mut egui_contexts: EguiContexts,
     actions: Query<&ActionState<PlayerAction>>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
-    dialog_target_query: Query<&DialogTarget>,
+    dialog_target_query: Query<(Entity, &YarnNode)>,
     mut freeze: ResMut<ActionsFrozen>,
+    mut current_dialog_target: ResMut<CurrentDialogTarget>,
 ) {
     let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
-    let dialog_target = dialog_target_query.get(opportunity)?;
+    let (entity, dialog_target) = dialog_target_query.get(opportunity)?;
     let window = primary_windows
         .get_single()
         .context("Failed to get primary window")?;
@@ -154,7 +158,8 @@ fn display_interaction_prompt(
     for actions in actions.iter() {
         if actions.just_pressed(&PlayerAction::Interact) {
             let mut dialogue_runner = dialogue_runner.single_mut();
-            dialogue_runner.start_node(&dialog_target.node);
+            dialogue_runner.start_node(&dialog_target.0);
+            current_dialog_target.0.replace(entity);
             freeze.freeze();
         }
     }

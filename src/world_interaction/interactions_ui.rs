@@ -9,11 +9,7 @@ use crate::{
 
 use crate::{world_interaction::dialog::DialogTarget, GameState};
 use anyhow::Context;
-use bevy::{
-    prelude::*, 
-    transform::TransformSystem::TransformPropagate
-    window::PrimaryWindow, 
-};
+use bevy::{prelude::*, transform::TransformSystem::TransformPropagate, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;

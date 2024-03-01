@@ -13029,58 +13029,91 @@
       "type": "float",
       "typeInfo": "Value"
     },
-    "foxtrot::level_instantiation::spawning::Hidden": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Hidden",
-      "title": "foxtrot::level_instantiation::spawning::Hidden",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "foxtrot::level_instantiation::spawning::objects::camera::IngameCameraMarker": {
+    "foxtrot::level_instantiation::on_spawn::camera::IngameCameraMarker": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "IngameCameraMarker",
-      "title": "foxtrot::level_instantiation::spawning::objects::camera::IngameCameraMarker",
+      "title": "foxtrot::level_instantiation::on_spawn::camera::IngameCameraMarker",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::level_instantiation::spawning::objects::ground::Grass": {
+    "foxtrot::level_instantiation::on_spawn::collider::Collider": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
-      "short_name": "Grass",
-      "title": "foxtrot::level_instantiation::spawning::objects::ground::Grass",
+      "short_name": "Collider",
+      "title": "foxtrot::level_instantiation::on_spawn::collider::Collider",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::level_instantiation::spawning::objects::orb::Orb": {
+    "foxtrot::level_instantiation::on_spawn::ground::Ground": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Ground",
+      "title": "foxtrot::level_instantiation::on_spawn::ground::Ground",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::level_instantiation::on_spawn::hidden::Hidden": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Hidden",
+      "title": "foxtrot::level_instantiation::on_spawn::hidden::Hidden",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::level_instantiation::on_spawn::npc::Npc": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Npc",
+      "title": "foxtrot::level_instantiation::on_spawn::npc::Npc",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::level_instantiation::on_spawn::orb::Orb": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "Orb",
-      "title": "foxtrot::level_instantiation::spawning::objects::orb::Orb",
+      "title": "foxtrot::level_instantiation::on_spawn::orb::Orb",
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::level_instantiation::spawning::objects::sunlight::Sun": {
+    "foxtrot::level_instantiation::on_spawn::player::Player": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "Player",
+      "title": "foxtrot::level_instantiation::on_spawn::player::Player",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::level_instantiation::on_spawn::sunlight::Sun": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
       "properties": {},
       "required": [],
       "short_name": "Sun",
-      "title": "foxtrot::level_instantiation::spawning::objects::sunlight::Sun",
+      "title": "foxtrot::level_instantiation::on_spawn::sunlight::Sun",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -13161,28 +13194,6 @@
       ],
       "short_name": "Walk",
       "title": "foxtrot::movement::character_controller::components::Walk",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "foxtrot::movement::navigation::Follower": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Follower",
-      "title": "foxtrot::movement::navigation::Follower",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "foxtrot::movement::physics::ColliderMarker": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "ColliderMarker",
-      "title": "foxtrot::movement::physics::ColliderMarker",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -13321,17 +13332,6 @@
       "required": [],
       "short_name": "UiCamera",
       "title": "foxtrot::player_control::camera::ui::UiCamera",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "foxtrot::player_control::player_embodiment::Player": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Player",
-      "title": "foxtrot::player_control::player_embodiment::Player",
       "type": "object",
       "typeInfo": "Struct"
     },

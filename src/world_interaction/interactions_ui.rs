@@ -1,13 +1,10 @@
 use crate::{
+    level_instantiation::on_spawn::Player,
     player_control::{
         actions::{ActionsFrozen, PlayerAction},
         camera::{IngameCamera, IngameCameraKind},
-        player_embodiment::Player,
     },
     util::criteria::is_frozen,
-};
-
-use crate::{
     world_interaction::dialog::{CurrentDialogTarget, YarnNode},
     GameState,
 };

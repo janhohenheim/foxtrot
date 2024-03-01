@@ -1,4 +1,4 @@
-use crate::{level_instantiation::spawning::objects::player, particles::SprintingParticle};
+use crate::{level_instantiation::on_spawn::player, particles::SprintingParticle};
 use bevy::{pbr::NotShadowReceiver, prelude::*};
 use bevy_hanabi::prelude::*;
 

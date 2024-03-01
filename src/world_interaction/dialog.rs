@@ -1,7 +1,4 @@
-use crate::{
-    level_instantiation::spawning::objects::camera::IngameCameraMarker,
-    player_control::actions::ActionsFrozen,
-};
+use crate::player_control::{actions::ActionsFrozen, camera::IngameCamera};
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
@@ -57,7 +54,7 @@ fn unfreeze_after_dialog(
 fn set_ui_target_camera(
     mut commands: Commands,
     root_ui_node: Query<Entity, (With<UiRootNode>, Without<TargetCamera>)>,
-    main_camera: Query<Entity, With<IngameCameraMarker>>,
+    main_camera: Query<Entity, With<IngameCamera>>,
 ) {
     for camera_entity in main_camera.iter() {
         for node_entity in root_ui_node.iter() {

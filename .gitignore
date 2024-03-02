@@ -12,3 +12,4 @@ blender_assets.cats.txt*
 trace-*.json
 
 .cargo/config.toml
+rust-toolchain.toml

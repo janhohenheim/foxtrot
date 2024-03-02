@@ -5,7 +5,7 @@ on:
     types: [ labeled, opened, synchronize, reopened ]
 env:
   CARGO_TERM_COLOR: always
-  NIGHTLY_TOOLCHAIN: nightly
+  CARGO_TOOLCHAIN: stable
   # Sparse cargo registry for faster updates
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+          toolchain: ${{ env.CARGO_TOOLCHAIN }}
       - name: Cache Cargo build files
         uses: Leafwing-Studios/cargo-cache@v1
       - name: Install alsa and udev
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+          toolchain: ${{ env.CARGO_TOOLCHAIN }}
           components: rustfmt, clippy
       - name: Cache Cargo build files
         uses: Leafwing-Studios/cargo-cache@v1

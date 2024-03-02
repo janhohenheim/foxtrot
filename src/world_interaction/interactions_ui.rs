@@ -17,6 +17,7 @@ use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
+use std::iter;
 
 pub(crate) fn interactions_ui_plugin(app: &mut App) {
     app.register_type::<InteractionOpportunity>()
@@ -64,14 +65,12 @@ fn update_interaction_opportunities(
             continue;
         };
 
-        // We might collide with the sensor or the dialog target itself.
-        // If we collide with the sensor, we need to take its parent to get the dialog target
-        let parent = parents.get(sensor).map(Parent::get).unwrap_or(sensor);
+        // A dialog collider is valid for any of its ancestors
+        let mut ancestors = iter::once(sensor).chain(parents.iter_ancestors(sensor));
 
         // Check if what we are colliding with is a dialog target
-        let Ok((target, target_transform)) = target_query
-            .get(sensor)
-            .or_else(|_| target_query.get(parent))
+        let Some((target, target_transform)) =
+            ancestors.find_map(|entity| target_query.get(entity).ok())
         else {
             continue;
         };

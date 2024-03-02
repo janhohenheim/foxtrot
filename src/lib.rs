@@ -1,4 +1,3 @@
-#![feature(let_chains)]
 // These two generate a lot of false positives for Bevy systems
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 

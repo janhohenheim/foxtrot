@@ -21,11 +21,11 @@ pub(crate) fn blender_workflow_plugin(app: &mut App) {
             format: GltfFormat::GLB,
             aabbs: true,
             legacy_mode: false,
-            ..Default::default()
+            ..default()
         },
         ExportRegistryPlugin {
-            save_path: "assets/scenes/registry.json".into(),
-            ..Default::default()
+            save_path: "scenes/registry.json".into(),
+            ..default()
         },
     ));
 }

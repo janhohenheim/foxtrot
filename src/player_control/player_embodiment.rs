@@ -8,7 +8,7 @@ use crate::{
 };
 
 use crate::{
-    level_instantiation::on_spawn::Player, util::trait_extension::Vec3Ext,
+    level_instantiation::on_spawn::Player, util::math_trait_ext::Vec3Ext,
     world_interaction::dialog::CurrentDialogTarget, GameState,
 };
 use anyhow::Context;

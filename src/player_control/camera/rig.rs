@@ -7,7 +7,7 @@ use crate::{
             IngameCamera, IngameCameraKind,
         },
     },
-    util::trait_extension::Vec2Ext,
+    util::math_trait_ext::Vec2Ext,
 };
 
 use crate::player_control::actions::ActionsFrozen;

@@ -9,7 +9,7 @@ use warbler_grass::{
     prelude::*,
 };
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins(WarblersPlugin)
         .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }

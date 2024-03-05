@@ -139,10 +139,11 @@ fn display_interaction_prompt(
     let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
+    let Some(window) = primary_windows.get_single() else {
+        return Ok(());
+    };
+
     let (entity, dialog_target) = dialog_target_query.get(opportunity)?;
-    let window = primary_windows
-        .get_single()
-        .context("Failed to get primary window")?;
     egui::Window::new("Interaction")
         .collapsible(false)
         .title_bar(false)

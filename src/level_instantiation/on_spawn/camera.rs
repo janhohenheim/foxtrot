@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 struct IngameCameraMarker;
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<IngameCameraMarker>()
         .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }

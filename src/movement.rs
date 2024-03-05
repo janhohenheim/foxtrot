@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 pub(crate) mod character_controller;
 
-pub(crate) mod navigation;
+mod navigation;
 pub(crate) mod physics;
 
 /// This plugin handles all physical movement that is not exclusive to the player.

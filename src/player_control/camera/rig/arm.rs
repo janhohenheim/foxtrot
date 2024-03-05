@@ -8,7 +8,7 @@ use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
-pub(crate) fn get_arm_distance(
+pub(super) fn get_arm_distance(
     camera: &IngameCamera,
     transform: &Transform,
     spatial_query: &SpatialQuery,
@@ -26,7 +26,7 @@ pub(crate) fn get_arm_distance(
     }
 }
 
-pub(crate) fn get_zoom_smoothness(
+pub(super) fn get_zoom_smoothness(
     config: &GameConfig,
     camera: &IngameCamera,
     rig: &Rig,
@@ -48,7 +48,7 @@ pub(crate) fn get_zoom_smoothness(
     }
 }
 
-pub(crate) fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
+pub(super) fn set_arm(rig: &mut Rig, distance: f32, zoom_smoothness: f32, dt: f32) {
     let factor = smoothness_to_lerp_factor(zoom_smoothness, dt);
     let arm_length = &mut rig.driver_mut::<Arm>().offset.z;
     *arm_length = arm_length.lerp(distance, factor);

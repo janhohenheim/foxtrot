@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub(super) trait MeshAssetsExt {
+pub(crate) trait MeshAssetsExt {
     fn get_or_add(&mut self, handle: Handle<Mesh>, create_mesh: impl Fn() -> Mesh) -> Handle<Mesh>;
 }
 

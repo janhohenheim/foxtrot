@@ -32,10 +32,10 @@ fn setup_shader(
 
 #[derive(AsBindGroup, Debug, Clone, Asset, TypePath)]
 /// Material for [`glowy.wgsl`](https://github.com/janhohenheim/foxtrot/blob/main/assets/shaders/glowy.wgsl).
-pub(super) struct GlowyMaterial {
+pub(crate) struct GlowyMaterial {
     #[texture(0)]
     #[sampler(1)]
-    pub(super) env_texture: Handle<Image>,
+    pub(crate) env_texture: Handle<Image>,
 }
 
 impl Material for GlowyMaterial {

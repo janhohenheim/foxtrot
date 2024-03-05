@@ -9,7 +9,7 @@ use bevy_hanabi::prelude::*;
 use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_xpbd_3d::PhysicsSet;
-pub(super) use creation::*;
+pub(crate) use creation::*;
 
 mod creation;
 

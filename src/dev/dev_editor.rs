@@ -46,7 +46,7 @@ impl EditorWindow for DevEditorWindow {
 #[reflect(Resource, Serialize, Deserialize)]
 #[derive(Default)]
 pub(crate) struct DevEditorState {
-    pub(super) open: bool,
+    pub(crate) open: bool,
     pub(crate) collider_render_enabled: bool,
     pub(crate) navmesh_render_enabled: bool,
 }

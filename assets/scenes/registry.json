@@ -13186,17 +13186,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::level_instantiation::on_spawn::sunlight::Sun": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "Sun",
-      "title": "foxtrot::level_instantiation::on_spawn::sunlight::Sun",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
     "foxtrot::movement::character_controller::components::CharacterAnimations": {
       "additionalProperties": false,
       "isComponent": true,

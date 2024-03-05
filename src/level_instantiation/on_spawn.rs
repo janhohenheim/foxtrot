@@ -10,7 +10,6 @@ mod hidden;
 mod npc;
 mod orb;
 pub(crate) mod player;
-mod sunlight;
 mod util;
 
 /// Handles the modifications of objects after they spawn.
@@ -24,7 +23,6 @@ pub(crate) fn on_spawn_plugin(app: &mut App) {
         orb::plugin,
         player::plugin,
         npc::plugin,
-        sunlight::plugin,
         hidden::plugin,
         collider::plugin,
     ));

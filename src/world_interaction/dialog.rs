@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 use bevy_yarnspinner_example_dialogue_view::{prelude::*, UiRootNode};
+use leafwing_input_manager::plugin::InputManagerSystem;
 use serde::{Deserialize, Serialize};
 
 pub(crate) fn dialog_plugin(app: &mut App) {
@@ -15,7 +16,7 @@ pub(crate) fn dialog_plugin(app: &mut App) {
         Update,
         (
             spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
-            unfreeze_after_dialog,
+            unfreeze_after_dialog.after(InputManagerSystem::ManualControl),
             set_ui_target_camera,
         )
             .after(ExampleYarnSpinnerDialogueViewSystemSet),

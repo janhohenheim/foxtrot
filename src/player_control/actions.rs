@@ -1,6 +1,7 @@
 use crate::util::criteria::is_frozen;
 use bevy::prelude::*;
-use leafwing_input_manager::{axislike::DualAxisData, plugin::InputManagerSystem, prelude::*};
+use leafwing_input_manager::plugin::InputManagerSystem;
+use leafwing_input_manager::{axislike::DualAxisData, prelude::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(Resource, Default, Reflect, Serialize, Deserialize)]
@@ -29,14 +30,16 @@ pub(crate) fn actions_plugin(app: &mut App) {
         .register_type::<UiAction>()
         .register_type::<ActionsFrozen>()
         .init_resource::<ActionsFrozen>()
-        .add_plugins(InputManagerPlugin::<PlayerAction>::default())
-        .add_plugins(InputManagerPlugin::<CameraAction>::default())
-        .add_plugins(InputManagerPlugin::<UiAction>::default())
+        .add_plugins((
+            InputManagerPlugin::<PlayerAction>::default(),
+            InputManagerPlugin::<CameraAction>::default(),
+            InputManagerPlugin::<UiAction>::default(),
+        ))
         .add_systems(
-            PreUpdate,
+            Update,
             remove_actions_when_frozen
                 .run_if(is_frozen)
-                .after(InputManagerSystem::ManualControl),
+                .in_set(InputManagerSystem::ManualControl),
         );
 }
 
@@ -94,23 +97,12 @@ pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAc
 
 pub(crate) fn remove_actions_when_frozen(
     mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
-    mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     for mut player_actions in player_actions_query.iter_mut() {
         player_actions
             .action_data_mut_or_default(&PlayerAction::Move)
             .axis_pair = Some(default());
-        player_actions.release(&PlayerAction::Jump);
-        player_actions.release(&PlayerAction::Interact);
-        player_actions.release(&PlayerAction::Sprint);
-    }
-    for mut camera_actions in camera_actions_query.iter_mut() {
-        camera_actions
-            .action_data_mut_or_default(&CameraAction::Orbit)
-            .axis_pair = Some(default());
-        camera_actions
-            .action_data_mut_or_default(&CameraAction::Zoom)
-            .value = default();
+        player_actions.consume_all();
     }
 }
 

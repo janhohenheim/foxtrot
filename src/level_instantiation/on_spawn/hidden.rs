@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Hidden;
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<Hidden>().add_systems(
         Update,
         spawn

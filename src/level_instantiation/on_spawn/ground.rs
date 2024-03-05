@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Ground;
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<Ground>()
         .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }

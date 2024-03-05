@@ -1,11 +1,11 @@
 use crate::GameState;
-pub(crate) use animations::*;
+use animations::*;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
-pub(crate) use models::*;
+use models::*;
 
 mod animations;
 mod components;
@@ -45,7 +45,7 @@ pub(crate) enum AnimationState {
     Running(f32),
 }
 
-pub(crate) fn apply_walking(
+fn apply_walking(
     mut character_query: Query<(
         &mut TnuaController,
         &mut Walk,
@@ -73,7 +73,7 @@ pub(crate) fn apply_walking(
     }
 }
 
-pub(crate) fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jump)>) {
+fn apply_jumping(mut character_query: Query<(&mut TnuaController, &mut Jump)>) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("apply_jumping").entered();
     for (mut controller, mut jump) in &mut character_query {

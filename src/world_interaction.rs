@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 pub(crate) mod dialog;
-pub(crate) mod interaction_ui;
+mod interaction_ui;
 
 /// Handles player to world interactions. Split into the following sub-plugins:
 /// - [`dialog::plugin`] handles dialog trees

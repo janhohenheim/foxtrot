@@ -8,7 +8,7 @@ use bevy_mod_sysfail::prelude::*;
 use bevy_yarnspinner::events::DialogueCompleteEvent;
 
 #[sysfail(Log<anyhow::Error, Error>)]
-pub(crate) fn set_camera_focus(
+pub(super) fn set_camera_focus(
     mut camera_query: Query<&mut IngameCamera>,
     player_query: Query<&Transform, With<Player>>,
     dialog_targets: Query<&Transform, Without<Player>>,

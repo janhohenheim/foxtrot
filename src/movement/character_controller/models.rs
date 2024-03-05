@@ -3,7 +3,7 @@ use bevy::{prelude::*, render::view::NoFrustumCulling};
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
 
-pub(crate) fn prepare_models_of_controllers(
+pub(super) fn prepare_models_of_controllers(
     mut commands: Commands,
     controllers: Query<(Entity, &Transform, &FloatHeight), (Added<TnuaController>, With<Collider>)>,
     mut transforms: Query<&mut Transform, Without<Collider>>,

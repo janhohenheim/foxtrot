@@ -1,5 +1,7 @@
 // These two generate a lot of false positives for Bevy systems
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
+// This is not a library, so we don't need to worry about intra-doc links
+#![allow(rustdoc::private_intra_doc_links)]
 
 //! Foxtrot is split into many plugins with their own set of responsibilities.
 //! This is an organizational measure and not meant to be imply that you can turn them on or off at will,
@@ -49,7 +51,7 @@ enum GameState {
 /// - [`shader::plugin`]: Handles the shaders.
 /// - [`dev::plugin`]: Handles the dev tools.
 /// - [`ingame_menu::plugin`]: Handles the ingame menu accessed via ESC.
-/// - [`particle::plugin`]: Handles the particle system.
+/// - [`particles::plugin`]: Handles the particle system.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {

@@ -93,9 +93,7 @@ pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAc
     }
 }
 
-pub(crate) fn remove_actions_when_frozen(
-    mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
-) {
+fn remove_actions_when_frozen(mut player_actions_query: Query<&mut ActionState<PlayerAction>>) {
     for mut player_actions in player_actions_query.iter_mut() {
         player_actions
             .action_data_mut_or_default(&PlayerAction::Move)

@@ -1,7 +1,7 @@
 use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::on_spawn::Player,
-    util::trait_extension::{F32Ext, Vec3Ext},
+    util::math_trait_ext::{F32Ext, Vec3Ext},
     GameState,
 };
 use bevy::prelude::*;

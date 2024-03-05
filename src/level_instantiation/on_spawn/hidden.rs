@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub(crate) struct Hidden;
+struct Hidden;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Hidden>().add_systems(

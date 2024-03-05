@@ -13,19 +13,19 @@
 #[cfg(feature = "dev")]
 use bevy::prelude::*;
 
-pub(crate) mod bevy_config;
+mod bevy_config;
 #[cfg(feature = "dev")]
-pub(crate) mod dev;
-pub(crate) mod file_system_interaction;
-pub(crate) mod ingame_menu;
-pub(crate) mod level_instantiation;
-pub(crate) mod menu;
+mod dev;
+mod file_system_interaction;
+mod ingame_menu;
+mod level_instantiation;
+mod menu;
 pub(crate) mod movement;
 pub(crate) mod particles;
-pub(crate) mod player_control;
-pub(crate) mod shader;
+mod player_control;
+mod shader;
 pub(crate) mod util;
-pub(crate) mod world_interaction;
+mod world_interaction;
 
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {

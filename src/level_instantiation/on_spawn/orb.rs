@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]
-pub(super) struct Orb;
+struct Orb;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Orb>()

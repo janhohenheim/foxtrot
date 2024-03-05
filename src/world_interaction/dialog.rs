@@ -6,7 +6,7 @@ use bevy_yarnspinner_example_dialogue_view::{prelude::*, UiRootNode};
 use leafwing_input_manager::plugin::InputManagerSystem;
 use serde::{Deserialize, Serialize};
 
-pub(crate) fn dialog_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         EguiPlugin,
         YarnSpinnerPlugin::new(),

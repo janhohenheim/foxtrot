@@ -14,7 +14,7 @@ mod models;
 
 /// This plugin communicates with the Tnua character controller by propagating settings found in
 /// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
-pub(crate) fn character_controller_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
         .register_type::<Jump>()
         .register_type::<Walk>()

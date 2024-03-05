@@ -5,7 +5,7 @@ use std::io::Cursor;
 use winit::window::Icon;
 
 /// Overrides the default Bevy plugins and configures things like the screen settings.
-pub(crate) fn bevy_config_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     let default_plugins = DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
             title: "Foxtrot".to_string(),

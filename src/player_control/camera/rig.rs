@@ -10,6 +10,7 @@ use crate::{
     util::trait_extension::Vec2Ext,
 };
 
+use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
 use bevy_mod_sysfail::prelude::*;
@@ -29,11 +30,15 @@ pub(crate) fn update_rig(
     )>,
     config: Res<GameConfig>,
     spatial_query: SpatialQuery,
+    actions_frozen: Res<ActionsFrozen>,
 ) {
     let dt = time.delta_seconds();
     for (mut camera, mut rig, actions, transform) in camera_query.iter_mut() {
         set_look_at(&mut rig, &camera);
         set_position(&mut rig, &camera);
+        if actions_frozen.is_frozen() {
+            continue;
+        }
         if camera.kind == IngameCameraKind::FixedAngle {
             let yaw_pitch = rig.driver_mut::<YawPitch>();
             yaw_pitch.yaw_degrees = 0.;

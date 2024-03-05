@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[reflect(Component, Serialize, Deserialize)]
 struct Collider;
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<Collider>().add_systems(
         Update,
         spawn

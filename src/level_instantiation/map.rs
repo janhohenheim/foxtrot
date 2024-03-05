@@ -5,7 +5,7 @@ use crate::{
 use bevy::{gltf::Gltf, prelude::*};
 use bevy_egui::{egui, EguiContexts};
 
-pub(crate) fn map_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Playing), spawn_level)
         .add_systems(
             Update,

@@ -9,7 +9,7 @@ use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 /// Loads resources and assets for the game.
 /// See assets/main.assets.ron for the actual paths used.
-pub(crate) fn loading_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TomlAssetPlugin::<GameConfig>::new(&["game.toml"]))
         .add_plugins(ProgressPlugin::new(GameState::Loading).continue_to(GameState::Menu))
         .add_loading_state(

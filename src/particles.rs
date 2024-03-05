@@ -14,7 +14,7 @@ pub(crate) use creation::*;
 mod creation;
 
 /// Handles particle effects instantiation and playing.
-pub(crate) fn particle_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<SprintingParticle>()
         .add_plugins(HanabiPlugin)
         .add_systems(

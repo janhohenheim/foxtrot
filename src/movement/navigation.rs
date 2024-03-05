@@ -22,7 +22,7 @@ use oxidized_navigation::{
 const CELL_WIDTH: f32 = 0.4 * player::RADIUS;
 
 /// Handles NPC pathfinding. Currently, all entities with the [`Npc`] component will follow the [`Player`].
-pub(crate) fn navigation_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     // consts manually tweaked
     app.add_plugins(OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
         cell_width: CELL_WIDTH,

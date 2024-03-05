@@ -20,7 +20,7 @@ pub(crate) const RADIUS: f32 = 0.3;
 #[reflect(Component, Serialize, Deserialize)]
 pub(crate) struct Player;
 
-pub(crate) fn plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>()
         .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }

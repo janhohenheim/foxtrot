@@ -1,4 +1,3 @@
-use crate::dev::dev_editor::dev_editor_plugin;
 use bevy::{
     diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
@@ -10,13 +9,13 @@ pub(crate) mod dev_editor;
 
 /// Plugin with debugging utility intended for use during development only.
 /// Don't include this in a release build.
-pub(crate) fn dev_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     {
         app.add_plugins(EditorPlugin::new())
             .insert_resource(default_editor_controls())
             .add_plugins((
                 FrameTimeDiagnosticsPlugin,
-                dev_editor_plugin,
+                dev_editor::plugin,
                 LogDiagnosticsPlugin::filtered(vec![]),
                 PhysicsDebugPlugin::default(),
             ))

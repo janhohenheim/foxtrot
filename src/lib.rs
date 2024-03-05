@@ -1,5 +1,7 @@
 // These two generate a lot of false positives for Bevy systems
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
+// This is not a library, so we don't need to worry about intra-doc links
+#![allow(rustdoc::private_intra_doc_links)]
 
 //! Foxtrot is split into many plugins with their own set of responsibilities.
 //! This is an organizational measure and not meant to be imply that you can turn them on or off at will,
@@ -9,14 +11,6 @@
 //! The docs are organized such that you can click through the plugins to explore the systems at play.
 
 #[cfg(feature = "dev")]
-use crate::dev::dev_plugin;
-use crate::{
-    bevy_config::bevy_config_plugin, file_system_interaction::file_system_interaction_plugin,
-    ingame_menu::ingame_menu_plugin, level_instantiation::level_instantiation_plugin,
-    menu::menu_plugin, movement::movement_plugin, particles::particle_plugin,
-    player_control::player_control_plugin, shader::shader_plugin,
-    world_interaction::world_interaction_plugin,
-};
 use bevy::prelude::*;
 
 pub(crate) mod bevy_config;
@@ -47,34 +41,34 @@ enum GameState {
 /// Main entrypoint for Foxtrot.
 ///
 /// The top-level plugins are:
-/// - [`bevy_config_plugin`]: Sets up the bevy configuration.
-/// - [`menu_plugin`]: Handles the menu.
-/// - [`movement_plugin`]: Handles the movement of entities.
-/// - [`player_control_plugin`]: Handles the player's control.
-/// - [`world_interaction_plugin`]: Handles the interaction of entities with the world.
-/// - [`level_instantiation_plugin`]: Handles the creation of levels and objects.
-/// - [`file_system_interaction_plugin`]: Handles the loading and saving of games.
-/// - [`shader_plugin`]: Handles the shaders.
-/// - [`dev_plugin`]: Handles the dev tools.
-/// - [`ingame_menu_plugin`]: Handles the ingame menu accessed via ESC.
-/// - [`particle_plugin`]: Handles the particle system.
+/// - [`bevy_config::plugin`]: Sets up the bevy configuration.
+/// - [`menu::plugin`]: Handles the menu.
+/// - [`movement::plugin`]: Handles the movement of entities.
+/// - [`player_control::plugin`]: Handles the player's control.
+/// - [`world_interaction::plugin`]: Handles the interaction of entities with the world.
+/// - [`level_instantiation::plugin`]: Handles the creation of levels and objects.
+/// - [`file_system_interaction::plugin`]: Handles the loading and saving of games.
+/// - [`shader::plugin`]: Handles the shaders.
+/// - [`dev::plugin`]: Handles the dev tools.
+/// - [`ingame_menu::plugin`]: Handles the ingame menu accessed via ESC.
+/// - [`particles::plugin`]: Handles the particle system.
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<GameState>().add_plugins((
-            bevy_config_plugin,
-            menu_plugin,
-            movement_plugin,
-            player_control_plugin,
-            world_interaction_plugin,
-            level_instantiation_plugin,
-            file_system_interaction_plugin,
-            shader_plugin,
-            ingame_menu_plugin,
-            particle_plugin,
+            bevy_config::plugin,
+            menu::plugin,
+            movement::plugin,
+            player_control::plugin,
+            world_interaction::plugin,
+            level_instantiation::plugin,
+            file_system_interaction::plugin,
+            shader::plugin,
+            ingame_menu::plugin,
+            particles::plugin,
             #[cfg(feature = "dev")]
-            dev_plugin,
+            dev::plugin,
         ));
     }
 }

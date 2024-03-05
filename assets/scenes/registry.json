@@ -3807,6 +3807,86 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_gltf_components::GltfProcessed": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {},
+      "required": [],
+      "short_name": "GltfProcessed",
+      "title": "bevy_gltf_components::GltfProcessed",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "color": {
+          "type": {
+            "$ref": "#/$defs/bevy_render::color::Color"
+          }
+        },
+        "strength": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "color",
+        "strength"
+      ],
+      "short_name": "BlenderBackgroundShader",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderBackgroundShader",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "buffer_bias": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "enabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "buffer_bias"
+      ],
+      "short_name": "BlenderLightShadows",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderLightShadows",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "properties": {
+        "cascade_size": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "cascade_size"
+      ],
+      "short_name": "BlenderShadowSettings",
+      "title": "bevy_gltf_components::blender_settings::lighting::BlenderShadowSettings",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_hanabi::ParticleEffect": {
       "additionalProperties": false,
       "isComponent": true,

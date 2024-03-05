@@ -24,6 +24,22 @@ jobs:
       - name: Run cargo test
         run: cargo test
 
+  doc:
+    runs-on: ubuntu-latest
+    env:
+      RUSTDOCFLAGS: "-D warnings"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.CARGO_TOOLCHAIN }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+      - name: Install alsa and udev
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
+      - name: Run cargo doc
+        run: cargo doc --no-deps --document-private-items
+
   lint:
     runs-on: ubuntu-latest
     env:

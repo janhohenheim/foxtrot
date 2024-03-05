@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_xpbd_3d::prelude::*;
 
-/// Sets up the [`RapierPhysicsPlugin`] and [`RapierConfiguration`].
+/// Sets up and configures the XPBD physics.
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(PhysicsPlugins::default())
         // Using the default fixed timestep causes issues on faster (165 Hz) machines.

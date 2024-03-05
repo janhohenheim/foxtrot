@@ -52,7 +52,7 @@ pub(crate) enum IngameCameraKind {
 }
 
 /// Handles the main ingame camera, i.e. not the UI camera in the menu.
-/// Cameras are controlled with [`CameraActions`]. Depending on the distance, a first person,
+/// Cameras are controlled with [`CameraAction`](crate::player_control::actions::CameraAction). Depending on the distance, a first person,
 /// third person or fixed angle camera is used.
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(AtmospherePlugin)

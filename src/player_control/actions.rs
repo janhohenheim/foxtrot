@@ -21,9 +21,7 @@ impl ActionsFrozen {
     }
 }
 
-/// Configures [`Actions`], the resource that holds all player input.
-/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
-
+/// Configures [`Actionlike`]s, the components that hold all player input.
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<PlayerAction>()
         .register_type::<CameraAction>()

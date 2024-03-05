@@ -9,7 +9,7 @@ use bevy_tnua::{
 use std::time::Duration;
 
 #[sysfail(Log<anyhow::Error, Error>)]
-pub(crate) fn play_animations(
+pub(super) fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,

@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use ui::*;
 
 mod cursor;
-pub(crate) mod focus;
+mod focus;
 mod kind;
 mod rig;
 mod ui;
@@ -80,4 +80,4 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub(crate) struct CameraUpdateSystemSet;
+pub(super) struct CameraUpdateSystemSet;

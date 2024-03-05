@@ -47,17 +47,6 @@ pub(crate) enum PlayerAction {
     Sprint,
     Jump,
     Interact,
-    SpeedUpDialog,
-    NumberedChoice1,
-    NumberedChoice2,
-    NumberedChoice3,
-    NumberedChoice4,
-    NumberedChoice5,
-    NumberedChoice6,
-    NumberedChoice7,
-    NumberedChoice8,
-    NumberedChoice9,
-    NumberedChoice0,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
@@ -79,17 +68,6 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
             (PlayerAction::Jump, KeyCode::Space),
             (PlayerAction::Sprint, KeyCode::ShiftLeft),
             (PlayerAction::Interact, KeyCode::KeyE),
-            (PlayerAction::SpeedUpDialog, KeyCode::Space),
-            (PlayerAction::NumberedChoice1, KeyCode::Digit1),
-            (PlayerAction::NumberedChoice2, KeyCode::Digit2),
-            (PlayerAction::NumberedChoice3, KeyCode::Digit3),
-            (PlayerAction::NumberedChoice4, KeyCode::Digit4),
-            (PlayerAction::NumberedChoice5, KeyCode::Digit5),
-            (PlayerAction::NumberedChoice6, KeyCode::Digit6),
-            (PlayerAction::NumberedChoice7, KeyCode::Digit7),
-            (PlayerAction::NumberedChoice8, KeyCode::Digit8),
-            (PlayerAction::NumberedChoice9, KeyCode::Digit9),
-            (PlayerAction::NumberedChoice0, KeyCode::Digit0),
         ])
         .insert(PlayerAction::Move, VirtualDPad::wasd())
         .build(),

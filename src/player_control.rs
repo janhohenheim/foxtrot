@@ -1,6 +1,3 @@
-pub(crate) use crate::player_control::{
-    actions::actions_plugin, camera::camera_plugin, player_embodiment::player_embodiment_plugin,
-};
 use bevy::prelude::*;
 
 pub(crate) mod actions;
@@ -8,10 +5,10 @@ pub(crate) mod camera;
 pub(crate) mod player_embodiment;
 
 /// Handles systems exclusive to the player's control. Is split into the following sub-plugins:
-/// - [`actions_plugin`]: Handles player input such as mouse and keyboard and neatly packs it into an [`actions::Actions`] resource.
-/// - [`camera_plugin`]: Handles camera movement.
-/// - [`player_embodiment_plugin`]: Tells the components from [`super::movement_plugin`] about the desired player [`actions::Actions`].
+/// - [`actions::plugin`]: Handles player input such as mouse and keyboard and neatly packs it into a [`leafwing_input_manager::Actionlike`].
+/// - [`camera::plugin`]: Handles camera movement.
+/// - [`player_embodiment::plugin`]: Tells the components from [`super::movement::plugin`] about the desired [`actions::PlayerAction`]s.
 /// Also handles other systems that change how the player is physically represented in the world.
-pub(crate) fn player_control_plugin(app: &mut App) {
-    app.add_plugins((actions_plugin, camera_plugin, player_embodiment_plugin));
+pub(super) fn plugin(app: &mut App) {
+    app.add_plugins((actions::plugin, camera::plugin, player_embodiment::plugin));
 }

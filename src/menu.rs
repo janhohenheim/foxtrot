@@ -12,7 +12,7 @@ use bevy_egui::{
 
 /// This plugin is responsible for the game menu
 /// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited.
-pub(crate) fn menu_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, setup_menu.run_if(in_state(GameState::Menu)));
 }
 

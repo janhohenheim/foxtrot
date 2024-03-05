@@ -14,7 +14,7 @@ use bevy_registry_export::ExportRegistryPlugin;
 /// - Load the GLTF in Bevy
 /// - React to objects being spawned with a marker component via a query like `Query<Entity, Added<ColliderMarker>>`
 /// - Add the rest of the appropriate components to the entity, e.g. `Collider` and `RigidBody` for a `ColliderMarker`
-pub(crate) fn blender_workflow_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         BlueprintsPlugin {
             library_folder: "scenes/library".into(),

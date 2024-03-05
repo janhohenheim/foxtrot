@@ -8,7 +8,7 @@ use bevy::render::render_resource::{AsBindGroup, ShaderRef};
 /// Handles instantiation of shaders. The shaders can be found in the [`shaders`](https://github.com/janhohenheim/foxtrot/tree/main/assets/shaders) directory.
 /// Shaders are stored in [`Material`]s which can be used on objects by attaching a `Handle<Material>` to an entity.
 /// The handles can be stored and retrieved in the [`ShaderMaterials`] resource.
-pub(crate) fn shader_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_plugins(MaterialPlugin::<GlowyMaterial>::default())
         .add_systems(OnExit(GameState::Loading), setup_shader);
 }

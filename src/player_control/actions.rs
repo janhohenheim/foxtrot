@@ -1,6 +1,7 @@
 use crate::util::criteria::is_frozen;
 use bevy::prelude::*;
-use leafwing_input_manager::{axislike::DualAxisData, plugin::InputManagerSystem, prelude::*};
+use leafwing_input_manager::plugin::InputManagerSystem;
+use leafwing_input_manager::{axislike::DualAxisData, prelude::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(Resource, Default, Reflect, Serialize, Deserialize)]
@@ -20,23 +21,23 @@ impl ActionsFrozen {
     }
 }
 
-/// Configures [`Actions`], the resource that holds all player input.
-/// Add new input in [`set_actions`] and in [`game_control::generate_bindings!`](game_control).
-
-pub(crate) fn actions_plugin(app: &mut App) {
+/// Configures [`Actionlike`]s, the components that hold all player input.
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<PlayerAction>()
         .register_type::<CameraAction>()
         .register_type::<UiAction>()
         .register_type::<ActionsFrozen>()
         .init_resource::<ActionsFrozen>()
-        .add_plugins(InputManagerPlugin::<PlayerAction>::default())
-        .add_plugins(InputManagerPlugin::<CameraAction>::default())
-        .add_plugins(InputManagerPlugin::<UiAction>::default())
+        .add_plugins((
+            InputManagerPlugin::<PlayerAction>::default(),
+            InputManagerPlugin::<CameraAction>::default(),
+            InputManagerPlugin::<UiAction>::default(),
+        ))
         .add_systems(
-            PreUpdate,
+            Update,
             remove_actions_when_frozen
                 .run_if(is_frozen)
-                .after(InputManagerSystem::ManualControl),
+                .in_set(InputManagerSystem::ManualControl),
         );
 }
 
@@ -47,17 +48,6 @@ pub(crate) enum PlayerAction {
     Sprint,
     Jump,
     Interact,
-    SpeedUpDialog,
-    NumberedChoice1,
-    NumberedChoice2,
-    NumberedChoice3,
-    NumberedChoice4,
-    NumberedChoice5,
-    NumberedChoice6,
-    NumberedChoice7,
-    NumberedChoice8,
-    NumberedChoice9,
-    NumberedChoice0,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
@@ -79,17 +69,6 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
             (PlayerAction::Jump, KeyCode::Space),
             (PlayerAction::Sprint, KeyCode::ShiftLeft),
             (PlayerAction::Interact, KeyCode::KeyE),
-            (PlayerAction::SpeedUpDialog, KeyCode::Space),
-            (PlayerAction::NumberedChoice1, KeyCode::Digit1),
-            (PlayerAction::NumberedChoice2, KeyCode::Digit2),
-            (PlayerAction::NumberedChoice3, KeyCode::Digit3),
-            (PlayerAction::NumberedChoice4, KeyCode::Digit4),
-            (PlayerAction::NumberedChoice5, KeyCode::Digit5),
-            (PlayerAction::NumberedChoice6, KeyCode::Digit6),
-            (PlayerAction::NumberedChoice7, KeyCode::Digit7),
-            (PlayerAction::NumberedChoice8, KeyCode::Digit8),
-            (PlayerAction::NumberedChoice9, KeyCode::Digit9),
-            (PlayerAction::NumberedChoice0, KeyCode::Digit0),
         ])
         .insert(PlayerAction::Move, VirtualDPad::wasd())
         .build(),
@@ -116,23 +95,12 @@ pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAc
 
 pub(crate) fn remove_actions_when_frozen(
     mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
-    mut camera_actions_query: Query<&mut ActionState<CameraAction>>,
 ) {
     for mut player_actions in player_actions_query.iter_mut() {
         player_actions
             .action_data_mut_or_default(&PlayerAction::Move)
             .axis_pair = Some(default());
-        player_actions.release(&PlayerAction::Jump);
-        player_actions.release(&PlayerAction::Interact);
-        player_actions.release(&PlayerAction::Sprint);
-    }
-    for mut camera_actions in camera_actions_query.iter_mut() {
-        camera_actions
-            .action_data_mut_or_default(&CameraAction::Orbit)
-            .axis_pair = Some(default());
-        camera_actions
-            .action_data_mut_or_default(&CameraAction::Zoom)
-            .value = default();
+        player_actions.consume_all();
     }
 }
 

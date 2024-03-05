@@ -8,7 +8,7 @@ use bevy_xpbd_3d::prelude::*;
 use leafwing_input_manager::prelude::ActionState;
 
 /// Handles the pause menu accessed while playing the game via ESC.
-pub(crate) fn ingame_menu_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, handle_pause.run_if(in_state(GameState::Playing)));
 }
 

@@ -8,7 +8,6 @@ use crate::{
     world_interaction::dialog::{CurrentDialogTarget, YarnNode},
     GameState,
 };
-use anyhow::Context;
 use bevy::{prelude::*, transform::TransformSystem::TransformPropagate, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;
@@ -19,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 use std::iter;
 
-pub(crate) fn interactions_ui_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<InteractionOpportunity>()
         .init_resource::<InteractionOpportunity>()
         .add_systems(
@@ -139,7 +138,7 @@ fn display_interaction_prompt(
     let Some(opportunity) = interaction_opportunity.0 else {
         return Ok(());
     };
-    let Some(window) = primary_windows.get_single() else {
+    let Ok(window) = primary_windows.get_single() else {
         return Ok(());
     };
 

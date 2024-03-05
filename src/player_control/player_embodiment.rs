@@ -21,7 +21,7 @@ use leafwing_input_manager::prelude::ActionState;
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
 /// This includes movement and rotation that differ from the way the [`MovementPlugin`] already handles characters in general.
-pub(crate) fn player_embodiment_plugin(app: &mut App) {
+pub(super) fn plugin(app: &mut App) {
     app.register_type::<Timer>()
         .register_type::<Player>()
         .add_systems(

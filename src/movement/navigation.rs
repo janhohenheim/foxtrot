@@ -3,7 +3,7 @@ use crate::dev::dev_editor::DevEditorWindow;
 use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
     movement::character_controller::{GeneralMovementSystemSet, Walk},
-    util::trait_extension::{F32Ext, Vec3Ext},
+    util::math_trait_ext::{F32Ext, Vec3Ext},
     GameState,
 };
 #[cfg(feature = "dev")]

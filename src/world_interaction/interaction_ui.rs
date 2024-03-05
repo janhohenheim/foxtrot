@@ -40,7 +40,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Debug, Clone, Eq, PartialEq, Resource, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Resource, Serialize, Deserialize)]
-pub(super) struct InteractionOpportunity(pub(super) Option<Entity>);
+struct InteractionOpportunity(Option<Entity>);
 
 #[sysfail(Log<anyhow::Error, Error>)]
 fn update_interaction_opportunities(

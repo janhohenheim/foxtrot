@@ -93,7 +93,7 @@ pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAc
     }
 }
 
-pub(super) fn remove_actions_when_frozen(
+fn remove_actions_when_frozen(
     mut player_actions_query: Query<&mut ActionState<PlayerAction>>,
 ) {
     for mut player_actions in player_actions_query.iter_mut() {
@@ -104,7 +104,7 @@ pub(super) fn remove_actions_when_frozen(
     }
 }
 
-pub(super) trait DualAxisDataExt {
+pub(crate) trait DualAxisDataExt {
     fn max_normalized(self) -> Option<Vec2>;
 }
 

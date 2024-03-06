@@ -1,4 +1,4 @@
-use crate::movement::character_controller::{AnimationState, CharacterAnimations};
+use crate::movement::character_controller::AnimationState;
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
 use bevy_mod_sysfail::prelude::*;
@@ -8,20 +8,42 @@ use bevy_tnua::{
 };
 use std::time::Duration;
 
+pub(super) fn plugin(app: &mut App) {
+    app.register_type::<CharacterAnimationNames>()
+        .add_systems(Update, play_animations);
+}
+
+#[derive(Debug, Clone, PartialEq, Component, Reflect, Default)]
+#[reflect(Component)]
+struct CharacterAnimationNames {
+    idle: String,
+    walk: String,
+    aerial: String,
+}
+
 #[sysfail(Log<anyhow::Error, Error>)]
-pub(super) fn play_animations(
+fn play_animations(
     mut query: Query<(
+        Entity,
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
-        &CharacterAnimations,
         &AnimationPlayerLink,
         &Animations,
     )>,
+    children: Query<&Children>,
+    animation_names: Query<&CharacterAnimationNames>,
     mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
-    for (mut animating_state, controller, animation_names, link, animations) in query.iter_mut() {
+    for (entity, mut animating_state, controller, link, animations) in query.iter_mut() {
+        let Some(animation_names) = children
+            .iter_descendants(entity)
+            .filter_map(|entity| animation_names.get(entity).ok())
+            .next()
+        else {
+            continue;
+        };
         let mut animation_player = animation_players.get_mut(link.0)?;
         match animating_state.update_by_discriminant({
             let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {

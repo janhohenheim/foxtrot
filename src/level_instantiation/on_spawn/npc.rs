@@ -1,10 +1,9 @@
 use crate::{
     level_instantiation::on_spawn::player,
     movement::{
-        character_controller::{CharacterAnimations, CharacterControllerBundle},
+        character_controller::{CharacterControllerBundle},
         physics::CollisionLayer,
     },
-    world_interaction::dialog::YarnNode,
     GameState,
 };
 use bevy::prelude::*;
@@ -24,21 +23,11 @@ fn spawn(follower: Query<(Entity, &Transform), Added<Npc>>, mut commands: Comman
     for (entity, transform) in follower.iter() {
         commands
             .entity(entity)
-            .insert((
-                CharacterControllerBundle::capsule(
-                    player::HEIGHT,
-                    player::RADIUS,
-                    transform.scale.y,
-                ),
-                Npc,
-                // Use the same names as in Blender
-                CharacterAnimations {
-                    idle: "Idle".into(),
-                    walk: "Walk".into(),
-                    aerial: "Run".into(),
-                },
-                YarnNode("Follower".to_string()),
-            ))
+            .insert((CharacterControllerBundle::capsule(
+                player::HEIGHT,
+                player::RADIUS,
+                transform.scale.y,
+            ),))
             .with_children(|parent| {
                 parent.spawn((
                     Name::new("NPC Dialog Collider"),

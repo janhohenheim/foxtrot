@@ -1,10 +1,7 @@
 use crate::{
     level_instantiation::on_spawn::util::MeshAssetsExt, shader::ShaderMaterials, GameState,
 };
-use bevy::{
-    pbr::{NotShadowCaster, NotShadowReceiver},
-    prelude::*,
-};
+use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
@@ -30,15 +27,11 @@ fn spawn(
         });
         commands
             .entity(entity)
-            .insert((
-                MaterialMeshBundle {
-                    mesh: mesh_handle,
-                    material: materials.glowy.clone(),
-                    ..default()
-                },
-                NotShadowCaster,
-                NotShadowReceiver,
-            ))
+            .insert((MaterialMeshBundle {
+                mesh: mesh_handle,
+                material: materials.glowy.clone(),
+                ..default()
+            },))
             .with_children(|parent| {
                 parent.spawn((PointLightBundle {
                     point_light: PointLight {

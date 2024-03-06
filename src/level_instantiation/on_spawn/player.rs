@@ -1,8 +1,5 @@
 use crate::{
-    movement::{
-        character_controller::{CharacterControllerBundle},
-        physics::CollisionLayer,
-    },
+    movement::{character_controller::CharacterControllerBundle, physics::CollisionLayer},
     particles,
     player_control::actions::{
         create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,

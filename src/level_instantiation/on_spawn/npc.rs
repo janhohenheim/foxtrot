@@ -1,9 +1,6 @@
 use crate::{
     level_instantiation::on_spawn::player,
-    movement::{
-        character_controller::{CharacterControllerBundle},
-        physics::CollisionLayer,
-    },
+    movement::{character_controller::CharacterControllerBundle, physics::CollisionLayer},
     GameState,
 };
 use bevy::prelude::*;

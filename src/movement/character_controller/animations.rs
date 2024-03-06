@@ -1,4 +1,3 @@
-use crate::movement::character_controller::AnimationState;
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
 use bevy_mod_sysfail::prelude::*;
@@ -11,6 +10,16 @@ use std::time::Duration;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CharacterAnimationNames>()
         .add_systems(Update, play_animations);
+}
+
+
+/// Managed by [`play_animations`]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub(crate) enum AnimationState {
+    Standing,
+    Airborne,
+    Walking(f32),
+    Running(f32),
 }
 
 #[derive(Debug, Clone, PartialEq, Component, Reflect, Default)]

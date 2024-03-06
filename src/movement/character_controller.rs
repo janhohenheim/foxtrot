@@ -4,6 +4,7 @@ use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
+pub(crate) use animations::AnimationState;
 
 mod animations;
 mod components;
@@ -26,15 +27,6 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub(crate) struct GeneralMovementSystemSet;
-
-/// Managed by [`play_animations`]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) enum AnimationState {
-    Standing,
-    Airborne,
-    Walking(f32),
-    Running(f32),
-}
 
 fn apply_walking(
     mut character_query: Query<(

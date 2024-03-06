@@ -1,19 +1,19 @@
 use crate::GameState;
+pub(crate) use animation::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
-pub(crate) use animations::AnimationState;
 
-mod animations;
+mod animation;
 mod components;
 mod models;
 
 /// This plugin communicates with the Tnua character controller by propagating settings found in
 /// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((components::plugin, animations::plugin, models::plugin))
+    app.add_plugins((components::plugin, animation::plugin, models::plugin))
         .add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
         .add_systems(
             Update,

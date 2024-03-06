@@ -12,7 +12,6 @@ pub(super) fn plugin(app: &mut App) {
         .add_systems(Update, play_animations);
 }
 
-
 /// Managed by [`play_animations`]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum AnimationState {

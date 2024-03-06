@@ -1,49 +1,32 @@
 use crate::GameState;
-use animations::*;
+pub(crate) use animation::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
-use models::*;
 
-mod animations;
+mod animation;
 mod components;
-
 mod models;
 
 /// This plugin communicates with the Tnua character controller by propagating settings found in
 /// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
-        .register_type::<Jump>()
-        .register_type::<Walk>()
-        .register_type::<CharacterAnimations>()
+    app.add_plugins((components::plugin, animation::plugin, models::plugin))
+        .add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
         .add_systems(
             Update,
-            (apply_jumping, apply_walking, play_animations)
+            (apply_jumping, apply_walking)
                 .chain()
                 .in_set(GeneralMovementSystemSet)
                 .before(PhysicsSet::Prepare)
                 .run_if(in_state(GameState::Playing)),
-        )
-        .add_systems(
-            Update,
-            prepare_models_of_controllers.after(PhysicsSet::Sync),
         );
 }
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub(crate) struct GeneralMovementSystemSet;
-
-/// Managed by [`play_animations`]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) enum AnimationState {
-    Standing,
-    Airborne,
-    Walking(f32),
-    Running(f32),
-}
 
 fn apply_walking(
     mut character_query: Query<(

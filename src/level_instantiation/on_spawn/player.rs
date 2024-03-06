@@ -1,8 +1,5 @@
 use crate::{
-    movement::{
-        character_controller::{CharacterAnimations, CharacterControllerBundle},
-        physics::CollisionLayer,
-    },
+    movement::{character_controller::CharacterControllerBundle, physics::CollisionLayer},
     particles,
     player_control::actions::{
         create_player_action_input_manager_bundle, create_ui_action_input_manager_bundle,
@@ -38,12 +35,6 @@ fn spawn(
             .entity(entity)
             .insert((
                 controller,
-                // Use the same names as in Blender
-                CharacterAnimations {
-                    idle: "Idle".into(),
-                    walk: "Walk".into(),
-                    aerial: "Run".into(),
-                },
                 create_player_action_input_manager_bundle(),
                 create_ui_action_input_manager_bundle(),
             ))

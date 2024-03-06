@@ -13186,7 +13186,7 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::movement::character_controller::animations::CharacterAnimationNames": {
+    "foxtrot::movement::character_controller::animation::CharacterAnimationNames": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -13213,7 +13213,7 @@
         "aerial"
       ],
       "short_name": "CharacterAnimationNames",
-      "title": "foxtrot::movement::character_controller::animations::CharacterAnimationNames",
+      "title": "foxtrot::movement::character_controller::animation::CharacterAnimationNames",
       "type": "object",
       "typeInfo": "Struct"
     },

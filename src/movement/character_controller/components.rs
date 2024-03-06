@@ -5,6 +5,10 @@ use bevy_tnua_xpbd3d::*;
 use bevy_xpbd_3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
+pub(super) fn plugin(app: &mut App) {
+    app.register_type::<Jump>().register_type::<Walk>();
+}
+
 #[derive(Bundle)]
 pub(crate) struct CharacterControllerBundle {
     pub(crate) walking: Walk,
@@ -107,12 +111,4 @@ impl Default for Jump {
             requested: false,
         }
     }
-}
-
-#[derive(Debug, Clone, PartialEq, Component, Reflect, Default)]
-#[reflect(Component)]
-pub(crate) struct CharacterAnimations {
-    pub(crate) idle: String,
-    pub(crate) walk: String,
-    pub(crate) aerial: String,
 }

@@ -13186,7 +13186,7 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::movement::character_controller::components::CharacterAnimations": {
+    "foxtrot::movement::character_controller::animations::CharacterAnimationNames": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
@@ -13212,8 +13212,8 @@
         "walk",
         "aerial"
       ],
-      "short_name": "CharacterAnimations",
-      "title": "foxtrot::movement::character_controller::components::CharacterAnimations",
+      "short_name": "CharacterAnimationNames",
+      "title": "foxtrot::movement::character_controller::animations::CharacterAnimationNames",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -13425,7 +13425,7 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "foxtrot::world_interaction::interactions_ui::InteractionOpportunity": {
+    "foxtrot::world_interaction::interaction_ui::InteractionOpportunity": {
       "isComponent": false,
       "isResource": true,
       "items": false,
@@ -13437,7 +13437,7 @@
         }
       ],
       "short_name": "InteractionOpportunity",
-      "title": "foxtrot::world_interaction::interactions_ui::InteractionOpportunity",
+      "title": "foxtrot::world_interaction::interaction_ui::InteractionOpportunity",
       "type": "array",
       "typeInfo": "TupleStruct"
     },

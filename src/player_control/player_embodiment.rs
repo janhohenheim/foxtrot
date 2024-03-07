@@ -118,7 +118,7 @@ fn handle_camera_kind(
 #[sysfail(Log<anyhow::Error, Error>)]
 fn rotate_to_speaker(
     dialog_target: Res<CurrentDialogTarget>,
-    mut with_player: Query<(&Transform, &mut TnuaController), With<Player>>,
+    mut with_player: Query<(&Transform, &mut TnuaController, &FloatHeight), With<Player>>,
     speakers: Query<&Transform, Without<Player>>,
 ) {
     let Some(dialog_target) = dialog_target.0 else {
@@ -127,11 +127,13 @@ fn rotate_to_speaker(
 
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    let (player_transform, mut controller) = with_player.get_single_mut()?;
+    let (player_transform, mut controller, float_height) = with_player.get_single_mut()?;
     let speaker_transform = speakers.get(dialog_target)?;
-    let direction = speaker_transform.translation - player_transform.translation;
+    let direction = (speaker_transform.translation - player_transform.translation).horizontal();
     controller.basis(TnuaBuiltinWalk {
-        desired_forward: direction,
+        desired_forward: direction.normalize_or_zero(),
+        float_height: float_height.0,
+        cling_distance: 0.1,
         ..Default::default()
     });
 }

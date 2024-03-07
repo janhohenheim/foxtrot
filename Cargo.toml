@@ -57,7 +57,8 @@ bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
 bevy-tnua = "0.15"
 bevy_atmosphere = "0.9"
 warbler_grass = "0.6"
-bevy_gltf_blueprints = "0.9"
+## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/168
+bevy_gltf_blueprints = { version = "0.9", git = "https://github.com/janhohenheim/Blender_bevy_components_workflow", branch = "fix-crashe" }
 bevy_registry_export = "0.3"
 
 [patch."https://github.com/rparrett/bevy_dolly/"]

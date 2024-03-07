@@ -20,9 +20,9 @@ checksum = "c71b1793ee61086797f5c80b6efa2b8ffa6d5dd703f118545808a7f2e27f7046"
 
 [[package]]
 name = "accesskit"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cb10ed32c63247e4e39a8f42e8e30fb9442fbf7878c8e4a9849e7e381619bea"
+checksum = "74a4b14f3d99c1255dcba8f45621ab1a2e7540a0009652d33989005a4d0bfc6b"
 
 [[package]]
 name = "accesskit_consumer"
@@ -877,8 +877,7 @@ dependencies = [
 [[package]]
 name = "bevy_gltf_blueprints"
 version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78a27285bdd0e163aa4ac08875a38a398b7d191b0ce17644604813a439e16a2f"
+source = "git+https://github.com/janhohenheim/Blender_bevy_components_workflow?branch=fix-crashe#86c965e102581779443b7f1df8412e544fbe1417"
 dependencies = [
  "bevy",
  "bevy_gltf_components",
@@ -887,8 +886,7 @@ dependencies = [
 [[package]]
 name = "bevy_gltf_components"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a56e67ac5f1e10e1f66e05f46ccffe73306c5a906df861524a1f337db129a7ec"
+source = "git+https://github.com/janhohenheim/Blender_bevy_components_workflow?branch=fix-crashe#86c965e102581779443b7f1df8412e544fbe1417"
 dependencies = [
  "bevy",
  "ron",
@@ -1687,9 +1685,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.0.89"
+version = "1.0.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0ba8f7aaa012f30d5b2861462f6708eccd49c3c39863fe083a308035f63d723"
+checksum = "8cd6604a82acf3039f1144f54b8eb34e91ffba622051189e71b781822d5ee1f5"
 dependencies = [
  "jobserver",
  "libc",
@@ -2165,9 +2163,9 @@ dependencies = [
 
 [[package]]
 name = "egui_dock"
-version = "0.11.2"
+version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d14beb118bc4d114bb875f14d1d437736be7010939cedf60c9ee002d7d02d09f"
+checksum = "66abdc4b3040c20462deb534b8221ffaea72dc95522330b38daa23dd67b35e53"
 dependencies = [
  "duplicate",
  "egui",
@@ -4730,9 +4728,9 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.30.6"
+version = "0.30.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6746919caf9f2a85bff759535664c060109f21975c5ac2e8652e60102bd4d196"
+checksum = "0c385888ef380a852a16209afc8cfad22795dd8873d69c9a14d2e2088f118d18"
 dependencies = [
  "cfg-if",
  "core-foundation-sys",

@@ -10,9 +10,7 @@
 //! Feel free to [file an issue](https://github.com/janhohenheim/foxtrot/issues/new) if you need help!
 //! The docs are organized such that you can click through the plugins to explore the systems at play.
 
-#[cfg(feature = "dev")]
 use bevy::prelude::*;
-
 mod bevy_config;
 #[cfg(feature = "dev")]
 mod dev;

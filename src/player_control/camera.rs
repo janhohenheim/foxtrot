@@ -9,6 +9,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
+use bevy::transform::TransformSystem;
 use bevy_atmosphere::prelude::AtmospherePlugin;
 use bevy_dolly::prelude::Dolly;
 use bevy_xpbd_3d::PhysicsSet;
@@ -76,6 +77,7 @@ pub(super) fn plugin(app: &mut App) {
                 .chain()
                 .in_set(CameraUpdateSystemSet)
                 .after(PhysicsSet::Sync)
+                .before(TransformSystem::TransformPropagate)
                 .run_if(in_state(GameState::Playing))
                 .run_if(any_with_component::<Player>),
         );

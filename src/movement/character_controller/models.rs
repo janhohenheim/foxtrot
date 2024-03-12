@@ -1,4 +1,6 @@
 use crate::movement::character_controller::FloatHeight;
+use crate::GameState;
+use bevy::transform::TransformSystem;
 use bevy::{prelude::*, render::view::NoFrustumCulling};
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
@@ -6,7 +8,10 @@ use bevy_xpbd_3d::prelude::*;
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
-        prepare_models_of_controllers.after(PhysicsSet::Sync),
+        prepare_models_of_controllers
+            .after(PhysicsSet::Sync)
+            .before(TransformSystem::TransformPropagate)
+            .run_if(in_state(GameState::Playing)),
     );
 }
 
@@ -18,7 +23,7 @@ fn prepare_models_of_controllers(
     meshes: Query<&Handle<Mesh>>,
 ) {
     for (entity, transform, float_height) in controllers.iter() {
-        // Shift models down because XPBD will make controllers float,
+        // Shift models down because Tnua will make controllers float,
         // but our models definitely should not be floating!
         let offset = (float_height.0 / transform.scale.y) * 2.;
         let children = children_q.get(entity).unwrap();

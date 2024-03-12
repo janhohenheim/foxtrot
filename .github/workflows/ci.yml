@@ -56,5 +56,8 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
       - name: Check format
         run: cargo fmt --all -- --check
-      - name: Run clippy with native dev features
+      - name: Run clippy with dev features
         run: cargo clippy
+      - name: Run clippy without dev features
+        run: cargo clippy --no-default-features
+

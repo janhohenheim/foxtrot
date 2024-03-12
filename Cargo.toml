@@ -45,8 +45,7 @@ bevy_egui = "0.25"
 oxidized_navigation = { version = "0.10", features = ["xpbd", "debug_draw"] }
 iyes_progress = "0.11"
 leafwing-input-manager = { version = "0.13", features = ["egui"] }
-## Waiting for https://github.com/BlackPhlox/bevy_dolly/pull/51
-bevy_dolly = { git = "https://github.com/rparrett/bevy_dolly/", branch = "bevy-0.13" }
+bevy_dolly = "0.0.3"
 bevy_mod_sysfail = "7"
 bevy_editor_pls = { version = "0.8.1", optional = true }
 bevy_hanabi = "0.10"
@@ -60,10 +59,6 @@ warbler_grass = "0.6"
 ## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/168
 bevy_gltf_blueprints = { version = "0.9", git = "https://github.com/janhohenheim/Blender_bevy_components_workflow", branch = "fix-crashe" }
 bevy_registry_export = "0.3"
-
-[patch."https://github.com/rparrett/bevy_dolly/"]
-## Waiting for https://github.com/BlackPhlox/bevy_dolly/pull/51
-dolly = { git = "https://github.com/janhohenheim/dolly", branch = "bevy-0.13" }
 
 [build-dependencies]
 embed-resource = "2"

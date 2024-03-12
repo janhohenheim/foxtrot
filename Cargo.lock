@@ -680,11 +680,13 @@ dependencies = [
 
 [[package]]
 name = "bevy_dolly"
-version = "0.0.2"
-source = "git+https://github.com/rparrett/bevy_dolly/?branch=bevy-0.13#5b49c824946d83c249f9456a9a75a90044868863"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7360942ebba92bdcb60e583fae786d26a969c535999eb090bdcda30b590f17b8"
 dependencies = [
  "bevy",
- "dolly",
+ "bevy_math",
+ "bevy_transform",
  "leafwing-input-manager",
 ]
 
@@ -2103,15 +2105,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "330c60081dcc4c72131f8eb70510f1ac07223e5d4163db481a04a0befcffa412"
 dependencies = [
  "libloading 0.8.3",
-]
-
-[[package]]
-name = "dolly"
-version = "0.4.2"
-source = "git+https://github.com/janhohenheim/dolly?branch=bevy-0.13#35292c650677456839fb616b84f7da544065e403"
-dependencies = [
- "bevy_math",
- "bevy_transform",
 ]
 
 [[package]]

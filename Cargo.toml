@@ -17,6 +17,7 @@ dev = [
     "dep:bevy_editor_pls",
     "bevy/file_watcher",
     "bevy/dynamic_linking",
+    "oxidized_navigation/debug_draw",
 ]
 tracing = ["bevy/trace_chrome"]
 
@@ -28,9 +29,9 @@ features = [
 
 [dependencies]
 # keep the following two in sync with Bevy's dependencies
-## https://github.com/bevyengine/bevy/blob/v0.13.0/crates/bevy_winit/Cargo.toml#L32
+## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_winit/Cargo.toml#L32
 winit = { version = "0.29", default-features = false }
-## https://github.com/bevyengine/bevy/blob/v0.13.0/crates/bevy_render/Cargo.toml#L61
+## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_render/Cargo.toml#L61
 image = { version = "0.24", default-features = false }
 
 # generic dependencies
@@ -42,7 +43,7 @@ bevy_kira_audio = "0.19"
 bevy_asset_loader = { version = "0.20", features = ["progress_tracking", "standard_dynamic_assets"] }
 bevy_common_assets = { version = "0.10", features = ["ron", "toml"] }
 bevy_egui = "0.25"
-oxidized_navigation = { version = "0.10", features = ["xpbd", "debug_draw"] }
+oxidized_navigation = { version = "0.10", features = ["xpbd"] }
 iyes_progress = "0.11"
 leafwing-input-manager = { version = "0.13", features = ["egui"] }
 bevy_dolly = "0.0.3"
@@ -56,8 +57,7 @@ bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
 bevy-tnua = "0.15"
 bevy_atmosphere = "0.9"
 warbler_grass = "0.6"
-## Waiting for https://github.com/kaosat-dev/Blender_bevy_components_workflow/pull/168
-bevy_gltf_blueprints = { version = "0.9", git = "https://github.com/janhohenheim/Blender_bevy_components_workflow", branch = "fix-crashe" }
+bevy_gltf_blueprints = "0.10"
 bevy_registry_export = "0.3"
 
 [build-dependencies]

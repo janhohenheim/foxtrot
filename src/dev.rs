@@ -39,7 +39,7 @@ fn default_editor_controls() -> bevy_editor_pls::controls::EditorControls {
     editor_controls.insert(
         Action::PlayPauseEditor,
         Binding {
-            input: UserInput::Single(Button::Keyboard(KeyCode::KeyG)),
+            input: UserInput::Single(Button::Keyboard(KeyCode::KeyQ)),
             conditions: vec![BindingCondition::ListeningForText(false)],
         },
     );

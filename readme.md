@@ -10,7 +10,7 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 - Physics via [`bevy_xpbd`](https://crates.io/crates/bevy_xpbd_3d)
 - Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
 - Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
-- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) bound to 'G'
+- [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) bound to 'Q'
 - Custom editor found in the windows selection for `bevy_editor_pls`.
 - Animations
 - Dialogs via [`Yarn Spinner for Rust`](https://crates.io/crates/bevy_yarnspinner)

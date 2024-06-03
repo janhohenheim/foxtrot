@@ -14,7 +14,7 @@ mod models;
 /// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((components::plugin, animation::plugin, models::plugin))
-        .add_plugins((TnuaXpbd3dPlugin, TnuaControllerPlugin))
+        .add_plugins((TnuaXpbd3dPlugin::default(), TnuaControllerPlugin::default()))
         .add_systems(
             Update,
             (apply_jumping, apply_walking)

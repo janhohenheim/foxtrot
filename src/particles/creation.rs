@@ -1,21 +1,18 @@
 use crate::{level_instantiation::on_spawn::player, particles::SprintingParticle};
-use bevy::{pbr::NotShadowReceiver, prelude::*};
+use bevy::pbr::NotShadowReceiver;
+use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 
 pub(crate) fn create_sprint_particle_bundle(effects: &mut Assets<EffectAsset>) -> impl Bundle {
-    let sprinting = create_sprinting_effect(effects);
     (
         Name::new("Sprinting particle"),
         SprintingParticle,
-        ParticleEffectBundle {
-            effect: sprinting,
-            ..default()
-        },
+        ParticleEffectBundle::new(create_sprinting_effect(effects)),
         NotShadowReceiver,
     )
 }
 
-fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect {
+fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let mut color_gradient = Gradient::new();
     color_gradient.add_key(0.0, Vec4::new(1.2, 1.0, 1.0, 0.6));
     color_gradient.add_key(0.1, Vec4::new(1.2, 1.0, 1.0, 0.4));
@@ -49,27 +46,25 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect 
     };
     let accel_modifier = AccelModifier::new(module.lit(Vec3::new(0., 1., 0.)));
 
-    ParticleEffect::new(
-        effects.add(
-            EffectAsset::new(
-                100,
-                Spawner::rate(10.0.into()).with_starts_active(false),
-                module,
-            )
-            .with_name("Sprint")
-            .init(position_circle_modifier)
-            .init(velocity_sphere_modifier)
-            .init(lifetime)
-            .update(linear_drag_modifier)
-            .render(orient_modifier)
-            .update(accel_modifier)
-            .render(ColorOverLifetimeModifier {
-                gradient: color_gradient,
-            })
-            .render(SizeOverLifetimeModifier {
-                gradient: size_gradient,
-                screen_space_size: false,
-            }),
-        ),
+    effects.add(
+        EffectAsset::new(
+            100,
+            Spawner::rate(10.0.into()).with_starts_active(false),
+            module,
+        )
+        .with_name("Sprint")
+        .init(position_circle_modifier)
+        .init(velocity_sphere_modifier)
+        .init(lifetime)
+        .update(linear_drag_modifier)
+        .render(orient_modifier)
+        .update(accel_modifier)
+        .render(ColorOverLifetimeModifier {
+            gradient: color_gradient,
+        })
+        .render(SizeOverLifetimeModifier {
+            gradient: size_gradient,
+            screen_space_size: false,
+        }),
     )
 }

@@ -1,4 +1,6 @@
 use anyhow::Context;
+use bevy::render::settings::{WgpuFeatures, WgpuSettings};
+use bevy::render::RenderPlugin;
 use bevy::{prelude::*, window::PrimaryWindow, winit::WinitWindows};
 use bevy_mod_sysfail::prelude::*;
 use std::io::Cursor;
@@ -6,17 +8,31 @@ use winit::window::Icon;
 
 /// Overrides the default Bevy plugins and configures things like the screen settings.
 pub(super) fn plugin(app: &mut App) {
-    let default_plugins = DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-            title: "Foxtrot".to_string(),
-            ..default()
-        }),
-        ..default()
-    });
-    app.insert_resource(Msaa::Sample4)
-        .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
-        .add_plugins(default_plugins)
-        .add_systems(Startup, set_window_icon);
+    app.add_plugins(
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Foxtrot".to_string(),
+                    ..default()
+                }),
+                ..default()
+            })
+            .set(RenderPlugin {
+                render_creation: create_wgpu_settings().into(),
+                synchronous_pipeline_compilation: false,
+            }),
+    )
+    .insert_resource(Msaa::Sample4)
+    .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+    .add_systems(Startup, set_window_icon);
+}
+
+fn create_wgpu_settings() -> WgpuSettings {
+    let mut wgpu_settings = WgpuSettings::default();
+    wgpu_settings
+        .features
+        .set(WgpuFeatures::VERTEX_WRITABLE_STORAGE, true);
+    wgpu_settings
 }
 
 // Sets the icon on Windows and X11

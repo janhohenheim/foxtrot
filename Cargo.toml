@@ -42,19 +42,19 @@ anyhow = "1"
 bevy_kira_audio = "0.19"
 bevy_asset_loader = { version = "0.20", features = ["progress_tracking", "standard_dynamic_assets"] }
 bevy_common_assets = { version = "0.10", features = ["ron", "toml"] }
-bevy_egui = "0.25"
+bevy_egui = "0.25" # version governed by bevy_editor_pls and leafwing-input-manager
 oxidized_navigation = { version = "0.10", features = ["xpbd"] }
 iyes_progress = "0.11"
 leafwing-input-manager = { version = "0.13", features = ["egui"] }
 bevy_dolly = "0.0.3"
 bevy_mod_sysfail = "7"
 bevy_editor_pls = { version = "0.8.1", optional = true }
-bevy_hanabi = "0.10"
+bevy_hanabi = "0.11"
 bevy_yarnspinner = "0.2"
 bevy_yarnspinner_example_dialogue_view = "0.2.1"
-bevy-tnua-xpbd3d = "0.2"
+bevy-tnua-xpbd3d = "0.4"
 bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
-bevy-tnua = "0.15"
+bevy-tnua = "0.18"
 bevy_atmosphere = "0.9"
 warbler_grass = "0.6"
 bevy_gltf_blueprints = "0.10"

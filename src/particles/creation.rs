@@ -52,7 +52,7 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> ParticleEffect 
     ParticleEffect::new(
         effects.add(
             EffectAsset::new(
-                100,
+                vec![100],
                 Spawner::rate(10.0.into()).with_starts_active(false),
                 module,
             )

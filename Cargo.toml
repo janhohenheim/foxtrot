@@ -86,3 +86,7 @@ strip = true
 nalgebra-macros = { git = "https://github.com/bash/nalgebra.git", branch = "backport-syn-update" } # https://github.com/dimforge/nalgebra/pull/1342
 derive_more = { git = "https://github.com/bash/derive_more.git", branch = "backport-syn-update" }
 egui_dock = { git = "https://github.com/bash/egui_dock.git", branch = "backport-syn-update" }
+
+# These patches mainly remove strum and are included in bevy_yarnspinner 0.3.0-rc
+bevy_yarnspinner = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }
+bevy_yarnspinner_example_dialogue_view = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }

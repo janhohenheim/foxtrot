@@ -1465,8 +1465,7 @@ dependencies = [
 [[package]]
 name = "bevy_yarnspinner"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b31a28cad3a545ebcac1347e107e06c6bc81228841fe1b60d94db82c6e6d31ad"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "anyhow",
  "bevy",
@@ -1481,8 +1480,7 @@ dependencies = [
 [[package]]
 name = "bevy_yarnspinner_example_dialogue_view"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79ef048b716e03413534048f307310d39783659755bceb4b7f9f8360c1c67581"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "bevy",
  "bevy_yarnspinner",
@@ -2755,12 +2753,6 @@ dependencies = [
  "widestring",
  "winapi",
 ]
-
-[[package]]
-name = "heck"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "hermit-abi"
@@ -4451,12 +4443,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rustversion"
-version = "1.0.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "955d28af4278de8121b7ebeb796b6a45735dc01436d898801014aced2773a3d6"
-
-[[package]]
 name = "ruzstd"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4662,25 +4648,6 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
-
-[[package]]
-name = "strum"
-version = "0.26.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d8cec3501a5194c432b2b7976db6b7d10ec95c253208b45f83f7136aa985e29"
-
-[[package]]
-name = "strum_macros"
-version = "0.26.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn 2.0.66",
-]
 
 [[package]]
 name = "svg_fmt"
@@ -5934,8 +5901,7 @@ checksum = "791978798f0597cfc70478424c2b4fdc2b7a8024aaff78497ef00f24ef674193"
 [[package]]
 name = "yarnspinner"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d39473a37f93e84dadb0be4c3df88d7a614e90df98bb852b847c7624e6794e38"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "log",
  "yarnspinner_compiler",
@@ -5946,8 +5912,7 @@ dependencies = [
 [[package]]
 name = "yarnspinner_compiler"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d9f57c0f8d0754b98c83dbd25b69c0015755486428d9726aefe84324a5d235a"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "annotate-snippets",
  "antlr-rust",
@@ -5957,34 +5922,24 @@ dependencies = [
  "rand",
  "regex",
  "serde",
- "strum",
- "strum_macros",
- "thiserror",
  "yarnspinner_core",
 ]
 
 [[package]]
 name = "yarnspinner_core"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fe49910e13e0254e50201a80fb450e5d6382feee3b09c44bb3914d32e356600"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "bevy",
- "bytes",
- "paste",
  "prost",
  "serde",
- "strum",
- "strum_macros",
- "thiserror",
  "yarnspinner_macros",
 ]
 
 [[package]]
 name = "yarnspinner_macros"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8ae8c98bd97e554fe9a4c593a1438492611d93a0b92075467984167cd896b30"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5994,8 +5949,7 @@ dependencies = [
 [[package]]
 name = "yarnspinner_runtime"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcc42ff1081804df3e43f238076294223d77266dbe99adaf835b5907a3b1b6a4"
+source = "git+https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git?rev=c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30#c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30"
 dependencies = [
  "bevy",
  "fixed_decimal",
@@ -6005,7 +5959,6 @@ dependencies = [
  "once_cell",
  "regex",
  "serde",
- "thiserror",
  "unicode-normalization",
  "unicode-segmentation",
  "yarnspinner_core",

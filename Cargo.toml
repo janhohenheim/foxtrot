@@ -84,7 +84,7 @@ strip = true
 # * com-macros and com_macros_support (unlikely to receive updates)
 # * windows-implement and windows-interface (updated to syn 2 in Bevy 0.14.0-rc.2)
 nalgebra-macros = { git = "https://github.com/bash/nalgebra.git", branch = "backport-syn-update" } # https://github.com/dimforge/nalgebra/pull/1342
-derive_more = { git = "https://github.com/bash/derive_more.git", branch = "backport-syn-update" }
+derive_more = { git = "https://github.com/bash/derive_more.git", branch = "backport-syn-update" } # https://github.com/JelteF/derive_more/issues/368
 egui_dock = { git = "https://github.com/bash/egui_dock.git", branch = "backport-syn-update" }
 
 # These patches mainly remove strum and are included in bevy_yarnspinner 0.3.0-rc

@@ -31,7 +31,7 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Remove build script
         run: |
           rm build.rs
@@ -81,7 +81,7 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -116,7 +116,7 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:

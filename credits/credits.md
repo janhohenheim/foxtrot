@@ -15,5 +15,5 @@
 
 ## Template
 
-- Foxtrot template: MIT or Apache 2.0; made by Jan Hohenheim https://github.com/janhohenheim/foxtrot
+- Foxtrot template: MIT OR Apache-2.0 OR CC0-1.0; made by Jan Hohenheim https://github.com/janhohenheim/foxtrot
 - Adapted from bevy_game_template: CC0 1.0; https://github.com/NiklasEi/bevy_game_template 

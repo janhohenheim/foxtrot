@@ -53,6 +53,6 @@ fn spawn(
         .entity(parent)
         .remove::<Collider>()
         // If this were on the descendant, the collider would behave as if its local transform were its global transform
-        // ¯\_ (ツ)_/¯
+        // ¯\_(ツ)_/¯
         .insert(RigidBody::Static);
 }

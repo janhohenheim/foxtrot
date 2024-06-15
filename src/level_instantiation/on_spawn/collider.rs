@@ -5,6 +5,7 @@ use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::{Collider as XpbdCollider, *};
 use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
+use std::iter;
 
 #[derive(Debug, Clone, Eq, PartialEq, Component, Reflect, Serialize, Deserialize, Default)]
 #[reflect(Component, Serialize, Deserialize)]

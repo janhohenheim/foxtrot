@@ -30,34 +30,29 @@ fn spawn(
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
-    for entity in collider_marker.iter() {
-        let mut all_children_loaded = true;
-        for child in children.iter_descendants(entity) {
-            if let Ok(mesh_handle) = mesh_handles.get(child) {
-                if let Some(mesh) = meshes.get(mesh_handle) {
-                    let global_transform = global_transforms
-                        .get(child)
-                        .context("Failed to get global transform while reading collider")?
-                        .compute_transform();
-                    let scaled_mesh = mesh.clone().scaled_by(global_transform.scale);
-                    let collider = XpbdCollider::trimesh_from_mesh(&scaled_mesh)
-                        .context("Failed to create collider from mesh")?;
-                    commands.entity(child).insert((
-                        collider,
-                        RigidBody::Static,
-                        CollisionLayers::new(
-                            [CollisionLayer::Terrain, CollisionLayer::CameraObstacle],
-                            [CollisionLayer::Character],
-                        ),
-                        NavMeshAffector,
-                    ));
-                } else {
-                    all_children_loaded = false;
-                }
-            }
-        }
-        if all_children_loaded {
-            commands.entity(entity).remove::<Collider>();
+    for parent in collider_marker.iter() {
+        for child in iter::once(entity).chain(children.iter_descendants(entity)) {
+            let Ok(mesh_handle) = mesh_handles.get(child) else {
+                continue;
+            };
+            // Cannot fail: we already load all the meshes at startup.
+            let mesh = meshes.get(mesh_handle).unwrap();
+            let collider = XpbdCollider::trimesh_from_mesh(&scaled_mesh)
+                .context("Failed to create collider from mesh")?;
+            commands.entity(child).insert((
+                collider,
+                CollisionLayers::new(
+                    [CollisionLayer::Terrain, CollisionLayer::CameraObstacle],
+                    [CollisionLayer::Character],
+                ),
+                NavMeshAffector,
+            ));
         }
     }
+    commands
+        .entity(parent)
+        .remove::<Collider>()
+        // If this were on the descendant, the collider would behave as if its local transform were its global transform
+        // ¯\_ (ツ)_/¯
+        .insert(RigidBody::Static);
 }

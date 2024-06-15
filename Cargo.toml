@@ -3,7 +3,7 @@ authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 edition = "2021"
 name = "foxtrot"
 version = "0.5.0"
-license = "MIT OR Apache-2.0"
+license = "MIT OR Apache-2.0 OR CC0-1.0"
 exclude = ["assets/"]
 description = "The all-in-one Bevy 3D game template for desktop."
 repository = "https://github.com/janhohenheim/foxtrot"
@@ -49,7 +49,7 @@ leafwing-input-manager = { version = "0.13", features = ["egui"] }
 bevy_dolly = "0.0.3"
 bevy_mod_sysfail = "7"
 bevy_editor_pls = { version = "0.8.1", optional = true }
-bevy_hanabi = "0.10" # Not on 0.11 yet because of Hanabi bugs ("Failed to find update pipeline")
+bevy_hanabi = { version = "0.10", default-features = false, features = ["3d"] } # Not on 0.11 yet because of Hanabi bugs ("Failed to find update pipeline")
 bevy_yarnspinner = "0.2"
 bevy_yarnspinner_example_dialogue_view = "0.2.1"
 bevy-tnua-xpbd3d = "0.4"
@@ -77,3 +77,15 @@ opt-level = 3
 lto = true
 codegen-units = 1
 strip = true
+
+[patch.crates-io]
+# Patches that replace syn 1 with syn 2
+# Note that windows still uses syn 1 through
+# * com-macros and com_macros_support (unlikely to receive updates)
+# * windows-implement and windows-interface (updated to syn 2 in Bevy 0.14.0-rc.2)
+nalgebra-macros = { git = "https://github.com/bash/nalgebra.git", branch = "backport-syn-update" } # https://github.com/dimforge/nalgebra/pull/1342
+egui_dock = { git = "https://github.com/bash/egui_dock.git", branch = "backport-syn-update" } # This change is not PR-worthy. Instead, I made a PR to the actually affected dependency `duplicate`: https://github.com/Emoun/duplicate/pull/62
+
+# These patches mainly remove strum and are included in bevy_yarnspinner 0.3.0-rc
+bevy_yarnspinner = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }
+bevy_yarnspinner_example_dialogue_view = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }

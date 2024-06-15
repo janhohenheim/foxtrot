@@ -32,7 +32,7 @@ fn spawn(
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for parent in collider_marker.iter() {
-        for child in iter::once(entity).chain(children.iter_descendants(entity)) {
+        for child in iter::once(parent).chain(children.iter_descendants(entity)) {
             let Ok(mesh_handle) = mesh_handles.get(child) else {
                 continue;
             };

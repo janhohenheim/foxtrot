@@ -26,8 +26,7 @@ fn spawn(
     mut commands: Commands,
     children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
-    mesh_handles: Query<&Handle<Mesh>, Without<RigidBody>>,
-    global_transforms: Query<&GlobalTransform>,
+    mesh_handles: Query<&Handle<Mesh>>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();

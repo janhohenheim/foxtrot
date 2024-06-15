@@ -12,12 +12,8 @@ use std::iter;
 struct Collider;
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<Collider>().add_systems(
-        Update,
-        spawn
-            .after(TransformPropagate)
-            .run_if(in_state(GameState::Playing)),
-    );
+    app.register_type::<Collider>()
+        .add_systems(Update, spawn.run_if(in_state(GameState::Playing)));
 }
 
 #[sysfail(Log<anyhow::Error, Error>)]

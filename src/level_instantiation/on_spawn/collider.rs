@@ -32,13 +32,13 @@ fn spawn(
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for parent in collider_marker.iter() {
-        for child in iter::once(parent).chain(children.iter_descendants(entity)) {
+        for child in iter::once(parent).chain(children.iter_descendants(parent)) {
             let Ok(mesh_handle) = mesh_handles.get(child) else {
                 continue;
             };
             // Cannot fail: we already load all the meshes at startup.
             let mesh = meshes.get(mesh_handle).unwrap();
-            let collider = XpbdCollider::trimesh_from_mesh(&scaled_mesh)
+            let collider = XpbdCollider::trimesh_from_mesh(mesh)
                 .context("Failed to create collider from mesh")?;
             commands.entity(child).insert((
                 collider,

@@ -1,6 +1,5 @@
 use crate::{
     file_system_interaction::asset_loading::GltfAssets,
-    level_instantiation::on_spawn::Player,
     player_control::{actions::create_camera_action_input_manager_bundle, camera::IngameCamera},
     GameState,
 };
@@ -37,4 +36,3 @@ fn spawn_level(mut commands: Commands, models: Res<Assets<Gltf>>, gltf_assets: R
         create_camera_action_input_manager_bundle(),
     ));
 }
-

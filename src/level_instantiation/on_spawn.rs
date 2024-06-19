@@ -2,7 +2,6 @@ use bevy::prelude::*;
 
 pub(crate) use self::{ground::Ground, npc::Npc, player::Player};
 
-mod camera;
 mod collider;
 mod grass;
 mod ground;
@@ -19,7 +18,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         grass::plugin,
         ground::plugin,
-        camera::plugin,
         orb::plugin,
         player::plugin,
         npc::plugin,

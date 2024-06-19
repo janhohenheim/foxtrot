@@ -4025,11 +4025,6 @@
           "type": {
             "$ref": "#/$defs/core::option::Option<bevy_hanabi::spawn::Spawner>"
           }
-        },
-        "z_layer_2d": {
-          "type": {
-            "$ref": "#/$defs/core::option::Option<f32>"
-          }
         }
       },
       "required": [
@@ -13245,17 +13240,6 @@
       "title": "f64",
       "type": "float",
       "typeInfo": "Value"
-    },
-    "foxtrot::level_instantiation::on_spawn::camera::IngameCameraMarker": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "properties": {},
-      "required": [],
-      "short_name": "IngameCameraMarker",
-      "title": "foxtrot::level_instantiation::on_spawn::camera::IngameCameraMarker",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "foxtrot::level_instantiation::on_spawn::collider::Collider": {
       "additionalProperties": false,

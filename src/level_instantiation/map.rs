@@ -26,6 +26,7 @@ fn spawn_level(mut commands: Commands, models: Res<Assets<Gltf>>, gltf_assets: R
         Camera3dBundle::default(),
         IngameCamera::default(),
         AtmosphereCamera::default(),
+        IsDefaultUiCamera,
         Rig::builder()
             .with(Position::default())
             .with(YawPitch::default())

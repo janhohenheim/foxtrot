@@ -896,15 +896,15 @@ dependencies = [
 
 [[package]]
 name = "bevy_hanabi"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f63879a7274ed0d629f7240b0acc4c262aca0276503bdc182552b0f69cba163"
+version = "0.11.0"
+source = "git+https://github.com/djeedai/bevy_hanabi/?rev=b9a98bdf51be07f8127d2f16b68f1eb86259242f#b9a98bdf51be07f8127d2f16b68f1eb86259242f"
 dependencies = [
  "anyhow",
  "bevy",
  "bitflags 2.5.0",
  "bytemuck",
  "copyless",
+ "fixedbitset",
  "naga",
  "naga_oil",
  "rand",
@@ -3255,7 +3255,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c2a198fb6b0eada2a8df47933734e6d35d350665a33a3593d7164fa52c75c19"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.5",
 ]
 
 [[package]]
@@ -5328,7 +5328,7 @@ dependencies = [
  "js-sys",
  "log",
  "naga",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.3",
  "profiling",
  "raw-window-handle 0.6.2",
  "smallvec",
@@ -5356,7 +5356,7 @@ dependencies = [
  "log",
  "naga",
  "once_cell",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.3",
  "profiling",
  "raw-window-handle 0.6.2",
  "rustc-hash",
@@ -5398,7 +5398,7 @@ dependencies = [
  "ndk-sys",
  "objc",
  "once_cell",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.3",
  "profiling",
  "range-alloc",
  "raw-window-handle 0.6.2",

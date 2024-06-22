@@ -4020,11 +4020,6 @@
           "type": {
             "$ref": "#/$defs/bevy_asset::handle::Handle<bevy_hanabi::asset::EffectAsset>"
           }
-        },
-        "spawner": {
-          "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_hanabi::spawn::Spawner>"
-          }
         }
       },
       "required": [
@@ -4045,9 +4040,9 @@
             "$ref": "#/$defs/bevy_hanabi::asset::AlphaMode"
           }
         },
-        "capacity": {
+        "capacities": {
           "type": {
-            "$ref": "#/$defs/u32"
+            "$ref": "#/$defs/alloc::vec::Vec<u32>"
           }
         },
         "module": {
@@ -4063,11 +4058,6 @@
         "name": {
           "type": {
             "$ref": "#/$defs/alloc::string::String"
-          }
-        },
-        "properties": {
-          "type": {
-            "$ref": "#/$defs/alloc::vec::Vec<bevy_hanabi::properties::Property>"
           }
         },
         "simulation_condition": {
@@ -4093,12 +4083,11 @@
       },
       "required": [
         "name",
-        "capacity",
+        "capacities",
         "spawner",
         "z_layer_2d",
         "simulation_space",
         "simulation_condition",
-        "properties",
         "motion_integration",
         "module",
         "alpha_mode"
@@ -9286,6 +9275,85 @@
       ],
       "short_name": "Time<()>",
       "title": "bevy_time::time::Time<()>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_time::time::Time<bevy_hanabi::time::EffectSimulation>": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": true,
+      "properties": {
+        "context": {
+          "type": {
+            "$ref": "#/$defs/bevy_hanabi::time::EffectSimulation"
+          }
+        },
+        "delta": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "delta_seconds": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "delta_seconds_f64": {
+          "type": {
+            "$ref": "#/$defs/f64"
+          }
+        },
+        "elapsed": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "elapsed_seconds": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "elapsed_seconds_f64": {
+          "type": {
+            "$ref": "#/$defs/f64"
+          }
+        },
+        "elapsed_seconds_wrapped": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "elapsed_seconds_wrapped_f64": {
+          "type": {
+            "$ref": "#/$defs/f64"
+          }
+        },
+        "elapsed_wrapped": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        },
+        "wrap_period": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::Duration"
+          }
+        }
+      },
+      "required": [
+        "context",
+        "wrap_period",
+        "delta",
+        "delta_seconds",
+        "delta_seconds_f64",
+        "elapsed",
+        "elapsed_seconds",
+        "elapsed_seconds_f64",
+        "elapsed_wrapped",
+        "elapsed_seconds_wrapped",
+        "elapsed_seconds_wrapped_f64"
+      ],
+      "short_name": "Time<EffectSimulation>",
+      "title": "bevy_time::time::Time<bevy_hanabi::time::EffectSimulation>",
       "type": "object",
       "typeInfo": "Struct"
     },

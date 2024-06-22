@@ -9,7 +9,7 @@ use bevy_registry_export::ExportRegistryPlugin;
 /// The basic workflow is as follows:
 /// - Create a scene in Blender
 /// - Add marker components to objects via the Bevy Components Addon, e.g. `ColliderMarker`
-/// (If using an old version of the plugin, make sure to turn the legacy mode *off*)
+///     (If using an old version of the plugin, make sure to turn the legacy mode *off*)
 /// - Export the scene as a GLTF
 /// - Load the GLTF in Bevy
 /// - React to objects being spawned with a marker component via a query like `Query<Entity, Added<ColliderMarker>>`

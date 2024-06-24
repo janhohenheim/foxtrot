@@ -3474,8 +3474,9 @@ dependencies = [
 
 [[package]]
 name = "nalgebra-macros"
-version = "0.2.1"
-source = "git+https://github.com/bash/nalgebra.git?branch=backport-syn-update#beacb25173aeaa868992b55804e9718e7b5fa1da"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "254a5372af8fc138e36684761d3c0cdb758a4410e938babcff1c860ce14ddbfc"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -1,8 +1,30 @@
-pub(crate) mod criteria;
-pub(crate) mod math_trait_ext;
+mod criteria;
+mod math_trait_ext;
+mod pipe;
 
-pub(crate) fn smoothness_to_lerp_factor(smoothness: f32, dt: f32) -> f32 {
-    // Taken from https://github.com/h3r2tic/dolly/blob/main/src/util.rs#L34
-    const SMOOTHNESS_MULTIPLIER: f32 = 8.0;
-    1.0 - (-SMOOTHNESS_MULTIPLIER * dt / smoothness.max(1e-5)).exp()
+pub(crate) use self::{criteria::*, math_trait_ext::*, pipe::*};
+
+macro_rules! single {
+    ($query:expr) => {
+        match $query.get_single() {
+            Ok(q) => q,
+            _ => {
+                return;
+            }
+        }
+    };
 }
+
+macro_rules! single_mut {
+    ($query:expr) => {
+        match $query.get_single_mut() {
+            Ok(q) => q,
+            _ => {
+                return;
+            }
+        }
+    };
+}
+
+pub(crate) use single;
+pub(crate) use single_mut;

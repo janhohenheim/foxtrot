@@ -1,6 +1,5 @@
 use crate::movement::character_controller::FloatHeight;
 use crate::GameState;
-use bevy::transform::TransformSystem;
 use bevy::{prelude::*, render::view::NoFrustumCulling};
 use bevy_tnua::controller::TnuaController;
 use bevy_xpbd_3d::prelude::*;
@@ -8,10 +7,7 @@ use bevy_xpbd_3d::prelude::*;
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
-        prepare_models_of_controllers
-            .after(PhysicsSet::Sync)
-            .before(TransformSystem::TransformPropagate)
-            .run_if(in_state(GameState::Playing)),
+        prepare_models_of_controllers.run_if(in_state(GameState::Playing)),
     );
 }
 

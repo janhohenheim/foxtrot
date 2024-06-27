@@ -1,15 +1,15 @@
 #[cfg(feature = "dev")]
 use crate::dev::dev_editor::DevEditorWindow;
+use crate::util::error;
 use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
-    movement::character_controller::{GeneralMovementSystemSet, Walk},
-    util::math_trait_ext::{F32Ext, Vec3Ext},
-    GameState,
+    movement::character_controller::Walk,
+    util::{F32Ext, Vec3Ext},
+    GameSystemSet,
 };
 #[cfg(feature = "dev")]
 use anyhow::Context;
 use bevy::prelude::*;
-use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::Collider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
@@ -42,16 +42,13 @@ pub(super) fn plugin(app: &mut App) {
     }))
     .add_systems(
         Update,
-        query_mesh
-            .before(GeneralMovementSystemSet)
-            .run_if(in_state(GameState::Playing)),
+        query_mesh.pipe(error).in_set(GameSystemSet::Navigation),
     );
     #[cfg(feature = "dev")]
     app.add_plugins(OxidizedNavigationDebugDrawPlugin)
-        .add_systems(Update, draw_navmesh);
+        .add_systems(Update, draw_navmesh.pipe(error));
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn query_mesh(
     #[cfg(feature = "dev")] mut commands: Commands,
     mut with_follower: Query<(&Transform, &mut Walk), (With<Npc>, Without<Player>)>,
@@ -59,7 +56,7 @@ fn query_mesh(
     nav_mesh_settings: Res<NavMeshSettings>,
     nav_mesh: Res<NavMesh>,
     #[cfg(feature = "dev")] editor_state: Res<bevy_editor_pls::editor::Editor>,
-) {
+) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("query_mesh").entered();
     if let Ok(nav_mesh) = nav_mesh.get().read() {
@@ -105,17 +102,18 @@ fn query_mesh(
             }
         }
     }
+    Ok(())
 }
 
 #[cfg(feature = "dev")]
-#[sysfail(Log<anyhow::Error, Error>)]
 fn draw_navmesh(
     editor: Res<bevy_editor_pls::editor::Editor>,
     mut draw_nav_mesh: ResMut<DrawNavMesh>,
-) {
+) -> anyhow::Result<()> {
     let nav_render_enabled = editor
         .window_state::<DevEditorWindow>()
         .context("Failed to read dev window state")?
         .navmesh_render_enabled;
     draw_nav_mesh.0 = nav_render_enabled;
+    Ok(())
 }

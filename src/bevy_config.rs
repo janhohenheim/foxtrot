@@ -1,8 +1,7 @@
-use anyhow::Context;
+use crate::util::error;
 use bevy::render::settings::{WgpuFeatures, WgpuSettings};
 use bevy::render::RenderPlugin;
 use bevy::{prelude::*, window::PrimaryWindow, winit::WinitWindows};
-use bevy_mod_sysfail::prelude::*;
 use std::io::Cursor;
 use winit::window::Icon;
 
@@ -24,7 +23,7 @@ pub(super) fn plugin(app: &mut App) {
     )
     .insert_resource(Msaa::Sample4)
     .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
-    .add_systems(Startup, set_window_icon);
+    .add_systems(Startup, set_window_icon.pipe(error));
 }
 
 fn create_wgpu_settings() -> WgpuSettings {
@@ -36,15 +35,14 @@ fn create_wgpu_settings() -> WgpuSettings {
 }
 
 // Sets the icon on Windows and X11
-#[sysfail(Log<anyhow::Error, Error>)]
 fn set_window_icon(
     windows: NonSend<WinitWindows>,
     primary_windows: Query<Entity, With<PrimaryWindow>>,
-) {
+) -> anyhow::Result<()> {
     let primary_entity = primary_windows.single();
-    let primary = windows
-        .get_window(primary_entity)
-        .context("Failed to get primary window")?;
+    let Some(primary) = windows.get_window(primary_entity) else {
+        return Ok(());
+    };
     let icon_buf = Cursor::new(include_bytes!(
         "../build/macos/AppIcon.iconset/icon_256x256.png"
     ));
@@ -55,4 +53,5 @@ fn set_window_icon(
         let icon = Icon::from_rgba(rgba, width, height)?;
         primary.set_window_icon(Some(icon));
     };
+    Ok(())
 }

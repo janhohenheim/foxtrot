@@ -1,5 +1,4 @@
 use crate::system_set::GameSystemSet;
-use crate::GameState;
 pub(crate) use animation::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
@@ -19,8 +18,7 @@ pub(super) fn plugin(app: &mut App) {
             Update,
             (apply_jumping, apply_walking)
                 .chain()
-                .in_set(GameSystemSet::GeneralMovement)
-                .run_if(in_state(GameState::Playing)),
+                .in_set(GameSystemSet::GeneralMovement),
         );
 }
 

@@ -16,9 +16,9 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         (
             spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
-            unfreeze_after_dialog,
+            unfreeze_after_dialog.in_set(GameSystemSet::Dialog),
         )
-            .in_set(GameSystemSet::Dialog),
+            .chain(),
     )
     .init_resource::<CurrentDialogTarget>()
     .register_type::<YarnNode>()

@@ -4,7 +4,7 @@ use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
     movement::character_controller::Walk,
     util::math_trait_ext::{F32Ext, Vec3Ext},
-    GameState, GameSystemSet,
+    GameSystemSet,
 };
 #[cfg(feature = "dev")]
 use anyhow::Context;
@@ -40,12 +40,7 @@ pub(super) fn plugin(app: &mut App) {
         max_edge_length: 100,
         max_tile_generation_tasks: None,
     }))
-    .add_systems(
-        Update,
-        query_mesh
-            .in_set(GameSystemSet::Navigation)
-            .run_if(in_state(GameState::Playing)),
-    );
+    .add_systems(Update, query_mesh.in_set(GameSystemSet::Navigation));
     #[cfg(feature = "dev")]
     app.add_plugins(OxidizedNavigationDebugDrawPlugin)
         .add_systems(Update, draw_navmesh);

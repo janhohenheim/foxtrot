@@ -6,22 +6,21 @@ https://user-images.githubusercontent.com/9047632/226387411-70f662de-0681-47ff-b
 
 ## What does this template give you?
 
-- A 3D character controller via [`bevy-tnua`](https://crates.io/crates/bevy-tnua)
+- Integration with Blender as an editor via
+  the [`Blender_bevy_components_workflow`](https://github.com/kaosat-dev/Blender_bevy_components_workflow) set of tools
 - Physics via [`bevy_xpbd`](https://crates.io/crates/bevy_xpbd_3d)
+    - A 3D character controller via [`bevy-tnua`](https://crates.io/crates/bevy-tnua)
 - Audio via [`bevy_kira_audio`](https://crates.io/crates/bevy_kira_audio)
 - Pathfinding via [`oxidized_navigation`](https://crates.io/crates/oxidized_navigation)
 - [`bevy_editor_pls`](https://crates.io/crates/bevy_editor_pls) bound to 'Q'
-- Custom editor found in the windows selection for `bevy_editor_pls`.
+    - Custom editor found in the windows selection for `bevy_editor_pls`.
 - Animations
 - Dialogs via [`Yarn Spinner for Rust`](https://crates.io/crates/bevy_yarnspinner)
 - Shaders, using the code from [DGriffin's tutorial](https://www.youtube.com/watch?v=O6A_nVmpvhc)
-- GLTF imports, including auto-insertion of markers via the GLTF extras field
 - Smooth cameras via [`bevy_dolly`](https://crates.io/crates/bevy_dolly)
 - Particle effects via [`bevy_hanabi`](https://crates.io/crates/bevy_hanabi)
 - Procedural skies via [`bevy_atmosphere`](https://crates.io/crates/bevy_atmosphere)
 - Grass via [`warbler_grass`](https://crates.io/crates/warbler_grass)
-- Integration with Blender as an editor via
-  the [`Blender_bevy_components_workflow`](https://github.com/kaosat-dev/Blender_bevy_components_workflow) set of tools
 
 ## Usage
 

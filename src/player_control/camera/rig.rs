@@ -7,19 +7,17 @@ use crate::{
             IngameCamera, IngameCameraKind,
         },
     },
-    util::math_trait_ext::Vec2Ext,
+    util::Vec2Ext,
 };
 
 use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;
 
-#[sysfail(Log<anyhow::Error, Error>)]
 pub(super) fn update_rig(
     time: Res<Time<Virtual>>,
     mut camera_query: Query<(

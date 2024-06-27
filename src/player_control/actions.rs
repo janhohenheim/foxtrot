@@ -1,4 +1,4 @@
-use crate::util::criteria::is_frozen;
+use crate::util::is_frozen;
 use bevy::prelude::*;
 use leafwing_input_manager::plugin::InputManagerSystem;
 use leafwing_input_manager::{axislike::DualAxisData, prelude::*};

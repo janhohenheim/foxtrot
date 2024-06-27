@@ -1064,30 +1064,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bevy_mod_sysfail"
-version = "7.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1a58f0be698c10aab373413556a89e193a783a7241ed3ed5971330a284a7c3b"
-dependencies = [
- "anyhow",
- "bevy",
- "bevy_ecs",
- "bevy_mod_sysfail_macros",
- "bevy_utils",
-]
-
-[[package]]
-name = "bevy_mod_sysfail_macros"
-version = "5.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "595deba61fcc75116469575cec8abfa9ea2b74b905501daa6e34f0fa588f34d8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.66",
-]
-
-[[package]]
 name = "bevy_pbr"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2440,7 +2416,6 @@ dependencies = [
  "bevy_gltf_blueprints",
  "bevy_hanabi",
  "bevy_kira_audio",
- "bevy_mod_sysfail",
  "bevy_registry_export",
  "bevy_xpbd_3d",
  "bevy_yarnspinner",

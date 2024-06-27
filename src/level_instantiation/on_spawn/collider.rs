@@ -1,7 +1,7 @@
+use crate::util::error;
 use crate::{movement::physics::CollisionLayer, GameSystemSet};
 use anyhow::Context;
 use bevy::prelude::*;
-use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::{Collider as XpbdCollider, *};
 use oxidized_navigation::NavMeshAffector;
 use serde::{Deserialize, Serialize};
@@ -12,18 +12,19 @@ use std::iter;
 struct Collider;
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<Collider>()
-        .add_systems(Update, spawn.in_set(GameSystemSet::ColliderSpawn));
+    app.register_type::<Collider>().add_systems(
+        Update,
+        spawn.pipe(error).in_set(GameSystemSet::ColliderSpawn),
+    );
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn spawn(
     collider_marker: Query<Entity, With<Collider>>,
     mut commands: Commands,
     children: Query<&Children>,
     meshes: Res<Assets<Mesh>>,
     mesh_handles: Query<&Handle<Mesh>>,
-) {
+) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("read_colliders").entered();
     for parent in collider_marker.iter() {
@@ -49,4 +50,5 @@ fn spawn(
             .remove::<Collider>()
             .insert(RigidBody::Static);
     }
+    Ok(())
 }

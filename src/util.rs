@@ -1,5 +1,8 @@
-pub(crate) mod criteria;
-pub(crate) mod math_trait_ext;
+mod criteria;
+mod math_trait_ext;
+mod pipe;
+
+pub(crate) use self::{criteria::*, math_trait_ext::*, pipe::*};
 
 macro_rules! single {
     ($query:expr) => {

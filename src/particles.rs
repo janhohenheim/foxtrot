@@ -1,12 +1,11 @@
 use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::on_spawn::Player,
-    util::math_trait_ext::{F32Ext, Vec3Ext},
+    util::{F32Ext, Vec3Ext},
     GameState,
 };
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
-use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::prelude::*;
 pub(crate) use creation::*;
 
@@ -26,7 +25,6 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 struct SprintingParticle;
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn play_sprinting_effect(
     with_player: Query<&TnuaController, With<Player>>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,

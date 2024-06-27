@@ -6,7 +6,7 @@ use crate::{
         actions::{ActionsFrozen, PlayerAction},
         camera::{IngameCamera, IngameCameraKind},
     },
-    util::criteria::is_frozen,
+    util::is_frozen,
     world_interaction::dialog::{CurrentDialogTarget, YarnNode},
 };
 use bevy::{prelude::*, window::PrimaryWindow};

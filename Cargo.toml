@@ -47,7 +47,6 @@ oxidized_navigation = { version = "0.10", features = ["xpbd"] }
 iyes_progress = "0.11"
 leafwing-input-manager = { version = "0.13", features = ["egui"] }
 bevy_dolly = "0.0.3"
-bevy_mod_sysfail = "7"
 bevy_editor_pls = { version = "0.8.1", optional = true }
 bevy_hanabi = { version = "0.11", default-features = false, features = ["3d"] }
 bevy_yarnspinner = "0.2"

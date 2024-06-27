@@ -22,8 +22,11 @@ pub(crate) mod movement;
 pub(crate) mod particles;
 mod player_control;
 mod shader;
+mod system_set;
 pub(crate) mod util;
 mod world_interaction;
+
+pub(crate) use system_set::GameSystemSet;
 
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
@@ -39,6 +42,7 @@ enum GameState {
 /// Main entrypoint for Foxtrot.
 ///
 /// The top-level plugins are:
+/// - [`system_set::plugin`]: Sets up the system set used to order systems across Foxtrot.
 /// - [`bevy_config::plugin`]: Sets up the bevy configuration.
 /// - [`menu::plugin`]: Handles the menu.
 /// - [`movement::plugin`]: Handles the movement of entities.
@@ -55,6 +59,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<GameState>().add_plugins((
+            system_set::plugin,
             bevy_config::plugin,
             menu::plugin,
             movement::plugin,

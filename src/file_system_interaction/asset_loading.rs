@@ -4,7 +4,6 @@ use bevy_asset_loader::prelude::*;
 use bevy_common_assets::toml::TomlAssetPlugin;
 use bevy_egui::{egui, egui::ProgressBar, EguiContexts};
 use bevy_kira_audio::AudioSource;
-use bevy_mod_sysfail::prelude::*;
 use iyes_progress::{ProgressCounter, ProgressPlugin};
 
 /// Loads resources and assets for the game.
@@ -95,7 +94,6 @@ fn show_progress(
     }
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn update_config(
     mut commands: Commands,
     config: Res<Assets<GameConfig>>,

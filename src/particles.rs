@@ -1,14 +1,12 @@
 use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::on_spawn::Player,
-    util::math_trait_ext::{F32Ext, Vec3Ext},
+    util::{F32Ext, Vec3Ext},
     GameState,
 };
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
-use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::prelude::*;
-use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use creation::*;
 
 mod creation;
@@ -19,9 +17,7 @@ pub(super) fn plugin(app: &mut App) {
         .add_plugins(HanabiPlugin)
         .add_systems(
             Update,
-            play_sprinting_effect
-                .run_if(in_state(GameState::Playing))
-                .after(PhysicsSet::Sync),
+            play_sprinting_effect.run_if(in_state(GameState::Playing)),
         );
 }
 
@@ -29,7 +25,6 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 struct SprintingParticle;
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn play_sprinting_effect(
     with_player: Query<&TnuaController, With<Player>>,
     mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,

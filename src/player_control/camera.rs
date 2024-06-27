@@ -1,4 +1,4 @@
-use crate::level_instantiation::on_spawn::Player;
+use crate::GameSystemSet;
 use crate::{
     player_control::camera::{
         cursor::grab_cursor,
@@ -9,11 +9,8 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use bevy::transform::TransformSystem;
 use bevy_atmosphere::prelude::AtmospherePlugin;
 use bevy_dolly::prelude::Dolly;
-use bevy_xpbd_3d::PhysicsSet;
-use bevy_yarnspinner_example_dialogue_view::ExampleYarnSpinnerDialogueViewSystemSet;
 pub(crate) use cursor::ForceCursorGrabMode;
 use serde::{Deserialize, Serialize};
 use ui::*;
@@ -65,23 +62,16 @@ pub(super) fn plugin(app: &mut App) {
         .add_systems(Update, Dolly::<IngameCamera>::update_active)
         .add_systems(Startup, spawn_ui_camera)
         .add_systems(OnEnter(GameState::Playing), despawn_ui_camera)
-        .add_systems(Update, grab_cursor.run_if(in_state(GameState::Playing)))
         .add_systems(
             Update,
             (
+                grab_cursor,
                 update_kind,
                 update_drivers,
-                set_camera_focus.after(ExampleYarnSpinnerDialogueViewSystemSet),
+                set_camera_focus,
                 update_rig,
             )
                 .chain()
-                .in_set(CameraUpdateSystemSet)
-                .after(PhysicsSet::Sync)
-                .before(TransformSystem::TransformPropagate)
-                .run_if(in_state(GameState::Playing))
-                .run_if(any_with_component::<Player>),
+                .in_set(GameSystemSet::CameraUpdate),
         );
 }
-
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub(super) struct CameraUpdateSystemSet;

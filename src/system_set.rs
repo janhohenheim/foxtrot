@@ -7,24 +7,17 @@ pub(super) fn plugin(app: &mut App) {
     app.configure_sets(
         Update,
         (
-            (
                 GltfBlueprintsSet::AfterSpawn,
                 GameSystemSet::ColliderSpawn,
+                GameSystemSet::UpdateInteractionOpportunities,
                 GameSystemSet::Navigation,
                 GameSystemSet::PlayerEmbodiment,
                 GameSystemSet::GeneralMovement,
-                GameSystemSet::PrepareAnimationState,
-            )
-                .chain(),
-            (
-                GameSystemSet::UpdateAnimationState,
                 GameSystemSet::PlayAnimation,
+                GameSystemSet::Dialog,
                 ExampleYarnSpinnerDialogueViewSystemSet,
                 GameSystemSet::CameraUpdate,
                 DollyUpdateSet,
-                GameSystemSet::UpdateInteractionOpportunities,
-            )
-                .chain(),
         )
             .chain(),
     );
@@ -32,10 +25,8 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
 pub(crate) enum GameSystemSet {
-    /// - Goes through entities tagged with [`ColliderConstructor`](crate::physics::ColliderConstructor) in Blender
-    /// - Inserts a proper XPBD collider
-    /// - Inserts [`SensorLinks`](crate::physics::SensorLinks) on all [`RigidBody`](bevy_xpbd_3d::components::RigidBody)s
-    /// - Links sensor colliders to their closest [`SensorLinks`](crate::physics::SensorLinks) up the hierarchy
+    /// Goes through entities tagged with `Collider` in Blender
+    /// and inserts a proper XPBD collider
     ColliderSpawn,
     /// Run path finding
     Navigation,
@@ -45,10 +36,6 @@ pub(crate) enum GameSystemSet {
     PlayerEmbodiment,
     /// Handle movement for character controllers
     GeneralMovement,
-    /// Prepare the exclusive animation state for the current frame
-    PrepareAnimationState,
-    /// Update the animation state according to this frame's events since [`GameSystemSet::PrepareAnimationState`]
-    UpdateAnimationState,
     /// Play animations
     PlayAnimation,
     /// Update the camera transform

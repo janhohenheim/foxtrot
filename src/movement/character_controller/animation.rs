@@ -6,10 +6,11 @@ use bevy_tnua::{
     TnuaAnimatingStateDirective,
 };
 use std::time::Duration;
+use crate::system_set::GameSystemSet;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CharacterAnimationNames>()
-        .add_systems(Update, play_animations);
+        .add_systems(Update, play_animations.in_set(GameSystemSet::PlayAnimation));
 }
 
 /// Managed by [`play_animations`]

@@ -2,9 +2,9 @@
 use crate::dev::dev_editor::DevEditorWindow;
 use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
-    movement::character_controller::{GeneralMovementSystemSet, Walk},
+    movement::character_controller::Walk,
     util::math_trait_ext::{F32Ext, Vec3Ext},
-    GameState,
+    GameState, GameSystemSet,
 };
 #[cfg(feature = "dev")]
 use anyhow::Context;
@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
     .add_systems(
         Update,
         query_mesh
-            .before(GeneralMovementSystemSet)
+            .in_set(GameSystemSet::Navigation)
             .run_if(in_state(GameState::Playing)),
     );
     #[cfg(feature = "dev")]

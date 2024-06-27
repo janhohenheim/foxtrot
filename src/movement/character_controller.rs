@@ -1,9 +1,9 @@
+use crate::system_set::GameSystemSet;
 use crate::GameState;
 pub(crate) use animation::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
-use bevy_xpbd_3d::PhysicsSet;
 pub(crate) use components::*;
 
 mod animation;
@@ -19,14 +19,10 @@ pub(super) fn plugin(app: &mut App) {
             Update,
             (apply_jumping, apply_walking)
                 .chain()
-                .in_set(GeneralMovementSystemSet)
-                .before(PhysicsSet::Prepare)
+                .in_set(GameSystemSet::GeneralMovement)
                 .run_if(in_state(GameState::Playing)),
         );
 }
-
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub(crate) struct GeneralMovementSystemSet;
 
 fn apply_walking(
     mut character_query: Query<(

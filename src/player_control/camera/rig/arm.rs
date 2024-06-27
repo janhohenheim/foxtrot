@@ -2,7 +2,6 @@ use crate::{
     file_system_interaction::config::GameConfig,
     movement::physics::CollisionLayer,
     player_control::camera::{IngameCamera, IngameCameraKind},
-    util::smoothness_to_lerp_factor,
 };
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
@@ -105,4 +104,10 @@ fn get_distance_such_that_min_distance_from_collision_is_ensured(
     let angle = direction.angle_between(-hit.normal);
     let hypotenuse = adjacent_side / angle.cos();
     hit.time_of_impact - hypotenuse
+}
+
+/// Taken from https://github.com/h3r2tic/dolly/blob/main/src/util.rs#L34
+fn smoothness_to_lerp_factor(smoothness: f32, dt: f32) -> f32 {
+    const SMOOTHNESS_MULTIPLIER: f32 = 8.0;
+    1.0 - (-SMOOTHNESS_MULTIPLIER * dt / smoothness.max(1e-5)).exp()
 }

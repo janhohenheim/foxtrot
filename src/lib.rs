@@ -22,8 +22,11 @@ pub(crate) mod movement;
 pub(crate) mod particles;
 mod player_control;
 mod shader;
+mod system_set;
 pub(crate) mod util;
 mod world_interaction;
+
+pub(crate) use system_set::GameSystemSet;
 
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
 enum GameState {
@@ -55,6 +58,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<GameState>().add_plugins((
+            system_set::plugin,
             bevy_config::plugin,
             menu::plugin,
             movement::plugin,

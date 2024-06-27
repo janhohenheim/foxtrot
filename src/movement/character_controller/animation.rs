@@ -1,7 +1,7 @@
 use crate::system_set::GameSystemSet;
+use crate::util::error;
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
-use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{
     builtins::TnuaBuiltinWalk, controller::TnuaController, TnuaAnimatingState,
     TnuaAnimatingStateDirective,
@@ -9,8 +9,12 @@ use bevy_tnua::{
 use std::time::Duration;
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<CharacterAnimationNames>()
-        .add_systems(Update, play_animations.in_set(GameSystemSet::PlayAnimation));
+    app.register_type::<CharacterAnimationNames>().add_systems(
+        Update,
+        play_animations
+            .pipe(error)
+            .in_set(GameSystemSet::PlayAnimation),
+    );
 }
 
 /// Managed by [`play_animations`]
@@ -30,7 +34,6 @@ struct CharacterAnimationNames {
     aerial: String,
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn play_animations(
     mut query: Query<(
         Entity,
@@ -42,7 +45,7 @@ fn play_animations(
     children: Query<&Children>,
     animation_names: Query<&CharacterAnimationNames>,
     mut animation_players: Query<&mut AnimationPlayer>,
-) {
+) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
     for (entity, mut animating_state, controller, link, animations) in query.iter_mut() {
@@ -120,4 +123,5 @@ fn play_animations(
             },
         }
     }
+    Ok(())
 }

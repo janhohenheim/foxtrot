@@ -1,3 +1,4 @@
+use crate::util::{error, single, single_mut};
 use crate::{
     file_system_interaction::audio::AudioHandles,
     movement::character_controller::*,
@@ -7,16 +8,13 @@ use crate::{
     },
     GameSystemSet,
 };
-
-use crate::util::single_mut;
 use crate::{
-    level_instantiation::on_spawn::Player, util::math_trait_ext::Vec3Ext,
+    level_instantiation::on_spawn::Player, util::Vec3Ext,
     world_interaction::dialog::CurrentDialogTarget,
 };
 use anyhow::Context;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
-use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
 use leafwing_input_manager::prelude::ActionState;
 
@@ -31,7 +29,7 @@ pub(super) fn plugin(app: &mut App) {
                 handle_jump,
                 handle_horizontal_movement,
                 rotate_to_speaker,
-                control_walking_sound,
+                control_walking_sound.pipe(error),
                 handle_camera_kind,
             )
                 .chain()
@@ -47,16 +45,13 @@ fn handle_jump(mut player_query: Query<(&ActionState<PlayerAction>, &mut Jump), 
     }
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn handle_horizontal_movement(
     mut player_query: Query<(&ActionState<PlayerAction>, &mut Walk, &mut Sprinting), With<Player>>,
     camera_query: Query<(&IngameCamera, &Transform), Without<Player>>,
 ) {
     #[cfg(feature = "tracing")]
     let _span = info_span!("handle_horizontal_movement").entered();
-    let Some((camera, camera_transform)) = camera_query.iter().next() else {
-        return Ok(());
-    };
+    let (camera, camera_transform) = single!(camera_query);
 
     for (actions, mut walk, mut sprint) in &mut player_query {
         let Some(axis) = actions.axis_pair(&PlayerAction::Move) else {
@@ -135,13 +130,12 @@ fn rotate_to_speaker(
     });
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn control_walking_sound(
     time: Res<Time<Virtual>>,
     character_query: Query<&TnuaController, With<Player>>,
     audio: Res<AudioHandles>,
     mut audio_instances: ResMut<Assets<AudioInstance>>,
-) {
+) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("control_walking_sound").entered();
     for controller in character_query.iter() {
@@ -159,4 +153,5 @@ fn control_walking_sound(
             audio_instance.pause(default());
         }
     }
+    Ok(())
 }

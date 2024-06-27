@@ -1,9 +1,9 @@
 use crate::player_control::actions::ActionsFrozen;
+use crate::GameSystemSet;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 use bevy_yarnspinner_example_dialogue_view::prelude::*;
-use leafwing_input_manager::plugin::InputManagerSystem;
 use serde::{Deserialize, Serialize};
 
 pub(super) fn plugin(app: &mut App) {
@@ -16,9 +16,9 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         (
             spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
-            unfreeze_after_dialog.after(InputManagerSystem::ManualControl),
+            unfreeze_after_dialog,
         )
-            .after(ExampleYarnSpinnerDialogueViewSystemSet),
+            .in_set(GameSystemSet::Dialog),
     )
     .init_resource::<CurrentDialogTarget>()
     .register_type::<YarnNode>()

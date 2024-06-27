@@ -3,8 +3,9 @@ use crate::{
     movement::character_controller::*,
     player_control::{
         actions::{DualAxisDataExt, PlayerAction},
-        camera::{CameraUpdateSystemSet, IngameCamera, IngameCameraKind},
+        camera::{IngameCamera, IngameCameraKind},
     },
+    GameSystemSet,
 };
 
 use crate::{
@@ -16,7 +17,6 @@ use bevy::prelude::*;
 use bevy_kira_audio::AudioInstance;
 use bevy_mod_sysfail::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinWalk, controller::TnuaController};
-use leafwing_input_manager::plugin::InputManagerSystem;
 use leafwing_input_manager::prelude::ActionState;
 
 /// This plugin handles everything that has to do with the player's physical representation in the world.
@@ -34,9 +34,7 @@ pub(super) fn plugin(app: &mut App) {
                 handle_camera_kind,
             )
                 .chain()
-                .before(CameraUpdateSystemSet)
-                .before(GeneralMovementSystemSet)
-                .after(InputManagerSystem::ManualControl)
+                .in_set(GameSystemSet::PlayerEmbodiment)
                 .run_if(in_state(GameState::Playing)),
         );
 }

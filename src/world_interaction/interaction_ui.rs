@@ -1,3 +1,4 @@
+use crate::system_set::GameSystemSet;
 use crate::{
     level_instantiation::on_spawn::Player,
     player_control::{
@@ -8,7 +9,7 @@ use crate::{
     world_interaction::dialog::{CurrentDialogTarget, YarnNode},
     GameState,
 };
-use bevy::{prelude::*, transform::TransformSystem::TransformPropagate, window::PrimaryWindow};
+use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 use bevy_mod_sysfail::prelude::*;
 use bevy_xpbd_3d::prelude::*;
@@ -23,12 +24,8 @@ pub(super) fn plugin(app: &mut App) {
         .init_resource::<InteractionOpportunity>()
         .add_systems(
             Update,
-            (
-                update_interaction_opportunities
-                    .after(PhysicsSet::Sync)
-                    .after(TransformPropagate),
-                display_interaction_prompt,
-            )
+            (update_interaction_opportunities, display_interaction_prompt)
+                .in_set(GameSystemSet::UpdateInteractionOpportunities)
                 .chain()
                 .run_if(
                     not(is_frozen)

@@ -1,4 +1,4 @@
-use crate::{player_control::camera::ForceCursorGrabMode, GameState};
+use crate::player_control::camera::ForceCursorGrabMode;
 use anyhow::Context;
 use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_editor_pls::{
@@ -14,10 +14,7 @@ use serde::{Deserialize, Serialize};
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DevEditorState>()
         .add_editor_window::<DevEditorWindow>()
-        .add_systems(
-            Update,
-            (handle_debug_render, set_cursor_grab_mode).run_if(in_state(GameState::Playing)),
-        );
+        .add_systems(Update, (handle_debug_render, set_cursor_grab_mode));
 }
 
 pub(crate) struct DevEditorWindow;

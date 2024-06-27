@@ -42,6 +42,7 @@ enum GameState {
 /// Main entrypoint for Foxtrot.
 ///
 /// The top-level plugins are:
+/// - [`system_set::plugin`]: Sets up the system set used to order systems across Foxtrot.
 /// - [`bevy_config::plugin`]: Sets up the bevy configuration.
 /// - [`menu::plugin`]: Handles the menu.
 /// - [`movement::plugin`]: Handles the movement of entities.

@@ -8,9 +8,10 @@ use crate::{
     GameSystemSet,
 };
 
+use crate::util::single_mut;
 use crate::{
     level_instantiation::on_spawn::Player, util::math_trait_ext::Vec3Ext,
-    world_interaction::dialog::CurrentDialogTarget, GameState,
+    world_interaction::dialog::CurrentDialogTarget,
 };
 use anyhow::Context;
 use bevy::prelude::*;
@@ -34,8 +35,7 @@ pub(super) fn plugin(app: &mut App) {
                 handle_camera_kind,
             )
                 .chain()
-                .in_set(GameSystemSet::PlayerEmbodiment)
-                .run_if(in_state(GameState::Playing)),
+                .in_set(GameSystemSet::PlayerEmbodiment),
         );
 }
 
@@ -113,20 +113,19 @@ fn handle_camera_kind(
     }
 }
 
-#[sysfail(Log<anyhow::Error, Error>)]
 fn rotate_to_speaker(
     dialog_target: Res<CurrentDialogTarget>,
     mut with_player: Query<(&Transform, &mut TnuaController, &FloatHeight), With<Player>>,
     speakers: Query<&Transform, Without<Player>>,
 ) {
     let Some(dialog_target) = dialog_target.0 else {
-        return Ok(());
+        return;
     };
 
     #[cfg(feature = "tracing")]
     let _span = info_span!("rotate_to_speaker").entered();
-    let (player_transform, mut controller, float_height) = with_player.get_single_mut()?;
-    let speaker_transform = speakers.get(dialog_target)?;
+    let (player_transform, mut controller, float_height) = single_mut!(with_player);
+    let speaker_transform = speakers.get(dialog_target).unwrap();
     let direction = (speaker_transform.translation - player_transform.translation).horizontal();
     controller.basis(TnuaBuiltinWalk {
         desired_forward: direction.normalize_or_zero(),

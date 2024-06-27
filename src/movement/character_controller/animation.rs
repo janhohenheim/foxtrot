@@ -1,3 +1,4 @@
+use crate::system_set::GameSystemSet;
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
 use bevy_mod_sysfail::prelude::*;
@@ -6,7 +7,6 @@ use bevy_tnua::{
     TnuaAnimatingStateDirective,
 };
 use std::time::Duration;
-use crate::system_set::GameSystemSet;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CharacterAnimationNames>()

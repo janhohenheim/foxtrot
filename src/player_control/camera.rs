@@ -1,4 +1,3 @@
-use crate::level_instantiation::on_spawn::Player;
 use crate::GameSystemSet;
 use crate::{
     player_control::camera::{
@@ -63,13 +62,16 @@ pub(super) fn plugin(app: &mut App) {
         .add_systems(Update, Dolly::<IngameCamera>::update_active)
         .add_systems(Startup, spawn_ui_camera)
         .add_systems(OnEnter(GameState::Playing), despawn_ui_camera)
-        .add_systems(Update, grab_cursor.run_if(in_state(GameState::Playing)))
         .add_systems(
             Update,
-            (update_kind, update_drivers, set_camera_focus, update_rig)
+            (
+                grab_cursor,
+                update_kind,
+                update_drivers,
+                set_camera_focus,
+                update_rig,
+            )
                 .chain()
-                .in_set(GameSystemSet::CameraUpdate)
-                .run_if(in_state(GameState::Playing))
-                .run_if(any_with_component::<Player>),
+                .in_set(GameSystemSet::CameraUpdate),
         );
 }

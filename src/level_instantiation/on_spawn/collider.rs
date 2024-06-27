@@ -1,4 +1,4 @@
-use crate::{movement::physics::CollisionLayer, GameState, GameSystemSet};
+use crate::{movement::physics::CollisionLayer, GameSystemSet};
 use anyhow::Context;
 use bevy::prelude::*;
 use bevy_mod_sysfail::prelude::*;
@@ -12,12 +12,8 @@ use std::iter;
 struct Collider;
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<Collider>().add_systems(
-        Update,
-        spawn
-            .in_set(GameSystemSet::ColliderSpawn)
-            .run_if(in_state(GameState::Playing)),
-    );
+    app.register_type::<Collider>()
+        .add_systems(Update, spawn.in_set(GameSystemSet::ColliderSpawn));
 }
 
 #[sysfail(Log<anyhow::Error, Error>)]

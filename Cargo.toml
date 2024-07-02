@@ -28,11 +28,13 @@ features = [
 ]
 
 [dependencies]
-# keep the following two in sync with Bevy's dependencies
+# keep the following in sync with Bevy's dependencies
 ## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_winit/Cargo.toml#L32
 winit = { version = "0.29", default-features = false }
 ## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_render/Cargo.toml#L61
 image = { version = "0.24", default-features = false }
+## This greatly improves WGPU's performance due to its heavy use of trace! calls
+log = { version = "0.4", features = ["max_level_debug", "release_max_level_warn"] }
 
 # generic dependencies
 serde = { version = "1", features = ["derive"] }

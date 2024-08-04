@@ -2,7 +2,7 @@ use crate::movement::character_controller::FloatHeight;
 use crate::GameState;
 use bevy::{prelude::*, render::view::NoFrustumCulling};
 use bevy_tnua::controller::TnuaController;
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(

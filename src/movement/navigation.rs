@@ -1,5 +1,3 @@
-#[cfg(feature = "dev")]
-use crate::dev::dev_editor::DevEditorWindow;
 use crate::util::error;
 use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
@@ -10,7 +8,7 @@ use crate::{
 #[cfg(feature = "dev")]
 use anyhow::Context;
 use bevy::prelude::*;
-use bevy_xpbd_3d::prelude::Collider;
+use avian3d::prelude::Collider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{

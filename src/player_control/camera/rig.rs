@@ -13,7 +13,7 @@ use crate::{
 use crate::player_control::actions::ActionsFrozen;
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_xpbd_3d::prelude::SpatialQuery;
+use avian3d::prelude::SpatialQuery;
 use leafwing_input_manager::prelude::ActionState;
 
 mod arm;

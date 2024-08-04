@@ -11,7 +11,7 @@ use crate::{
 };
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 use bevy_yarnspinner::prelude::DialogueRunner;
 use leafwing_input_manager::prelude::ActionState;
 use serde::{Deserialize, Serialize};

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 
 /// Sets up and configures the XPBD physics.
 pub(super) fn plugin(app: &mut App) {

@@ -1,8 +1,8 @@
 use crate::movement::{character_controller::AnimationState, physics::CollisionLayer};
+use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_tnua::{prelude::*, TnuaAnimatingState};
-use bevy_tnua_xpbd3d::*;
-use bevy_xpbd_3d::prelude::*;
+use bevy_tnua_avian3d::*;
 use serde::{Deserialize, Serialize};
 
 pub(super) fn plugin(app: &mut App) {
@@ -18,7 +18,7 @@ pub(crate) struct CharacterControllerBundle {
     pub(crate) rigid_body: RigidBody,
     pub(crate) locked_axes: LockedAxes,
     pub(crate) collision_layers: CollisionLayers,
-    pub(crate) tnua_sensor_shape: TnuaXpbd3dSensorShape,
+    pub(crate) tnua_sensor_shape: TnuaAvian3dSensorShape,
     pub(crate) tnua_controller: TnuaControllerBundle,
     pub(crate) float_height: FloatHeight,
     pub(crate) animation_state: TnuaAnimatingState<AnimationState>,
@@ -42,7 +42,7 @@ impl CharacterControllerBundle {
                     CollisionLayer::Sensor,
                 ],
             ),
-            tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(
+            tnua_sensor_shape: TnuaAvian3dSensorShape(Collider::capsule(
                 height * 0.95,
                 radius * 0.95,
             )),

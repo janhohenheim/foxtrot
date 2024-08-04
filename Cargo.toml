@@ -45,7 +45,7 @@ bevy_kira_audio = "0.20"
 bevy_asset_loader = { version = "0.21", features = ["progress_tracking", "standard_dynamic_assets"] }
 bevy_common_assets = { version = "0.11", features = ["ron", "toml"] }
 bevy_egui = "0.28" # version governed by bevy_editor_pls
-oxidized_navigation = { version = "0.11", features = ["xpbd"] }
+oxidized_navigation = { version = "0.11", default-features = false, features = ["parry_015"] }
 iyes_progress = "0.12"
 leafwing-input-manager = "0.14"
 bevy_dolly = "0.0.4"

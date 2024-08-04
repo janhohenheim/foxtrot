@@ -2,7 +2,7 @@ use crate::system_set::GameSystemSet;
 pub(crate) use animation::AnimationState;
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
-use bevy_tnua_xpbd3d::*;
+use bevy_tnua_avian3d::*;
 pub(crate) use components::*;
 
 mod animation;
@@ -13,7 +13,7 @@ mod models;
 /// the control components [`Walk`] and [`Jump`]. It also controls a state machine to determine which animations to play.
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((components::plugin, animation::plugin, models::plugin))
-        .add_plugins((TnuaXpbd3dPlugin::default(), TnuaControllerPlugin::default()))
+        .add_plugins((TnuaAvian3dPlugin::default(), TnuaControllerPlugin::default()))
         .add_systems(
             Update,
             (apply_jumping, apply_walking)

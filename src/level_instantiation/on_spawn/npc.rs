@@ -4,7 +4,7 @@ use crate::{
     GameState,
 };
 use bevy::prelude::*;
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Component, Clone, PartialEq, Default, Reflect, Serialize, Deserialize)]

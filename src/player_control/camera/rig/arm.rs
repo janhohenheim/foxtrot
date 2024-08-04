@@ -5,7 +5,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_dolly::prelude::*;
-use bevy_xpbd_3d::prelude::*;
+use avian3d::prelude::*;
 
 pub(super) fn get_arm_distance(
     camera: &IngameCamera,

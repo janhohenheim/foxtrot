@@ -57,7 +57,6 @@ bevy-tnua-avian3d = "0.1"
 avian3d = { version = "0.1", features = ["simd"] }
 bevy-tnua = "0.19"
 bevy_atmosphere = "0.10"
-#warbler_grass = "0.6"
 blenvy = { git = "https://github.com/kaosat-dev/blenvy", branch = "blenvy" }
 
 [build-dependencies]

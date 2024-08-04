@@ -3,7 +3,6 @@ use bevy::prelude::*;
 pub(crate) use self::{ground::Ground, npc::Npc, player::Player};
 
 mod collider;
-mod grass;
 mod ground;
 mod hidden;
 mod npc;
@@ -16,7 +15,6 @@ mod util;
 /// These marker components are then used to spawn the rest of the components or modify other existing components in Bevy through code.
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
-        grass::plugin,
         ground::plugin,
         orb::plugin,
         player::plugin,

@@ -2,7 +2,7 @@ use crate::movement::{character_controller::AnimationState, physics::CollisionLa
 use bevy::prelude::*;
 use bevy_tnua::{prelude::*, TnuaAnimatingState};
 use bevy_tnua_xpbd3d::*;
-use bevy_xpbd_3d::prelude::*;
+use bevy_xpbd_3d::{parry::shape::SharedShape, prelude::*};
 use serde::{Deserialize, Serialize};
 
 pub(super) fn plugin(app: &mut App) {
@@ -30,8 +30,7 @@ impl CharacterControllerBundle {
             walking: default(),
             sprinting: default(),
             jumping: default(),
-            collider: bevy_xpbd_3d::parry::shape::SharedShape::capsule_z(height, radius * scale_y)
-                .into(),
+            collider: SharedShape::capsule_z(height, radius * scale_y).into(),
             rigid_body: RigidBody::Dynamic,
             locked_axes: LockedAxes::new().lock_rotation_x().lock_rotation_z(),
             collision_layers: CollisionLayers::new(
@@ -44,11 +43,7 @@ impl CharacterControllerBundle {
                 ],
             ),
             tnua_sensor_shape: TnuaXpbd3dSensorShape(
-                bevy_xpbd_3d::parry::shape::SharedShape::capsule_z(
-                    height * 0.95,
-                    radius * scale_y * 0.95,
-                )
-                .into(),
+                SharedShape::capsule_z(height * 0.95, radius * scale_y * 0.95).into(),
             ),
             tnua_controller: default(),
             float_height: FloatHeight(radius * scale_y),

@@ -30,7 +30,8 @@ impl CharacterControllerBundle {
             walking: default(),
             sprinting: default(),
             jumping: default(),
-            collider: Collider::capsule(height, radius),
+            collider: bevy_xpbd_3d::parry::shape::SharedShape::capsule_z(height, radius * scale_y)
+                .into(),
             rigid_body: RigidBody::Dynamic,
             locked_axes: LockedAxes::new().lock_rotation_x().lock_rotation_z(),
             collision_layers: CollisionLayers::new(
@@ -42,12 +43,15 @@ impl CharacterControllerBundle {
                     CollisionLayer::Sensor,
                 ],
             ),
-            tnua_sensor_shape: TnuaXpbd3dSensorShape(Collider::capsule(
-                height * 0.95,
-                radius * 0.95,
-            )),
+            tnua_sensor_shape: TnuaXpbd3dSensorShape(
+                bevy_xpbd_3d::parry::shape::SharedShape::capsule_z(
+                    height * 0.95,
+                    radius * scale_y * 0.95,
+                )
+                .into(),
+            ),
             tnua_controller: default(),
-            float_height: FloatHeight((height / 2. + radius) * scale_y),
+            float_height: FloatHeight(radius * scale_y),
             animation_state: default(),
         }
     }

@@ -7,6 +7,11 @@ edition = "2021"
 [dependencies]
 bevy = { version = "0.14", features = ["wayland"] }
 rand = "0.8"
+blenvy = "0.1.0-alpha.1"
+avian3d = { git = "https://github.com/Jondolf/avian", version = "0.1.2" }
+bevy-inspector-egui = { version = "0.25.2", optional = true }
+
+
 # Compile low-severity logs out of native builds for performance.
 log = { version = "0.4", features = [
     "max_level_debug",
@@ -18,18 +23,17 @@ tracing = { version = "0.1", features = [
     "release_max_level_warn",
 ] }
 
+
 [features]
 default = [
     # Default to a native dev build.
-    "dev_native",
+    "dev",
 ]
 dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
-]
-dev_native = [
-    "dev",
+    "bevy-inspector-egui",
     # Enable asset hot reloading for native dev builds.
     "bevy/file_watcher",
     # Enable embedded asset hot reloading for native dev builds.
@@ -62,9 +66,7 @@ opt-level = 3
 [profile.dev.package.wgpu-types]
 debug-assertions = false
 
-# The default profile is optimized for Wasm builds because
-# that's what [Trunk reads](https://github.com/trunk-rs/trunk/issues/605).
-# Optimize for size in the wasm-release profile to reduce load times and bandwidth usage on web.
+# Enable more optimization in the release profile at the cost of compile time.
 [profile.release]
 # Compile the entire crate as one unit.
 # Slows compile times, marginal improvements.
@@ -72,17 +74,3 @@ codegen-units = 1
 # Do a second optimization pass over the entire program, including dependencies.
 # Slows compile times, marginal improvements.
 lto = "thin"
-# Optimize with size in mind (also try "z", sometimes it is better).
-# Slightly slows compile times, great improvements to file size and runtime performance.
-opt-level = "s"
-# Strip all debugging information from the binary to slightly reduce file size.
-strip = "debuginfo"
-
-# Override some settings for native builds.
-[profile.release-native]
-# Default to release profile values.
-inherits = "release"
-# Optimize with performance in mind.
-opt-level = 3
-# Keep debug information in the binary.
-strip = "none"

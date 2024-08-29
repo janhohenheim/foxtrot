@@ -5,6 +5,7 @@ mod demo;
 mod dev_tools;
 mod screens;
 mod theme;
+mod third_party_setup;
 
 use bevy::{
     asset::AssetMetaCheck,
@@ -60,6 +61,7 @@ impl Plugin for AppPlugin {
             demo::plugin,
             screens::plugin,
             theme::plugin,
+            third_party_setup::plugin,
         ));
 
         // Enable dev tools for dev builds.

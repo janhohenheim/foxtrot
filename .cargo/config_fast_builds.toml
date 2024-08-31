@@ -67,60 +67,61 @@
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = [
-    # LLD linker
-    #
-    # You may need to install it:
-    #
-    # - Ubuntu: `sudo apt-get install lld clang`
-    # - Fedora: `sudo dnf install lld clang`
-    # - Arch: `sudo pacman -S lld clang`
-    "-Clink-arg=-fuse-ld=lld",
-    # Mold linker
-    #
-    # You may need to install it:
-    #
-    # - Ubuntu: `sudo apt-get install mold clang`
-    # - Fedora: `sudo dnf install mold clang`
-    # - Arch: `sudo pacman -S mold clang`
-    # "-Clink-arg=-fuse-ld=/usr/bin/mold",
+  # LLD linker
+  #
+  # You may need to install it:
+  #
+  # - Ubuntu: `sudo apt-get install lld clang`
+  # - Fedora: `sudo dnf install lld clang`
+  # - Arch: `sudo pacman -S lld clang`
+  "-Clink-arg=-fuse-ld=lld",
 
-    # Nightly
-    # "-Zshare-generics=y",
-    # "-Zthreads=0",
+  # Mold linker
+  #
+  # You may need to install it:
+  #
+  # - Ubuntu: `sudo apt-get install mold clang`
+  # - Fedora: `sudo dnf install mold clang`
+  # - Arch: `sudo pacman -S mold clang`
+  # "-Clink-arg=-fuse-ld=/usr/bin/mold",
+
+  # Nightly
+  # "-Zshare-generics=y",
+  # "-Zthreads=0",
 ]
 
 [target.x86_64-apple-darwin]
 rustflags = [
-    # LLD linker
-    #
-    # The default ld64 linker is faster, you should continue using it instead.
-    #
-    # You may need to install it:
-    #
-    # Brew: `brew install llvm`
-    # Manually: <https://lld.llvm.org/MachO/index.html>
-    # "-Clink-arg=-fuse-ld=/usr/local/opt/llvm/bin/ld64.lld",
+  # LLD linker
+  #
+  # The default ld64 linker is faster, you should continue using it instead.
+  #
+  # You may need to install it:
+  #
+  # Brew: `brew install llvm`
+  # Manually: <https://lld.llvm.org/MachO/index.html>
+  # "-Clink-arg=-fuse-ld=/usr/local/opt/llvm/bin/ld64.lld",
 
-    # Nightly
-    # "-Zshare-generics=y",
-    # "-Zthreads=0",
+  # Nightly
+  # "-Zshare-generics=y",
+  # "-Zthreads=0",
 ]
 
 [target.aarch64-apple-darwin]
 rustflags = [
-    # LLD linker
-    #
-    # The default ld64 linker is faster, you should continue using it instead.
-    #
-    # You may need to install it:
-    #
-    # Brew: `brew install llvm`
-    # Manually: <https://lld.llvm.org/MachO/index.html>
-    # "-Clink-arg=-fuse-ld=/opt/homebrew/opt/llvm/bin/ld64.lld",
+  # LLD linker
+  #
+  # The default ld64 linker is faster, you should continue using it instead.
+  #
+  # You may need to install it:
+  #
+  # Brew: `brew install llvm`
+  # Manually: <https://lld.llvm.org/MachO/index.html>
+  # "-Clink-arg=-fuse-ld=/opt/homebrew/opt/llvm/bin/ld64.lld",
 
-    # Nightly
-    # "-Zshare-generics=y",
-    # "-Zthreads=0",
+  # Nightly
+  # "-Zshare-generics=y",
+  # "-Zthreads=0",
 ]
 
 [target.x86_64-pc-windows-msvc]
@@ -133,10 +134,11 @@ rustflags = [
 # rustup component add llvm-tools
 # ```
 linker = "rust-lld.exe"
+rustdocflags = ["-Clinker=rust-lld.exe"]
 rustflags = [
-    # Nightly
-    # "-Zshare-generics=y",
-    # "-Zthreads=0",
+  # Nightly
+  # "-Zshare-generics=n", # This needs to be off if you use dynamic linking on Windows.
+  # "-Zthreads=0",
 ]
 
 # Optional: Uncommenting the following improves compile times, but reduces the amount of debug info to 'line number tables only'

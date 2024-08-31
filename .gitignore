@@ -1,15 +1,6 @@
-target/
-.idea/
-.DS_Store
-
-dist/
-saves/
-
-assets/scenes/*-[1-9].scn.ron
-blender_assets.cats.txt*
-*.blend1
-
-trace-*.json
-
+# Rust builds
+/target
+# This file contains environment-specific configuration like linker settings
 .cargo/config.toml
-rust-toolchain.toml
+# Blender backup files
+*.blend[1-9]

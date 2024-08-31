@@ -1,0 +1,56 @@
+:root {
+    /* Consider adjusting this color to match your splash screen! */
+    --loading-screen-bg-color: #282828;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.center {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#loading-screen {
+    background-color: var(--loading-screen-bg-color);
+}
+
+.spinner {
+    width: 128px;
+    height: 128px;
+    border: 64px solid transparent;
+    border-bottom-color: #ececec;
+    border-right-color: #b2b2b2;
+    border-top-color: #787878;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#bevy {
+    /* Hide Bevy app before it loads */
+    height: 0;
+}

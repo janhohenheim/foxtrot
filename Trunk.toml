@@ -1,0 +1,13 @@
+[build]
+# Point to our `index.html`.
+target = "web/index.html"
+# Set the output directory for the web build.
+dist = "target/trunk"
+# This is needed in order to host the game on itch.io.
+public_url = "./"
+
+[serve]
+# Required in order to receive 404s for missing assets, which is what Bevy expects.
+no_spa = true
+# Open a browser tab once the initial build is complete.
+open = true

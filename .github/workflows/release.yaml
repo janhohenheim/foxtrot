@@ -25,10 +25,6 @@ env:
   # Whether to upload the packages produced by this workflow to a GitHub release.
   upload_to_github: true
 
-  # The itch.io project to upload to in the format `user-name/project-name`.
-  # There will be no upload to itch.io if this is commented out.
-  #upload_to_itch: your-itch-username/foxtrot
-
   ############
   # ADVANCED #
   ############
@@ -258,48 +254,4 @@ jobs:
           tag: ${{ env.version }}
           overwrite: true
 
-  # Check if upload to itch.io is enabled.
-  # This is needed because the `env` context can't be used in the `if:` condition of a job:
-  # https://docs.github.com/en/actions/learn-github-actions/contexts#context-availability
-  check-upload-to-itch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Do nothing
-        run: 'true'
-    outputs:
-      target: ${{ env.upload_to_itch }}
 
-  # Upload all packages to itch.io.
-  upload-to-itch:
-    runs-on: ubuntu-latest
-    needs:
-      - get-version
-      - check-upload-to-itch
-      - build
-    if: ${{ needs.check-upload-to-itch.outputs.target != '' }}
-
-    steps:
-      - name: Download all packages
-        uses: actions/download-artifact@v4
-        with:
-          pattern: package-*
-          path: tmp
-
-      - name: Install butler
-        run: |
-          curl -L -o butler.zip 'https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default'
-          unzip butler.zip
-          chmod +x butler
-          ./butler -V
-
-      - name: Upload all packages to itch.io
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_CREDENTIALS }}
-        run: |
-          for channel in $(ls tmp); do
-            ./butler push \
-              --fix-permissions \
-              --userversion='${{ needs.get-version.outputs.version }}' \
-              tmp/"${channel}"/* \
-              '${{ env.upload_to_itch }}':"${channel#package-}"
-          done

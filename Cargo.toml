@@ -8,9 +8,9 @@ edition = "2021"
 bevy = { version = "0.14", features = ["wayland"] }
 rand = "0.8"
 blenvy = "0.1.0-alpha.1"
-avian3d = { git = "https://github.com/Jondolf/avian", version = "0.1.2" }
+avian3d = { git = "https://github.com/Jondolf/avian" }
 bevy-inspector-egui = { version = "0.25.2", optional = true }
-
+leafwing-input-manager = "0.15.0"
 
 # Compile low-severity logs out of native builds for performance.
 log = { version = "0.4", features = [

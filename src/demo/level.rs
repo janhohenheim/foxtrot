@@ -1,8 +1,9 @@
 //! Spawn the main level.
 
-use bevy::{ecs::world::Command, prelude::*};
+use bevy::{color::palettes::tailwind, ecs::world::Command, prelude::*};
+use blenvy::*;
 
-use crate::demo::player::SpawnPlayer;
+use crate::{demo::player::SpawnPlayer, screens::Screen};
 
 pub(super) fn plugin(_app: &mut App) {
     // No setup required for this plugin.
@@ -14,7 +15,17 @@ pub(super) fn plugin(_app: &mut App) {
 /// Functions that accept only `&mut World` as their parameter implement [`Command`].
 /// We use this style when a command requires no configuration.
 pub fn spawn_level(world: &mut World) {
-    // The only thing we have in our level is a player,
-    // but add things like walls etc. here.
-    SpawnPlayer { max_speed: 400.0 }.apply(world);
+    world.spawn((
+        Name::new("Level"),
+        BlueprintInfo::from_path("levels/World.glb"),
+        SpawnBlueprint,
+        HideUntilReady,
+        GameWorldTag,
+        StateScoped(Screen::Gameplay),
+    ));
+    world.insert_resource(AmbientLight {
+        color: tailwind::SKY_100.into(),
+        brightness: 400.0,
+    });
+    SpawnPlayer::default().apply(world);
 }

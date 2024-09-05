@@ -18,6 +18,8 @@ use crate::{
     AppSet,
 };
 
+pub mod camera;
+
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
     app.load_resource::<PlayerAssets>();
@@ -34,11 +36,8 @@ pub(super) fn plugin(app: &mut App) {
 pub struct Player;
 
 /// A command to spawn the player character.
-#[derive(Debug)]
-pub struct SpawnPlayer {
-    /// See [`MovementController::max_speed`].
-    pub max_speed: f32,
-}
+#[derive(Debug, Default)]
+pub struct SpawnPlayer;
 
 impl Command for SpawnPlayer {
     fn apply(self, world: &mut World) {
@@ -74,7 +73,7 @@ fn spawn_player(
             index: player_animation.get_atlas_index(),
         },
         MovementController {
-            max_speed: config.max_speed,
+            max_speed: 0.0,
             ..default()
         },
         ScreenWrap,

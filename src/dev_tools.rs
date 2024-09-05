@@ -18,13 +18,16 @@ pub(super) fn plugin(app: &mut App) {
 
     app.add_plugins((
         DebugUiPlugin,
-        WorldInspectorPlugin::new(),
+        WorldInspectorPlugin::default().run_if(is_inspector_active),
         PhysicsDebugPlugin::default(),
     ));
     app.add_systems(
         Update,
         toggle_debug_mode.run_if(input_just_pressed(TOGGLE_KEY)),
     );
+
+    app.init_resource::<InspectorActive>();
+
     // Disable physics gizmos by default.
     app.insert_gizmo_config(
         PhysicsGizmos {
@@ -40,11 +43,20 @@ pub(super) fn plugin(app: &mut App) {
 
 const TOGGLE_KEY: KeyCode = KeyCode::Backquote;
 
+#[derive(Resource, Default)]
+struct InspectorActive(bool);
+
 fn toggle_debug_mode(
     mut options: ResMut<UiDebugOptions>,
     mut config_store: ResMut<GizmoConfigStore>,
+    mut is_inspector_active: ResMut<InspectorActive>,
 ) {
     options.toggle();
     let physics_gizmos = config_store.config_mut::<PhysicsGizmos>().0;
     physics_gizmos.enabled = options.enabled;
+    is_inspector_active.0 = options.enabled;
+}
+
+fn is_inspector_active(is_active: Res<InspectorActive>) -> bool {
+    is_active.as_ref().0
 }

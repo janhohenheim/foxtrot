@@ -564,6 +564,7 @@ dependencies = [
  "bevy_reflect",
  "bevy_tasks",
  "bevy_utils",
+ "serde",
  "uuid",
 ]
 
@@ -827,6 +828,7 @@ dependencies = [
  "bevy_math",
  "bevy_reflect",
  "bevy_utils",
+ "serde",
  "smol_str",
  "thiserror",
 ]
@@ -1168,6 +1170,7 @@ dependencies = [
  "bevy_reflect",
  "bevy_utils",
  "crossbeam-channel",
+ "serde",
  "thiserror",
 ]
 
@@ -1182,6 +1185,7 @@ dependencies = [
  "bevy_hierarchy",
  "bevy_math",
  "bevy_reflect",
+ "serde",
  "thiserror",
 ]
 
@@ -1210,6 +1214,7 @@ dependencies = [
  "bevy_window",
  "bytemuck",
  "nonmax",
+ "serde",
  "smallvec",
  "taffy",
  "thiserror",
@@ -1254,6 +1259,7 @@ dependencies = [
  "bevy_reflect",
  "bevy_utils",
  "raw-window-handle",
+ "serde",
  "smol_str",
 ]
 
@@ -1280,6 +1286,7 @@ dependencies = [
  "cfg-if",
  "crossbeam-channel",
  "raw-window-handle",
+ "serde",
  "wasm-bindgen",
  "web-sys",
  "winit",
@@ -1864,6 +1871,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f25c0e292a7ca6d6498557ff1df68f32c99850012b6ea401cf8daf771f22ff53"
 
 [[package]]
+name = "dyn-clone"
+version = "1.0.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d6ef0072f8a535281e4876be788938b528e9a1d43900b82c2569af7da799125"
+
+[[package]]
+name = "dyn-eq"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c2d035d21af5cde1a6f5c7b444a5bf963520a9f142e5d06931178433d7d5388"
+
+[[package]]
+name = "dyn-hash"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a650a461c6a8ff1ef205ed9a2ad56579309853fecefc2423f73dced342f92258"
+
+[[package]]
 name = "ecolor"
 version = "0.28.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2123,6 +2148,7 @@ dependencies = [
  "bevy",
  "bevy-inspector-egui",
  "blenvy",
+ "leafwing-input-manager",
  "log",
  "rand",
  "tracing",
@@ -2806,6 +2832,36 @@ name = "lazycell"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+
+[[package]]
+name = "leafwing-input-manager"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10cfa701709bb37011dd09965a76ff981f6284ed5b8ac0e5089dcd311efeff49"
+dependencies = [
+ "bevy",
+ "derive_more",
+ "dyn-clone",
+ "dyn-eq",
+ "dyn-hash",
+ "itertools 0.13.0",
+ "leafwing_input_manager_macros",
+ "once_cell",
+ "serde",
+ "serde_flexitos",
+]
+
+[[package]]
+name = "leafwing_input_manager_macros"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61ff6f0b220de1c284422f6af6a529acfaa5dab76ee86d6167eb2ee34502290c"
+dependencies = [
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
 
 [[package]]
 name = "lewton"
@@ -4113,6 +4169,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_flexitos"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15a95e8972debc2acae5fa208fd4ec9ba96ace41d2bdd4e715ad4082b822e955"
+dependencies = [
+ "erased-serde",
+ "serde",
+]
+
+[[package]]
 name = "serde_json"
 version = "1.0.117"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4180,6 +4246,9 @@ name = "smallvec"
 version = "1.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "smithay-client-toolkit"

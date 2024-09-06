@@ -8,7 +8,7 @@ use bevy::prelude::*;
 use rand::prelude::*;
 use std::time::Duration;
 
-use crate::{audio::SoundEffect,  player::PlayerAssets, AppSet};
+use crate::{audio::SoundEffect, player::PlayerAssets, AppSet};
 
 pub(super) fn plugin(app: &mut App) {
     // Animate and play sound effects based on controls.
@@ -30,11 +30,9 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 /// Update the sprite direction and animation state (idling/walking).
-fn update_animation_movement(
-    mut player_query: Query<(&MovementController, &mut Sprite, &mut PlayerAnimation)>,
-) {
-    for (controller, mut sprite, mut animation) in &mut player_query {
-        let dx = controller.intent.x;
+fn update_animation_movement(mut player_query: Query<(&mut Sprite, &mut PlayerAnimation)>) {
+    for (mut sprite, mut animation) in &mut player_query {
+        /*let dx = controller.intent.x;
         if dx != 0.0 {
             sprite.flip_x = dx < 0.0;
         }
@@ -45,6 +43,7 @@ fn update_animation_movement(
             PlayerAnimationState::Walking
         };
         animation.update_state(animation_state);
+        */
     }
 }
 

@@ -8,13 +8,7 @@ use bevy::{
     render::texture::{ImageLoaderSettings, ImageSampler},
 };
 
-use crate::{
-    animation::PlayerAnimation,
-    asset_tracking::LoadResource,
-    movement::{MovementController, ScreenWrap},
-    screens::Screen,
-    AppSet,
-};
+use crate::{animation::PlayerAnimation, asset_tracking::LoadResource, screens::Screen, AppSet};
 
 pub mod camera;
 pub mod input;
@@ -23,28 +17,12 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
     app.load_resource::<PlayerAssets>();
 
-    // Record directional input as movement controls.
-    app.add_systems(
-        Update,
-        record_player_directional_input.in_set(AppSet::RecordInput),
-    );
-
     app.add_plugins((camera::plugin, input::plugin));
 }
 
 #[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 pub struct Player;
-
-/// A command to spawn the player character.
-#[derive(Debug, Default)]
-pub struct SpawnPlayer;
-
-impl Command for SpawnPlayer {
-    fn apply(self, world: &mut World) {
-        world.run_system_once_with(self, spawn_player);
-    }
-}
 
 #[derive(Resource, Asset, Reflect, Clone)]
 pub struct PlayerAssets {

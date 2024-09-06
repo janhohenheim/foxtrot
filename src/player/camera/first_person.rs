@@ -1,8 +1,10 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
+use super::PlayerCamera;
+
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<PlayerCamera>();
+    app.register_type::<FirstPersonCamera>();
     app.add_plugins((InputManagerPlugin::<CameraAction>::default(),));
 }
 
@@ -28,24 +30,25 @@ impl CameraAction {
 
 #[derive(Debug, Clone, Copy, PartialEq, Component, Reflect, Default)]
 #[reflect(Component)]
-pub struct PlayerCamera {
+pub struct FirstPersonCamera {
     pub follow: Transform,
     pub offset: Transform,
     pub look_at: Option<Vec3>,
 }
 
-impl PlayerCamera {
+impl FirstPersonCamera {
     pub fn transform(self) -> Transform {
         self.follow * self.offset
     }
 }
 
-pub fn spawn_player_camera(world: &mut World) {
-    world.spawn((
+pub fn first_person_camera_bundle() -> impl Bundle {
+    (
         Name::new("Camera"),
         Camera3dBundle::default(),
-        PlayerCamera::default(),
+        FirstPersonCamera::default(),
         IsDefaultUiCamera,
+        PlayerCamera,
         InputManagerBundle::with_map(CameraAction::default_input_map()),
-    ));
+    )
 }

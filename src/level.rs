@@ -3,7 +3,7 @@
 use bevy::{color::palettes::tailwind, ecs::world::Command, prelude::*};
 use blenvy::*;
 
-use crate::{player::SpawnPlayer, screens::Screen};
+use crate::{player::camera::switch_to_first_person_camera, screens::Screen};
 
 pub(super) fn plugin(_app: &mut App) {
     // No setup required for this plugin.
@@ -27,5 +27,6 @@ pub fn spawn_level(world: &mut World) {
         color: tailwind::SKY_100.into(),
         brightness: 400.0,
     });
-    SpawnPlayer::default().apply(world);
+
+    switch_to_first_person_camera(world);
 }

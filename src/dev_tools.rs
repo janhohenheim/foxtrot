@@ -1,6 +1,6 @@
 //! Development tools for the game. This plugin is only enabled in dev builds.
 
-use crate::screens::Screen;
+use crate::screens::{gameplay::GameplayState, Screen};
 use avian3d::prelude::*;
 use bevy::{
     dev_tools::{
@@ -14,7 +14,10 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
-    app.add_systems(Update, log_transitions::<Screen>);
+    app.add_systems(
+        Update,
+        (log_transitions::<Screen>, log_transitions::<GameplayState>),
+    );
 
     app.add_plugins((
         DebugUiPlugin,

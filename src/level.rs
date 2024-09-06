@@ -3,12 +3,19 @@
 use bevy::{color::palettes::tailwind, ecs::world::Command, prelude::*};
 use blenvy::*;
 
-use crate::{player::camera::switch_to_first_person_camera, screens::Screen};
+use crate::{
+    player::camera::switch_to_first_person_camera,
+    screens::{gameplay::GameplayState, Screen},
+};
 
-pub(super) fn plugin(_app: &mut App) {
-    // No setup required for this plugin.
-    // It's still good to have a function here so that we can add some setup
-    // later if needed.
+pub(super) fn plugin(app: &mut App) {
+    app.add_systems(OnEnter(GameplayState::SpawningLevel), spawn_level);
+    app.add_systems(
+        Update,
+        // No need to place this in a set, as it the state transition will
+        // only run next frame anyways, as `Update` is run after `StateTransition`.
+        finish_spawning_level,
+    );
 }
 
 /// A [`Command`] to spawn the level.
@@ -27,6 +34,14 @@ pub fn spawn_level(world: &mut World) {
         color: tailwind::SKY_100.into(),
         brightness: 400.0,
     });
-
     switch_to_first_person_camera(world);
+}
+
+fn finish_spawning_level(
+    q_finished_level: Query<(), (With<GameWorldTag>, With<BlueprintInstanceReady>)>,
+    mut next_state: ResMut<NextState<GameplayState>>,
+) {
+    if !q_finished_level.is_empty() {
+        next_state.set(GameplayState::Playing);
+    }
 }

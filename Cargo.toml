@@ -10,7 +10,8 @@ rand = "0.8"
 blenvy = "0.1.0-alpha.1"
 avian3d = { git = "https://github.com/Jondolf/avian" }
 bevy-inspector-egui = { version = "0.25.2", optional = true }
-leafwing-input-manager = "0.15.0"
+leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing_input_manager" }
+bevy_dolly = "0.0.4"
 
 # Compile low-severity logs out of native builds for performance.
 log = { version = "0.4", features = [

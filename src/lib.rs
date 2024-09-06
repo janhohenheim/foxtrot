@@ -1,18 +1,23 @@
+mod animation;
 mod asset_tracking;
-pub mod audio;
-mod demo;
+mod audio;
+mod collision_layer;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod level;
+mod movement;
+mod player;
 mod screens;
 mod theme;
-mod third_party_setup;
 mod ui_camera;
 
+use avian3d::PhysicsPlugins;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
     prelude::*,
 };
+use blenvy::BlenvyPlugin;
 
 pub struct AppPlugin;
 
@@ -56,13 +61,19 @@ impl Plugin for AppPlugin {
                 }),
         );
 
-        // Add other plugins.
+        // Add third party plugins.
+        app.add_plugins((BlenvyPlugin::default(), PhysicsPlugins::default()));
+
+        // Add internal plugins.
         app.add_plugins((
             asset_tracking::plugin,
-            demo::plugin,
+            animation::plugin,
+            movement::plugin,
+            player::plugin,
+            level::plugin,
             screens::plugin,
             theme::plugin,
-            third_party_setup::plugin,
+            collision_layer::plugin,
             ui_camera::plugin,
         ));
 

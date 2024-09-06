@@ -3,7 +3,7 @@
 use bevy::{color::palettes::tailwind, ecs::world::Command, prelude::*};
 use blenvy::*;
 
-use crate::{demo::player::SpawnPlayer, screens::Screen};
+use crate::{player::SpawnPlayer, screens::Screen};
 
 pub(super) fn plugin(_app: &mut App) {
     // No setup required for this plugin.

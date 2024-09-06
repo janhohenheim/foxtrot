@@ -649,6 +649,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_dolly"
+version = "0.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e784bbab334c8025fdb175ad8a4f81d88ea82fa954714f2cf435565c806cbfc8"
+dependencies = [
+ "bevy",
+ "bevy_math",
+ "bevy_transform",
+ "leafwing-input-manager 0.14.0",
+]
+
+[[package]]
 name = "bevy_dylib"
 version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2147,8 +2159,9 @@ dependencies = [
  "avian3d",
  "bevy",
  "bevy-inspector-egui",
+ "bevy_dolly",
  "blenvy",
- "leafwing-input-manager",
+ "leafwing-input-manager 0.15.0",
  "log",
  "rand",
  "tracing",
@@ -2835,9 +2848,21 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "leafwing-input-manager"
-version = "0.15.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10cfa701709bb37011dd09965a76ff981f6284ed5b8ac0e5089dcd311efeff49"
+checksum = "bebb7f3227809906ca7ccc981aedf7805b5edb422b4265290cc749316c0faba4"
+dependencies = [
+ "bevy",
+ "derive_more",
+ "itertools 0.13.0",
+ "leafwing_input_manager_macros 0.13.0",
+ "serde",
+]
+
+[[package]]
+name = "leafwing-input-manager"
+version = "0.15.0"
+source = "git+https://github.com/Leafwing-Studios/leafwing_input_manager#b2d706a499ef574803a0fd5a1d28e4d300e5292f"
 dependencies = [
  "bevy",
  "derive_more",
@@ -2845,7 +2870,7 @@ dependencies = [
  "dyn-eq",
  "dyn-hash",
  "itertools 0.13.0",
- "leafwing_input_manager_macros",
+ "leafwing_input_manager_macros 0.15.0",
  "once_cell",
  "serde",
  "serde_flexitos",
@@ -2853,9 +2878,20 @@ dependencies = [
 
 [[package]]
 name = "leafwing_input_manager_macros"
-version = "0.15.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61ff6f0b220de1c284422f6af6a529acfaa5dab76ee86d6167eb2ee34502290c"
+checksum = "5d065e4f0771d9cc597e76d648da18476ad01fd50cd60ee585ee500f9cd8d696"
+dependencies = [
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
+
+[[package]]
+name = "leafwing_input_manager_macros"
+version = "0.15.0"
+source = "git+https://github.com/Leafwing-Studios/leafwing_input_manager#b2d706a499ef574803a0fd5a1d28e4d300e5292f"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",

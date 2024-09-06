@@ -1,6 +1,7 @@
 mod animation;
 mod asset_tracking;
 mod audio;
+mod character;
 mod collision_layer;
 #[cfg(feature = "dev")]
 mod dev_tools;
@@ -75,6 +76,7 @@ impl Plugin for AppPlugin {
             theme::plugin,
             collision_layer::plugin,
             ui_camera::plugin,
+            character::plugin,
         ));
 
         // Enable dev tools for dev builds.

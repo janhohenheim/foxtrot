@@ -1,23 +1,11 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((
-        InputManagerPlugin::<PlayerAction>::default(),
-    ));
-}
+use crate::character::action::CharacterAction;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Actionlike, Reflect, Default)]
-pub(crate) enum PlayerAction {
-    #[default]
-    #[actionlike(DualAxis)]
-    Move,
-    Sprint,
-    Jump,
-    Interact,
-}
+pub(super) fn plugin(_app: &mut App) {}
 
-impl PlayerAction {
+impl CharacterAction {
     pub fn default_input_map() -> InputMap<Self> {
         let mut input_map = InputMap::default();
 

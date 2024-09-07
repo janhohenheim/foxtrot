@@ -8,7 +8,7 @@ use crate::system_set::VariableBeforeFixedGameSet;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
-        TnuaAvian3dPlugin::default(),
+        TnuaAvian3dPlugin::new(RunFixedMainLoop),
         TnuaControllerPlugin::new(RunFixedMainLoop),
     ));
     app.add_systems(

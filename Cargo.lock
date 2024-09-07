@@ -309,28 +309,9 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
 [[package]]
 name = "avian3d"
 version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "263f406c08c5ec296039ba06d7aa50e54f9ecd996f682aaa63eae25709e8935b"
-dependencies = [
- "avian_derive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "bevy",
- "bevy_math",
- "bitflags 2.5.0",
- "derive_more",
- "fxhash",
- "indexmap",
- "itertools 0.13.0",
- "nalgebra",
- "parry3d",
- "parry3d-f64",
-]
-
-[[package]]
-name = "avian3d"
-version = "0.1.2"
 source = "git+https://github.com/Jondolf/avian#f1a98d96d240220d1345a785c563b3d84ad653a6"
 dependencies = [
- "avian_derive 0.1.0 (git+https://github.com/Jondolf/avian)",
+ "avian_derive",
  "bevy",
  "bevy_math",
  "bitflags 2.5.0",
@@ -341,17 +322,6 @@ dependencies = [
  "nalgebra",
  "parry3d",
  "parry3d-f64",
-]
-
-[[package]]
-name = "avian_derive"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4adeeecb6d4628d3ca11836ce9af8309f9552d4bd3e3f6e4368440d8163260c"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.66",
 ]
 
 [[package]]
@@ -434,8 +404,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua"
 version = "0.19.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c6f3a55bcc8bbd39a29cfec796a7095e6b8fa5675c86f97a90a70a42be00f87"
+source = "git+https://github.com/janhohenheim/bevy-tnua?branch=avian-main#5e1aad3faaaf0e75fe6a792b754c946ff28e7b90"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -445,10 +414,9 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cbc77298804e3f10010b1b4df52edbb96fc310679c554df128890e4208b321f"
+source = "git+https://github.com/janhohenheim/bevy-tnua?branch=avian-main#5e1aad3faaaf0e75fe6a792b754c946ff28e7b90"
 dependencies = [
- "avian3d 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "avian3d",
  "bevy",
  "bevy-tnua-physics-integration-layer",
 ]
@@ -456,8 +424,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7baa47d51ffdd74afb641bd0811455e6648bb4f4c039afa52be0849bc202cb4f"
+source = "git+https://github.com/janhohenheim/bevy-tnua?branch=avian-main#5e1aad3faaaf0e75fe6a792b754c946ff28e7b90"
 dependencies = [
  "bevy",
 ]
@@ -2217,7 +2184,7 @@ dependencies = [
 name = "foxtrot"
 version = "0.1.0"
 dependencies = [
- "avian3d 0.1.2 (git+https://github.com/Jondolf/avian)",
+ "avian3d",
  "bevy",
  "bevy-inspector-egui",
  "bevy-tnua",

@@ -14,6 +14,7 @@ homepage = "https://janhohenheim.github.io/foxtrot/"
 [features]
 default = ["dev"]
 dev = [
+    "dep:bevy_editor_pls",
     "dep:bevy-inspector-egui",
     "bevy/file_watcher",
     "bevy/dynamic_linking",
@@ -54,10 +55,13 @@ bevy_hanabi = { version = "0.12", default-features = false, features = ["3d"] }
 bevy_yarnspinner = "0.3"
 bevy_yarnspinner_example_dialogue_view = "0.3"
 bevy-tnua-avian3d = "0.1"
-avian3d = { version = "0.1", features = ["simd"] }
+avian3d = { version = "0.1", features = ["simd", "default-collider"] }
 bevy-tnua = "0.19"
 bevy_atmosphere = "0.10"
 blenvy = { git = "https://github.com/kaosat-dev/blenvy", branch = "blenvy" }
+bevy_gltf_blueprints = { git = "https://github.com/kaosat-dev/Blenvy", branch = "bevy-0.14" }
+bevy_editor_pls = { version = "0.9", optional = true }
+parry3d = { version = "0.15" }
 
 [build-dependencies]
 embed-resource = "2"

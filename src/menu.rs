@@ -1,12 +1,7 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_egui::{
-    egui,
-    egui::{
-        FontFamily::Proportional,
-        FontId,
-        TextStyle::{Body, Button, Heading},
-    },
+    egui::{self, FontFamily::Proportional, FontId, Margin, TextStyle::{Body, Button, Heading}},
     EguiContexts,
 };
 
@@ -33,7 +28,8 @@ fn setup_menu(mut egui_contexts: EguiContexts, mut next_state: ResMut<NextState<
 
 fn get_menu_panel() -> egui::CentralPanel {
     egui::CentralPanel::default().frame(egui::Frame {
-        inner_margin: egui::style::Margin::same(60.),
+        // inner_margin: egui::style::Margin::same(60.),
+        inner_margin: Margin::same(60.),
         ..default()
     })
 }

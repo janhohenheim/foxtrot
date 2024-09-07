@@ -1,3 +1,5 @@
+#[cfg(feature = "dev")]
+use crate::dev::dev_editor::DevEditorWindow;
 use crate::util::error;
 use crate::{
     level_instantiation::on_spawn::{player, Npc, Player},
@@ -7,37 +9,79 @@ use crate::{
 };
 #[cfg(feature = "dev")]
 use anyhow::Context;
+use avian3d::parry::shape::{SharedShape};
 use bevy::prelude::*;
-use avian3d::prelude::Collider;
+use oxidized_navigation::colliders::OxidizedCollider;
 #[cfg(feature = "dev")]
 use oxidized_navigation::debug_draw::{DrawNavMesh, DrawPath, OxidizedNavigationDebugDrawPlugin};
 use oxidized_navigation::{
     query::{find_polygon_path, perform_string_pulling_on_path},
     NavMesh, NavMeshSettings, OxidizedNavigationPlugin,
 };
+use parry3d::bounding_volume::Aabb;
+use parry3d::shape::TypedShape;
 
 /// Manually tweaked
 const CELL_WIDTH: f32 = 0.4 * player::RADIUS;
 
+#[derive(Component)]
+struct MyColliderWrapper {
+    collider: SharedShape,
+}
+
+impl OxidizedCollider for MyColliderWrapper {
+    fn oxidized_into_typed_shape(&self) -> TypedShape {
+        self.collider.as_typed_shape()
+    }
+
+    fn oxidized_compute_local_aabb(&self) -> Aabb {
+        self.collider.compute_local_aabb()
+    }
+}
+
 /// Handles NPC pathfinding. Currently, all entities with the [`Npc`] component will follow the [`Player`].
 pub(super) fn plugin(app: &mut App) {
     // consts manually tweaked
-    app.add_plugins(OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
-        cell_width: CELL_WIDTH,
-        cell_height: 0.5 * CELL_WIDTH,
-        tile_width: 170,
-        world_half_extents: 250.0,
-        world_bottom_bound: -20.0,
-        max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
-        walkable_height: 25,
-        walkable_radius: 4,
-        step_height: 3,
-        min_region_area: 30,
-        merge_region_area: 500,
-        max_contour_simplification_error: 1.3,
-        max_edge_length: 100,
-        max_tile_generation_tasks: None,
-    }))
+    app.add_plugins(
+
+        OxidizedNavigationPlugin::<MyColliderWrapper>::new(NavMeshSettings {
+            cell_width: CELL_WIDTH,
+            cell_height: 0.5 * CELL_WIDTH,
+            tile_width: 170,
+            world_half_extents: 250.0,
+            world_bottom_bound: -20.0,
+            max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
+            walkable_height: 25,
+            walkable_radius: 4,
+            step_height: 3,
+            min_region_area: 30,
+            max_region_area_to_merge_into: 500,
+            // merge_region_area: 500,
+            max_contour_simplification_error: 1.3,
+            max_edge_length: 100,
+            max_tile_generation_tasks: None,
+        })
+        
+        // OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
+        //     cell_width: CELL_WIDTH,
+        //     cell_height: 0.5 * CELL_WIDTH,
+        //     tile_width: 170,
+        //     world_half_extents: 250.0,
+        //     world_bottom_bound: -20.0,
+        //     max_traversable_slope_radians: (40.0_f32 - 0.1).to_radians(),
+        //     walkable_height: 25,
+        //     walkable_radius: 4,
+        //     step_height: 3,
+        //     min_region_area: 30,
+        //     max_region_area_to_merge_into: 500,
+        //     // merge_region_area: 500,
+        //     max_contour_simplification_error: 1.3,
+        //     max_edge_length: 100,
+        //     max_tile_generation_tasks: None,
+        // })
+
+
+    )
     .add_systems(
         Update,
         query_mesh.pipe(error).in_set(GameSystemSet::Navigation),
@@ -85,7 +129,7 @@ fn query_mesh(
                             commands.spawn(DrawPath {
                                 timer: Some(Timer::from_seconds(4.0, TimerMode::Once)),
                                 pulled_path: shifted_path,
-                                color: Color::BLUE,
+                                color: Color::WHITE,
                             });
                         }
                     }

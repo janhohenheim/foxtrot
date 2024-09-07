@@ -57,7 +57,7 @@ fn handle_pause(
                 ui.add_space(100.0);
 
                 if ui.button("Quit Game").clicked() {
-                    app_exit_events.send(AppExit);
+                    app_exit_events.send(AppExit::Success);
                 }
             });
         });

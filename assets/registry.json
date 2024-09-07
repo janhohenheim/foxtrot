@@ -31,6 +31,32 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
+    "(foxtrot::character::controller::FloatHeight, foxtrot::character::controller::WalkSpeed, foxtrot::character::controller::JumpHeight)": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "(foxtrot::character::controller::FloatHeight, foxtrot::character::controller::WalkSpeed, foxtrot::character::controller::JumpHeight)",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::character::controller::FloatHeight"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::character::controller::WalkSpeed"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::character::controller::JumpHeight"
+          }
+        }
+      ],
+      "short_name": "(FloatHeight, WalkSpeed, JumpHeight)",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "(u8, u8)": {
       "isComponent": false,
       "isResource": false,
@@ -17443,6 +17469,65 @@
       "short_name": "CharacterAction",
       "type": "string",
       "typeInfo": "Enum"
+    },
+    "foxtrot::character::controller::FloatHeight": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "foxtrot::character::controller::FloatHeight",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "FloatHeight",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::character::controller::JumpHeight": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "foxtrot::character::controller::JumpHeight",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "JumpHeight",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::character::controller::WalkSpeed": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "foxtrot::character::controller::WalkSpeed",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      ],
+      "short_name": "WalkSpeed",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::character::spawn::InsertCharacterController": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::character::spawn::InsertCharacterController",
+      "properties": {},
+      "required": [],
+      "short_name": "InsertCharacterController",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "foxtrot::collision_layer::CollisionLayerPreset": {
       "isComponent": true,

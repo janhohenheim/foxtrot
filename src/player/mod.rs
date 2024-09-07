@@ -3,11 +3,12 @@
 //! for other characters as well.
 
 use bevy::{
+    ecs::component::{ComponentHooks, StorageType},
     prelude::*,
     render::texture::{ImageLoaderSettings, ImageSampler},
 };
 
-use crate::asset_tracking::LoadResource;
+use crate::{asset_tracking::LoadResource, character::action::CharacterAction};
 
 pub mod camera;
 pub mod input;
@@ -19,9 +20,22 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((camera::plugin, input::plugin));
 }
 
-#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 pub struct Player;
+
+impl Component for Player {
+    const STORAGE_TYPE: StorageType = StorageType::Table;
+
+    fn register_component_hooks(hooks: &mut ComponentHooks) {
+        hooks.on_add(|mut world, entity, _component_id| {
+            world
+                .commands()
+                .entity(entity)
+                .insert(CharacterAction::default_input_map());
+        });
+    }
+}
 
 #[derive(Resource, Asset, Reflect, Clone)]
 pub struct PlayerAssets {

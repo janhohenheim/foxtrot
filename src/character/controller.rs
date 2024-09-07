@@ -7,6 +7,7 @@ use super::action::CharacterAction;
 use crate::system_set::VariableBeforeFixedGameSet;
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<(FloatHeight, WalkSpeed, JumpHeight)>();
     app.add_plugins((
         TnuaAvian3dPlugin::new(RunFixedMainLoop),
         TnuaControllerPlugin::new(RunFixedMainLoop),
@@ -26,11 +27,14 @@ fn apply_walking(
     )>,
 ) {
     for (mut controller, action_state, float_height, max_speed) in &mut character_query {
-        let direction = action_state
+        let axis = action_state
             .axis_pair(&CharacterAction::Move)
-            .normalize_or_zero()
-            .extend(0.)
-            .xzy();
+            .normalize_or_zero();
+        let direction = Vec3 {
+            x: axis.x,
+            y: 0.0,
+            z: -axis.y,
+        };
         let sprinting_factor = if action_state.pressed(&CharacterAction::Sprint) {
             1.5
         } else {
@@ -65,14 +69,16 @@ fn apply_jumping(
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Component, Reflect, Deref, DerefMut)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
 #[reflect(Component)]
 /// Must be larger than the height of the entity's center from the bottom of its
 /// collider, or else the character will not float and Tnua will not work properly
 pub struct FloatHeight(pub(crate) f32);
-#[derive(Debug, Default, Clone, PartialEq, Component, Reflect, Deref, DerefMut)]
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
 #[reflect(Component)]
 pub struct WalkSpeed(pub(crate) f32);
-#[derive(Debug, Default, Clone, PartialEq, Component, Reflect, Deref, DerefMut)]
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
 #[reflect(Component)]
 pub struct JumpHeight(pub(crate) f32);

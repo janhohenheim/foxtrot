@@ -5,6 +5,7 @@ mod character;
 mod collision_layer;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod hacks;
 mod level;
 mod player;
 mod screens;
@@ -16,6 +17,7 @@ use avian3d::PhysicsPlugins;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
+    log::LogPlugin,
     prelude::*,
 };
 use blenvy::BlenvyPlugin;
@@ -59,6 +61,13 @@ impl Plugin for AppPlugin {
                         volume: Volume::new(0.3),
                     },
                     ..default()
+                })
+                .set(LogPlugin {
+                    // Blenvy's alpha currently logs debug messages under the info level, so we disable that in general
+                    // The ronstring_to_reflect_component is reporting a warning for `components_meta`, which is exported by mistake.
+                    filter: "blenvy=warn,blenvy::components::ronstring_to_reflect_component=error"
+                        .to_string(),
+                    ..default()
                 }),
         );
 
@@ -77,6 +86,7 @@ impl Plugin for AppPlugin {
             ui_camera::plugin,
             character::plugin,
             system_set::plugin,
+            hacks::plugin,
         ));
 
         // Enable dev tools for dev builds.

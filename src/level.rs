@@ -14,7 +14,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         // No need to place this in a set, as it the state transition will
         // only run next frame anyways, as `Update` is run after `StateTransition`.
-        finish_spawning_level,
+        finish_spawning_level.run_if(in_state(GameplayState::SpawningLevel)),
     );
 }
 

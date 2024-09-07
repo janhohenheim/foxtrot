@@ -63,10 +63,16 @@ impl Plugin for AppPlugin {
                     ..default()
                 })
                 .set(LogPlugin {
-                    // Blenvy's alpha currently logs debug messages under the info level, so we disable that in general
-                    // The ronstring_to_reflect_component is reporting a warning for `components_meta`, which is exported by mistake.
-                    filter: "blenvy=warn,blenvy::components::ronstring_to_reflect_component=error"
-                        .to_string(),
+                    // - Blenvy's alpha currently logs debug messages under the info level, so we disable that in general.
+                    // - The ronstring_to_reflect_component is reporting a warning for `components_meta`, which is exported by mistake.
+                    // - avian3d::prepare is reporting that dynamic rigid bodies are lacking mass, which is because it takes a while for the
+                    //   underlying blueprint to finish loading.
+                    filter: "\
+                        blenvy=warn,\
+                        blenvy::components::ronstring_to_reflect_component=error,\
+                        avian3d::prepare=error\
+                    "
+                    .to_string(),
                     ..default()
                 }),
         );

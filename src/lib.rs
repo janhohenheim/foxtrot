@@ -6,9 +6,9 @@ mod collision_layer;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod level;
-mod movement;
 mod player;
 mod screens;
+mod system_set;
 mod theme;
 mod ui_camera;
 
@@ -69,7 +69,6 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_tracking::plugin,
             animation::plugin,
-            movement::plugin,
             player::plugin,
             level::plugin,
             screens::plugin,
@@ -77,6 +76,7 @@ impl Plugin for AppPlugin {
             collision_layer::plugin,
             ui_camera::plugin,
             character::plugin,
+            system_set::plugin,
         ));
 
         // Enable dev tools for dev builds.

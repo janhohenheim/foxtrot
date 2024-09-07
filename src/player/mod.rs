@@ -3,12 +3,11 @@
 //! for other characters as well.
 
 use bevy::{
-    ecs::{system::RunSystemOnce as _, world::Command},
     prelude::*,
     render::texture::{ImageLoaderSettings, ImageSampler},
 };
 
-use crate::{animation::PlayerAnimation, asset_tracking::LoadResource, screens::Screen, AppSet};
+use crate::asset_tracking::LoadResource;
 
 pub mod camera;
 pub mod input;

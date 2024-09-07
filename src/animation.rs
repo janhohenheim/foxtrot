@@ -31,7 +31,7 @@ pub(super) fn plugin(app: &mut App) {
 
 /// Update the sprite direction and animation state (idling/walking).
 fn update_animation_movement(mut player_query: Query<(&mut Sprite, &mut PlayerAnimation)>) {
-    for (mut sprite, mut animation) in &mut player_query {
+    for (_sprite, _animation) in &mut player_query {
         /*let dx = controller.intent.x;
         if dx != 0.0 {
             sprite.flip_x = dx < 0.0;

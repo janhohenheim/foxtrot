@@ -14621,6 +14621,96 @@
         }
       }
     },
+    "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/foxtrot::character::action::CharacterAction"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<CharacterAction, Vec<Box<dyn Axislike>>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/foxtrot::character::action::CharacterAction"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<CharacterAction, Vec<Box<dyn Buttonlike>>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/foxtrot::character::action::CharacterAction"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<CharacterAction, Vec<Box<dyn DualAxislike>>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/foxtrot::character::action::CharacterAction"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<CharacterAction, Vec<Box<dyn TripleAxislike>>, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>"
+        }
+      }
+    },
+    "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/foxtrot::character::action::CharacterAction"
+        }
+      },
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashMap<CharacterAction, ActionData, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/leafwing_input_manager::action_state::action_data::ActionData"
+        }
+      }
+    },
     "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::first_person::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
@@ -14703,96 +14793,6 @@
       },
       "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::first_person::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, ActionData, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map",
-      "valueType": {
-        "type": {
-          "$ref": "#/$defs/leafwing_input_manager::action_state::action_data::ActionData"
-        }
-      }
-    },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "isComponent": false,
-      "isResource": false,
-      "keyType": {
-        "type": {
-          "$ref": "#/$defs/foxtrot::player::input::PlayerAction"
-        }
-      },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<PlayerAction, Vec<Box<dyn Axislike>>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map",
-      "valueType": {
-        "type": {
-          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>"
-        }
-      }
-    },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "isComponent": false,
-      "isResource": false,
-      "keyType": {
-        "type": {
-          "$ref": "#/$defs/foxtrot::player::input::PlayerAction"
-        }
-      },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<PlayerAction, Vec<Box<dyn Buttonlike>>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map",
-      "valueType": {
-        "type": {
-          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>"
-        }
-      }
-    },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "isComponent": false,
-      "isResource": false,
-      "keyType": {
-        "type": {
-          "$ref": "#/$defs/foxtrot::player::input::PlayerAction"
-        }
-      },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<PlayerAction, Vec<Box<dyn DualAxislike>>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map",
-      "valueType": {
-        "type": {
-          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>"
-        }
-      }
-    },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "isComponent": false,
-      "isResource": false,
-      "keyType": {
-        "type": {
-          "$ref": "#/$defs/foxtrot::player::input::PlayerAction"
-        }
-      },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<PlayerAction, Vec<Box<dyn TripleAxislike>>, DefaultHashBuilder>",
-      "type": "object",
-      "typeInfo": "Map",
-      "valueType": {
-        "type": {
-          "$ref": "#/$defs/alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>"
-        }
-      }
-    },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
-      "isComponent": false,
-      "isResource": false,
-      "keyType": {
-        "type": {
-          "$ref": "#/$defs/foxtrot::player::input::PlayerAction"
-        }
-      },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
-      "short_name": "HashMap<PlayerAction, ActionData, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
       "valueType": {
@@ -17430,6 +17430,20 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "foxtrot::character::action::CharacterAction": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "foxtrot::character::action::CharacterAction",
+      "oneOf": [
+        "Move",
+        "Sprint",
+        "Jump",
+        "Interact"
+      ],
+      "short_name": "CharacterAction",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
     "foxtrot::collision_layer::CollisionLayerPreset": {
       "isComponent": true,
       "isResource": false,
@@ -17506,20 +17520,6 @@
       "short_name": "FirstPersonCamera",
       "type": "object",
       "typeInfo": "Struct"
-    },
-    "foxtrot::player::input::PlayerAction": {
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "foxtrot::player::input::PlayerAction",
-      "oneOf": [
-        "Move",
-        "Sprint",
-        "Jump",
-        "Interact"
-      ],
-      "short_name": "PlayerAction",
-      "type": "string",
-      "typeInfo": "Enum"
     },
     "foxtrot::screens::splash::SplashTimer": {
       "isComponent": false,
@@ -18530,6 +18530,31 @@
       "type": "int",
       "typeInfo": "Value"
     },
+    "leafwing_input_manager::action_state::ActionState<foxtrot::character::action::CharacterAction>": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": true,
+      "long_name": "leafwing_input_manager::action_state::ActionState<foxtrot::character::action::CharacterAction>",
+      "properties": {
+        "action_data": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        },
+        "disabled": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "disabled",
+        "action_data"
+      ],
+      "short_name": "ActionState<CharacterAction>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "leafwing_input_manager::action_state::ActionState<foxtrot::player::camera::first_person::CameraAction>": {
       "additionalProperties": false,
       "isComponent": true,
@@ -18552,31 +18577,6 @@
         "action_data"
       ],
       "short_name": "ActionState<CameraAction>",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "leafwing_input_manager::action_state::ActionState<foxtrot::player::input::PlayerAction>": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": true,
-      "long_name": "leafwing_input_manager::action_state::ActionState<foxtrot::player::input::PlayerAction>",
-      "properties": {
-        "action_data": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
-        },
-        "disabled": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        }
-      },
-      "required": [
-        "disabled",
-        "action_data"
-      ],
-      "short_name": "ActionState<PlayerAction>",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -18847,6 +18847,48 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "leafwing_input_manager::input_map::InputMap<foxtrot::character::action::CharacterAction>": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": true,
+      "long_name": "leafwing_input_manager::input_map::InputMap<foxtrot::character::action::CharacterAction>",
+      "properties": {
+        "associated_gamepad": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_input::gamepad::Gamepad>"
+          }
+        },
+        "axislike_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        },
+        "buttonlike_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        },
+        "dual_axislike_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        },
+        "triple_axislike_map": {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::character::action::CharacterAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      },
+      "required": [
+        "buttonlike_map",
+        "axislike_map",
+        "dual_axislike_map",
+        "triple_axislike_map"
+      ],
+      "short_name": "InputMap<CharacterAction>",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "leafwing_input_manager::input_map::InputMap<foxtrot::player::camera::first_person::CameraAction>": {
       "additionalProperties": false,
       "isComponent": true,
@@ -18886,48 +18928,6 @@
         "triple_axislike_map"
       ],
       "short_name": "InputMap<CameraAction>",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "leafwing_input_manager::input_map::InputMap<foxtrot::player::input::PlayerAction>": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": true,
-      "long_name": "leafwing_input_manager::input_map::InputMap<foxtrot::player::input::PlayerAction>",
-      "properties": {
-        "associated_gamepad": {
-          "type": {
-            "$ref": "#/$defs/core::option::Option<bevy_input::gamepad::Gamepad>"
-          }
-        },
-        "axislike_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
-        },
-        "buttonlike_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
-        },
-        "dual_axislike_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
-        },
-        "triple_axislike_map": {
-          "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::input::PlayerAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
-          }
-        }
-      },
-      "required": [
-        "buttonlike_map",
-        "axislike_map",
-        "dual_axislike_map",
-        "triple_axislike_map"
-      ],
-      "short_name": "InputMap<PlayerAction>",
       "type": "object",
       "typeInfo": "Struct"
     },

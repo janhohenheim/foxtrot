@@ -1,6 +1,6 @@
 //! Spawn the main level.
 
-use bevy::{color::palettes::tailwind, ecs::world::Command, prelude::*};
+use bevy::{color::palettes::tailwind, prelude::*};
 use blenvy::*;
 
 use crate::{

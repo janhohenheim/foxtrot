@@ -1,10 +1,21 @@
-use bevy::prelude::*;
+use bevy::{app::RunFixedMainLoop, prelude::*};
 use bevy_tnua::prelude::*;
+use bevy_tnua_avian3d::TnuaAvian3dPlugin;
 use leafwing_input_manager::prelude::*;
 
 use super::action::CharacterAction;
+use crate::system_set::VariableBeforeFixedGameSet;
 
-pub(super) fn plugin(app: &mut App) {}
+pub(super) fn plugin(app: &mut App) {
+    app.add_plugins((
+        TnuaAvian3dPlugin::default(),
+        TnuaControllerPlugin::new(RunFixedMainLoop),
+    ));
+    app.add_systems(
+        RunFixedMainLoop,
+        (apply_walking, apply_jumping).in_set(VariableBeforeFixedGameSet::CharacterController),
+    );
+}
 
 fn apply_walking(
     mut character_query: Query<(

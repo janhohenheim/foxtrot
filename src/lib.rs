@@ -58,7 +58,8 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<GameState>().add_plugins((
+        app
+        .add_plugins((
             system_set::plugin,
             bevy_config::plugin,
             menu::plugin,
@@ -72,6 +73,8 @@ impl Plugin for GamePlugin {
             particles::plugin,
             #[cfg(feature = "dev")]
             dev::plugin,
-        ));
+        ))
+        .init_state::<GameState>()
+        ;
     }
 }

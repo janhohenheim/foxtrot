@@ -85,6 +85,12 @@ fn play_animations(
                 state,
             } => match state {
                 AnimationState::Airborne | AnimationState::Running(..) => {
+                    animation_player
+                        .play(
+                            *animations.named_indices
+                                .get(&animation_names.aerial)
+                                .unwrap()
+                        ).repeat().set_speed(0.2);
                     // animation_player
                     //     .play_with_transition(
                     //         animations
@@ -97,6 +103,13 @@ fn play_animations(
                     //     .repeat();
                 }
                 AnimationState::Standing => {
+                    animation_player
+                    .play(
+                        *animations.named_indices
+                            .get(&animation_names.idle)
+                            .unwrap()
+                    ).repeat().set_speed(0.2);
+
                     // animation_player
                     //     .play_with_transition(
                     //         animations
@@ -109,6 +122,14 @@ fn play_animations(
                     //     .repeat();
                 }
                 AnimationState::Walking(_speed) => {
+
+                    animation_player
+                    .play(
+                        *animations.named_indices
+                            .get(&animation_names.walk)
+                            .unwrap()
+                    ).repeat().set_speed(0.1);
+
                     // animation_player
                     //     .play_with_transition(
                     //         animations

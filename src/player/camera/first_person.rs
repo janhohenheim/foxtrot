@@ -68,7 +68,7 @@ fn follow_player(
     let Ok(mut camera_transform) = q_camera.get_single_mut() else {
         return;
     };
-    let decay_rate = f32::ln(5.0);
+    let decay_rate = f32::ln(100.0);
     let origin = &mut camera_transform.translation;
     let target = player_transform.translation;
     *origin = origin.lerp(target, 1.0 - f32::exp(-decay_rate * dt));

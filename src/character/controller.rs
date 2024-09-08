@@ -1,20 +1,21 @@
-use bevy::{app::RunFixedMainLoop, prelude::*};
+use avian3d::prelude::*;
+use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dPlugin;
 use leafwing_input_manager::prelude::*;
 
 use super::action::CharacterAction;
-use crate::system_set::VariableBeforeFixedGameSet;
+use crate::system_set::FixedGameSet;
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<(FloatHeight, WalkSpeed, JumpHeight)>();
+    app.register_type::<(WalkControllerConfig, JumpControllerConfig)>();
     app.add_plugins((
-        TnuaAvian3dPlugin::new(RunFixedMainLoop),
-        TnuaControllerPlugin::new(RunFixedMainLoop),
+        TnuaAvian3dPlugin::new(PhysicsSchedule),
+        TnuaControllerPlugin::new(PhysicsSchedule),
     ));
     app.add_systems(
-        RunFixedMainLoop,
-        (apply_walking, apply_jumping).in_set(VariableBeforeFixedGameSet::CharacterController),
+        FixedUpdate,
+        (apply_walking, apply_jumping).in_set(FixedGameSet::CharacterController),
     );
 }
 
@@ -22,11 +23,10 @@ fn apply_walking(
     mut character_query: Query<(
         &mut TnuaController,
         &ActionState<CharacterAction>,
-        &FloatHeight,
-        &WalkSpeed,
+        &WalkControllerConfig,
     )>,
 ) {
-    for (mut controller, action_state, float_height, max_speed) in &mut character_query {
+    for (mut controller, action_state, walk) in &mut character_query {
         let axis = action_state
             .axis_pair(&CharacterAction::Move)
             .normalize_or_zero();
@@ -36,15 +36,15 @@ fn apply_walking(
             z: -axis.y,
         };
         let sprinting_factor = if action_state.pressed(&CharacterAction::Sprint) {
-            1.5
+            walk.sprint_multiplier
         } else {
             1.0
         };
-        let velocity = direction * max_speed.0 * sprinting_factor;
+        let velocity = direction * walk.max_speed * sprinting_factor;
         controller.basis(TnuaBuiltinWalk {
             desired_velocity: velocity,
             desired_forward: direction,
-            float_height: float_height.0,
+            float_height: walk.float_height,
             cling_distance: 0.1,
             ..Default::default()
         });
@@ -55,13 +55,13 @@ fn apply_jumping(
     mut character_query: Query<(
         &mut TnuaController,
         &ActionState<CharacterAction>,
-        &JumpHeight,
+        &JumpControllerConfig,
     )>,
 ) {
-    for (mut controller, action_state, jump_height) in &mut character_query {
+    for (mut controller, action_state, jump) in &mut character_query {
         if action_state.pressed(&CharacterAction::Jump) {
             controller.action(TnuaBuiltinJump {
-                height: jump_height.0,
+                height: jump.height,
                 takeoff_extra_gravity: 10.0,
                 ..Default::default()
             });
@@ -69,16 +69,18 @@ fn apply_jumping(
     }
 }
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect)]
 #[reflect(Component)]
-/// Must be larger than the height of the entity's center from the bottom of its
-/// collider, or else the character will not float and Tnua will not work properly
-pub struct FloatHeight(pub(crate) f32);
+struct WalkControllerConfig {
+    max_speed: f32,
+    sprint_multiplier: f32,
+    /// Must be larger than the height of the entity's center from the bottom of its
+    /// collider, or else the character will not float and Tnua will not work properly
+    float_height: f32,
+}
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect)]
 #[reflect(Component)]
-pub struct WalkSpeed(pub(crate) f32);
-
-#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect, Deref, DerefMut)]
-#[reflect(Component)]
-pub struct JumpHeight(pub(crate) f32);
+struct JumpControllerConfig {
+    height: f32,
+}

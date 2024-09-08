@@ -12,8 +12,8 @@ avian3d = { git = "https://github.com/Jondolf/avian" }
 bevy-inspector-egui = { version = "0.25.2", optional = true }
 leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing_input_manager" }
 bevy_dolly = "0.0.4"
-bevy-tnua-avian3d = { version = "0.1.1", git = "https://github.com/janhohenheim/bevy-tnua", branch = "avian-main" }
-bevy-tnua = { version = "0.19.0", git = "https://github.com/janhohenheim/bevy-tnua", branch = "avian-main"}
+bevy-tnua-avian3d = { version = "0.1.1", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff" }
+bevy-tnua = { version = "0.19.0", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff"}
 
 # Generic dependencies
 rand = "0.8"

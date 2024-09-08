@@ -4,3 +4,5 @@
 .cargo/config.toml
 # Blender backup files
 *.blend[1-9]
+# Blenvy backup files
+*[1-9].blend

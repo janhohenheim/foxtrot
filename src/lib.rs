@@ -14,6 +14,7 @@ mod theme;
 mod ui_camera;
 
 use avian3d::PhysicsPlugins;
+use avian_interpolation3d::prelude::*;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
@@ -78,7 +79,11 @@ impl Plugin for AppPlugin {
         );
 
         // Add third party plugins.
-        app.add_plugins((BlenvyPlugin::default(), PhysicsPlugins::default()));
+        app.add_plugins((
+            BlenvyPlugin::default(),
+            PhysicsPlugins::default(),
+            AvianInterpolationPlugin::default(),
+        ));
 
         // Add internal plugins.
         app.add_plugins((

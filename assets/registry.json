@@ -10,6 +10,27 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
+    "(avian_interpolation3d::InterpolationMode, avian_interpolation3d::DisableTransformChanges)": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "(avian_interpolation3d::InterpolationMode, avian_interpolation3d::DisableTransformChanges)",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/avian_interpolation3d::InterpolationMode"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/avian_interpolation3d::DisableTransformChanges"
+          }
+        }
+      ],
+      "short_name": "(InterpolationMode, DisableTransformChanges)",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "(bevy_ecs::entity::Entity, bevy_ecs::entity::Entity)": {
       "isComponent": false,
       "isResource": false,
@@ -3173,6 +3194,29 @@
       "short_name": "AncestorMarker<RigidBody>",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "avian_interpolation3d::DisableTransformChanges": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "avian_interpolation3d::DisableTransformChanges",
+      "properties": {},
+      "required": [],
+      "short_name": "DisableTransformChanges",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "avian_interpolation3d::InterpolationMode": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "avian_interpolation3d::InterpolationMode",
+      "oneOf": [
+        "Linear",
+        "None"
+      ],
+      "short_name": "InterpolationMode",
+      "type": "string",
+      "typeInfo": "Enum"
     },
     "bevy_animation::AnimationClip": {
       "additionalProperties": false,
@@ -13888,6 +13932,11 @@
       "isResource": false,
       "long_name": "bevy_ui::ui_node::Node",
       "properties": {
+        "border_radius": {
+          "type": {
+            "$ref": "#/$defs/bevy_ui::ui_node::ResolvedBorderRadius"
+          }
+        },
         "calculated_size": {
           "type": {
             "$ref": "#/$defs/glam::Vec2"
@@ -13919,7 +13968,8 @@
         "calculated_size",
         "outline_width",
         "outline_offset",
-        "unrounded_size"
+        "unrounded_size",
+        "border_radius"
       ],
       "short_name": "Node",
       "type": "object",
@@ -14028,6 +14078,43 @@
         "tracks"
       ],
       "short_name": "RepeatedGridTrack",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_ui::ui_node::ResolvedBorderRadius": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_ui::ui_node::ResolvedBorderRadius",
+      "properties": {
+        "bottom_left": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "bottom_right": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "top_left": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "top_right": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "top_left",
+        "top_right",
+        "bottom_left",
+        "bottom_right"
+      ],
+      "short_name": "ResolvedBorderRadius",
       "type": "object",
       "typeInfo": "Struct"
     },
@@ -16395,28 +16482,6 @@
       "short_name": "BlenderToneMapping",
       "type": "string",
       "typeInfo": "Enum"
-    },
-    "blenvy::save_load::Dynamic": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "blenvy::save_load::Dynamic",
-      "properties": {},
-      "required": [],
-      "short_name": "Dynamic",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "blenvy::save_load::StaticEntitiesRoot": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "blenvy::save_load::StaticEntitiesRoot",
-      "properties": {},
-      "required": [],
-      "short_name": "StaticEntitiesRoot",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "bool": {
       "isComponent": false,

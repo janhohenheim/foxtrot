@@ -6,9 +6,10 @@ edition = "2021"
 
 [dependencies]
 # Bevy dependencies
-bevy = { version = "0.14", features = ["wayland"] }
-blenvy = "0.1.0-alpha.1"
+bevy = { version = "0.14.2", features = ["wayland"] }
+blenvy = { version = "0.1.0-alpha.1", git = "https://github.com/janhohenheim/blenvy", branch = "scheduling"}
 avian3d = { git = "https://github.com/Jondolf/avian" }
+avian_interpolation3d = { git = "https://github.com/janhohenheim/avian_interpolation", version = "0.1.0" }
 bevy-inspector-egui = { version = "0.25.2", optional = true }
 leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing_input_manager" }
 bevy_dolly = "0.0.4"

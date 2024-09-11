@@ -5,7 +5,7 @@ use bevy_tnua_avian3d::TnuaAvian3dPlugin;
 use leafwing_input_manager::prelude::*;
 
 use super::action::CharacterAction;
-use crate::{player::camera::PlayerCamera, system_set::FixedGameSet};
+use crate::system_set::FixedGameSet;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<(WalkControllerConfig, JumpControllerConfig)>();

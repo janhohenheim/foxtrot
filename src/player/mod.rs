@@ -3,11 +3,11 @@
 //! for other characters as well.
 
 use bevy::{
-    ecs::component::{ComponentHooks, StorageType},
     prelude::*,
     render::texture::{ImageLoaderSettings, ImageSampler},
 };
 use camera::PlayerCamera;
+use leafwing_input_manager::InputManagerBundle;
 
 use crate::{
     asset_tracking::LoadResource,
@@ -29,6 +29,8 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 pub struct Player;
 
+/// Adds components to the player entity that would be
+/// hard or impossible set up in Blender.
 fn add_player_components(
     trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
@@ -36,7 +38,7 @@ fn add_player_components(
 ) {
     let camera = camera_query.get_single().expect("Player camera not found");
     commands.entity(trigger.entity()).insert((
-        CharacterAction::default_input_map(),
+        InputManagerBundle::with_map(CharacterAction::default_input_map()),
         OverrideForwardDirection(camera),
     ));
 }

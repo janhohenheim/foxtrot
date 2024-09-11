@@ -12,6 +12,7 @@ mod screens;
 mod system_set;
 mod theme;
 mod ui_camera;
+mod cursor;
 
 use avian3d::{prelude::SyncPlugin, sync::SyncConfig, PhysicsPlugins};
 use avian_interpolation3d::prelude::*;
@@ -99,6 +100,7 @@ impl Plugin for AppPlugin {
             character::plugin,
             system_set::plugin,
             hacks::plugin,
+            cursor::plugin,
         ));
 
         // Enable dev tools for dev builds.

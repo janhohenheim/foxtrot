@@ -3159,6 +3159,11 @@
             "$ref": "#/$defs/bool"
           }
         },
+        "transform_to_collider_scale": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
         "transform_to_position": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -3167,7 +3172,8 @@
       },
       "required": [
         "position_to_transform",
-        "transform_to_position"
+        "transform_to_position",
+        "transform_to_collider_scale"
       ],
       "short_name": "SyncConfig",
       "type": "object",
@@ -16482,6 +16488,28 @@
       "short_name": "BlenderToneMapping",
       "type": "string",
       "typeInfo": "Enum"
+    },
+    "blenvy::save_load::Dynamic": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::save_load::Dynamic",
+      "properties": {},
+      "required": [],
+      "short_name": "Dynamic",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "blenvy::save_load::StaticEntitiesRoot": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "blenvy::save_load::StaticEntitiesRoot",
+      "properties": {},
+      "required": [],
+      "short_name": "StaticEntitiesRoot",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "bool": {
       "isComponent": false,

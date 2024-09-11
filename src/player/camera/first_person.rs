@@ -57,19 +57,14 @@ pub fn first_person_camera_bundle() -> impl Bundle {
 }
 
 fn follow_player(
-    time: Res<Time>,
     mut q_camera: Query<&mut Transform, With<FirstPersonCamera>>,
     q_player: Query<&Transform, (With<Player>, Without<FirstPersonCamera>)>,
 ) {
-    let dt = time.delta_seconds();
     let Ok(player_transform) = q_player.get_single() else {
         return;
     };
     let Ok(mut camera_transform) = q_camera.get_single_mut() else {
         return;
     };
-    let decay_rate = f32::ln(100.0);
-    let origin = &mut camera_transform.translation;
-    let target = player_transform.translation;
-    *origin = origin.lerp(target, 1.0 - f32::exp(-decay_rate * dt));
+    camera_transform.translation = player_transform.translation;
 }

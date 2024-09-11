@@ -13,7 +13,7 @@ mod system_set;
 mod theme;
 mod ui_camera;
 
-use avian3d::PhysicsPlugins;
+use avian3d::{prelude::SyncPlugin, sync::SyncConfig, PhysicsPlugins};
 use avian_interpolation3d::prelude::*;
 use bevy::{
     asset::AssetMetaCheck,
@@ -79,9 +79,10 @@ impl Plugin for AppPlugin {
         );
 
         // Add third party plugins.
+        app.init_resource::<SyncConfig>();
         app.add_plugins((
             BlenvyPlugin::default(),
-            PhysicsPlugins::default(),
+            PhysicsPlugins::default().build().disable::<SyncPlugin>(),
             AvianInterpolationPlugin::default(),
         ));
 

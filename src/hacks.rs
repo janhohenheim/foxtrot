@@ -1,17 +1,6 @@
-use avian3d::prelude::*;
-use bevy::prelude::*;
+use avian3d::{prelude::*, sync::SyncConfig};
+use bevy::{ecs::system::RunSystemOnce as _, prelude::*};
 
-pub(super) fn plugin(app: &mut App) {
-    app.observe(fix_collider);
+pub(super) fn plugin(_app: &mut App) {
 }
 
-fn fix_collider(
-    trigger: Trigger<OnAdd, Collider>,
-    mut q_floor: Query<(&GlobalTransform, &mut Collider)>,
-) {
-    let Ok((transform, mut collider)) = q_floor.get_mut(trigger.entity()) else {
-        return;
-    };
-    let transform = transform.compute_transform();
-    collider.set_scale(transform.scale, 10);
-}

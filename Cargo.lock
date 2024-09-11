@@ -309,7 +309,6 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
 [[package]]
 name = "avian3d"
 version = "0.1.2"
-source = "git+https://github.com/Jondolf/avian#a5616dd194aecfef294d70ad9294d20ac68a49d4"
 dependencies = [
  "avian_derive",
  "bevy",
@@ -327,7 +326,6 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.1.0"
-source = "git+https://github.com/Jondolf/avian#a5616dd194aecfef294d70ad9294d20ac68a49d4"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -338,7 +336,6 @@ dependencies = [
 [[package]]
 name = "avian_interpolation3d"
 version = "0.1.0"
-source = "git+https://github.com/janhohenheim/avian_interpolation#d51dca2e8601d45d8f04cb7e9da0362d9a0b3186"
 dependencies = [
  "avian3d",
  "bevy",
@@ -413,7 +410,6 @@ dependencies = [
 [[package]]
 name = "bevy-tnua"
 version = "0.19.0"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=fix-minor-avian-stuff#6099a73bfb1b550345dec7ac3802c91aaa3d579a"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -423,7 +419,6 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.1.1"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=fix-minor-avian-stuff#6099a73bfb1b550345dec7ac3802c91aaa3d579a"
 dependencies = [
  "avian3d",
  "bevy",
@@ -433,7 +428,6 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.4.0"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=fix-minor-avian-stuff#6099a73bfb1b550345dec7ac3802c91aaa3d579a"
 dependencies = [
  "bevy",
 ]
@@ -1407,7 +1401,7 @@ dependencies = [
 [[package]]
 name = "blenvy"
 version = "0.1.0-alpha.1"
-source = "git+https://github.com/janhohenheim/blenvy?branch=scheduling#98010b116d7475c082fda6c9d2d01537b28fd8f7"
+source = "git+https://github.com/janhohenheim/blenvy?branch=initialization#21142bf84655c3d2b5f6d04e361336afe7ca8078"
 dependencies = [
  "bevy",
  "bevy_common_assets",

@@ -1,6 +1,3 @@
-use avian3d::{prelude::*, sync::SyncConfig};
-use bevy::{ecs::system::RunSystemOnce as _, prelude::*};
+use bevy::prelude::*;
 
-pub(super) fn plugin(_app: &mut App) {
-}
-
+pub(super) fn plugin(_app: &mut App) {}

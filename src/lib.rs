@@ -3,6 +3,7 @@ mod asset_tracking;
 mod audio;
 mod character;
 mod collision_layer;
+mod cursor;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod hacks;
@@ -12,7 +13,6 @@ mod screens;
 mod system_set;
 mod theme;
 mod ui_camera;
-mod cursor;
 
 use avian3d::{prelude::SyncPlugin, sync::SyncConfig, PhysicsPlugins};
 use avian_interpolation3d::prelude::*;

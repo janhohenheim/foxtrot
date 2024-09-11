@@ -68,7 +68,9 @@ fn follow_player(
     let Ok(mut camera_transform) = q_camera.get_single_mut() else {
         return;
     };
-    camera_transform.translation = player_transform.translation;
+    let height_offset = 0.5;
+    camera_transform.translation =
+        player_transform.translation + player_transform.up() * height_offset;
 }
 
 fn rotate_camera(

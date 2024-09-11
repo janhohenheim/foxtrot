@@ -4,7 +4,8 @@ use leafwing_input_manager::{common_conditions::action_just_pressed, prelude::*}
 use crate::screens::gameplay::GameplayState;
 
 pub(super) fn plugin(app: &mut App) {
-    app.init_resource::<ActionState<CursorAction>>()
+    app.add_plugins(InputManagerPlugin::<CursorAction>::default())
+        .init_resource::<ActionState<CursorAction>>()
         .insert_resource(CursorAction::default_input_map())
         .add_systems(
             OnEnter(GameplayState::Playing),
@@ -18,8 +19,7 @@ pub(super) fn plugin(app: &mut App) {
                 capture_cursor.run_if(action_just_pressed(CursorAction::Capture)),
                 release_cursor.run_if(action_just_pressed(CursorAction::Release)),
             )
-                .run_if(in_state(GameplayState::Playing))
-                .chain(),
+                .run_if(in_state(GameplayState::Playing)),
         );
 }
 
@@ -32,7 +32,7 @@ pub enum CursorAction {
 impl CursorAction {
     pub fn default_input_map() -> InputMap<Self> {
         let mut input_map = InputMap::default();
-        input_map.insert(CursorAction::Capture, MouseButton::Left);
+        input_map.insert(CursorAction::Capture, MouseButton::Right);
         input_map.insert(CursorAction::Release, KeyCode::Escape);
         input_map
     }
@@ -64,6 +64,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn capture_cursor(mut windows: Query<&mut Window>) {
+    info!("capture_cursor");
     for mut window in &mut windows {
         window.cursor.visible = false;
         window.cursor.grab_mode = CursorGrabMode::Locked;
@@ -71,6 +72,7 @@ fn capture_cursor(mut windows: Query<&mut Window>) {
 }
 
 fn release_cursor(mut windows: Query<&mut Window>) {
+    info!("release_cursor");
     for mut window in &mut windows {
         window.cursor.visible = true;
         window.cursor.grab_mode = CursorGrabMode::None;

@@ -1,6 +1,6 @@
 //! The screen state for the main gameplay.
 
-use bevy::{input::common_conditions::input_just_pressed, prelude::*};
+use bevy::prelude::*;
 
 use crate::{asset_tracking::LoadResource, audio::Music, screens::Screen};
 
@@ -8,12 +8,6 @@ pub(super) fn plugin(app: &mut App) {
     app.load_resource::<GameplayMusic>();
     app.add_systems(OnEnter(GameplayState::Playing), play_gameplay_music);
     app.add_systems(OnExit(GameplayState::Playing), stop_music);
-
-    app.add_systems(
-        Update,
-        return_to_title_screen
-            .run_if(in_state(Screen::Gameplay).and_then(input_just_pressed(KeyCode::Escape))),
-    );
 
     app.enable_state_scoped_entities::<GameplayState>();
 }
@@ -61,8 +55,4 @@ fn stop_music(mut commands: Commands, mut music: ResMut<GameplayMusic>) {
     if let Some(entity) = music.entity.take() {
         commands.entity(entity).despawn_recursive();
     }
-}
-
-fn return_to_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
-    next_screen.set(Screen::Title);
 }

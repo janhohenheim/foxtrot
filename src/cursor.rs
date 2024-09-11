@@ -63,8 +63,6 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-/// Capture the cursor when the left mouse button is pressed.
-/// This makes it way less fidgity to pick up objects.
 fn capture_cursor(mut windows: Query<&mut Window>) {
     for mut window in &mut windows {
         window.cursor.visible = false;
@@ -72,8 +70,6 @@ fn capture_cursor(mut windows: Query<&mut Window>) {
     }
 }
 
-/// Release the cursor when the escape key is pressed.
-/// Somehow doesn't work on macOS?
 fn release_cursor(mut windows: Query<&mut Window>) {
     for mut window in &mut windows {
         window.cursor.visible = true;

@@ -1,3 +1,5 @@
+use std::f32::consts::FRAC_PI_2;
+
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
@@ -8,7 +10,7 @@ use super::PlayerCamera;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<FirstPersonCamera>();
     app.add_plugins((InputManagerPlugin::<CameraAction>::default(),));
-    app.add_systems(Update, follow_player);
+    app.add_systems(Update, (rotate_camera, follow_player).chain());
 }
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
@@ -51,7 +53,7 @@ pub fn first_person_camera_bundle() -> impl Bundle {
         Camera3dBundle::default(),
         FirstPersonCamera::default(),
         IsDefaultUiCamera,
-        PlayerCamera,
+        PlayerCamera::default(),
         InputManagerBundle::with_map(CameraAction::default_input_map()),
     )
 }
@@ -67,4 +69,22 @@ fn follow_player(
         return;
     };
     camera_transform.translation = player_transform.translation;
+}
+
+fn rotate_camera(
+    mut character_query: Query<(&mut Transform, &ActionState<CameraAction>, &PlayerCamera)>,
+) {
+    for (mut transform, action_state, config) in &mut character_query {
+        let delta = action_state.axis_pair(&CameraAction::RotateCamera);
+        let delta_yaw = -delta.x * config.sensitivity.x;
+        let delta_pitch = -delta.y * config.sensitivity.y;
+
+        let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
+        let yaw = yaw + delta_yaw;
+
+        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+        let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
+
+        transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    }
 }

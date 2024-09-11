@@ -5,7 +5,7 @@ use bevy_tnua_avian3d::TnuaAvian3dPlugin;
 use leafwing_input_manager::prelude::*;
 
 use super::action::CharacterAction;
-use crate::system_set::FixedGameSet;
+use crate::{player::camera::PlayerCamera, system_set::FixedGameSet};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<(WalkControllerConfig, JumpControllerConfig)>();
@@ -21,25 +21,39 @@ pub(super) fn plugin(app: &mut App) {
 
 fn apply_walking(
     mut character_query: Query<(
+        Entity,
         &mut TnuaController,
         &ActionState<CharacterAction>,
         &WalkControllerConfig,
+        Option<&OverrideForwardDirection>,
     )>,
+    forward_reference_query: Query<&Transform>,
 ) {
-    for (mut controller, action_state, walk) in &mut character_query {
-        let axis = action_state
-            .axis_pair(&CharacterAction::Move)
-            .normalize_or_zero();
-        let direction = Vec3 {
-            x: axis.x,
-            y: 0.0,
-            z: -axis.y,
+    for (entity, mut controller, action_state, walk, forward_reference) in &mut character_query {
+        let forward_reference_entity = forward_reference.map_or(entity, |e| e.0);
+        let Ok(forward_reference) = forward_reference_query.get(forward_reference_entity) else {
+            error!("Forward reference entity not found");
+            continue;
         };
+        let axis = action_state.axis_pair(&CharacterAction::Move);
+
+        let (forward, right) = {
+            let forward = forward_reference.forward().as_vec3();
+            let up = forward_reference.up().as_vec3();
+
+            let vertical = up * forward.dot(up);
+            let horizontal_forward = (forward - vertical).normalize();
+            let horizontal_right = horizontal_forward.cross(up);
+            (horizontal_forward, horizontal_right)
+        };
+        let direction = forward * axis.y + right * axis.x;
+
         let sprinting_factor = if action_state.pressed(&CharacterAction::Sprint) {
             walk.sprint_multiplier
         } else {
             1.0
         };
+
         let velocity = direction * walk.max_speed * sprinting_factor;
         controller.basis(TnuaBuiltinWalk {
             desired_velocity: velocity,
@@ -78,6 +92,13 @@ struct WalkControllerConfig {
     /// collider, or else the character will not float and Tnua will not work properly
     float_height: f32,
 }
+
+/// The entity who's forward direction on the horizontal place will be
+/// used to determine the character's forward direction for the [`WalkControllerConfig`].
+/// Used to make the player character always walk in the direction the camera is facing.
+/// Todo: make this an optional member on `WalkControllerConfig` once Blenvy supports relations.
+#[derive(Debug, Clone, Copy, PartialEq, Component)]
+pub(crate) struct OverrideForwardDirection(pub(crate) Entity);
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect)]
 #[reflect(Component)]

@@ -7,8 +7,12 @@ use bevy::{
     prelude::*,
     render::texture::{ImageLoaderSettings, ImageSampler},
 };
+use camera::PlayerCamera;
 
-use crate::{asset_tracking::LoadResource, character::action::CharacterAction};
+use crate::{
+    asset_tracking::LoadResource,
+    character::{action::CharacterAction, controller::OverrideForwardDirection},
+};
 
 pub mod camera;
 pub mod input;
@@ -16,25 +20,25 @@ pub mod input;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
     app.load_resource::<PlayerAssets>();
+    app.observe(add_player_components);
 
     app.add_plugins((camera::plugin, input::plugin));
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 pub struct Player;
 
-impl Component for Player {
-    const STORAGE_TYPE: StorageType = StorageType::Table;
-
-    fn register_component_hooks(hooks: &mut ComponentHooks) {
-        hooks.on_add(|mut world, entity, _component_id| {
-            world
-                .commands()
-                .entity(entity)
-                .insert(CharacterAction::default_input_map());
-        });
-    }
+fn add_player_components(
+    trigger: Trigger<OnAdd, Player>,
+    mut commands: Commands,
+    camera_query: Query<Entity, With<PlayerCamera>>,
+) {
+    let camera = camera_query.get_single().expect("Player camera not found");
+    commands.entity(trigger.entity()).insert((
+        CharacterAction::default_input_map(),
+        OverrideForwardDirection(camera),
+    ));
 }
 
 #[derive(Resource, Asset, Reflect, Clone)]

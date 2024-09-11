@@ -17649,8 +17649,16 @@
       "isComponent": true,
       "isResource": false,
       "long_name": "foxtrot::player::camera::PlayerCamera",
-      "properties": {},
-      "required": [],
+      "properties": {
+        "sensitivity": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec2"
+          }
+        }
+      },
+      "required": [
+        "sensitivity"
+      ],
       "short_name": "PlayerCamera",
       "type": "object",
       "typeInfo": "Struct"

@@ -3159,11 +3159,6 @@
             "$ref": "#/$defs/bool"
           }
         },
-        "transform_to_collider_scale": {
-          "type": {
-            "$ref": "#/$defs/bool"
-          }
-        },
         "transform_to_position": {
           "type": {
             "$ref": "#/$defs/bool"
@@ -3172,8 +3167,7 @@
       },
       "required": [
         "position_to_transform",
-        "transform_to_position",
-        "transform_to_collider_scale"
+        "transform_to_position"
       ],
       "short_name": "SyncConfig",
       "type": "object",

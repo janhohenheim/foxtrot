@@ -513,6 +513,136 @@
       "type": "array",
       "typeInfo": "List"
     },
+    "alloc::vec::Vec<yarnspinner_compiler::compiler::File>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_compiler::compiler::File"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_compiler::compiler::File>",
+      "short_name": "Vec<File>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic>",
+      "short_name": "Vec<Diagnostic>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_compiler::output::declaration::Declaration>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_compiler::output::declaration::Declaration"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_compiler::output::declaration::Declaration>",
+      "short_name": "Vec<Declaration>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_core::generated::Header>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::generated::Header"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_core::generated::Header>",
+      "short_name": "Vec<Header>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_core::generated::Instruction>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::generated::Instruction"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_core::generated::Instruction>",
+      "short_name": "Vec<Instruction>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_core::generated::Operand>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::generated::Operand"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_core::generated::Operand>",
+      "short_name": "Vec<Operand>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_core::line_id::LineId>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::line_id::LineId"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_core::line_id::LineId>",
+      "short_name": "Vec<LineId>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_core::yarn_value::YarnValue>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::yarn_value::YarnValue"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_core::yarn_value::YarnValue>",
+      "short_name": "Vec<YarnValue>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_runtime::dialogue_option::DialogueOption>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_runtime::dialogue_option::DialogueOption"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_runtime::dialogue_option::DialogueOption>",
+      "short_name": "Vec<DialogueOption>",
+      "type": "array",
+      "typeInfo": "List"
+    },
+    "alloc::vec::Vec<yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute>": {
+      "isComponent": false,
+      "isResource": false,
+      "items": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute"
+        }
+      },
+      "long_name": "alloc::vec::Vec<yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute>",
+      "short_name": "Vec<MarkupAttribute>",
+      "type": "array",
+      "typeInfo": "List"
+    },
     "avian3d::collision::broad_phase::AabbIntersections": {
       "isComponent": true,
       "isResource": false,
@@ -4360,6 +4490,82 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "bevy_asset::handle::Handle<bevy_yarnspinner::localization::strings_file::asset::StringsFile>": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_asset::handle::Handle<bevy_yarnspinner::localization::strings_file::asset::StringsFile>",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Strong",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Weak",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_yarnspinner::localization::strings_file::asset::StringsFile>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<StringsFile>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::handle::Handle<bevy_yarnspinner::yarn_file_asset::YarnFile>": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_asset::handle::Handle<bevy_yarnspinner::yarn_file_asset::YarnFile>",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Strong",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/std::sync::Arc<bevy_asset::handle::StrongHandle>"
+              }
+            }
+          ],
+          "short_name": "Strong",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Weak",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_asset::id::AssetId<bevy_yarnspinner::yarn_file_asset::YarnFile>"
+              }
+            }
+          ],
+          "short_name": "Weak",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Handle<YarnFile>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "bevy_asset::handle::Handle<blenvy::blueprints::assets::BlueprintPreloadAssets>": {
       "isComponent": true,
       "isResource": false,
@@ -5559,6 +5765,98 @@
         }
       ],
       "short_name": "AssetId<Font>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<bevy_yarnspinner::localization::strings_file::asset::StringsFile>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_asset::id::AssetId<bevy_yarnspinner::localization::strings_file::asset::StringsFile>",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "long_name": "Index",
+          "properties": {
+            "index": {
+              "long_name": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "Uuid",
+          "properties": {
+            "uuid": {
+              "long_name": "uuid",
+              "type": {
+                "$ref": "#/$defs/uuid::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<StringsFile>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "bevy_asset::id::AssetId<bevy_yarnspinner::yarn_file_asset::YarnFile>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_asset::id::AssetId<bevy_yarnspinner::yarn_file_asset::YarnFile>",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "long_name": "Index",
+          "properties": {
+            "index": {
+              "long_name": "index",
+              "type": {
+                "$ref": "#/$defs/bevy_asset::assets::AssetIndex"
+              }
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "short_name": "Index",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "Uuid",
+          "properties": {
+            "uuid": {
+              "long_name": "uuid",
+              "type": {
+                "$ref": "#/$defs/uuid::Uuid"
+              }
+            }
+          },
+          "required": [
+            "uuid"
+          ],
+          "short_name": "Uuid",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "AssetId<YarnFile>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -15133,6 +15431,14 @@
       "type": "object",
       "typeInfo": "Value"
     },
+    "bevy_utils::hashbrown::HashSet<bevy_yarnspinner::plugin::yarn_file_source::YarnFileSource, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_utils::hashbrown::HashSet<bevy_yarnspinner::plugin::yarn_file_source::YarnFileSource, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "short_name": "HashSet<YarnFileSource, DefaultHashBuilder>",
+      "type": "object",
+      "typeInfo": "Value"
+    },
     "bevy_utils::hashbrown::HashSet<std::any::TypeId, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
@@ -16154,6 +16460,84 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "bevy_yarnspinner::development_file_generation::DevelopmentFileGeneration": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_yarnspinner::development_file_generation::DevelopmentFileGeneration",
+      "oneOf": [
+        "Full",
+        "None"
+      ],
+      "short_name": "DevelopmentFileGeneration",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "bevy_yarnspinner::project::compilation::YarnFilesToLoad": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "long_name": "bevy_yarnspinner::project::compilation::YarnFilesToLoad",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashSet<bevy_yarnspinner::plugin::yarn_file_source::YarnFileSource, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      ],
+      "short_name": "YarnFilesToLoad",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "bevy_yarnspinner::yarn_file_asset::YarnFile": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_yarnspinner::yarn_file_asset::YarnFile",
+      "properties": {
+        "file": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_compiler::compiler::File"
+          }
+        },
+        "string_table": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<yarnspinner_core::line_id::LineId, yarnspinner_compiler::output::string_info::StringInfo, std::collections::hash_map::RandomState>"
+          }
+        }
+      },
+      "required": [
+        "file",
+        "string_table"
+      ],
+      "short_name": "YarnFile",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_yarnspinner_example_dialogue_view::updating::SpeakerChangeEvent": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_yarnspinner_example_dialogue_view::updating::SpeakerChangeEvent",
+      "properties": {
+        "character_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "speaking": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        }
+      },
+      "required": [
+        "character_name",
+        "speaking"
+      ],
+      "short_name": "SpeakerChangeEvent",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "blenvy::blueprints::animation::AnimationInfo": {
       "additionalProperties": false,
       "isComponent": false,
@@ -16648,6 +17032,14 @@
       "isResource": false,
       "long_name": "core::ops::Range<f64>",
       "short_name": "Range<f64>",
+      "type": "object",
+      "typeInfo": "Value"
+    },
+    "core::ops::Range<yarnspinner_core::position::Position>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::ops::Range<yarnspinner_core::position::Position>",
+      "short_name": "Range<Position>",
       "type": "object",
       "typeInfo": "Value"
     },
@@ -17407,6 +17799,33 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "core::option::Option<core::ops::Range<yarnspinner_core::position::Position>>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<core::ops::Range<yarnspinner_core::position::Position>>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/core::ops::Range<yarnspinner_core::position::Position>"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Range<Position>>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "core::option::Option<f32>": {
       "isComponent": false,
       "isResource": false,
@@ -17566,6 +17985,141 @@
         }
       ],
       "short_name": "Option<NodeIndex>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<usize>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<usize>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/usize"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<usize>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<yarnspinner_core::generated::Program>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<yarnspinner_core::generated::Program>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_core::generated::Program"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Program>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<yarnspinner_core::generated::operand::Value>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<yarnspinner_core::generated::operand::Value>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_core::generated::operand::Value"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Value>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<yarnspinner_core::position::Position>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<yarnspinner_core::position::Position>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_core::position::Position"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Position>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<yarnspinner_core::yarn_value::YarnValue>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<yarnspinner_core::yarn_value::YarnValue>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_core::yarn_value::YarnValue"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<YarnValue>",
       "type": "object",
       "typeInfo": "Enum"
     },
@@ -20516,6 +21070,150 @@
         }
       }
     },
+    "std::collections::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, Vec<String>, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+        }
+      }
+    },
+    "std::collections::HashMap<alloc::string::String, i32, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, i32, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, i32, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/i32"
+        }
+      }
+    },
+    "std::collections::HashMap<alloc::string::String, yarnspinner_compiler::output::debug_info::DebugInfo, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, yarnspinner_compiler::output::debug_info::DebugInfo, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, DebugInfo, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_compiler::output::debug_info::DebugInfo"
+        }
+      }
+    },
+    "std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Node, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Node, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, Node, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::generated::Node"
+        }
+      }
+    },
+    "std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Operand, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Operand, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, Operand, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::generated::Operand"
+        }
+      }
+    },
+    "std::collections::HashMap<alloc::string::String, yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/alloc::string::String"
+        }
+      },
+      "long_name": "std::collections::HashMap<alloc::string::String, yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<String, MarkupValue, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue"
+        }
+      }
+    },
+    "std::collections::HashMap<usize, core::option::Option<yarnspinner_core::position::Position>, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/usize"
+        }
+      },
+      "long_name": "std::collections::HashMap<usize, core::option::Option<yarnspinner_core::position::Position>, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<usize, Option<Position>, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/core::option::Option<yarnspinner_core::position::Position>"
+        }
+      }
+    },
+    "std::collections::HashMap<yarnspinner_core::line_id::LineId, yarnspinner_compiler::output::string_info::StringInfo, std::collections::hash_map::RandomState>": {
+      "isComponent": false,
+      "isResource": false,
+      "keyType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_core::line_id::LineId"
+        }
+      },
+      "long_name": "std::collections::HashMap<yarnspinner_core::line_id::LineId, yarnspinner_compiler::output::string_info::StringInfo, std::collections::hash_map::RandomState>",
+      "short_name": "HashMap<LineId, StringInfo, RandomState>",
+      "type": "object",
+      "typeInfo": "Map",
+      "valueType": {
+        "type": {
+          "$ref": "#/$defs/yarnspinner_compiler::output::string_info::StringInfo"
+        }
+      }
+    },
     "std::path::PathBuf": {
       "isComponent": false,
       "isResource": false,
@@ -20587,6 +21285,1353 @@
       "short_name": "Uuid",
       "type": "object",
       "typeInfo": "Value"
+    },
+    "yarnspinner_compiler::compiler::CompilationType": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::compiler::CompilationType",
+      "oneOf": [
+        "FullCompilation",
+        "DeclarationsOnly",
+        "StringsOnly"
+      ],
+      "short_name": "CompilationType",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_compiler::compiler::Compiler": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::compiler::Compiler",
+      "properties": {
+        "compilation_type": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_compiler::compiler::CompilationType"
+          }
+        },
+        "files": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_compiler::compiler::File>"
+          }
+        },
+        "variable_declarations": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_compiler::output::declaration::Declaration>"
+          }
+        }
+      },
+      "required": [
+        "files",
+        "compilation_type",
+        "variable_declarations"
+      ],
+      "short_name": "Compiler",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::compiler::File": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::compiler::File",
+      "properties": {
+        "file_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "source": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "file_name",
+        "source"
+      ],
+      "short_name": "File",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic",
+      "properties": {
+        "context": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        },
+        "file_name": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        },
+        "message": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "range": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<core::ops::Range<yarnspinner_core::position::Position>>"
+          }
+        },
+        "severity": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_compiler::listeners::error_listener::diagnostic::DiagnosticSeverity"
+          }
+        },
+        "start_line": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "message",
+        "severity",
+        "start_line"
+      ],
+      "short_name": "Diagnostic",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::listeners::error_listener::diagnostic::DiagnosticSeverity": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::listeners::error_listener::diagnostic::DiagnosticSeverity",
+      "oneOf": [
+        "Error",
+        "Warning"
+      ],
+      "short_name": "DiagnosticSeverity",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_compiler::output::Compilation": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::Compilation",
+      "properties": {
+        "contains_implicit_string_tags": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "debug_info": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, yarnspinner_compiler::output::debug_info::DebugInfo, std::collections::hash_map::RandomState>"
+          }
+        },
+        "declarations": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_compiler::output::declaration::Declaration>"
+          }
+        },
+        "file_tags": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, alloc::vec::Vec<alloc::string::String>, std::collections::hash_map::RandomState>"
+          }
+        },
+        "program": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<yarnspinner_core::generated::Program>"
+          }
+        },
+        "string_table": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<yarnspinner_core::line_id::LineId, yarnspinner_compiler::output::string_info::StringInfo, std::collections::hash_map::RandomState>"
+          }
+        },
+        "warnings": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic>"
+          }
+        }
+      },
+      "required": [
+        "string_table",
+        "declarations",
+        "contains_implicit_string_tags",
+        "file_tags",
+        "warnings",
+        "debug_info"
+      ],
+      "short_name": "Compilation",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::output::CompilerError": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "yarnspinner_compiler::output::CompilerError",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_compiler::listeners::error_listener::diagnostic::Diagnostic>"
+          }
+        }
+      ],
+      "short_name": "CompilerError",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "yarnspinner_compiler::output::debug_info::DebugInfo": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::debug_info::DebugInfo",
+      "properties": {
+        "file_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "line_positions": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<usize, core::option::Option<yarnspinner_core::position::Position>, std::collections::hash_map::RandomState>"
+          }
+        },
+        "node_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "file_name",
+        "node_name",
+        "line_positions"
+      ],
+      "short_name": "DebugInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::output::debug_info::LineInfo": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::debug_info::LineInfo",
+      "properties": {
+        "file_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "node_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "position": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<yarnspinner_core::position::Position>"
+          }
+        }
+      },
+      "required": [
+        "file_name",
+        "node_name"
+      ],
+      "short_name": "LineInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::output::declaration::Declaration": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::declaration::Declaration",
+      "properties": {
+        "default_value": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<yarnspinner_core::yarn_value::YarnValue>"
+          }
+        },
+        "description": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        },
+        "is_implicit": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "r#type": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_core::types::r#type::Type"
+          }
+        },
+        "range": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<core::ops::Range<yarnspinner_core::position::Position>>"
+          }
+        },
+        "source_file_name": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_compiler::output::declaration::DeclarationSource"
+          }
+        },
+        "source_node_name": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "source_file_name",
+        "is_implicit",
+        "r#type"
+      ],
+      "short_name": "Declaration",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_compiler::output::declaration::DeclarationSource": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::declaration::DeclarationSource",
+      "oneOf": [
+        {
+          "long_name": "External"
+        },
+        {
+          "items": false,
+          "long_name": "File",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "File",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "DeclarationSource",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_compiler::output::string_info::StringInfo": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_compiler::output::string_info::StringInfo",
+      "properties": {
+        "file_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "is_implicit_tag": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "line_number": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "metadata": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+          }
+        },
+        "node_name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "text": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "text",
+        "node_name",
+        "line_number",
+        "file_name",
+        "is_implicit_tag",
+        "metadata"
+      ],
+      "short_name": "StringInfo",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::Header": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::Header",
+      "properties": {
+        "key": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "value": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "short_name": "Header",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::Instruction": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::Instruction",
+      "properties": {
+        "opcode": {
+          "type": {
+            "$ref": "#/$defs/i32"
+          }
+        },
+        "operands": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_core::generated::Operand>"
+          }
+        }
+      },
+      "required": [
+        "opcode",
+        "operands"
+      ],
+      "short_name": "Instruction",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::Node": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::Node",
+      "properties": {
+        "headers": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_core::generated::Header>"
+          }
+        },
+        "instructions": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_core::generated::Instruction>"
+          }
+        },
+        "labels": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, i32, std::collections::hash_map::RandomState>"
+          }
+        },
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "source_text_string_id": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "tags": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<alloc::string::String>"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "instructions",
+        "labels",
+        "tags",
+        "source_text_string_id",
+        "headers"
+      ],
+      "short_name": "Node",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::Operand": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::Operand",
+      "properties": {
+        "value": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<yarnspinner_core::generated::operand::Value>"
+          }
+        }
+      },
+      "required": [],
+      "short_name": "Operand",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::Program": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::Program",
+      "properties": {
+        "initial_values": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Operand, std::collections::hash_map::RandomState>"
+          }
+        },
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "nodes": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, yarnspinner_core::generated::Node, std::collections::hash_map::RandomState>"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "nodes",
+        "initial_values"
+      ],
+      "short_name": "Program",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::generated::ext::InvalidOpCodeError": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "yarnspinner_core::generated::ext::InvalidOpCodeError",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/i32"
+          }
+        }
+      ],
+      "short_name": "InvalidOpCodeError",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "yarnspinner_core::generated::operand::Value": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::generated::operand::Value",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "StringValue",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "StringValue",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "BoolValue",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            }
+          ],
+          "short_name": "BoolValue",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "FloatValue",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "FloatValue",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Value",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_core::line_id::LineId": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "yarnspinner_core::line_id::LineId",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      ],
+      "short_name": "LineId",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "yarnspinner_core::position::Position": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::position::Position",
+      "properties": {
+        "character": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "line": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "line",
+        "character"
+      ],
+      "short_name": "Position",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::types::function::FunctionType": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::types::function::FunctionType",
+      "properties": {},
+      "required": [],
+      "short_name": "FunctionType",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_core::types::r#type::Type": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::types::r#type::Type",
+      "oneOf": [
+        {
+          "long_name": "Any"
+        },
+        {
+          "long_name": "Boolean"
+        },
+        {
+          "items": false,
+          "long_name": "Function",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_core::types::function::FunctionType"
+              }
+            }
+          ],
+          "short_name": "Function",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "long_name": "Number"
+        },
+        {
+          "long_name": "String"
+        }
+      ],
+      "short_name": "Type",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_core::yarn_value::YarnValue": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_core::yarn_value::YarnValue",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Number",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Number",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "String",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "String",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Boolean",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            }
+          ],
+          "short_name": "Boolean",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "YarnValue",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_runtime::analyser::diagnosis::Diagnosis": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::analyser::diagnosis::Diagnosis",
+      "properties": {
+        "column": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<usize>"
+          }
+        },
+        "line": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<usize>"
+          }
+        },
+        "message": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "node_name": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+          }
+        },
+        "severity": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_runtime::analyser::diagnosis::DiagnosisSeverity"
+          }
+        }
+      },
+      "required": [
+        "severity",
+        "message"
+      ],
+      "short_name": "Diagnosis",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_runtime::analyser::diagnosis::DiagnosisSeverity": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::analyser::diagnosis::DiagnosisSeverity",
+      "oneOf": [
+        "Error",
+        "Warning",
+        "Note"
+      ],
+      "short_name": "DiagnosisSeverity",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_runtime::command::Command": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::command::Command",
+      "properties": {
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "parameters": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_core::yarn_value::YarnValue>"
+          }
+        },
+        "raw": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "parameters",
+        "raw"
+      ],
+      "short_name": "Command",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_runtime::dialogue_option::DialogueOption": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::dialogue_option::DialogueOption",
+      "properties": {
+        "destination_node": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "id": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_runtime::dialogue_option::OptionId"
+          }
+        },
+        "is_available": {
+          "type": {
+            "$ref": "#/$defs/bool"
+          }
+        },
+        "line": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_runtime::line::Line"
+          }
+        }
+      },
+      "required": [
+        "line",
+        "id",
+        "destination_node",
+        "is_available"
+      ],
+      "short_name": "DialogueOption",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_runtime::dialogue_option::OptionId": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "yarnspinner_runtime::dialogue_option::OptionId",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      ],
+      "short_name": "OptionId",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "yarnspinner_runtime::events::DialogueEvent": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::events::DialogueEvent",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Line",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_runtime::line::Line"
+              }
+            }
+          ],
+          "short_name": "Line",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Options",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_runtime::dialogue_option::DialogueOption>"
+              }
+            }
+          ],
+          "short_name": "Options",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Command",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/yarnspinner_runtime::command::Command"
+              }
+            }
+          ],
+          "short_name": "Command",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "NodeComplete",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "NodeComplete",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "NodeStart",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "NodeStart",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "LineHints",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_core::line_id::LineId>"
+              }
+            }
+          ],
+          "short_name": "LineHints",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "long_name": "DialogueComplete"
+        }
+      ],
+      "short_name": "DialogueEvent",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_runtime::line::Line": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::line::Line",
+      "properties": {
+        "attributes": {
+          "type": {
+            "$ref": "#/$defs/alloc::vec::Vec<yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute>"
+          }
+        },
+        "id": {
+          "type": {
+            "$ref": "#/$defs/yarnspinner_core::line_id::LineId"
+          }
+        },
+        "text": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "attributes"
+      ],
+      "short_name": "Line",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_runtime::markup::markup_parse_error::MarkupParseError": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::markup::markup_parse_error::MarkupParseError",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "long_name": "TrimWhitespaceAttributeIsNotBoolean",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            },
+            "name": {
+              "long_name": "name",
+              "type": {
+                "$ref": "#/$defs/core::option::Option<alloc::string::String>"
+              }
+            },
+            "position": {
+              "long_name": "position",
+              "type": {
+                "$ref": "#/$defs/usize"
+              }
+            },
+            "type_": {
+              "long_name": "type_",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input",
+            "position",
+            "type_"
+          ],
+          "short_name": "TrimWhitespaceAttributeIsNotBoolean",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "UnexpectedWhitespaceEnd",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "short_name": "UnexpectedWhitespaceEnd",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "UnexpectedEndOfLine",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "short_name": "UnexpectedEndOfLine",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "UnexpectedCharacter",
+          "properties": {
+            "character": {
+              "long_name": "character",
+              "type": {
+                "$ref": "#/$defs/char"
+              }
+            },
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input",
+            "character"
+          ],
+          "short_name": "UnexpectedCharacter",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "UnmatchedCloseMarker",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            },
+            "name": {
+              "long_name": "name",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            },
+            "position": {
+              "long_name": "position",
+              "type": {
+                "$ref": "#/$defs/usize"
+              }
+            }
+          },
+          "required": [
+            "input",
+            "name",
+            "position"
+          ],
+          "short_name": "UnmatchedCloseMarker",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "NoIdentifierFound",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "short_name": "NoIdentifierFound",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "NoStringFound",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "short_name": "NoStringFound",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "InvalidEscapeSequence",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "short_name": "InvalidEscapeSequence",
+          "type": "object",
+          "typeInfo": "Struct"
+        },
+        {
+          "additionalProperties": false,
+          "long_name": "UnterminatedMarker",
+          "properties": {
+            "input": {
+              "long_name": "input",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            },
+            "name": {
+              "long_name": "name",
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            },
+            "position": {
+              "long_name": "position",
+              "type": {
+                "$ref": "#/$defs/usize"
+              }
+            }
+          },
+          "required": [
+            "input",
+            "name",
+            "position"
+          ],
+          "short_name": "UnterminatedMarker",
+          "type": "object",
+          "typeInfo": "Struct"
+        }
+      ],
+      "short_name": "MarkupParseError",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute": {
+      "additionalProperties": false,
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::markup::parsed_markup::markup_attribute::MarkupAttribute",
+      "properties": {
+        "length": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "name": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        },
+        "position": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        },
+        "properties": {
+          "type": {
+            "$ref": "#/$defs/std::collections::HashMap<alloc::string::String, yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue, std::collections::hash_map::RandomState>"
+          }
+        },
+        "source_position": {
+          "type": {
+            "$ref": "#/$defs/usize"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "position",
+        "length",
+        "properties",
+        "source_position"
+      ],
+      "short_name": "MarkupAttribute",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "yarnspinner_runtime::markup::parsed_markup::markup_value::MarkupValue",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Integer",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/u32"
+              }
+            }
+          ],
+          "short_name": "Integer",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Float",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/f32"
+              }
+            }
+          ],
+          "short_name": "Float",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "String",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "String",
+          "type": "array",
+          "typeInfo": "Tuple"
+        },
+        {
+          "items": false,
+          "long_name": "Bool",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bool"
+              }
+            }
+          ],
+          "short_name": "Bool",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "MarkupValue",
+      "type": "object",
+      "typeInfo": "Enum"
     }
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",

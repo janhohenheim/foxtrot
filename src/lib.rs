@@ -6,6 +6,7 @@ mod collision_layer;
 mod cursor;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod dialog;
 mod hacks;
 mod level;
 mod player;
@@ -101,6 +102,7 @@ impl Plugin for AppPlugin {
             system_set::plugin,
             hacks::plugin,
             cursor::plugin,
+            dialog::plugin,
         ));
 
         // Enable dev tools for dev builds.

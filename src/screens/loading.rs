@@ -4,7 +4,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    player::PlayerAssets,
+    player::initialize::PlayerAssets,
     screens::{credits::CreditsMusic, gameplay::GameplayMusic, Screen},
     theme::{interaction::InteractionAssets, prelude::*},
 };

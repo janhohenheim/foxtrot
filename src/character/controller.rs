@@ -20,13 +20,16 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn apply_walking(
-    mut character_query: Query<(
-        Entity,
-        &mut TnuaController,
-        &ActionState<CharacterAction>,
-        &WalkControllerConfig,
-        Option<&OverrideForwardDirection>,
-    )>,
+    mut character_query: Query<
+        (
+            Entity,
+            &mut TnuaController,
+            &ActionState<CharacterAction>,
+            &WalkControllerConfig,
+            Option<&OverrideForwardDirection>,
+        ),
+        Without<ControllerDisabled>,
+    >,
     forward_reference_query: Query<&Transform>,
 ) {
     for (entity, mut controller, action_state, walk, forward_reference) in &mut character_query {
@@ -66,11 +69,14 @@ fn apply_walking(
 }
 
 fn apply_jumping(
-    mut character_query: Query<(
-        &mut TnuaController,
-        &ActionState<CharacterAction>,
-        &JumpControllerConfig,
-    )>,
+    mut character_query: Query<
+        (
+            &mut TnuaController,
+            &ActionState<CharacterAction>,
+            &JumpControllerConfig,
+        ),
+        Without<ControllerDisabled>,
+    >,
 ) {
     for (mut controller, action_state, jump) in &mut character_query {
         if action_state.pressed(&CharacterAction::Jump) {
@@ -92,6 +98,10 @@ struct WalkControllerConfig {
     /// collider, or else the character will not float and Tnua will not work properly
     float_height: f32,
 }
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Component, Reflect)]
+#[reflect(Component)]
+pub struct ControllerDisabled;
 
 /// The entity who's forward direction on the horizontal place will be
 /// used to determine the character's forward direction for the [`WalkControllerConfig`].

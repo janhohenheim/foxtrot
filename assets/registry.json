@@ -52,6 +52,27 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
+    "(foxtrot::opportunities::available_opportunities::OpportunitySensor, foxtrot::opportunities::available_opportunities::AvailableOpportunities)": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "(foxtrot::opportunities::available_opportunities::OpportunitySensor, foxtrot::opportunities::available_opportunities::AvailableOpportunities)",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::OpportunitySensor"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::AvailableOpportunities"
+          }
+        }
+      ],
+      "short_name": "(OpportunitySensor, AvailableOpportunities)",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "(u8, u8)": {
       "isComponent": false,
       "isResource": false,
@@ -4598,10 +4619,10 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::handle::Handle<foxtrot::player::PlayerAssets>": {
+    "bevy_asset::handle::Handle<foxtrot::player::initialize::PlayerAssets>": {
       "isComponent": true,
       "isResource": false,
-      "long_name": "bevy_asset::handle::Handle<foxtrot::player::PlayerAssets>",
+      "long_name": "bevy_asset::handle::Handle<foxtrot::player::initialize::PlayerAssets>",
       "oneOf": [
         {
           "items": false,
@@ -4623,7 +4644,7 @@
           "prefixItems": [
             {
               "type": {
-                "$ref": "#/$defs/bevy_asset::id::AssetId<foxtrot::player::PlayerAssets>"
+                "$ref": "#/$defs/bevy_asset::id::AssetId<foxtrot::player::initialize::PlayerAssets>"
               }
             }
           ],
@@ -5900,10 +5921,10 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "bevy_asset::id::AssetId<foxtrot::player::PlayerAssets>": {
+    "bevy_asset::id::AssetId<foxtrot::player::initialize::PlayerAssets>": {
       "isComponent": false,
       "isResource": false,
-      "long_name": "bevy_asset::id::AssetId<foxtrot::player::PlayerAssets>",
+      "long_name": "bevy_asset::id::AssetId<foxtrot::player::initialize::PlayerAssets>",
       "oneOf": [
         {
           "additionalProperties": false,
@@ -17442,6 +17463,33 @@
       "type": "object",
       "typeInfo": "Enum"
     },
+    "core::option::Option<bevy_ecs::entity::Entity>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<bevy_ecs::entity::Entity>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/bevy_ecs::entity::Entity"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Entity>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
     "core::option::Option<bevy_input::gamepad::Gamepad>": {
       "isComponent": false,
       "isResource": false,
@@ -18276,6 +18324,71 @@
       "short_name": "CursorAction",
       "type": "string",
       "typeInfo": "Enum"
+    },
+    "foxtrot::opportunities::available_opportunities::AvailableOpportunities": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "foxtrot::opportunities::available_opportunities::AvailableOpportunities",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashSet<bevy_ecs::entity::Entity, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+          }
+        }
+      ],
+      "short_name": "AvailableOpportunities",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::opportunities::available_opportunities::Opportunity": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::opportunities::available_opportunities::Opportunity",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Dialog",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "Dialog",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Opportunity",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "foxtrot::opportunities::available_opportunities::OpportunitySensor": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::opportunities::available_opportunities::OpportunitySensor",
+      "properties": {
+        "opportunity": {
+          "type": {
+            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::Opportunity"
+          }
+        },
+        "prompt": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "prompt",
+        "opportunity"
+      ],
+      "short_name": "OpportunitySensor",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "foxtrot::player::Player": {
       "additionalProperties": false,
@@ -20942,6 +21055,59 @@
       "short_name": "NodeIndex",
       "type": "object",
       "typeInfo": "Value"
+    },
+    "sickle_ui::widgets::layout::tab_container::Tab": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "sickle_ui::widgets::layout::tab_container::Tab",
+      "properties": {
+        "bar": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        },
+        "container": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        },
+        "label": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        },
+        "label_container": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        },
+        "original_index": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<usize>"
+          }
+        },
+        "panel": {
+          "type": {
+            "$ref": "#/$defs/bevy_ecs::entity::Entity"
+          }
+        },
+        "placeholder": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_ecs::entity::Entity>"
+          }
+        }
+      },
+      "required": [
+        "container",
+        "bar",
+        "panel",
+        "label_container",
+        "label"
+      ],
+      "short_name": "Tab",
+      "type": "object",
+      "typeInfo": "Struct"
     },
     "smallvec::SmallVec<[bevy_ecs::entity::Entity; 8]>": {
       "isComponent": false,

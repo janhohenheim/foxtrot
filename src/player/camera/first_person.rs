@@ -62,6 +62,8 @@ fn follow_player(
     mut q_camera: Query<&mut Transform, With<FirstPersonCamera>>,
     q_player: Query<&Transform, (With<Player>, Without<FirstPersonCamera>)>,
 ) {
+    // Use `Transform` instead of `Position`` because we want the camera to move
+    // smoothly, so we use the interpolated transform of the player.
     let Ok(player_transform) = q_player.get_single() else {
         return;
     };

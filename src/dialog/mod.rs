@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::player::{camera::PlayerCamera, Player};
 use crate::system_set::VariableGameSet;
 use avian3d::prelude::*;
 use bevy::prelude::*;
@@ -30,16 +30,17 @@ pub struct DialogSensor {
 
 fn on_dialog_collided(
     q_dialog_sensor: Query<
-        (&Transform, &DialogSensor, &CollidingEntities),
+        (&Position, &DialogSensor, &CollidingEntities),
         Changed<CollidingEntities>,
     >,
-    q_player: Query<&Transform, With<Player>>,
+    q_player: Query<(), With<Player>>,
+    q_camera: Query<&Transform, With<PlayerCamera>>,
 ) {
-    for (dialog_transform, sensor, colliding_entities) in &q_dialog_sensor {
-        let Some(player_transform) = colliding_entities
+    for (dialog_position, sensor, colliding_entities) in &q_dialog_sensor {
+        if !colliding_entities
             .iter()
-            .find_map(|entity| q_player.get(*entity).ok())
-        else {
+            .any(|entity| q_player.contains(*entity))
+        {
             continue;
         };
     }

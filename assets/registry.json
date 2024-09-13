@@ -10,27 +10,6 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
-    "(avian_interpolation3d::InterpolationMode, avian_interpolation3d::DisableTransformChanges)": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "long_name": "(avian_interpolation3d::InterpolationMode, avian_interpolation3d::DisableTransformChanges)",
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/avian_interpolation3d::InterpolationMode"
-          }
-        },
-        {
-          "type": {
-            "$ref": "#/$defs/avian_interpolation3d::DisableTransformChanges"
-          }
-        }
-      ],
-      "short_name": "(InterpolationMode, DisableTransformChanges)",
-      "type": "array",
-      "typeInfo": "Tuple"
-    },
     "(bevy_ecs::entity::Entity, bevy_ecs::entity::Entity)": {
       "isComponent": false,
       "isResource": false,
@@ -3325,23 +3304,38 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "avian_interpolation3d::DisableTransformChanges": {
+    "avian_interpolation3d::InterpolateTransformFields": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "avian_interpolation3d::DisableTransformChanges",
-      "properties": {},
-      "required": [],
-      "short_name": "DisableTransformChanges",
+      "long_name": "avian_interpolation3d::InterpolateTransformFields",
+      "properties": {
+        "rotation": {
+          "type": {
+            "$ref": "#/$defs/avian_interpolation3d::InterpolationMode"
+          }
+        },
+        "translation": {
+          "type": {
+            "$ref": "#/$defs/avian_interpolation3d::InterpolationMode"
+          }
+        }
+      },
+      "required": [
+        "translation",
+        "rotation"
+      ],
+      "short_name": "InterpolateTransformFields",
       "type": "object",
       "typeInfo": "Struct"
     },
     "avian_interpolation3d::InterpolationMode": {
-      "isComponent": true,
+      "isComponent": false,
       "isResource": false,
       "long_name": "avian_interpolation3d::InterpolationMode",
       "oneOf": [
         "Linear",
+        "Last",
         "None"
       ],
       "short_name": "InterpolationMode",

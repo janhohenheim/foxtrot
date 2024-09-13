@@ -9,6 +9,7 @@ mod dev_tools;
 mod dialog;
 mod hacks;
 mod level;
+mod opportunities;
 mod player;
 mod screens;
 mod system_set;
@@ -24,6 +25,7 @@ use bevy::{
     prelude::*,
 };
 use blenvy::BlenvyPlugin;
+use sickle_ui::SickleUiPlugin;
 
 pub struct AppPlugin;
 
@@ -86,6 +88,7 @@ impl Plugin for AppPlugin {
             BlenvyPlugin::default(),
             PhysicsPlugins::default().build().disable::<SyncPlugin>(),
             AvianInterpolationPlugin::default(),
+            SickleUiPlugin,
         ));
 
         // Add internal plugins.
@@ -103,6 +106,7 @@ impl Plugin for AppPlugin {
             hacks::plugin,
             cursor::plugin,
             dialog::plugin,
+            opportunities::plugin,
         ));
 
         // Enable dev tools for dev builds.

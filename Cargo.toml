@@ -7,16 +7,16 @@ edition = "2021"
 [dependencies]
 # Bevy dependencies
 bevy = { version = "0.14.2", features = ["wayland"] }
+leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing_input_manager" }
+sickle_ui = "0.2.1"
 blenvy = { version = "0.1.0-alpha.1", git = "https://github.com/kaosat-dev/blenvy" }
 avian3d = { git = "https://github.com/Jondolf/avian" }
-avian_interpolation3d = { git = "https://github.com/janhohenheim/avian_interpolation" }
-bevy-inspector-egui = { version = "0.25.2", optional = true }
-leafwing-input-manager = { git = "https://github.com/Leafwing-Studios/leafwing_input_manager" }
-bevy_dolly = "0.0.4"
-bevy-tnua-avian3d = { version = "0.1.1", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff"}
 bevy-tnua = { version = "0.19.0", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff"}
+bevy-tnua-avian3d = { version = "0.1.1", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff"}
 bevy_yarnspinner = "0.3"
 bevy_yarnspinner_example_dialogue_view = "0.3"
+avian_interpolation3d = { git = "https://github.com/janhohenheim/avian_interpolation", branch = "review" }
+bevy-inspector-egui = { version = "0.25.2", optional = true }
 
 # Generic dependencies
 rand = "0.8"

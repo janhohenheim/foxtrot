@@ -52,27 +52,6 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
-    "(foxtrot::opportunities::available_opportunities::OpportunitySensor, foxtrot::opportunities::available_opportunities::AvailableOpportunities)": {
-      "isComponent": false,
-      "isResource": false,
-      "items": false,
-      "long_name": "(foxtrot::opportunities::available_opportunities::OpportunitySensor, foxtrot::opportunities::available_opportunities::AvailableOpportunities)",
-      "prefixItems": [
-        {
-          "type": {
-            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::OpportunitySensor"
-          }
-        },
-        {
-          "type": {
-            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::AvailableOpportunities"
-          }
-        }
-      ],
-      "short_name": "(OpportunitySensor, AvailableOpportunities)",
-      "type": "array",
-      "typeInfo": "Tuple"
-    },
     "(u8, u8)": {
       "isComponent": false,
       "isResource": false,
@@ -18325,26 +18304,41 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "foxtrot::opportunities::available_opportunities::AvailableOpportunities": {
+    "foxtrot::opportunities::available_opportunities::PlayerInteractable": {
+      "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "items": false,
-      "long_name": "foxtrot::opportunities::available_opportunities::AvailableOpportunities",
-      "prefixItems": [
-        {
+      "long_name": "foxtrot::opportunities::available_opportunities::PlayerInteractable",
+      "properties": {
+        "interaction": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashSet<bevy_ecs::entity::Entity, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::PlayerInteraction"
+          }
+        },
+        "max_distance": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "prompt": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
           }
         }
+      },
+      "required": [
+        "prompt",
+        "interaction",
+        "max_distance"
       ],
-      "short_name": "AvailableOpportunities",
-      "type": "array",
-      "typeInfo": "TupleStruct"
+      "short_name": "PlayerInteractable",
+      "type": "object",
+      "typeInfo": "Struct"
     },
-    "foxtrot::opportunities::available_opportunities::Opportunity": {
+    "foxtrot::opportunities::available_opportunities::PlayerInteraction": {
       "isComponent": true,
       "isResource": false,
-      "long_name": "foxtrot::opportunities::available_opportunities::Opportunity",
+      "long_name": "foxtrot::opportunities::available_opportunities::PlayerInteraction",
       "oneOf": [
         {
           "items": false,
@@ -18361,34 +18355,9 @@
           "typeInfo": "Tuple"
         }
       ],
-      "short_name": "Opportunity",
+      "short_name": "PlayerInteraction",
       "type": "object",
       "typeInfo": "Enum"
-    },
-    "foxtrot::opportunities::available_opportunities::OpportunitySensor": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "foxtrot::opportunities::available_opportunities::OpportunitySensor",
-      "properties": {
-        "opportunity": {
-          "type": {
-            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::Opportunity"
-          }
-        },
-        "prompt": {
-          "type": {
-            "$ref": "#/$defs/alloc::string::String"
-          }
-        }
-      },
-      "required": [
-        "prompt",
-        "opportunity"
-      ],
-      "short_name": "OpportunitySensor",
-      "type": "object",
-      "typeInfo": "Struct"
     },
     "foxtrot::player::Player": {
       "additionalProperties": false,

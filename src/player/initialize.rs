@@ -4,7 +4,10 @@ use bevy::{
 };
 use leafwing_input_manager::InputManagerBundle;
 
-use crate::{asset_tracking::LoadResource as _, character::{action::CharacterAction, controller::OverrideForwardDirection}};
+use crate::{
+    asset_tracking::LoadResource as _,
+    character::{action::CharacterAction, controller::OverrideForwardDirection}, opportunities::available_opportunities::ActiveInteractable,
+};
 
 use super::{camera::PlayerCamera, Player};
 
@@ -24,6 +27,7 @@ fn add_player_components(
     commands.entity(trigger.entity()).insert((
         InputManagerBundle::with_map(CharacterAction::default_input_map()),
         OverrideForwardDirection(camera),
+        ActiveInteractable::default(),
     ));
 }
 

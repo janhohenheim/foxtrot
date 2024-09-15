@@ -3,7 +3,7 @@ use bevy::ui::Val::*;
 use sickle_ui::{prelude::*, ui_commands::SetTextExt as _};
 
 use super::{
-    available_opportunities::{AvailableOpportunities, OpportunitySensor},
+    available_opportunities::{ActiveInteractable, PlayerInteractable},
     OpportunitySystem,
 };
 
@@ -13,34 +13,33 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn show_prompt(
-    mut q_available_opportunities: Query<
-        &mut AvailableOpportunities,
-        Changed<AvailableOpportunities>,
-    >,
-    q_opportunity_sensor: Query<&OpportunitySensor>,
+    q_active_interactable: Query<&ActiveInteractable, Changed<ActiveInteractable>>,
+    q_interactable: Query<&PlayerInteractable>,
     mut q_prompt_text_node: Query<&mut Text, With<PromptTextNode>>,
-    mut q_prompt_ui_node: Query<&mut Visibility, With<PromptUiNode>>,
+    mut q_prompt_visibility: Query<&mut Visibility, With<PromptUiRootNode>>,
 ) {
-    for mut opportunities in &mut q_available_opportunities {
-        let Ok(mut visibility) = q_prompt_ui_node.get_single_mut() else {
-            continue;
-        };
-        let Some(opportunity) = opportunities.pick_one() else {
-            *visibility = Visibility::Hidden;
-            continue;
-        };
-        let Ok(sensor) = q_opportunity_sensor.get(opportunity) else {
-            // Looks like the opportunity despawned.
-            opportunities.remove(&opportunity);
-            *visibility = Visibility::Hidden;
-            continue;
-        };
-        let Ok(mut text) = q_prompt_text_node.get_single_mut() else {
-            continue;
-        };
-        text.sections[0].value = sensor.prompt.clone();
-        *visibility = Visibility::Inherited;
-    }
+    let Ok(active_interactable) = q_active_interactable.get_single() else {
+        // Nothing changed
+        return;
+    };
+    let Ok(mut prompt_visibility) = q_prompt_visibility.get_single_mut() else {
+        return;
+    };
+    let Some(interactable) = active_interactable
+        .0
+        .and_then(|entity| q_interactable.get(entity).ok())
+    else {
+        // The previous interactable is no longer available.
+        // Note that we don't check against previous values for change detection
+        // because this system is only run when the active interactable changes in the first place.
+        *prompt_visibility = Visibility::Hidden;
+        return;
+    };
+    let Ok(mut prompt_text_node) = q_prompt_text_node.get_single_mut() else {
+        return;
+    };
+
+    prompt_text_node.sections[0].value = interactable.prompt.clone();
 }
 
 fn spawn_prompt(mut commands: Commands) {
@@ -56,13 +55,16 @@ fn spawn_prompt(mut commands: Commands) {
         .style()
         .position_type(PositionType::Absolute)
         .bottom(Percent(1. / 3.))
-        .height(Val::Auto);
+        .height(Val::Auto)
+        .visibility(Visibility::Hidden)
+        .entity_commands()
+        .insert(PromptUiRootNode);
 }
 
 #[derive(Debug, Component, PartialEq, Eq, Clone, Reflect)]
 #[reflect(Component, PartialEq)]
-pub struct PromptUiNode;
+pub struct PromptTextNode;
 
 #[derive(Debug, Component, PartialEq, Eq, Clone, Reflect)]
 #[reflect(Component, PartialEq)]
-pub struct PromptTextNode;
+pub struct PromptUiRootNode;

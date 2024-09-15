@@ -1,7 +1,7 @@
 use crate::system_set::VariableGameSystem;
 use bevy::prelude::*;
 
-mod available_opportunities;
+pub mod available_opportunities;
 mod interact;
 mod prompt;
 

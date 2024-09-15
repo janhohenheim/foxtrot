@@ -5,7 +5,9 @@ use leafwing_input_manager::prelude::*;
 use crate::{character::action::CharacterAction, dialog::StartDialog, player::Player};
 
 use super::{
-    available_opportunities::{ActiveInteractable, PlayerInteractable, PlayerInteraction},
+    available_opportunities::{
+        AvailablePlayerInteraction, PlayerInteraction, PlayerInteractionParameters,
+    },
     OpportunitySystem,
 };
 
@@ -16,15 +18,21 @@ pub(super) fn plugin(app: &mut App) {
 /// Triggers dialog opportunity events when the player has an interaction opportunity and presses
 /// the interact button. The target entity is the entity that has the [`RigidBody`] component.
 fn usher_interact(
-    mut q_player: Query<(&ActionState<CharacterAction>, &mut ActiveInteractable), With<Player>>,
-    q_interactable: Query<(&PlayerInteractable, &ColliderParent)>,
+    mut q_player: Query<
+        (
+            &ActionState<CharacterAction>,
+            &mut AvailablePlayerInteraction,
+        ),
+        With<Player>,
+    >,
+    q_interactable: Query<(Entity, &PlayerInteractionParameters)>,
     mut commands: Commands,
 ) {
     for (action_state, mut active_interactable) in &mut q_player {
         if active_interactable.is_none() || !action_state.just_pressed(&CharacterAction::Interact) {
             continue;
         }
-        let Some((interactable, rigid_body)) = active_interactable
+        let Some((entity, interactable)) = active_interactable
             // Clear the current interactable so that it won't show up if we end up in a dialog
             .take()
             .and_then(|e| q_interactable.get(e).ok())
@@ -33,7 +41,7 @@ fn usher_interact(
         };
         match &interactable.interaction {
             PlayerInteraction::Dialog(node) => {
-                commands.trigger_targets(StartDialog(node.clone()), rigid_body.get());
+                commands.trigger_targets(StartDialog(node.clone()), entity);
             }
         }
     }

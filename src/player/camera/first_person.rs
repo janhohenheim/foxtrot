@@ -1,6 +1,6 @@
 use std::f32::consts::FRAC_PI_2;
 
-use bevy::prelude::*;
+use bevy::{app::RunFixedMainLoop, prelude::*, time::run_fixed_main_schedule};
 use leafwing_input_manager::prelude::*;
 
 use crate::player::Player;
@@ -10,7 +10,11 @@ use super::PlayerCamera;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<FirstPersonCamera>();
     app.add_plugins((InputManagerPlugin::<CameraAction>::default(),));
-    app.add_systems(Update, (rotate_camera, follow_player).chain());
+    app.add_systems(
+        RunFixedMainLoop,
+        rotate_camera.before(run_fixed_main_schedule),
+    );
+    app.add_systems(Update, follow_player);
 }
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]

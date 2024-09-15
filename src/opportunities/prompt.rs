@@ -3,7 +3,7 @@ use bevy::ui::Val::*;
 use sickle_ui::{prelude::*, ui_commands::SetTextExt as _};
 
 use super::{
-    available_opportunities::{ActiveInteractable, PlayerInteractable},
+    available_opportunities::{AvailablePlayerInteraction, PlayerInteractionParameters},
     OpportunitySystem,
 };
 
@@ -13,8 +13,8 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn show_prompt(
-    q_active_interactable: Query<&ActiveInteractable, Changed<ActiveInteractable>>,
-    q_interactable: Query<&PlayerInteractable>,
+    q_active_interactable: Query<&AvailablePlayerInteraction, Changed<AvailablePlayerInteraction>>,
+    q_interactable: Query<&PlayerInteractionParameters>,
     mut q_prompt_text_node: Query<&mut Text, With<PromptTextNode>>,
     mut q_prompt_visibility: Query<&mut Visibility, With<PromptUiRootNode>>,
 ) {
@@ -40,6 +40,7 @@ fn show_prompt(
         return;
     };
 
+    *prompt_visibility = Visibility::Inherited;
     prompt_text_node.sections[0].value = interactable.prompt.clone();
 }
 

@@ -34,7 +34,7 @@ impl PlayerInteractionParameters {
         match player_interaction {
             PlayerInteraction::Dialog(..) => Self {
                 prompt: "Talk".to_string(),
-                max_distance: 2.0,
+                max_distance: 2.5,
             },
         }
     }

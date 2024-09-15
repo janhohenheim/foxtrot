@@ -15,7 +15,7 @@ bevy-tnua = { version = "0.19.0", git = "https://github.com/janhohenheim/bevy-tn
 bevy-tnua-avian3d = { version = "0.1.1", git = "https://github.com/janhohenheim/bevy-tnua", branch = "fix-minor-avian-stuff"}
 bevy_yarnspinner = "0.3"
 bevy_yarnspinner_example_dialogue_view = "0.3"
-avian_interpolation3d = { git = "https://github.com/janhohenheim/avian_interpolation", branch = "review" }
+avian_interpolation3d = { git = "https://github.com/janhohenheim/avian_interpolation" }
 bevy-inspector-egui = { version = "0.25.2", optional = true }
 
 # Generic dependencies

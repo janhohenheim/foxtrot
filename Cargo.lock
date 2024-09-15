@@ -371,7 +371,7 @@ dependencies = [
 [[package]]
 name = "avian_interpolation3d"
 version = "0.1.0"
-source = "git+https://github.com/janhohenheim/avian_interpolation?branch=review#e5c66732e4498f2582f459939cca66a1b431b0b8"
+source = "git+https://github.com/janhohenheim/avian_interpolation#48e17a4094b7408afa628743e2948f37a68e23ab"
 dependencies = [
  "avian3d",
  "bevy",

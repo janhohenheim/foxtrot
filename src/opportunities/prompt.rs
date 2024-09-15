@@ -32,6 +32,7 @@ fn show_prompt(
         // The previous interactable is no longer available.
         // Note that we don't check against previous values for change detection
         // because this system is only run when the active interactable changes in the first place.
+        info!("hidder");
         *prompt_visibility = Visibility::Hidden;
         return;
     };
@@ -48,17 +49,21 @@ fn spawn_prompt(mut commands: Commands) {
         .column(|column| {
             column
                 .label(LabelConfig::default())
+                .style()
+                .bottom(Percent(100. / 3.))
                 .entity_commands()
                 .set_text("This is label 1.", None)
                 .insert(PromptTextNode);
         })
         .style()
         .position_type(PositionType::Absolute)
-        .bottom(Percent(1. / 3.))
-        .height(Val::Auto)
+        .width(Percent(100.0))
+        .height(Percent(100.0))
+        .align_items(AlignItems::Center)
+        .justify_content(JustifyContent::End)
         .visibility(Visibility::Hidden)
         .entity_commands()
-        .insert(PromptUiRootNode);
+        .insert((PromptUiRootNode, Name::new("Prompt UI")));
 }
 
 #[derive(Debug, Component, PartialEq, Eq, Clone, Reflect)]

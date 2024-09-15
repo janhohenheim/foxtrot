@@ -64,7 +64,6 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn capture_cursor(mut windows: Query<&mut Window>) {
-    info!("capture_cursor");
     for mut window in &mut windows {
         window.cursor.visible = false;
         window.cursor.grab_mode = CursorGrabMode::Locked;
@@ -72,7 +71,6 @@ fn capture_cursor(mut windows: Query<&mut Window>) {
 }
 
 fn release_cursor(mut windows: Query<&mut Window>) {
-    info!("release_cursor");
     for mut window in &mut windows {
         window.cursor.visible = true;
         window.cursor.grab_mode = CursorGrabMode::None;

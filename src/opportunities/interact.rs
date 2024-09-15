@@ -21,7 +21,7 @@ fn usher_interact(
     mut commands: Commands,
 ) {
     for (action_state, mut active_interactable) in &mut q_player {
-        if !action_state.just_pressed(&CharacterAction::Interact) {
+        if active_interactable.is_none() || !action_state.just_pressed(&CharacterAction::Interact) {
             continue;
         }
         let Some((interactable, rigid_body)) = active_interactable

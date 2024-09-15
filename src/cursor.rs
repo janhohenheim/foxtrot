@@ -43,6 +43,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
     let crosshair_texture = asset_server.load("textures/crosshair.png");
     commands
         .spawn((
+            Name::new("Crosshair UI"),
             StateScoped(GameplayState::Playing),
             NodeBundle {
                 style: Style {
@@ -57,7 +58,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         ))
         .with_children(|parent| {
             parent.spawn(ImageBundle {
-                image: crosshair_texture.into(),
+                image: UiImage::from(crosshair_texture).with_color(Color::WHITE.with_alpha(0.4)),
                 ..default()
             });
         });

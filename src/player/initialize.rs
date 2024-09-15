@@ -6,10 +6,10 @@ use leafwing_input_manager::InputManagerBundle;
 
 use crate::{
     asset_tracking::LoadResource as _,
-    character::{action::CharacterAction, controller::OverrideForwardDirection}, opportunities::available_opportunities::AvailablePlayerInteraction,
+    character::{action::CharacterAction, controller::OverrideForwardDirection},
 };
 
-use super::{camera::PlayerCamera, Player};
+use super::{camera::PlayerCamera, interactions::components::AvailablePlayerInteraction, Player};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<PlayerAssets>();

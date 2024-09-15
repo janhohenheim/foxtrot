@@ -3,7 +3,7 @@ use bevy::ui::Val::*;
 use sickle_ui::{prelude::*, ui_commands::SetTextExt as _};
 
 use super::{
-    available_opportunities::{AvailablePlayerInteraction, PlayerInteractionParameters},
+    components::{AvailablePlayerInteraction, PlayerInteractionParameters},
     OpportunitySystem,
 };
 
@@ -14,7 +14,7 @@ pub(super) fn plugin(app: &mut App) {
 
 fn show_prompt(
     q_active_interactable: Query<&AvailablePlayerInteraction, Changed<AvailablePlayerInteraction>>,
-    q_interactable: Query<&PlayerInteractionParameters>,
+    q_interaction_params: Query<&PlayerInteractionParameters>,
     mut q_prompt_text_node: Query<&mut Text, With<PromptTextNode>>,
     mut q_prompt_visibility: Query<&mut Visibility, With<PromptUiRootNode>>,
 ) {
@@ -25,14 +25,13 @@ fn show_prompt(
     let Ok(mut prompt_visibility) = q_prompt_visibility.get_single_mut() else {
         return;
     };
-    let Some(interactable) = active_interactable
+    let Some(interaction_params) = active_interactable
         .0
-        .and_then(|entity| q_interactable.get(entity).ok())
+        .and_then(|entity| q_interaction_params.get(entity).ok())
     else {
         // The previous interactable is no longer available.
         // Note that we don't check against previous values for change detection
         // because this system is only run when the active interactable changes in the first place.
-        info!("hidder");
         *prompt_visibility = Visibility::Hidden;
         return;
     };
@@ -41,7 +40,7 @@ fn show_prompt(
     };
 
     *prompt_visibility = Visibility::Inherited;
-    prompt_text_node.sections[0].value = interactable.prompt.clone();
+    prompt_text_node.sections[0].value = interaction_params.prompt.clone();
 }
 
 fn spawn_prompt(mut commands: Commands) {

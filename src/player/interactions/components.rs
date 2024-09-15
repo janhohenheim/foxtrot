@@ -1,15 +1,7 @@
-use crate::{
-    collision_layer::CollisionLayer,
-    dialog::conditions::dialog_running,
-    player::{camera::PlayerCamera, Player},
-};
-use avian3d::prelude::*;
 use bevy::{
     ecs::component::{ComponentHooks, StorageType},
     prelude::*,
 };
-
-use super::OpportunitySystem;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<(
@@ -40,9 +32,9 @@ pub struct PlayerInteractionParameters {
 impl PlayerInteractionParameters {
     pub fn default(player_interaction: &PlayerInteraction) -> Self {
         match player_interaction {
-            PlayerInteraction::Dialog(node) => Self {
+            PlayerInteraction::Dialog(..) => Self {
                 prompt: "Talk".to_string(),
-                max_distance: 10.0,
+                max_distance: 2.0,
             },
         }
     }

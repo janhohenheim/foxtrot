@@ -1,12 +1,11 @@
-use avian3d::prelude::ColliderParent;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{character::action::CharacterAction, dialog::StartDialog, player::Player};
 
 use super::{
-    available_opportunities::{
-        AvailablePlayerInteraction, PlayerInteraction, PlayerInteractionParameters,
+    components::{
+        AvailablePlayerInteraction, PlayerInteraction,
     },
     OpportunitySystem,
 };
@@ -25,21 +24,21 @@ fn usher_interact(
         ),
         With<Player>,
     >,
-    q_interactable: Query<(Entity, &PlayerInteractionParameters)>,
+    q_interaction: Query<(Entity, &PlayerInteraction)>,
     mut commands: Commands,
 ) {
     for (action_state, mut active_interactable) in &mut q_player {
         if active_interactable.is_none() || !action_state.just_pressed(&CharacterAction::Interact) {
             continue;
         }
-        let Some((entity, interactable)) = active_interactable
+        let Some((entity, interaction)) = active_interactable
             // Clear the current interactable so that it won't show up if we end up in a dialog
             .take()
-            .and_then(|e| q_interactable.get(e).ok())
+            .and_then(|e| q_interaction.get(e).ok())
         else {
             continue;
         };
-        match &interactable.interaction {
+        match interaction {
             PlayerInteraction::Dialog(node) => {
                 commands.trigger_targets(StartDialog(node.clone()), entity);
             }

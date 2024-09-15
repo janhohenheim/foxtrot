@@ -1,14 +1,14 @@
 use crate::system_set::VariableGameSystem;
 use bevy::prelude::*;
 
-pub mod available_opportunities;
+pub mod components;
 mod interact;
 mod prompt;
 mod update_available;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
-        available_opportunities::plugin,
+        components::plugin,
         prompt::plugin,
         interact::plugin,
         update_available::plugin,

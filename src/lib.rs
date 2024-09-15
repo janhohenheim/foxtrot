@@ -9,7 +9,6 @@ mod dev_tools;
 mod dialog;
 mod hacks;
 mod level;
-mod opportunities;
 mod player;
 mod screens;
 mod system_set;
@@ -106,7 +105,6 @@ impl Plugin for AppPlugin {
             hacks::plugin,
             cursor::plugin,
             dialog::plugin,
-            opportunities::plugin,
         ));
 
         // Enable dev tools for dev builds.

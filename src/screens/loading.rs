@@ -2,6 +2,7 @@
 //! This reduces stuttering, especially for audio on WASM.
 
 use bevy::prelude::*;
+use bevy_yarnspinner::prelude::YarnProject;
 
 use crate::{
     player::initialize::PlayerAssets,
@@ -39,9 +40,11 @@ fn all_assets_loaded(
     interaction_assets: Option<Res<InteractionAssets>>,
     credits_music: Option<Res<CreditsMusic>>,
     gameplay_music: Option<Res<GameplayMusic>>,
+    yarn_project: Option<Res<YarnProject>>,
 ) -> bool {
     player_assets.is_some()
         && interaction_assets.is_some()
         && credits_music.is_some()
         && gameplay_music.is_some()
+        && yarn_project.is_some()
 }

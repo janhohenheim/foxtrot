@@ -7,6 +7,7 @@ use bevy::prelude::*;
 pub mod camera;
 pub mod initialize;
 pub mod input;
+mod interactions;
 mod on_dialog;
 
 pub(super) fn plugin(app: &mut App) {
@@ -17,6 +18,7 @@ pub(super) fn plugin(app: &mut App) {
         input::plugin,
         initialize::plugin,
         on_dialog::plugin,
+        interactions::plugin,
     ));
 }
 

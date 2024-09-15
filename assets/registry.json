@@ -52,6 +52,32 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
+    "(foxtrot::player::interactions::components::PlayerInteractionParameters, foxtrot::player::interactions::components::AvailablePlayerInteraction, foxtrot::player::interactions::components::PlayerInteraction)": {
+      "isComponent": false,
+      "isResource": false,
+      "items": false,
+      "long_name": "(foxtrot::player::interactions::components::PlayerInteractionParameters, foxtrot::player::interactions::components::AvailablePlayerInteraction, foxtrot::player::interactions::components::PlayerInteraction)",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::player::interactions::components::PlayerInteractionParameters"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::player::interactions::components::AvailablePlayerInteraction"
+          }
+        },
+        {
+          "type": {
+            "$ref": "#/$defs/foxtrot::player::interactions::components::PlayerInteraction"
+          }
+        }
+      ],
+      "short_name": "(PlayerInteractionParameters, AvailablePlayerInteraction, PlayerInteraction)",
+      "type": "array",
+      "typeInfo": "Tuple"
+    },
     "(u8, u8)": {
       "isComponent": false,
       "isResource": false,
@@ -18304,61 +18330,6 @@
       "type": "string",
       "typeInfo": "Enum"
     },
-    "foxtrot::opportunities::available_opportunities::PlayerInteractable": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "foxtrot::opportunities::available_opportunities::PlayerInteractable",
-      "properties": {
-        "interaction": {
-          "type": {
-            "$ref": "#/$defs/foxtrot::opportunities::available_opportunities::PlayerInteraction"
-          }
-        },
-        "max_distance": {
-          "type": {
-            "$ref": "#/$defs/f32"
-          }
-        },
-        "prompt": {
-          "type": {
-            "$ref": "#/$defs/alloc::string::String"
-          }
-        }
-      },
-      "required": [
-        "prompt",
-        "interaction",
-        "max_distance"
-      ],
-      "short_name": "PlayerInteractable",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "foxtrot::opportunities::available_opportunities::PlayerInteraction": {
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "foxtrot::opportunities::available_opportunities::PlayerInteraction",
-      "oneOf": [
-        {
-          "items": false,
-          "long_name": "Dialog",
-          "prefixItems": [
-            {
-              "type": {
-                "$ref": "#/$defs/alloc::string::String"
-              }
-            }
-          ],
-          "short_name": "Dialog",
-          "type": "array",
-          "typeInfo": "Tuple"
-        }
-      ],
-      "short_name": "PlayerInteraction",
-      "type": "object",
-      "typeInfo": "Enum"
-    },
     "foxtrot::player::Player": {
       "additionalProperties": false,
       "isComponent": true,
@@ -18427,6 +18398,71 @@
         "offset"
       ],
       "short_name": "FirstPersonCamera",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::player::interactions::components::AvailablePlayerInteraction": {
+      "isComponent": true,
+      "isResource": false,
+      "items": false,
+      "long_name": "foxtrot::player::interactions::components::AvailablePlayerInteraction",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<bevy_ecs::entity::Entity>"
+          }
+        }
+      ],
+      "short_name": "AvailablePlayerInteraction",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
+    "foxtrot::player::interactions::components::PlayerInteraction": {
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::player::interactions::components::PlayerInteraction",
+      "oneOf": [
+        {
+          "items": false,
+          "long_name": "Dialog",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/alloc::string::String"
+              }
+            }
+          ],
+          "short_name": "Dialog",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "PlayerInteraction",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "foxtrot::player::interactions::components::PlayerInteractionParameters": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::player::interactions::components::PlayerInteractionParameters",
+      "properties": {
+        "max_distance": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        },
+        "prompt": {
+          "type": {
+            "$ref": "#/$defs/alloc::string::String"
+          }
+        }
+      },
+      "required": [
+        "prompt",
+        "max_distance"
+      ],
+      "short_name": "PlayerInteractionParameters",
       "type": "object",
       "typeInfo": "Struct"
     },

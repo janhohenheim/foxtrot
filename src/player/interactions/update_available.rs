@@ -7,7 +7,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use super::{
-    available_opportunities::{
+    components::{
         AvailablePlayerInteraction, PlayerInteraction, PlayerInteractionParameters,
     },
     OpportunitySystem,
@@ -16,13 +16,13 @@ use super::{
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
-        update_available_opportunities
+        update_available_interaction
             .run_if(not(dialog_running))
             .in_set(OpportunitySystem::UpdateAvailableOpportunities),
     );
 }
 
-fn update_available_opportunities(
+fn update_available_interaction(
     q_interaction: Query<&PlayerInteractionParameters, With<PlayerInteraction>>,
     mut q_player: Query<(Entity, &mut AvailablePlayerInteraction), With<Player>>,
     q_camera: Query<&Transform, With<PlayerCamera>>,
@@ -51,13 +51,21 @@ fn update_available_opportunities(
     ])
     .with_excluded_entities([player_entity]);
 
-    let interactable = spatial_query
-        .cast_ray(origin, direction, max_distance, solid, &query_filter)
-        .and_then(|hit| q_collider_parent.get(hit.entity).ok())
-        .map(|collider_parent| collider_parent.get())
-        .filter(|entity| q_interactable.contains(*entity));
-    let new_interactable = ActiveInteractable(interactable);
+    let mut new_interactable = None;
+    if let Some(hit) = spatial_query.cast_ray(origin, direction, max_distance, solid, &query_filter)
+    {
+        if let Ok(collider_parent) = q_collider_parent.get(hit.entity) {
+            let collider_parent = collider_parent.get();
+            if let Ok(interaction_params) = q_interaction.get(collider_parent) {
+                if hit.time_of_impact <= interaction_params.max_distance {
+                    new_interactable = Some(collider_parent);
+                }
+            }
+        }
+    }
+    let new_interactable = AvailablePlayerInteraction(new_interactable);
 
+    // Be nice to change detection :)
     if active_interactable.as_ref() != &new_interactable {
         *active_interactable = new_interactable;
     }

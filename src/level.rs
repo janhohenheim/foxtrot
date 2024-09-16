@@ -4,7 +4,7 @@ use bevy::{color::palettes::tailwind, prelude::*};
 use blenvy::*;
 
 use crate::{
-    player::camera::switch_to_first_person_camera,
+    player::camera::spawn_player_camera,
     screens::{gameplay::GameplayState, Screen},
 };
 
@@ -34,7 +34,7 @@ pub fn spawn_level(world: &mut World) {
         color: tailwind::SKY_100.into(),
         brightness: 400.0,
     });
-    switch_to_first_person_camera(world);
+    spawn_player_camera(world);
 }
 
 fn finish_spawning_level(

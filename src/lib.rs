@@ -23,6 +23,7 @@ use bevy::{
     log::LogPlugin,
     prelude::*,
 };
+use bevy_tweening::TweeningPlugin;
 use blenvy::BlenvyPlugin;
 use sickle_ui::SickleUiPlugin;
 
@@ -88,6 +89,7 @@ impl Plugin for AppPlugin {
             PhysicsPlugins::default().build().disable::<SyncPlugin>(),
             AvianInterpolationPlugin::default(),
             SickleUiPlugin,
+            TweeningPlugin,
         ));
 
         // Add internal plugins.

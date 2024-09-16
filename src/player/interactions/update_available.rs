@@ -7,10 +7,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use super::{
-    components::{
-        AvailablePlayerInteraction, PlayerInteraction, PlayerInteractionParameters,
-    },
-    OpportunitySystem,
+    OpportunitySystem, {AvailablePlayerInteraction, PlayerInteraction, PlayerInteractionParameters},
 };
 
 pub(super) fn plugin(app: &mut App) {

@@ -9,7 +9,7 @@ use crate::{
     character::{action::CharacterAction, controller::OverrideForwardDirection},
 };
 
-use super::{camera::PlayerCamera, interactions::components::AvailablePlayerInteraction, Player};
+use super::{camera::PlayerCamera, interactions::AvailablePlayerInteraction, Player};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<PlayerAssets>();

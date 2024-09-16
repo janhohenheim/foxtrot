@@ -3,8 +3,7 @@ use bevy::ui::Val::*;
 use sickle_ui::{prelude::*, ui_commands::SetTextExt as _};
 
 use super::{
-    components::{AvailablePlayerInteraction, PlayerInteractionParameters},
-    OpportunitySystem,
+    OpportunitySystem, {AvailablePlayerInteraction, PlayerInteractionParameters},
 };
 
 pub(super) fn plugin(app: &mut App) {

@@ -4,10 +4,7 @@ use leafwing_input_manager::prelude::*;
 use crate::{character::action::CharacterAction, dialog::StartDialog, player::Player};
 
 use super::{
-    components::{
-        AvailablePlayerInteraction, PlayerInteraction,
-    },
-    OpportunitySystem,
+    OpportunitySystem, {AvailablePlayerInteraction, PlayerInteraction},
 };
 
 pub(super) fn plugin(app: &mut App) {

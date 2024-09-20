@@ -1,10 +1,11 @@
+use crate::{dialog::StartDialog, screens::gameplay::GameplayState};
 use bevy::{prelude::*, window::CursorGrabMode};
+use bevy_yarnspinner::events::DialogueCompleteEvent;
 use leafwing_input_manager::{common_conditions::action_just_pressed, prelude::*};
 
-use crate::screens::gameplay::GameplayState;
-
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins(InputManagerPlugin::<CursorAction>::default())
+    app.register_type::<CrosshairNode>()
+        .add_plugins(InputManagerPlugin::<CursorAction>::default())
         .init_resource::<ActionState<CursorAction>>()
         .insert_resource(CursorAction::default_input_map())
         .add_systems(
@@ -20,7 +21,13 @@ pub(super) fn plugin(app: &mut App) {
                 release_cursor.run_if(action_just_pressed(CursorAction::Release)),
             )
                 .run_if(in_state(GameplayState::Playing)),
-        );
+        )
+        .add_systems(
+            Update,
+            capture_cursor_on_dialog_end.run_if(in_state(GameplayState::Playing)),
+        )
+        .observe(release_cursor_on_dialog_start)
+        .observe(set_cursor_visibility);
 }
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
@@ -43,6 +50,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
     let crosshair_texture = asset_server.load("textures/crosshair.png");
     commands
         .spawn((
+            CrosshairNode,
             Name::new("Crosshair UI"),
             StateScoped(GameplayState::Playing),
             NodeBundle {
@@ -64,16 +72,53 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-fn capture_cursor(mut windows: Query<&mut Window>) {
+fn capture_cursor(mut commands: Commands) {
+    commands.trigger(SetCursorVisibility(false));
+}
+
+fn release_cursor(mut commands: Commands) {
+    commands.trigger(SetCursorVisibility(true));
+}
+
+#[derive(Event, Debug, Copy, Clone, Deref, DerefMut)]
+pub struct SetCursorVisibility(pub bool);
+
+fn set_cursor_visibility(
+    trigger: Trigger<SetCursorVisibility>,
+    mut windows: Query<&mut Window>,
+    mut crosshair_visibility: Query<&mut Visibility, With<CrosshairNode>>,
+) {
+    let &SetCursorVisibility(visible) = trigger.event();
     for mut window in &mut windows {
-        window.cursor.visible = false;
-        window.cursor.grab_mode = CursorGrabMode::Locked;
+        window.cursor.visible = visible;
+        window.cursor.grab_mode = if visible {
+            CursorGrabMode::None
+        } else {
+            CursorGrabMode::Locked
+        };
+    }
+    for mut crosshair in &mut crosshair_visibility {
+        *crosshair = if visible {
+            Visibility::Hidden
+        } else {
+            Visibility::Inherited
+        };
     }
 }
 
-fn release_cursor(mut windows: Query<&mut Window>) {
-    for mut window in &mut windows {
-        window.cursor.visible = true;
-        window.cursor.grab_mode = CursorGrabMode::None;
+#[derive(Component, Debug, Reflect)]
+#[reflect(Component)]
+struct CrosshairNode;
+
+fn release_cursor_on_dialog_start(_trigger: Trigger<StartDialog>, mut commands: Commands) {
+    commands.trigger(SetCursorVisibility(true));
+}
+
+fn capture_cursor_on_dialog_end(
+    mut reader: EventReader<DialogueCompleteEvent>,
+    mut commands: Commands,
+) {
+    for _ in reader.read() {
+        commands.trigger(SetCursorVisibility(false));
     }
 }

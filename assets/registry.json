@@ -18339,6 +18339,17 @@
       "type": "string",
       "typeInfo": "Enum"
     },
+    "foxtrot::cursor::CrosshairNode": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::cursor::CrosshairNode",
+      "properties": {},
+      "required": [],
+      "short_name": "CrosshairNode",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "foxtrot::cursor::CursorAction": {
       "isComponent": false,
       "isResource": false,

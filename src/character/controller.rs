@@ -20,19 +20,19 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn apply_walking(
-    mut character_query: Query<
-        (
-            Entity,
-            &mut TnuaController,
-            &ActionState<CharacterAction>,
-            &WalkControllerConfig,
-            Option<&OverrideForwardDirection>,
-        ),
-        Without<ControllerDisabled>,
-    >,
+    mut character_query: Query<(
+        Entity,
+        &mut TnuaController,
+        &ActionState<CharacterAction>,
+        &WalkControllerConfig,
+        Option<&OverrideForwardDirection>,
+        Has<ControllerDisabled>,
+    )>,
     forward_reference_query: Query<&Transform>,
 ) {
-    for (entity, mut controller, action_state, walk, forward_reference) in &mut character_query {
+    for (entity, mut controller, action_state, walk, forward_reference, is_disabled) in
+        &mut character_query
+    {
         let forward_reference_entity = forward_reference.map_or(entity, |e| e.0);
         let Ok(forward_reference) = forward_reference_query.get(forward_reference_entity) else {
             error!("Forward reference entity not found");
@@ -51,13 +51,15 @@ fn apply_walking(
         };
         let direction = forward * axis.y + right * axis.x;
 
-        let sprinting_factor = if action_state.pressed(&CharacterAction::Sprint) {
+        let speed_factor = if is_disabled {
+            0.0
+        } else if action_state.pressed(&CharacterAction::Sprint) {
             walk.sprint_multiplier
         } else {
             1.0
         };
 
-        let velocity = direction * walk.max_speed * sprinting_factor;
+        let velocity = direction * walk.max_speed * speed_factor;
         controller.basis(TnuaBuiltinWalk {
             desired_velocity: velocity,
             desired_forward: direction,

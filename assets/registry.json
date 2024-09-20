@@ -73,25 +73,25 @@
       "type": "array",
       "typeInfo": "Tuple"
     },
-    "(foxtrot::player::interactions::components::PlayerInteractionParameters, foxtrot::player::interactions::components::AvailablePlayerInteraction, foxtrot::player::interactions::components::PlayerInteraction)": {
+    "(foxtrot::player::interactions::PlayerInteractionParameters, foxtrot::player::interactions::AvailablePlayerInteraction, foxtrot::player::interactions::PlayerInteraction)": {
       "isComponent": false,
       "isResource": false,
       "items": false,
-      "long_name": "(foxtrot::player::interactions::components::PlayerInteractionParameters, foxtrot::player::interactions::components::AvailablePlayerInteraction, foxtrot::player::interactions::components::PlayerInteraction)",
+      "long_name": "(foxtrot::player::interactions::PlayerInteractionParameters, foxtrot::player::interactions::AvailablePlayerInteraction, foxtrot::player::interactions::PlayerInteraction)",
       "prefixItems": [
         {
           "type": {
-            "$ref": "#/$defs/foxtrot::player::interactions::components::PlayerInteractionParameters"
+            "$ref": "#/$defs/foxtrot::player::interactions::PlayerInteractionParameters"
           }
         },
         {
           "type": {
-            "$ref": "#/$defs/foxtrot::player::interactions::components::AvailablePlayerInteraction"
+            "$ref": "#/$defs/foxtrot::player::interactions::AvailablePlayerInteraction"
           }
         },
         {
           "type": {
-            "$ref": "#/$defs/foxtrot::player::interactions::components::PlayerInteraction"
+            "$ref": "#/$defs/foxtrot::player::interactions::PlayerInteraction"
           }
         }
       ],
@@ -15248,15 +15248,15 @@
         }
       }
     },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
       "keyType": {
         "type": {
-          "$ref": "#/$defs/foxtrot::player::camera::CameraAction"
+          "$ref": "#/$defs/foxtrot::player::camera::control::CameraAction"
         }
       },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, Vec<Box<dyn Axislike>>, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
@@ -15266,15 +15266,15 @@
         }
       }
     },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
       "keyType": {
         "type": {
-          "$ref": "#/$defs/foxtrot::player::camera::CameraAction"
+          "$ref": "#/$defs/foxtrot::player::camera::control::CameraAction"
         }
       },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, Vec<Box<dyn Buttonlike>>, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
@@ -15284,15 +15284,15 @@
         }
       }
     },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
       "keyType": {
         "type": {
-          "$ref": "#/$defs/foxtrot::player::camera::CameraAction"
+          "$ref": "#/$defs/foxtrot::player::camera::control::CameraAction"
         }
       },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, Vec<Box<dyn DualAxislike>>, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
@@ -15302,15 +15302,15 @@
         }
       }
     },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
       "keyType": {
         "type": {
-          "$ref": "#/$defs/foxtrot::player::camera::CameraAction"
+          "$ref": "#/$defs/foxtrot::player::camera::control::CameraAction"
         }
       },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, Vec<Box<dyn TripleAxislike>>, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
@@ -15320,15 +15320,15 @@
         }
       }
     },
-    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
+    "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>": {
       "isComponent": false,
       "isResource": false,
       "keyType": {
         "type": {
-          "$ref": "#/$defs/foxtrot::player::camera::CameraAction"
+          "$ref": "#/$defs/foxtrot::player::camera::control::CameraAction"
         }
       },
-      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
+      "long_name": "bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>",
       "short_name": "HashMap<CameraAction, ActionData, DefaultHashBuilder>",
       "type": "object",
       "typeInfo": "Map",
@@ -18362,17 +18362,6 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::player::camera::CameraAction": {
-      "isComponent": false,
-      "isResource": false,
-      "long_name": "foxtrot::player::camera::CameraAction",
-      "oneOf": [
-        "RotateCamera"
-      ],
-      "short_name": "CameraAction",
-      "type": "string",
-      "typeInfo": "Enum"
-    },
     "foxtrot::player::camera::PlayerCamera": {
       "additionalProperties": false,
       "isComponent": true,
@@ -18417,11 +18406,33 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "foxtrot::player::interactions::components::AvailablePlayerInteraction": {
+    "foxtrot::player::camera::control::CameraAction": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "foxtrot::player::camera::control::CameraAction",
+      "oneOf": [
+        "RotateCamera"
+      ],
+      "short_name": "CameraAction",
+      "type": "string",
+      "typeInfo": "Enum"
+    },
+    "foxtrot::player::camera::on_dialog::DialogCameraTarget": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "foxtrot::player::camera::on_dialog::DialogCameraTarget",
+      "properties": {},
+      "required": [],
+      "short_name": "DialogCameraTarget",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "foxtrot::player::interactions::AvailablePlayerInteraction": {
       "isComponent": true,
       "isResource": false,
       "items": false,
-      "long_name": "foxtrot::player::interactions::components::AvailablePlayerInteraction",
+      "long_name": "foxtrot::player::interactions::AvailablePlayerInteraction",
       "prefixItems": [
         {
           "type": {
@@ -18433,10 +18444,10 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
-    "foxtrot::player::interactions::components::PlayerInteraction": {
+    "foxtrot::player::interactions::PlayerInteraction": {
       "isComponent": true,
       "isResource": false,
-      "long_name": "foxtrot::player::interactions::components::PlayerInteraction",
+      "long_name": "foxtrot::player::interactions::PlayerInteraction",
       "oneOf": [
         {
           "items": false,
@@ -18457,11 +18468,11 @@
       "type": "object",
       "typeInfo": "Enum"
     },
-    "foxtrot::player::interactions::components::PlayerInteractionParameters": {
+    "foxtrot::player::interactions::PlayerInteractionParameters": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "foxtrot::player::interactions::components::PlayerInteractionParameters",
+      "long_name": "foxtrot::player::interactions::PlayerInteractionParameters",
       "properties": {
         "max_distance": {
           "type": {
@@ -19541,15 +19552,15 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "leafwing_input_manager::action_state::ActionState<foxtrot::player::camera::CameraAction>": {
+    "leafwing_input_manager::action_state::ActionState<foxtrot::player::camera::control::CameraAction>": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": true,
-      "long_name": "leafwing_input_manager::action_state::ActionState<foxtrot::player::camera::CameraAction>",
+      "long_name": "leafwing_input_manager::action_state::ActionState<foxtrot::player::camera::control::CameraAction>",
       "properties": {
         "action_data": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, leafwing_input_manager::action_state::action_data::ActionData, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         },
         "disabled": {
@@ -19917,11 +19928,11 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "leafwing_input_manager::input_map::InputMap<foxtrot::player::camera::CameraAction>": {
+    "leafwing_input_manager::input_map::InputMap<foxtrot::player::camera::control::CameraAction>": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": true,
-      "long_name": "leafwing_input_manager::input_map::InputMap<foxtrot::player::camera::CameraAction>",
+      "long_name": "leafwing_input_manager::input_map::InputMap<foxtrot::player::camera::control::CameraAction>",
       "properties": {
         "associated_gamepad": {
           "type": {
@@ -19930,22 +19941,22 @@
         },
         "axislike_map": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::axislike::Axislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         },
         "buttonlike_map": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::buttonlike::Buttonlike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         },
         "dual_axislike_map": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::dualaxislike::DualAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         },
         "triple_axislike_map": {
           "type": {
-            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
+            "$ref": "#/$defs/bevy_utils::hashbrown::HashMap<foxtrot::player::camera::control::CameraAction, alloc::vec::Vec<std::boxed::Box<dyn leafwing_input_manager::user_input::trait_reflection::tripleaxislike::TripleAxislike>>, bevy_utils::hashbrown::hash_map::DefaultHashBuilder>"
           }
         }
       },

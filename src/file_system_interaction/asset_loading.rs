@@ -18,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
                 .load_collection::<AudioAssets>()
                 .load_collection::<GltfAssets>()
                 .load_collection::<TextureAssets>()
-                .load_collection::<GrassAssets>()
+                // .load_collection::<GrassAssets>()
                 .load_collection::<ConfigAssets>(),
         )
         .add_systems(Update, show_progress.run_if(in_state(GameState::Loading)))
@@ -48,11 +48,11 @@ pub(crate) struct TextureAssets {
     pub(crate) glowy_interior: Handle<Image>,
 }
 
-#[derive(AssetCollection, Resource, Clone)]
-pub(crate) struct GrassAssets {
-    #[asset(key = "grass_density_map")]
-    pub(crate) density_map: Handle<Image>,
-}
+// #[derive(AssetCollection, Resource, Clone)]
+// pub(crate) struct GrassAssets {
+//     #[asset(key = "grass_density_map")]
+//     pub(crate) density_map: Handle<Image>,
+// }
 
 #[derive(AssetCollection, Resource, Clone)]
 pub(crate) struct ConfigAssets {

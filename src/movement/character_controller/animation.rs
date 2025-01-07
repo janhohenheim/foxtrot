@@ -1,5 +1,6 @@
 use crate::system_set::GameSystemSet;
 use crate::util::error;
+
 use bevy::{animation::AnimationPlayer, prelude::*};
 use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
 use bevy_tnua::{
@@ -44,7 +45,7 @@ fn play_animations(
     )>,
     children: Query<&Children>,
     animation_names: Query<&CharacterAnimationNames>,
-    mut animation_players: Query<&mut AnimationPlayer>,
+    mut animation_players: Query<(&mut AnimationPlayer, &mut AnimationTransitions)>,
 ) -> anyhow::Result<()> {
     #[cfg(feature = "tracing")]
     let _span = info_span!("play_animations").entered();
@@ -56,7 +57,8 @@ fn play_animations(
         else {
             continue;
         };
-        let mut animation_player = animation_players.get_mut(link.0)?;
+        let (mut animation_player, mut animation_transitions) =
+            animation_players.get_mut(link.0)?;
         match animating_state.update_by_discriminant({
             let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
                 continue;
@@ -75,7 +77,8 @@ fn play_animations(
             TnuaAnimatingStateDirective::Maintain { state } => {
                 if let AnimationState::Running(speed) = state {
                     let anim_speed = (speed / 7.0).max(1.0);
-                    animation_player.set_speed(anim_speed);
+                    let factor = anim_speed / speed;
+                    animation_player.adjust_speeds(factor);
                 }
             }
             TnuaAnimatingStateDirective::Alter {
@@ -85,37 +88,37 @@ fn play_animations(
                 state,
             } => match state {
                 AnimationState::Airborne | AnimationState::Running(..) => {
-                    animation_player
-                        .play_with_transition(
-                            animations
-                                .named_animations
+                    animation_transitions
+                        .play(
+                            &mut animation_player,
+                            *animations
+                                .named_indices
                                 .get(&animation_names.aerial)
-                                .unwrap()
-                                .clone_weak(),
+                                .expect("Aerial animation should be in animation list"),
                             Duration::from_secs_f32(0.2),
                         )
                         .repeat();
                 }
                 AnimationState::Standing => {
-                    animation_player
-                        .play_with_transition(
-                            animations
-                                .named_animations
+                    animation_transitions
+                        .play(
+                            &mut animation_player,
+                            *animations
+                                .named_indices
                                 .get(&animation_names.idle)
-                                .unwrap()
-                                .clone_weak(),
+                                .expect("Idle animation should be in animation list"),
                             Duration::from_secs_f32(0.2),
                         )
                         .repeat();
                 }
                 AnimationState::Walking(_speed) => {
-                    animation_player
-                        .play_with_transition(
-                            animations
-                                .named_animations
+                    animation_transitions
+                        .play(
+                            &mut animation_player,
+                            *animations
+                                .named_indices
                                 .get(&animation_names.walk)
-                                .unwrap()
-                                .clone_weak(),
+                                .expect("Walk animation should be in animation list"),
                             Duration::from_secs_f32(0.1),
                         )
                         .repeat();

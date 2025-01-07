@@ -1,5 +1,6 @@
 use crate::player_control::camera::ForceCursorGrabMode;
 use crate::util::error;
+
 use anyhow::Context;
 use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_editor_pls::{
@@ -7,7 +8,6 @@ use bevy_editor_pls::{
     editor_window::EditorWindow,
     AddEditorWindow,
 };
-use bevy_egui::egui;
 use bevy_xpbd_3d::prelude::PhysicsGizmos;
 use serde::{Deserialize, Serialize};
 
@@ -29,7 +29,7 @@ impl EditorWindow for DevEditorWindow {
     fn ui(
         _world: &mut World,
         mut cx: bevy_editor_pls::editor_window::EditorWindowContext,
-        ui: &mut egui::Ui,
+        ui: &mut bevy_editor_pls::egui::Ui,
     ) {
         let state = cx
             .state_mut::<DevEditorWindow>()

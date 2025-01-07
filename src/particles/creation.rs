@@ -20,10 +20,10 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> Handle<EffectAs
     color_gradient.add_key(1.0, Vec4::new(1.2, 1.0, 1.0, 0.0));
 
     let mut size_gradient = Gradient::new();
-    size_gradient.add_key(0.0, Vec2::splat(0.1));
-    size_gradient.add_key(0.3, Vec2::splat(0.12));
-    size_gradient.add_key(0.6, Vec2::splat(0.15));
-    size_gradient.add_key(1.0, Vec2::splat(0.2));
+    size_gradient.add_key(0.0, Vec3::splat(0.1));
+    size_gradient.add_key(0.3, Vec3::splat(0.12));
+    size_gradient.add_key(0.6, Vec3::splat(0.15));
+    size_gradient.add_key(1.0, Vec3::splat(0.2));
 
     let mut module = Module::default();
     let position_circle_modifier = SetPositionCircleModifier {
@@ -48,7 +48,7 @@ fn create_sprinting_effect(effects: &mut Assets<EffectAsset>) -> Handle<EffectAs
 
     effects.add(
         EffectAsset::new(
-            vec![100],
+            100,
             Spawner::rate(10.0.into()).with_starts_active(false),
             module,
         )

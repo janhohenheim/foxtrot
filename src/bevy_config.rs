@@ -1,5 +1,6 @@
 use crate::util::error;
 use bevy::core::FrameCount;
+use bevy::state::app::StatesPlugin;
 use bevy::{prelude::*, window::PrimaryWindow, winit::WinitWindows};
 use std::io::Cursor;
 use winit::window::Icon;
@@ -18,10 +19,11 @@ pub(super) fn plugin(app: &mut App) {
             }
             .into(),
             ..default()
-        }),
+        })
+        .set(StatesPlugin),
     )
     .insert_resource(Msaa::Sample4)
-    .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+    .insert_resource(ClearColor(Color::srgb(0.4, 0.4, 0.4)))
     .add_systems(Startup, set_window_icon.pipe(error))
     .add_systems(Update, make_visible);
 }

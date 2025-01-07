@@ -37,7 +37,7 @@ fn spawn(
                     point_light: PointLight {
                         intensity: 10_000.,
                         radius: 1.,
-                        color: Color::rgb(0.5, 0.1, 0.),
+                        color: Color::srgb(0.5, 0.1, 0.),
                         shadows_enabled: true,
                         ..default()
                     },

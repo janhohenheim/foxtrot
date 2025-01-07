@@ -58,9 +58,9 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins(bevy_config::plugin);
         app.init_state::<GameState>().add_plugins((
             system_set::plugin,
-            bevy_config::plugin,
             menu::plugin,
             movement::plugin,
             player_control::plugin,

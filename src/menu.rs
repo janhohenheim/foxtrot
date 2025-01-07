@@ -33,7 +33,7 @@ fn setup_menu(mut egui_contexts: EguiContexts, mut next_state: ResMut<NextState<
 
 fn get_menu_panel() -> egui::CentralPanel {
     egui::CentralPanel::default().frame(egui::Frame {
-        inner_margin: egui::style::Margin::same(60.),
+        inner_margin: egui::Margin::same(60.),
         ..default()
     })
 }

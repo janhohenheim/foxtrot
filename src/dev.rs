@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
                 LogDiagnosticsPlugin::filtered(vec![]),
                 PhysicsDebugPlugin::default(),
             ))
-            .insert_gizmo_group(
+            .insert_gizmo_config(
                 PhysicsGizmos {
                     aabb_color: Some(Color::WHITE),
                     ..default()

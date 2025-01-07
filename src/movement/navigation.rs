@@ -35,7 +35,7 @@ pub(super) fn plugin(app: &mut App) {
         walkable_radius: 4,
         step_height: 3,
         min_region_area: 30,
-        merge_region_area: 500,
+        max_region_area_to_merge_into: 500,
         max_contour_simplification_error: 1.3,
         max_edge_length: 100,
         max_tile_generation_tasks: None,
@@ -87,7 +87,7 @@ fn query_mesh(
                             commands.spawn(DrawPath {
                                 timer: Some(Timer::from_seconds(4.0, TimerMode::Once)),
                                 pulled_path: shifted_path,
-                                color: Color::BLUE,
+                                color: Color::from(bevy::color::palettes::css::BLUE),
                             });
                         }
                     }

@@ -1,13 +1,15 @@
+pub(crate) use creation::*;
+
 use crate::{
     file_system_interaction::config::GameConfig,
     level_instantiation::on_spawn::Player,
     util::{F32Ext, Vec3Ext},
     GameState,
 };
+
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use bevy_tnua::prelude::*;
-pub(crate) use creation::*;
 
 mod creation;
 
@@ -27,7 +29,7 @@ struct SprintingParticle;
 
 fn play_sprinting_effect(
     with_player: Query<&TnuaController, With<Player>>,
-    mut with_particle: Query<&mut EffectSpawner, With<SprintingParticle>>,
+    mut with_particle: Query<&mut EffectInitializers, With<SprintingParticle>>,
     config: Res<GameConfig>,
 ) {
     for controller in with_player.iter() {

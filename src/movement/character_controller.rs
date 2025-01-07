@@ -1,9 +1,10 @@
 use crate::system_set::GameSystemSet;
 pub(crate) use animation::AnimationState;
+pub(crate) use components::*;
+
 use bevy::prelude::*;
 use bevy_tnua::prelude::*;
 use bevy_tnua_xpbd3d::*;
-pub(crate) use components::*;
 
 mod animation;
 mod components;
@@ -41,7 +42,7 @@ fn apply_walking(
         let speed = walking.speed * sprinting_multiplier;
         controller.basis(TnuaBuiltinWalk {
             desired_velocity: direction * speed,
-            desired_forward: direction.normalize_or_zero(),
+            desired_forward: Dir3::new(direction.normalize_or_zero()).ok(),
             float_height: float_height.0,
             cling_distance: 0.1,
             ..Default::default()

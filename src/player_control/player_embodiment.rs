@@ -123,7 +123,7 @@ fn rotate_to_speaker(
     let speaker_transform = speakers.get(dialog_target).unwrap();
     let direction = (speaker_transform.translation - player_transform.translation).horizontal();
     controller.basis(TnuaBuiltinWalk {
-        desired_forward: direction.normalize_or_zero(),
+        desired_forward: Dir3::new(direction.normalize_or_zero()).ok(),
         float_height: float_height.0,
         cling_distance: 0.1,
         ..Default::default()

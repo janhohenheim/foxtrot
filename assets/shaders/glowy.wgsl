@@ -2,7 +2,7 @@
 
 #import bevy_pbr::mesh_view_bindings
 #import bevy_pbr::mesh_bindings
-#import bevy_pbr::utils::PI
+#import bevy_render::maths::PI
 // Bring in tone-mapping functions
 #import bevy_pbr::pbr_types
 #import bevy_pbr::clustered_forward

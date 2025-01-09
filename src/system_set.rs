@@ -1,7 +1,7 @@
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_dolly::prelude::DollyUpdateSet;
-use bevy_gltf_blueprints::GltfBlueprintsSet;
+use blenvy::blueprints::GltfBlueprintsSet;
 use bevy_yarnspinner::prelude::YarnSpinnerSystemSet;
 use bevy_yarnspinner_example_dialogue_view::ExampleYarnSpinnerDialogueViewSystemSet;
 

@@ -58,8 +58,7 @@ bevy-tnua-xpbd3d = "0.5"
 bevy_xpbd_3d = { version = "0.5", features = ["simd"] }
 bevy-tnua = "0.20"
 bevy_atmosphere = "0.10"
-bevy_gltf_blueprints = "0.11"
-bevy_registry_export = "0.4"
+blenvy = { git = "https://github.com/kaosat-dev/Blenvy" }
 
 [build-dependencies]
 embed-resource = "2"

@@ -2,7 +2,7 @@ use crate::system_set::GameSystemSet;
 use crate::util::error;
 
 use bevy::{animation::AnimationPlayer, prelude::*};
-use bevy_gltf_blueprints::{AnimationPlayerLink, Animations};
+use blenvy::blueprints::animation::{BlueprintAnimationPlayerLink, BlueprintAnimations};
 use bevy_tnua::{
     builtins::TnuaBuiltinWalk, controller::TnuaController, TnuaAnimatingState,
     TnuaAnimatingStateDirective,
@@ -40,8 +40,8 @@ fn play_animations(
         Entity,
         &mut TnuaAnimatingState<AnimationState>,
         &TnuaController,
-        &AnimationPlayerLink,
-        &Animations,
+        &BlueprintAnimationPlayerLink,
+        &BlueprintAnimations,
     )>,
     children: Query<&Children>,
     animation_names: Query<&CharacterAnimationNames>,

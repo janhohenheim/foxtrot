@@ -23,7 +23,7 @@ fn spawn_level(mut commands: Commands, models: Res<Assets<Gltf>>, gltf_assets: R
 
     commands.spawn((
         Name::new("Camera"),
-        Camera3dBundle::default(),
+        Camera3d::default(),
         IngameCamera::default(),
         AtmosphereCamera::default(),
         IsDefaultUiCamera,

@@ -69,8 +69,14 @@ pub(crate) fn create_player_action_input_manager_bundle() -> InputManagerBundle<
             (PlayerAction::Jump, KeyCode::Space),
             (PlayerAction::Sprint, KeyCode::ShiftLeft),
             (PlayerAction::Interact, KeyCode::KeyE),
+
         ])
+        .insert(PlayerAction::Jump, InputKind::GamepadButton(GamepadButtonType::South))
+        .insert(PlayerAction::Sprint, InputKind::GamepadButton(GamepadButtonType::West))
+        .insert(PlayerAction::Interact, InputKind::GamepadButton(GamepadButtonType::East))
         .insert(PlayerAction::Move, VirtualDPad::wasd())
+        .insert(PlayerAction::Move, VirtualDPad::dpad())
+        .insert(PlayerAction::Move, DualAxis::left_stick())
         .build(),
         ..default()
     }
@@ -81,6 +87,7 @@ pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<
         input_map: InputMap::default()
             .insert(CameraAction::Orbit, DualAxis::mouse_motion())
             .insert(CameraAction::Zoom, SingleAxis::mouse_wheel_y())
+            .insert(CameraAction::Orbit, DualAxis::right_stick().with_sensitivity(10.,10.))
             .build(),
         ..default()
     }
@@ -88,7 +95,9 @@ pub(crate) fn create_camera_action_input_manager_bundle() -> InputManagerBundle<
 
 pub(crate) fn create_ui_action_input_manager_bundle() -> InputManagerBundle<UiAction> {
     InputManagerBundle {
-        input_map: InputMap::new([(UiAction::TogglePause, KeyCode::Escape)]),
+        input_map: InputMap::new([(UiAction::TogglePause, KeyCode::Escape)])
+          .insert(UiAction::TogglePause, InputKind::GamepadButton(GamepadButtonType::North))
+          .build(),
         ..default()
     }
 }

@@ -2,3 +2,11 @@
 /target
 # This file contains environment-specific configuration like linker settings
 .cargo/config.toml
+
+# TrenchBroom
+assets/**/autosave/
+assets/**/*.bsp
+assets/**/*.log
+assets/**/*.pts
+assets/**/*.texinfo.json
+assets/**/*.leak.prt

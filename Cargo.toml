@@ -7,6 +7,15 @@ edition = "2024"
 [dependencies]
 bevy = { version = "0.15.0", features = ["wayland"] }
 avian3d = "0.2.1"
+
+# TODO:
+# bevy_tnua
+# bevy_avian3d_tnua, or something like that
+# bevy_enhanced_input
+# bevy_landmass
+# bevy_hanabi
+
+
 rand = "0.8"
 # Compile low-severity logs out of native builds for performance.
 log = { version = "0.4", features = [

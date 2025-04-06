@@ -24,7 +24,7 @@ pub(crate) fn spawn_level(world: &mut World) {
     let asset_server = world.resource::<AssetServer>();
     world.spawn(SceneRoot(
         //  Run ./scripts/compile_maps.sh and change .map to .bsp when you're done prototyping and want some extra performance
-        asset_server.load("maps/playground/playground.map#Scene"),
+        asset_server.load("maps/foxtrot/foxtrot.map#Scene"),
     ));
 }
 

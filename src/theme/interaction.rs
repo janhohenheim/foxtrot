@@ -21,16 +21,16 @@ pub(super) fn plugin(app: &mut App) {
 /// on the current interaction state.
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
-pub struct InteractionPalette {
-    pub none: Color,
-    pub hovered: Color,
-    pub pressed: Color,
+pub(crate) struct InteractionPalette {
+    pub(crate) none: Color,
+    pub(crate) hovered: Color,
+    pub(crate) pressed: Color,
 }
 
 /// Event triggered on a UI entity when the [`Interaction`] component on the same entity changes to
 /// [`Interaction::Pressed`]. Observe this event to detect e.g. button presses.
 #[derive(Event)]
-pub struct OnPress;
+pub(crate) struct OnPress;
 
 fn trigger_on_press(
     interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
@@ -60,7 +60,7 @@ fn apply_interaction_palette(
 }
 
 #[derive(Resource, Asset, Reflect, Clone)]
-pub struct InteractionAssets {
+pub(crate) struct InteractionAssets {
     #[dependency]
     hover: Handle<AudioSource>,
     #[dependency]
@@ -68,8 +68,8 @@ pub struct InteractionAssets {
 }
 
 impl InteractionAssets {
-    pub const PATH_BUTTON_HOVER: &'static str = "audio/sound_effects/button_hover.ogg";
-    pub const PATH_BUTTON_PRESS: &'static str = "audio/sound_effects/button_press.ogg";
+    pub(crate) const PATH_BUTTON_HOVER: &'static str = "audio/sound_effects/button_hover.ogg";
+    pub(crate) const PATH_BUTTON_PRESS: &'static str = "audio/sound_effects/button_press.ogg";
 }
 
 impl FromWorld for InteractionAssets {

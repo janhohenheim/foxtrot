@@ -32,13 +32,13 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
-pub struct Player;
+pub(crate) struct Player;
 
 /// A command to spawn the player character.
 #[derive(Debug)]
-pub struct SpawnPlayer {
+pub(crate) struct SpawnPlayer {
     /// See [`MovementController::max_speed`].
-    pub max_speed: f32,
+    pub(crate) max_speed: f32,
 }
 
 impl Command for SpawnPlayer {
@@ -116,11 +116,11 @@ fn record_player_directional_input(
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
-pub struct PlayerAssets {
+pub(crate) struct PlayerAssets {
     #[dependency]
     ducky: Handle<Image>,
     #[dependency]
-    pub steps: Vec<Handle<AudioSource>>,
+    pub(crate) steps: Vec<Handle<AudioSource>>,
 }
 
 impl FromWorld for PlayerAssets {

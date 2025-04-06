@@ -16,7 +16,7 @@ use bevy::prelude::*;
 /// }
 /// ```
 #[derive(Component, Default)]
-pub struct Music;
+pub(crate) struct Music;
 
 /// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it is in the
 /// general "sound effect" category (ex: footsteps, the sound of a magic spell, a door opening).
@@ -34,4 +34,4 @@ pub struct Music;
 /// }
 /// ```
 #[derive(Component, Default)]
-pub struct SoundEffect;
+pub(crate) struct SoundEffect;

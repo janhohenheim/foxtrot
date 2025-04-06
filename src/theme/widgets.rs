@@ -5,7 +5,7 @@ use bevy::{ecs::system::EntityCommands, hierarchy::ChildBuild, prelude::*, ui::V
 use crate::theme::{interaction::InteractionPalette, palette::*};
 
 /// An extension trait for spawning UI widgets.
-pub trait Widgets {
+pub(crate) trait Widgets {
     /// Spawn a simple button with text.
     fn button(&mut self, text: impl Into<String>) -> EntityCommands;
 
@@ -92,7 +92,7 @@ impl<T: Spawn> Widgets for T {
 }
 
 /// An extension trait for spawning UI containers.
-pub trait Containers {
+pub(crate) trait Containers {
     /// Spawns a root node that covers the full screen
     /// and centers its content horizontally and vertically.
     fn ui_root(&mut self) -> EntityCommands;

@@ -1,4 +1,4 @@
-// Game: trenchbroom_playground
+// Game: foxtrot
 // Format: Valve
 // entity 0
 {
@@ -54,8 +54,5 @@
 // entity 1
 {
 "classname" "suzanne"
-"origin" "-8 -24 72"
-"model" "models/Suzanne.gltf"
-"visibility" "Inherited"
-"angles" "0 0 0"
+"origin" "8 120 72"
 }

@@ -3,13 +3,13 @@
 // Unused utilities may trigger this lints undesirably.
 #![allow(dead_code)]
 
-pub mod interaction;
-pub mod palette;
+pub(crate) mod interaction;
+pub(crate) mod palette;
 mod widgets;
 
 #[allow(unused_imports)]
-pub mod prelude {
-    pub use super::{
+pub(crate) mod prelude {
+    pub(crate) use super::{
         interaction::InteractionPalette,
         palette as ui_palette,
         widgets::{Containers as _, Widgets as _},

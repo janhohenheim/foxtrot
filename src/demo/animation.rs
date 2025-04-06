@@ -98,14 +98,14 @@ fn trigger_step_sound_effect(
 /// It is tightly bound to the texture atlas we use.
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-pub struct PlayerAnimation {
+pub(crate) struct PlayerAnimation {
     timer: Timer,
     frame: usize,
     state: PlayerAnimationState,
 }
 
 #[derive(Reflect, PartialEq)]
-pub enum PlayerAnimationState {
+pub(crate) enum PlayerAnimationState {
     Idling,
     Walking,
 }
@@ -136,12 +136,12 @@ impl PlayerAnimation {
         }
     }
 
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self::idling()
     }
 
     /// Update animation timers.
-    pub fn update_timer(&mut self, delta: Duration) {
+    pub(crate) fn update_timer(&mut self, delta: Duration) {
         self.timer.tick(delta);
         if !self.timer.finished() {
             return;
@@ -154,7 +154,7 @@ impl PlayerAnimation {
     }
 
     /// Update animation state if it changes.
-    pub fn update_state(&mut self, state: PlayerAnimationState) {
+    pub(crate) fn update_state(&mut self, state: PlayerAnimationState) {
         if self.state != state {
             match state {
                 PlayerAnimationState::Idling => *self = Self::idling(),
@@ -164,12 +164,12 @@ impl PlayerAnimation {
     }
 
     /// Whether animation changed this tick.
-    pub fn changed(&self) -> bool {
+    pub(crate) fn changed(&self) -> bool {
         self.timer.finished()
     }
 
     /// Return sprite index in the atlas.
-    pub fn get_atlas_index(&self) -> usize {
+    pub(crate) fn get_atlas_index(&self) -> usize {
         match self.state {
             PlayerAnimationState::Idling => self.frame,
             PlayerAnimationState::Walking => 6 + self.frame,

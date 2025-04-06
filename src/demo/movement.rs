@@ -33,14 +33,14 @@ pub(super) fn plugin(app: &mut App) {
 /// other players as well.
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-pub struct MovementController {
+pub(crate) struct MovementController {
     /// The direction the character wants to move in.
-    pub intent: Vec2,
+    pub(crate) intent: Vec2,
 
     /// Maximum speed in world units per second.
     /// 1 world unit = 1 pixel when using the default 2D camera and no physics
     /// engine.
-    pub max_speed: f32,
+    pub(crate) max_speed: f32,
 }
 
 impl Default for MovementController {
@@ -65,7 +65,7 @@ fn apply_movement(
 
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-pub struct ScreenWrap;
+pub(crate) struct ScreenWrap;
 
 fn apply_screen_wrap(
     window_query: Query<&Window, With<PrimaryWindow>>,

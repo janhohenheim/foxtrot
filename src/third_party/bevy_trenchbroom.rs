@@ -19,7 +19,7 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
 struct Worldspawn;
 
-pub trait LoadTrenchbroomModel {
+pub(crate) trait LoadTrenchbroomModel {
     fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene>;
 }
 

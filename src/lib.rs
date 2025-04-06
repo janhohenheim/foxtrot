@@ -1,5 +1,5 @@
 mod asset_tracking;
-pub mod audio;
+pub(crate) mod audio;
 mod demo;
 #[cfg(feature = "dev")]
 mod dev_tools;
@@ -84,7 +84,9 @@ enum AppSet {
 fn spawn_camera(mut commands: Commands) {
     commands.spawn((
         Name::new("Camera"),
-        Camera2d,
+        Camera3d::default(),
+        // TODO: Remove once player exists
+        Transform::from_xyz(0.0, 10.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
         // Render all UI to this camera.
         // Not strictly necessary since we only use one camera,
         // but if we don't use this component, our UI will disappear as soon

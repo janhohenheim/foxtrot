@@ -6,9 +6,9 @@
 use bevy::prelude::*;
 
 mod animation;
-pub mod level;
+pub(crate) mod level;
 mod movement;
-pub mod player;
+pub(crate) mod player;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((

@@ -9,7 +9,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, load_resource_assets);
 }
 
-pub trait LoadResource {
+pub(crate) trait LoadResource {
     /// This will load the [`Resource`] as an [`Asset`]. When all of its asset dependencies
     /// have been loaded, it will be inserted as a resource. This ensures that the resource only
     /// exists when the assets are ready.
@@ -40,7 +40,7 @@ impl LoadResource for App {
 type InsertLoadedResource = fn(&mut World, &UntypedHandle);
 
 #[derive(Resource, Default)]
-pub struct ResourceHandles {
+pub(crate) struct ResourceHandles {
     // Use a queue for waiting assets so they can be cycled through and moved to
     // `finished` one at a time.
     waiting: VecDeque<(UntypedHandle, InsertLoadedResource)>,
@@ -49,7 +49,7 @@ pub struct ResourceHandles {
 
 impl ResourceHandles {
     /// Returns true if all requested [`Asset`]s have finished loading and are available as [`Resource`]s.
-    pub fn is_all_done(&self) -> bool {
+    pub(crate) fn is_all_done(&self) -> bool {
         self.waiting.is_empty()
     }
 }

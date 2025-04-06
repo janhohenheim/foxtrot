@@ -1,13 +1,6 @@
 //! Helper traits for creating common widgets.
 
-use bevy::{
-    ecs::{
-        relationship::{RelatedSpawnerCommands, Relationship},
-        system::EntityCommands,
-    },
-    prelude::*,
-    ui::Val::*,
-};
+use bevy::{ecs::system::EntityCommands, hierarchy::ChildBuild, prelude::*, ui::Val::*};
 
 use crate::theme::{interaction::InteractionPalette, palette::*};
 
@@ -25,7 +18,7 @@ pub trait Widgets {
 
 impl<T: Spawn> Widgets for T {
     fn button(&mut self, text: impl Into<String>) -> EntityCommands {
-        self.spawn((
+        let mut entity = self.spawn((
             Name::new("Button"),
             Button,
             Node {
@@ -41,17 +34,24 @@ impl<T: Spawn> Widgets for T {
                 hovered: BUTTON_HOVERED_BACKGROUND,
                 pressed: BUTTON_PRESSED_BACKGROUND,
             },
-            children![(
-                Name::new("Button Text"),
-                Text(text.into()),
-                TextFont::from_font_size(40.0),
-                TextColor(BUTTON_TEXT),
-            )],
-        ))
+        ));
+        entity.with_children(|children| {
+            ChildBuild::spawn(
+                children,
+                (
+                    Name::new("Button Text"),
+                    Text(text.into()),
+                    TextFont::from_font_size(40.0),
+                    TextColor(BUTTON_TEXT),
+                ),
+            );
+        });
+
+        entity
     }
 
     fn header(&mut self, text: impl Into<String>) -> EntityCommands {
-        self.spawn((
+        let mut entity = self.spawn((
             Name::new("Header"),
             Node {
                 width: Px(500.0),
@@ -61,17 +61,23 @@ impl<T: Spawn> Widgets for T {
                 ..default()
             },
             BackgroundColor(NODE_BACKGROUND),
-            children![(
-                Name::new("Header Text"),
-                Text(text.into()),
-                TextFont::from_font_size(40.0),
-                TextColor(HEADER_TEXT),
-            )],
-        ))
+        ));
+        entity.with_children(|children| {
+            ChildBuild::spawn(
+                children,
+                (
+                    Name::new("Header Text"),
+                    Text(text.into()),
+                    TextFont::from_font_size(40.0),
+                    TextColor(HEADER_TEXT),
+                ),
+            );
+        });
+        entity
     }
 
     fn label(&mut self, text: impl Into<String>) -> EntityCommands {
-        self.spawn((
+        let entity = self.spawn((
             Name::new("Label"),
             Text(text.into()),
             TextFont::from_font_size(24.0),
@@ -80,7 +86,8 @@ impl<T: Spawn> Widgets for T {
                 width: Px(500.0),
                 ..default()
             },
-        ))
+        ));
+        entity
     }
 }
 
@@ -123,8 +130,8 @@ impl Spawn for Commands<'_, '_> {
     }
 }
 
-impl<R: Relationship> Spawn for RelatedSpawnerCommands<'_, R> {
+impl Spawn for ChildBuilder<'_> {
     fn spawn<B: Bundle>(&mut self, bundle: B) -> EntityCommands {
-        self.spawn(bundle)
+        ChildBuild::spawn(self, bundle)
     }
 }

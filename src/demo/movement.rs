@@ -71,7 +71,7 @@ fn apply_screen_wrap(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut wrap_query: Query<&mut Transform, With<ScreenWrap>>,
 ) {
-    let Ok(window) = window_query.single() else {
+    let Ok(window) = window_query.get_single() else {
         return;
     };
     let size = window.size() + 256.0;

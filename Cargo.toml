@@ -5,7 +5,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16.0-rc.1", features = ["wayland"] }
+bevy = { version = "0.15.0", features = ["wayland"] }
+avian3d = "0.2.1"
 rand = "0.8"
 # Compile low-severity logs out of native builds for performance.
 log = { version = "0.4", features = [
@@ -18,6 +19,11 @@ tracing = { version = "0.1", features = [
     "release_max_level_warn",
 ] }
 
+[dependencies.bevy_trenchbroom]
+git = "https://github.com/Noxmore/bevy_trenchbroom"
+rev = "f31382e49e75db1925f5e69c86284022a6cf708d"
+features = ["avian"]
+
 [features]
 default = [
     # Default to a native dev build.
@@ -27,7 +33,8 @@ dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
-    "bevy/bevy_ui_debug",
+    # uncomment in 0.16
+    # "bevy/bevy_ui_debug",
 ]
 dev_native = [
     "dev",

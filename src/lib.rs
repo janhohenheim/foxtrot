@@ -37,7 +37,7 @@ impl Plugin for AppPlugin {
                 })
                 .set(WindowPlugin {
                     primary_window: Window {
-                        title: "Foxtrot".to_string(),
+                        title: "Bevy New 2D".to_string(),
                         fit_canvas_to_parent: true,
                         ..default()
                     }
@@ -46,7 +46,7 @@ impl Plugin for AppPlugin {
                 })
                 .set(AudioPlugin {
                     global_volume: GlobalVolume {
-                        volume: Volume::Linear(0.3),
+                        volume: Volume::new(0.3),
                     },
                     ..default()
                 }),

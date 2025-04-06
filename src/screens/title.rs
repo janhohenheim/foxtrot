@@ -2,7 +2,10 @@
 
 use bevy::prelude::*;
 
-use crate::{screens::Screen, theme::prelude::*};
+use crate::{
+    screens::Screen,
+    theme::{interaction::OnPress, prelude::*},
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Title), spawn_title_screen);
@@ -12,24 +15,24 @@ fn spawn_title_screen(mut commands: Commands) {
     commands
         .ui_root()
         .insert(StateScoped(Screen::Title))
-        .with_children(|parent| {
-            parent.button("Play").observe(enter_gameplay_screen);
-            parent.button("Credits").observe(enter_credits_screen);
+        .with_children(|children| {
+            children.button("Play").observe(enter_gameplay_screen);
+            children.button("Credits").observe(enter_credits_screen);
 
             #[cfg(not(target_family = "wasm"))]
-            parent.button("Exit").observe(exit_app);
+            children.button("Exit").observe(exit_app);
         });
 }
 
-fn enter_gameplay_screen(_: Trigger<Pointer<Pressed>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_gameplay_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Gameplay);
 }
 
-fn enter_credits_screen(_: Trigger<Pointer<Pressed>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_credits_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Credits);
 }
 
 #[cfg(not(target_family = "wasm"))]
-fn exit_app(_: Trigger<Pointer<Pressed>>, mut app_exit: EventWriter<AppExit>) {
-    app_exit.write(AppExit::Success);
+fn exit_app(_trigger: Trigger<OnPress>, mut app_exit: EventWriter<AppExit>) {
+    app_exit.send(AppExit::Success);
 }

@@ -8,6 +8,8 @@ use bevy::{
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
+use bevy_tnua::prelude::*;
+use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
 use crate::{asset_tracking::LoadResource, third_party::bevy_trenchbroom::LoadTrenchbroomModel};
@@ -27,7 +29,7 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(jump);
 }
 
-const DEFAULT_SPEED: f32 = 1.0;
+const DEFAULT_SPEED: f32 = 3.0;
 
 // To define mappings for actions, write an observer for `Binding`.
 // It's also possible to create bindings before the insertion,
@@ -86,10 +88,19 @@ impl Player {
         world.commands().entity(entity).insert((
             SceneRoot(suzanne),
             RigidBody::Dynamic,
-            ColliderConstructorHierarchy::new(ColliderConstructor::ConvexDecompositionFromMesh),
             TrenchBroomGltfRotationFix,
             Actions::<Player>::default(),
             MovementController::default(),
+            // The player character needs to be configured as a dynamic rigid body of the physics
+            // engine.
+            Collider::capsule(0.5, 1.0),
+            // This is Tnua's interface component.
+            TnuaController::default(),
+            // A sensor shape is not strictly necessary, but without it we'll get weird results.
+            TnuaAvian3dSensorShape(Collider::cylinder(0.49, 0.0)),
+            // Tnua can fix the rotation, but the character will still get rotated before it can do so.
+            // By locking the rotation we can prevent this.
+            LockedAxes::ROTATION_LOCKED,
         ));
     }
 }
@@ -118,12 +129,30 @@ impl FromWorld for PlayerAssets {
     }
 }
 
-fn apply_movement(trigger: Trigger<Fired<Move>>, mut players: Query<&mut MovementController>) {
-    let mut transform = players.get_mut(trigger.entity()).unwrap();
-    // The value has already been preprocessed by defined modifiers.
-    transform.intent = trigger.value;
+fn apply_movement(trigger: Trigger<Fired<Move>>, mut controllers: Query<&mut TnuaController>) {
+    let mut controller = controllers.get_mut(trigger.entity()).unwrap();
+    // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:
+    // Vec3::ZERO`. `TnuaController` starts without a basis, which will make the character collider
+    // just fall.
+    let direction = trigger.value.extend(0.0).xzy();
+    controller.basis(TnuaBuiltinWalk {
+        // The `desired_velocity` determines how the character will move.
+        desired_velocity: direction * DEFAULT_SPEED,
+        // The `float_height` must be greater (even if by little) from the distance between the
+        // character's center and the lowest point of its collider.
+        float_height: 1.5,
+        // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
+        // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
+        ..Default::default()
+    });
 }
 
-fn jump(_trigger: Trigger<Started<Jump>>) {
-    info!("jump");
+fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaController>) {
+    let mut controller = controllers.get_mut(trigger.entity()).unwrap();
+    controller.action(TnuaBuiltinJump {
+        // The height is the only mandatory field of the jump button.
+        height: 4.0,
+        // `TnuaBuiltinJump` also has customization fields with sensible defaults.
+        ..Default::default()
+    });
 }

@@ -53,6 +53,6 @@
 }
 // entity 1
 {
-"classname" "suzanne"
+"classname" "player"
 "origin" "8 120 72"
 }

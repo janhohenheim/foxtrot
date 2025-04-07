@@ -12,10 +12,6 @@ use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel;
-
-use super::movement::MovementController;
-
 pub(crate) mod assets;
 pub(crate) mod camera;
 pub(crate) mod input;
@@ -42,15 +38,10 @@ pub(crate) struct Player;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
-        let Some(asset_server) = world.get_resource::<AssetServer>() else {
-            return;
-        };
-
         world.commands().entity(entity).insert((
             RigidBody::Dynamic,
             TrenchBroomGltfRotationFix,
             Actions::<Player>::default(),
-            MovementController::default(),
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
             Collider::capsule(0.5, 1.0),

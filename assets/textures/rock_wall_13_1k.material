@@ -1,0 +1,7 @@
+[material]
+base_color_texture = "rock_wall_13_1k.png"
+occlusion_texture = "rock_wall_13_1k/rock_wall_13_arm_1k.png"
+metallic_roughness_texture = "rock_wall_13_1k/rock_wall_13_arm_1k.png"
+normal_map_texture = "rock_wall_13_1k/rock_wall_13_nor_dx_1k.png"
+depth_map = "rock_wall_13_1k/rock_wall_13_disp_1k.png"
+#parallax_depth_scale = -0.1

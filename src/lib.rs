@@ -55,11 +55,11 @@ impl Plugin for AppPlugin {
 
         // Add other plugins.
         app.add_plugins((
+            third_party::plugin,
             asset_tracking::plugin,
             demo::plugin,
             screens::plugin,
             theme::plugin,
-            third_party::plugin,
         ));
 
         // Enable dev tools for dev builds.

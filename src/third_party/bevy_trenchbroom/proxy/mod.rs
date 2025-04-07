@@ -1,7 +1,4 @@
-use bevy::{
-    ecs::{component::ComponentId, world::DeferredWorld},
-    prelude::{PointLight as BevyPointLight, *},
-};
+use bevy::prelude::{PointLight as BevyPointLight, *};
 use bevy_trenchbroom::prelude::PointClass;
 
 pub(super) fn plugin(_app: &mut App) {}
@@ -23,93 +20,7 @@ pub(super) fn plugin(_app: &mut App) {}
 /// | 4000 | 300 |    | 75-100 | 40.5  |
 ///
 /// Source: [Wikipedia](https://en.wikipedia.org/wiki/Lumen_(unit)#Lighting)
-#[derive(PointClass, Component, Debug, Clone, Copy, Reflect)]
-#[component(on_add = Self::on_add)]
+#[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
+#[require(BevyPointLight)]
 #[reflect(Component, Default, Debug)]
-struct PointLight {
-    /// The color of this light source.
-    pub _color: Color,
-
-    /// Luminous power in lumens, representing the amount of light emitted by this source in all directions.
-    pub intensity: f32,
-
-    /// Cut-off for the light's area-of-effect. Fragments outside this range will not be affected by
-    /// this light at all, so it's important to tune this together with `intensity` to prevent hard
-    /// lighting cut-offs.
-    pub range: f32,
-
-    /// Simulates a light source coming from a spherical volume with the given
-    /// radius.
-    ///
-    /// This affects the size of specular highlights created by this light, as
-    /// well as the soft shadow penumbra size. Because of this, large values may
-    /// not produce the intended result -- for example, light radius does not
-    /// affect shadow softness or diffuse lighting.
-    pub radius: f32,
-
-    /// Whether this light casts shadows.
-    pub shadows_enabled: bool,
-
-    /// A bias used when sampling shadow maps to avoid "shadow-acne", or false shadow occlusions
-    /// that happen as a result of shadow-map fragments not mapping 1:1 to screen-space fragments.
-    /// Too high of a depth bias can lead to shadows detaching from their casters, or
-    /// "peter-panning". This bias can be tuned together with `shadow_normal_bias` to correct shadow
-    /// artifacts for a given scene.
-    pub shadow_depth_bias: f32,
-
-    /// A bias applied along the direction of the fragment's surface normal. It is scaled to the
-    /// shadow map's texel size so that it can be small close to the camera and gets larger further
-    /// away.
-    pub shadow_normal_bias: f32,
-
-    /// The distance from the light to near Z plane in the shadow map.
-    ///
-    /// Objects closer than this distance to the light won't cast shadows.
-    /// Setting this higher increases the shadow map's precision.
-    ///
-    /// This only has an effect if shadows are enabled.
-    pub shadow_map_near_z: f32,
-}
-
-impl Default for PointLight {
-    fn default() -> Self {
-        PointLight {
-            _color: Color::WHITE,
-            // 1,000,000 lumens is a very large "cinema light" capable of registering brightly at Bevy's
-            // default "very overcast day" exposure level. For "indoor lighting" with a lower exposure,
-            // this would be way too bright.
-            intensity: 1_000_000.0,
-            range: 20.0,
-            radius: 0.0,
-            shadows_enabled: false,
-            shadow_depth_bias: BevyPointLight::DEFAULT_SHADOW_DEPTH_BIAS,
-            shadow_normal_bias: BevyPointLight::DEFAULT_SHADOW_NORMAL_BIAS,
-            shadow_map_near_z: BevyPointLight::DEFAULT_SHADOW_MAP_NEAR_Z,
-        }
-    }
-}
-
-impl From<PointLight> for BevyPointLight {
-    fn from(value: PointLight) -> Self {
-        BevyPointLight {
-            color: value._color,
-            intensity: value.intensity,
-            range: value.range,
-            radius: value.radius,
-            shadows_enabled: value.shadows_enabled,
-            shadow_depth_bias: value.shadow_depth_bias,
-            shadow_normal_bias: value.shadow_normal_bias,
-            shadow_map_near_z: value.shadow_map_near_z,
-        }
-    }
-}
-
-impl PointLight {
-    fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
-        let point_light = *world.entity(entity).get::<PointLight>().unwrap();
-        world
-            .commands()
-            .entity(entity)
-            .insert((BevyPointLight::from(point_light),));
-    }
-}
+struct PointLight;

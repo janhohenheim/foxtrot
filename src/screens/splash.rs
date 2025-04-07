@@ -4,9 +4,10 @@ use bevy::{
     image::{ImageLoaderSettings, ImageSampler},
     input::common_conditions::input_just_pressed,
     prelude::*,
+    render::view::RenderLayers,
 };
 
-use crate::{AppSet, screens::Screen, theme::prelude::*};
+use crate::{AppSet, UI_RENDER_LAYER, screens::Screen, theme::prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
     // Spawn splash screen.
@@ -79,6 +80,7 @@ fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
                     fade_duration: SPLASH_FADE_DURATION_SECS,
                     t: 0.0,
                 },
+                RenderLayers::layer(UI_RENDER_LAYER),
             ));
         });
 }

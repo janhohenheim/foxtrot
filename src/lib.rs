@@ -11,6 +11,7 @@ use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
     prelude::*,
+    render::view::RenderLayers,
 };
 
 pub struct AppPlugin;
@@ -81,18 +82,19 @@ enum AppSet {
     Update,
 }
 
+const UI_RENDER_LAYER: usize = 2;
+
 fn spawn_camera(mut commands: Commands) {
     commands.spawn((
-        Name::new("Camera"),
-        Camera3d::default(),
-        // TODO: Remove once player exists
-        Transform::from_xyz(0.0, 10.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Name::new("UI Camera"),
+        Camera2d,
         // Render all UI to this camera.
-        // Not strictly necessary since we only use one camera,
-        // but if we don't use this component, our UI will disappear as soon
-        // as we add another camera. This includes indirect ways of adding cameras like using
-        // [ui node outlines](https://bevyengine.org/news/bevy-0-14/#ui-node-outline-gizmos)
-        // for debugging. So it's good to have this here for future-proofing.
         IsDefaultUiCamera,
+        RenderLayers::layer(UI_RENDER_LAYER),
+        Camera {
+            // Bump the order to render on top of the view model.
+            order: 2,
+            ..default()
+        },
     ));
 }

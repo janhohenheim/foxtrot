@@ -10,22 +10,27 @@ pub(super) fn plugin(app: &mut App) {
 // It can be done manually, but we provide a derive for convenience.
 // The only necessary parameter is `output`, which defines the output type.
 #[derive(Debug, InputAction)]
-#[input_action(output = Vec2)]
+#[input_action(output = Vec3)]
 pub(crate) struct Move;
 
 #[derive(Debug, InputAction)]
 #[input_action(output = bool)]
 pub(crate) struct Jump;
 
-fn apply_movement(trigger: Trigger<Fired<Move>>, mut controllers: Query<&mut TnuaController>) {
-    let mut controller = controllers.get_mut(trigger.entity()).unwrap();
+fn apply_movement(
+    trigger: Trigger<Fired<Move>>,
+    mut controllers: Query<(&Transform, &mut TnuaController)>,
+) {
+    let Ok((transform, mut controller)) = controllers.get_mut(trigger.entity()) else {
+        error!("Triggered movement for entity with missing components");
+        return;
+    };
     // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:
     // Vec3::ZERO`. `TnuaController` starts without a basis, which will make the character collider
     // just fall.
-    let direction = trigger.value.extend(0.0).xzy();
     controller.basis(TnuaBuiltinWalk {
         // The `desired_velocity` determines how the character will move.
-        desired_velocity: direction,
+        desired_velocity: transform.rotation * trigger.value,
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
         float_height: 1.5,

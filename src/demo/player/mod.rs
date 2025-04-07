@@ -17,12 +17,18 @@ use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel;
 use super::movement::MovementController;
 
 pub(crate) mod assets;
+pub(crate) mod camera;
 pub(crate) mod input;
 pub(crate) mod movement;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
-    app.add_plugins((assets::plugin, input::plugin, movement::plugin));
+    app.add_plugins((
+        assets::plugin,
+        input::plugin,
+        movement::plugin,
+        camera::plugin,
+    ));
 }
 
 #[derive(

@@ -46,10 +46,7 @@ impl Player {
             return;
         };
 
-        let suzanne = asset_server.load_trenchbroom_model::<Self>();
-
         world.commands().entity(entity).insert((
-            SceneRoot(suzanne),
             RigidBody::Dynamic,
             TrenchBroomGltfRotationFix,
             Actions::<Player>::default(),

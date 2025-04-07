@@ -4,6 +4,7 @@ use crate::screens::Screen;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, capture_cursor.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }
 
@@ -24,4 +25,23 @@ fn capture_cursor(
 fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
+}
+
+/// Show a crosshair for better aiming
+fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let crosshair_texture = asset_server.load("ui/crosshair.png");
+    commands
+        .spawn((
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            StateScoped(Screen::Gameplay),
+        ))
+        .with_children(|parent| {
+            parent.spawn(ImageNode::new(crosshair_texture));
+        });
 }

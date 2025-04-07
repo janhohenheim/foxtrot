@@ -59,6 +59,6 @@
 // entity 2
 {
 "classname" "point_light"
-"origin" "200 328 72"
+"origin" "200 328 216"
 "shadows_enabled" "true"
 }

@@ -11,8 +11,8 @@ pub(super) fn plugin(app: &mut App) {
                 .map(String::from)
                 .collect::<Vec<_>>(),
         ),
-    ))
-    .add_systems(Startup, write_trenchbroom_config);
+    ));
+    app.add_systems(Startup, write_trenchbroom_config);
     app.add_plugins(proxy::plugin);
 }
 

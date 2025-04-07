@@ -38,6 +38,9 @@ pub(crate) struct Player;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+        if world.is_scene_world() {
+            return;
+        }
         world.commands().entity(entity).insert((
             RigidBody::Dynamic,
             TrenchBroomGltfRotationFix,

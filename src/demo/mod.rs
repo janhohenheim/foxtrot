@@ -6,6 +6,7 @@
 use bevy::prelude::*;
 
 mod animation;
+mod cursor;
 pub(crate) mod level;
 mod movement;
 pub(crate) mod player;
@@ -16,5 +17,6 @@ pub(super) fn plugin(app: &mut App) {
         movement::plugin,
         player::plugin,
         level::plugin,
+        cursor::plugin,
     ));
 }

@@ -40,7 +40,7 @@ fn apply_movement(
         desired_velocity: yaw_quat * trigger.value,
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
-        float_height: 1.5,
+        float_height: 1.1,
         // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
         // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
         ..Default::default()

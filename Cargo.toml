@@ -8,10 +8,10 @@ edition = "2024"
 bevy = { version = "0.15.3", features = ["wayland"] }
 avian3d = "0.2.1"
 bevy_enhanced_input = { git = "https://github.com/projectharmonia/bevy_enhanced_input", rev = "b336075d972114f29f46a9f73360b16ff48d5d37" }
+bevy-tnua = "0.22.0"
+bevy-tnua-avian3d = "0.3.1"
 
 # TODO:
-# bevy_tnua
-# bevy_avian3d_tnua, or something like that
 # bevy_yarnspinner
 # bevy_landmass
 # bevy_hanabi

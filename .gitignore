@@ -3,6 +3,9 @@
 # This file contains environment-specific configuration like linker settings
 .cargo/config.toml
 
+# ICEs
+/rustc-ice-*.txt
+
 # TrenchBroom
 assets/**/autosave/
 assets/**/*.bsp

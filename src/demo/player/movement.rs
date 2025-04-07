@@ -33,9 +33,11 @@ fn apply_movement(
     // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:
     // Vec3::ZERO`. `TnuaController` starts without a basis, which will make the character collider
     // just fall.
+    let yaw = transform.rotation.to_euler(EulerRot::YXZ).0;
+    let yaw_quat = Quat::from_axis_angle(Vec3::Y, yaw);
     controller.basis(TnuaBuiltinWalk {
         // The `desired_velocity` determines how the character will move.
-        desired_velocity: transform.rotation * trigger.value,
+        desired_velocity: yaw_quat * trigger.value,
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
         float_height: 1.5,

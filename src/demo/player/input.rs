@@ -10,7 +10,7 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(binding); // Add observer to setup bindings.
 }
 
-const DEFAULT_SPEED: f32 = 3.0;
+const DEFAULT_SPEED: f32 = 10.0;
 
 // To define mappings for actions, write an observer for `Binding`.
 // It's also possible to create bindings before the insertion,
@@ -29,6 +29,8 @@ fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Pl
             DeadZone::default(), // Apply non-uniform normalization to ensure consistent speed, otherwise diagonal movement will be faster.
             SmoothNudge::default(), // Make movement smooth and independent of the framerate. To only make it framerate-independent, use `DeltaScale`.
             Scale::splat(DEFAULT_SPEED), // Additionally multiply by a constant to achieve the desired speed.
+            Negate::y(),
+            SwizzleAxis::XZY,
         ));
 
     // Multiple inputs can be assigned to a single action,

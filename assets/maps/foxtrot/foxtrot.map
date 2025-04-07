@@ -56,3 +56,9 @@
 "classname" "player"
 "origin" "8 120 72"
 }
+// entity 2
+{
+"classname" "point_light"
+"origin" "200 328 24"
+"shadows_enabled" "true"
+}

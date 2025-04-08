@@ -27,7 +27,7 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 #[reflect(Component)]
 #[require(BspWorldspawn)]
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
-struct Worldspawn;
+pub(crate) struct Worldspawn;
 
 pub(crate) trait LoadTrenchbroomModel {
     fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene>;

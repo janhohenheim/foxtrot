@@ -61,12 +61,14 @@ fn spawn_view_model(
 
     commands
         .spawn((
+            Name::new("PlayerCameraParent"),
             PlayerCameraParent,
             CameraSensitivity::default(),
             StateScoped(Screen::Gameplay),
         ))
         .with_children(|parent| {
             parent.spawn((
+                Name::new("WorldModelCamera"),
                 WorldModelCamera,
                 Camera3d::default(),
                 Projection::from(PerspectiveProjection {
@@ -77,6 +79,7 @@ fn spawn_view_model(
 
             // Spawn view model camera.
             parent.spawn((
+                Name::new("ViewModelCamera"),
                 Camera3d::default(),
                 Camera {
                     // Bump the order to render on top of the world model.
@@ -93,6 +96,7 @@ fn spawn_view_model(
 
             // Spawn the player's right arm.
             parent.spawn((
+                Name::new("PlayerArm"),
                 Mesh3d(arm),
                 MeshMaterial3d(arm_material),
                 Transform::from_xyz(0.2, -0.1, -0.25),

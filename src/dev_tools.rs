@@ -9,6 +9,8 @@ use bevy::{
     input::common_conditions::input_just_pressed,
     prelude::*,
 };
+use bevy_inspector_egui::DefaultInspectorConfigPlugin;
+use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
 
 use crate::screens::Screen;
 
@@ -17,12 +19,14 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, log_transitions::<Screen>);
 
     // Toggle the debug overlay for UI.
-    app.add_plugins((DebugUiPlugin, PhysicsDebugPlugin::default()));
+    app.add_plugins((
+        DebugUiPlugin,
+        PhysicsDebugPlugin::default(),
+        Landmass3dDebugPlugin::default(),
+        DefaultInspectorConfigPlugin,
+    ));
     app.insert_gizmo_config(
-        PhysicsGizmos {
-            aabb_color: Some(Color::WHITE),
-            ..default()
-        },
+        PhysicsGizmos::default(),
         GizmoConfig {
             enabled: false,
             ..default()
@@ -30,7 +34,12 @@ pub(super) fn plugin(app: &mut App) {
     );
     app.add_systems(
         Update,
-        (toggle_debug_ui, toggle_physics_debug_ui).run_if(input_just_pressed(TOGGLE_KEY)),
+        (
+            toggle_debug_ui,
+            toggle_physics_debug_ui,
+            toggle_landmass_debug_ui,
+        )
+            .run_if(input_just_pressed(TOGGLE_KEY)),
     );
 }
 
@@ -43,4 +52,8 @@ fn toggle_debug_ui(mut options: ResMut<UiDebugOptions>) {
 fn toggle_physics_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
     let config = config_store.config_mut::<PhysicsGizmos>().0;
     config.enabled = !config.enabled;
+}
+
+fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
+    **debug = !**debug;
 }

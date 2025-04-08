@@ -10,6 +10,10 @@ avian3d = "0.2.1"
 bevy_enhanced_input = { git = "https://github.com/projectharmonia/bevy_enhanced_input", rev = "b336075d972114f29f46a9f73360b16ff48d5d37" }
 bevy-tnua = "0.22.0"
 bevy-tnua-avian3d = "0.3.1"
+bevy_landmass = "0.8.0"
+oxidized_navigation = { version = "0.12.0", features = ["avian", "debug_draw"] }
+landmass_oxidized_navigation = "0.2.0"
+bevy-inspector-egui = "0.30.0"
 
 # TODO:
 # bevy_yarnspinner

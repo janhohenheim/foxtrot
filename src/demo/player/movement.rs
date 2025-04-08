@@ -23,7 +23,7 @@ pub(crate) struct Move;
 #[input_action(output = bool)]
 pub(crate) struct Jump;
 
-const FLOAT_HEIGHT: f32 = 1.1;
+const FLOAT_HEIGHT: f32 = 1.5;
 
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     for mut controller in controllers.iter_mut() {
@@ -55,6 +55,7 @@ fn apply_movement(
         float_height: FLOAT_HEIGHT,
         // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
         // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
+        spring_strength: 800.0,
         ..Default::default()
     });
 }
@@ -63,7 +64,7 @@ fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaControlle
     let mut controller = controllers.get_mut(trigger.entity()).unwrap();
     controller.action(TnuaBuiltinJump {
         // The height is the only mandatory field of the jump button.
-        height: 1.0,
+        height: 1.5,
         // `TnuaBuiltinJump` also has customization fields with sensible defaults.
         ..Default::default()
     });

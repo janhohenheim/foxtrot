@@ -4,7 +4,10 @@ use bevy::{input::mouse::AccumulatedMouseMotion, prelude::*};
 use bevy_enhanced_input::prelude::*;
 use bevy_tnua::prelude::*;
 
-use super::{Player, camera::CameraSensitivity};
+use super::{
+    Player,
+    camera::{CameraSensitivity, PlayerCameraParent},
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, reset_movement);
@@ -36,10 +39,14 @@ fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
 
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
-    mut controllers: Query<(&Transform, &mut TnuaController), With<Player>>,
+    mut controllers: Query<&mut TnuaController, With<Player>>,
+    transform: Option<Single<&Transform, With<PlayerCameraParent>>>,
 ) {
-    let Ok((transform, mut controller)) = controllers.get_mut(trigger.entity()) else {
+    let Ok(mut controller) = controllers.get_mut(trigger.entity()) else {
         error!("Triggered movement for entity with missing components");
+        return;
+    };
+    let Some(transform) = transform else {
         return;
     };
     // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:
@@ -72,7 +79,7 @@ fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaControlle
 
 fn rotate_player(
     accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
-    mut player: Query<(&mut Transform, &CameraSensitivity), With<Player>>,
+    mut player: Query<(&mut Transform, &CameraSensitivity)>,
 ) {
     let Ok((mut transform, camera_sensitivity)) = player.get_single_mut() else {
         return;

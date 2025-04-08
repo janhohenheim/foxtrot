@@ -2,21 +2,19 @@
 
 use std::f32::consts::FRAC_PI_2;
 
-use avian3d::prelude::{PhysicsStepSet, TransformInterpolation};
 use bevy::{
-    color::palettes::tailwind, input::mouse::AccumulatedMouseMotion, pbr::NotShadowCaster,
-    prelude::*, render::view::RenderLayers,
+    color::palettes::tailwind, pbr::NotShadowCaster, prelude::*, render::view::RenderLayers,
 };
-use bevy_enhanced_input::prelude::InputAction;
+use bevy_enhanced_input::prelude::*;
 
 use crate::screens::Screen;
 
-use super::Player;
+use super::{Player, input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
-    app.add_systems(Update, rotate_player);
+    app.add_observer(rotate_player);
     app.add_systems(PostUpdate, sync_with_player);
 }
 
@@ -106,18 +104,14 @@ fn spawn_view_model(
         });
 }
 
-#[derive(Debug, InputAction)]
-#[input_action(output = Vec2)]
-pub(crate) struct Rotate;
-
 fn rotate_player(
-    accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
-    mut player: Query<(&mut Transform, &CameraSensitivity)>,
+    trigger: Trigger<Fired<Rotate>>,
+    player: Option<Single<&mut Transform, With<PlayerCameraParent>>>,
 ) {
-    let Ok((mut transform, camera_sensitivity)) = player.get_single_mut() else {
+    let Some(mut transform) = player else {
         return;
     };
-    let delta = accumulated_mouse_motion.delta;
+    let delta = trigger.value;
 
     if delta != Vec2::ZERO {
         // Note that we are not multiplying by delta_time here.
@@ -126,8 +120,8 @@ fn rotate_player(
         // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
         // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
         // independent of the framerate.
-        let delta_yaw = -delta.x * camera_sensitivity.x;
-        let delta_pitch = -delta.y * camera_sensitivity.y;
+        let delta_yaw = delta.x;
+        let delta_pitch = delta.y;
 
         let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
         let yaw = yaw + delta_yaw;

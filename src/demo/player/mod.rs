@@ -56,6 +56,7 @@ impl Player {
             // By locking the rotation we can prevent this.
             LockedAxes::ROTATION_LOCKED,
             // No friction, otherwise we trigger a tnua bug that lets us float up 90 degree corners.
+            // See <https://github.com/idanarye/bevy-tnua/issues/93>
             Friction {
                 dynamic_coefficient: 0.0,
                 static_coefficient: 0.0,

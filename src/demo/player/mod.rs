@@ -55,8 +55,7 @@ impl Player {
             // Tnua can fix the rotation, but the character will still get rotated before it can do so.
             // By locking the rotation we can prevent this.
             LockedAxes::ROTATION_LOCKED,
-            // No friction, otherwise we trigger a tnua bug that lets us float up 90 degree corners.
-            // See <https://github.com/idanarye/bevy-tnua/issues/93>
+            // Movement feels nicer without friction.
             Friction {
                 dynamic_coefficient: 0.0,
                 static_coefficient: 0.0,

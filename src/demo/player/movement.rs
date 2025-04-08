@@ -23,10 +23,12 @@ pub(crate) struct Move;
 #[input_action(output = bool)]
 pub(crate) struct Jump;
 
+const FLOAT_HEIGHT: f32 = 1.1;
+
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     for mut controller in controllers.iter_mut() {
         controller.basis(TnuaBuiltinWalk {
-            float_height: 1.1,
+            float_height: FLOAT_HEIGHT,
             ..Default::default()
         });
     }
@@ -50,7 +52,7 @@ fn apply_movement(
         desired_velocity: yaw_quat * trigger.value,
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
-        float_height: 1.1,
+        float_height: FLOAT_HEIGHT,
         // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
         // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
         ..Default::default()
@@ -61,7 +63,7 @@ fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaControlle
     let mut controller = controllers.get_mut(trigger.entity()).unwrap();
     controller.action(TnuaBuiltinJump {
         // The height is the only mandatory field of the jump button.
-        height: 4.0,
+        height: 1.0,
         // `TnuaBuiltinJump` also has customization fields with sensible defaults.
         ..Default::default()
     });

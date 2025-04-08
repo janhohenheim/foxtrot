@@ -302,3 +302,8 @@
 "shadow_normal_bias" "0.6"
 "shadows_enabled" "true"
 }
+// entity 6
+{
+"classname" "npc"
+"origin" "-104 264 24"
+}

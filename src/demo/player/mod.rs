@@ -62,6 +62,7 @@ impl Player {
                 static_coefficient: 0.0,
                 combine_rule: CoefficientCombine::Multiply,
             },
+            TransformInterpolation,
         ));
     }
 }

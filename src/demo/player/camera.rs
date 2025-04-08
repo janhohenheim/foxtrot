@@ -1,15 +1,23 @@
 //! See <https://bevyengine.org/examples/camera/first-person-view-model/>
 
+use avian3d::prelude::{PhysicsStepSet, TransformInterpolation};
 use bevy::{
     color::palettes::tailwind, pbr::NotShadowCaster, prelude::*, render::view::RenderLayers,
 };
+
+use crate::screens::Screen;
 
 use super::Player;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
+    app.add_systems(PostUpdate, sync_with_player);
 }
+
+#[derive(Debug, Component)]
+#[require(Transform, Visibility)]
+pub(crate) struct PlayerCameraParent;
 
 #[derive(Debug, Component)]
 struct WorldModelCamera;
@@ -45,13 +53,15 @@ fn spawn_view_model(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let entity = trigger.entity();
     let arm = meshes.add(Cuboid::new(0.1, 0.1, 0.5));
     let arm_material = materials.add(Color::from(tailwind::TEAL_200));
 
     commands
-        .entity(entity)
-        .insert(CameraSensitivity::default())
+        .spawn((
+            PlayerCameraParent,
+            CameraSensitivity::default(),
+            StateScoped(Screen::Gameplay),
+        ))
         .with_children(|parent| {
             parent.spawn((
                 WorldModelCamera,
@@ -89,6 +99,17 @@ fn spawn_view_model(
                 NotShadowCaster,
             ));
         });
+}
+
+fn sync_with_player(
+    player_camera_parent: Option<Single<&mut Transform, With<PlayerCameraParent>>>,
+    player: Option<Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>>,
+) {
+    if let Some(mut player_camera_parent) = player_camera_parent {
+        if let Some(player) = player {
+            player_camera_parent.translation = player.translation;
+        }
+    }
 }
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {

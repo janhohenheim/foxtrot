@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_player);
-    app.add_systems(PostUpdate, sync_with_player);
+    app.add_systems(Update, sync_with_player);
 }
 
 #[derive(Debug, Component)]

@@ -20,6 +20,10 @@ pub(crate) struct Move;
 #[input_action(output = bool)]
 pub(crate) struct Jump;
 
+#[derive(Debug, InputAction)]
+#[input_action(output = Vec2)]
+pub(crate) struct Rotate;
+
 fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Player>>) {
     const DEFAULT_SPEED: f32 = 10.0;
     let mut actions = players.get_mut(trigger.entity()).unwrap();
@@ -44,4 +48,10 @@ fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Pl
     actions
         .bind::<Jump>()
         .to((KeyCode::Space, GamepadButton::South));
+
+    const DEFAULT_SENSITIVITY: f32 = 0.002;
+    actions
+        .bind::<Rotate>()
+        .to((Input::mouse_motion(), GamepadStick::Right))
+        .with_modifiers((Negate::all(), Scale::splat(DEFAULT_SENSITIVITY)));
 }

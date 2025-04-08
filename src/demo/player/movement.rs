@@ -7,6 +7,7 @@ use bevy_tnua::prelude::*;
 use super::{Player, camera::CameraSensitivity};
 
 pub(super) fn plugin(app: &mut App) {
+    app.add_systems(PreUpdate, reset_movement);
     app.add_observer(apply_movement).add_observer(jump);
     app.add_systems(Update, rotate_player);
 }
@@ -22,9 +23,18 @@ pub(crate) struct Move;
 #[input_action(output = bool)]
 pub(crate) struct Jump;
 
+fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
+    for mut controller in controllers.iter_mut() {
+        controller.basis(TnuaBuiltinWalk {
+            float_height: 1.1,
+            ..Default::default()
+        });
+    }
+}
+
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
-    mut controllers: Query<(&Transform, &mut TnuaController)>,
+    mut controllers: Query<(&Transform, &mut TnuaController), With<Player>>,
 ) {
     let Ok((transform, mut controller)) = controllers.get_mut(trigger.entity()) else {
         error!("Triggered movement for entity with missing components");

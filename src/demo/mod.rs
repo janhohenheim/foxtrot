@@ -9,6 +9,7 @@ mod animation;
 mod cursor;
 pub(crate) mod level;
 mod movement;
+mod npc;
 pub(crate) mod player;
 
 pub(super) fn plugin(app: &mut App) {
@@ -18,5 +19,6 @@ pub(super) fn plugin(app: &mut App) {
         player::plugin,
         level::plugin,
         cursor::plugin,
+        npc::plugin,
     ));
 }

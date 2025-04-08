@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 
 use super::Player;
-use super::movement::{Jump, Move};
 
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
@@ -10,12 +9,19 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(binding); // Add observer to setup bindings.
 }
 
-const DEFAULT_SPEED: f32 = 10.0;
+// All actions should implement the `InputAction` trait.
+// It can be done manually, but we provide a derive for convenience.
+// The only necessary parameter is `output`, which defines the output type.
+#[derive(Debug, InputAction)]
+#[input_action(output = Vec3)]
+pub(crate) struct Move;
 
-// To define mappings for actions, write an observer for `Binding`.
-// It's also possible to create bindings before the insertion,
-// but this way you can conveniently reload bindings when settings change.
+#[derive(Debug, InputAction)]
+#[input_action(output = bool)]
+pub(crate) struct Jump;
+
 fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Player>>) {
+    const DEFAULT_SPEED: f32 = 10.0;
     let mut actions = players.get_mut(trigger.entity()).unwrap();
 
     // Mappings like WASD or sticks are very common,

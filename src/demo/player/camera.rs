@@ -1,9 +1,13 @@
 //! See <https://bevyengine.org/examples/camera/first-person-view-model/>
 
+use std::f32::consts::FRAC_PI_2;
+
 use avian3d::prelude::{PhysicsStepSet, TransformInterpolation};
 use bevy::{
-    color::palettes::tailwind, pbr::NotShadowCaster, prelude::*, render::view::RenderLayers,
+    color::palettes::tailwind, input::mouse::AccumulatedMouseMotion, pbr::NotShadowCaster,
+    prelude::*, render::view::RenderLayers,
 };
+use bevy_enhanced_input::prelude::InputAction;
 
 use crate::screens::Screen;
 
@@ -12,6 +16,7 @@ use super::Player;
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
+    app.add_systems(Update, rotate_player);
     app.add_systems(PostUpdate, sync_with_player);
 }
 
@@ -48,7 +53,7 @@ impl Default for CameraSensitivity {
 }
 
 fn spawn_view_model(
-    trigger: Trigger<OnAdd, Player>,
+    _trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -99,6 +104,45 @@ fn spawn_view_model(
                 NotShadowCaster,
             ));
         });
+}
+
+#[derive(Debug, InputAction)]
+#[input_action(output = Vec2)]
+pub(crate) struct Rotate;
+
+fn rotate_player(
+    accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
+    mut player: Query<(&mut Transform, &CameraSensitivity)>,
+) {
+    let Ok((mut transform, camera_sensitivity)) = player.get_single_mut() else {
+        return;
+    };
+    let delta = accumulated_mouse_motion.delta;
+
+    if delta != Vec2::ZERO {
+        // Note that we are not multiplying by delta_time here.
+        // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
+        // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
+        // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
+        // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
+        // independent of the framerate.
+        let delta_yaw = -delta.x * camera_sensitivity.x;
+        let delta_pitch = -delta.y * camera_sensitivity.y;
+
+        let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
+        let yaw = yaw + delta_yaw;
+
+        // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
+        // When the user wants to move the camera back to the horizon, which way should the camera face?
+        // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
+        // so the direction picked will for all intents and purposes be arbitrary.
+        // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
+        // To not run into these issues, we clamp the pitch to a safe range.
+        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+        let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
+
+        transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    }
 }
 
 fn sync_with_player(

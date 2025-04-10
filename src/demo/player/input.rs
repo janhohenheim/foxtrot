@@ -5,7 +5,7 @@ use super::Player;
 
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
-    app.add_actions_marker::<Player>() // All contexts should be registered.
+    app.add_input_context::<Player>() // All contexts should be registered.
         .add_observer(binding); // Add observer to setup bindings.
 }
 

@@ -37,7 +37,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[derive(
-    PointClass, Component, ActionsMarker, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect,
+    PointClass, Component, InputContext, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect,
 )]
 #[reflect(Component)]
 #[require(Transform, Visibility)]

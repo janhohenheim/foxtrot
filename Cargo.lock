@@ -849,8 +849,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_enhanced_input"
-version = "0.8.0"
-source = "git+https://github.com/projectharmonia/bevy_enhanced_input?rev=b336075d972114f29f46a9f73360b16ff48d5d37#b336075d972114f29f46a9f73360b16ff48d5d37"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbdf3663dfd62d8aa6d7745168d314b1d1c44aaa7d2c44ad1384e3e3fc2e8df0"
 dependencies = [
  "bevy",
  "bevy_enhanced_input_macros",
@@ -860,8 +861,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_enhanced_input_macros"
-version = "0.8.0"
-source = "git+https://github.com/projectharmonia/bevy_enhanced_input?rev=b336075d972114f29f46a9f73360b16ff48d5d37#b336075d972114f29f46a9f73360b16ff48d5d37"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "66981f46add762ecb4b05e107348a5d46780631ae69be9eddccdff894960fa12"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -1485,7 +1487,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?rev=8df0000e0976c0e34c0498fd2509ccaf1004ad83#8df0000e0976c0e34c0498fd2509ccaf1004ad83"
+source = "git+https://github.com/Noxmore/bevy_trenchbroom?rev=9311daa90d542b2bf4fb5145178bb411f11c54e5#9311daa90d542b2bf4fb5145178bb411f11c54e5"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1515,7 +1517,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?rev=8df0000e0976c0e34c0498fd2509ccaf1004ad83#8df0000e0976c0e34c0498fd2509ccaf1004ad83"
+source = "git+https://github.com/Noxmore/bevy_trenchbroom?rev=9311daa90d542b2bf4fb5145178bb411f11c54e5#9311daa90d542b2bf4fb5145178bb411f11c54e5"
 dependencies = [
  "heck",
  "proc-macro2",

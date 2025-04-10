@@ -8,9 +8,12 @@ use bevy::{
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
+use bevy_landmass::{Character, prelude::*};
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
+
+use crate::screens::Screen;
 
 pub(crate) mod assets;
 pub(crate) mod camera;
@@ -25,6 +28,12 @@ pub(super) fn plugin(app: &mut App) {
         movement::plugin,
         camera::plugin,
     ));
+    app.add_systems(
+        RunFixedMainLoop,
+        setup_player_character
+            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
+            .run_if(in_state(Screen::Gameplay)),
+    );
 }
 
 #[derive(
@@ -35,6 +44,8 @@ pub(super) fn plugin(app: &mut App) {
 #[model("models/suzanne/Suzanne.gltf")]
 #[component(on_add = Self::on_add)]
 pub(crate) struct Player;
+
+pub(crate) const PLAYER_RADIUS: f32 = 0.5;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -47,11 +58,11 @@ impl Player {
             Actions::<Player>::default(),
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
-            Collider::capsule(0.5, 1.0),
+            Collider::capsule(PLAYER_RADIUS, 1.0),
             // This is Tnua's interface component.
             TnuaController::default(),
             // A sensor shape is not strictly necessary, but without it we'll get weird results.
-            TnuaAvian3dSensorShape(Collider::cylinder(0.49, 0.0)),
+            TnuaAvian3dSensorShape(Collider::cylinder(PLAYER_RADIUS - 0.01, 0.0)),
             // Tnua can fix the rotation, but the character will still get rotated before it can do so.
             // By locking the rotation we can prevent this.
             LockedAxes::ROTATION_LOCKED,
@@ -64,4 +75,24 @@ impl Player {
             TransformInterpolation,
         ));
     }
+}
+
+fn setup_player_character(
+    mut commands: Commands,
+    player: Option<Single<Entity, (With<Player>, Without<Character<ThreeD>>)>>,
+    archipelago: Option<Single<Entity, With<Archipelago3d>>>,
+) {
+    let Some(player) = player else {
+        return;
+    };
+    let Some(archipelago) = archipelago else {
+        return;
+    };
+    commands.entity(*player).insert(Character3dBundle {
+        character: Character::default(),
+        settings: CharacterSettings {
+            radius: PLAYER_RADIUS,
+        },
+        archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+    });
 }

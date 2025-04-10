@@ -12,6 +12,7 @@ use bevy_landmass::{
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
+use oxidized_navigation::NavMeshAffector;
 
 use crate::{screens::Screen, third_party::bevy_trenchbroom::LoadTrenchbroomModel};
 
@@ -88,7 +89,6 @@ fn setup_npc_agent(
             },
             AgentTarget3d::Entity(*player),
         ));
-        info!("Setup agent");
     }
 }
 

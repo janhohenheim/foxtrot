@@ -12,7 +12,7 @@ pub(super) fn plugin(app: &mut App) {
         Landmass3dPlugin::default(),
         LandmassOxidizedNavigationPlugin,
         OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
-            step_height: 6,
+            step_height: 5,
             ..NavMeshSettings::from_agent_and_bounds(0.5, 2.0, 100.0, -20.0)
         }),
     ));

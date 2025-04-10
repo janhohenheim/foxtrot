@@ -18,6 +18,8 @@ pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
     app.add_systems(Update, log_transitions::<Screen>);
 
+    app.init_resource::<DebugState>();
+
     // Toggle the debug overlay for UI.
     app.add_plugins((
         DebugUiPlugin,
@@ -38,15 +40,20 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            toggle_debug_ui,
-            toggle_physics_debug_ui,
-            toggle_landmass_debug_ui,
+            advance_debug_state.run_if(input_just_pressed(TOGGLE_KEY)),
+            toggle_debug_ui.run_if(toggled_state(DebugState::Ui)),
+            toggle_physics_debug_ui.run_if(toggled_state(DebugState::Physics)),
+            toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
         )
-            .run_if(input_just_pressed(TOGGLE_KEY)),
+            .chain(),
     );
 }
 
 const TOGGLE_KEY: KeyCode = KeyCode::Backquote;
+
+fn advance_debug_state(mut debug_state: ResMut<DebugState>) {
+    *debug_state = debug_state.next();
+}
 
 fn toggle_debug_ui(mut options: ResMut<UiDebugOptions>) {
     options.toggle();
@@ -59,4 +66,32 @@ fn toggle_physics_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
 
 fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
     **debug = !**debug;
+}
+
+#[derive(Debug, Resource, Default, Eq, PartialEq)]
+enum DebugState {
+    #[default]
+    None,
+    Ui,
+    Physics,
+    Landmass,
+}
+impl DebugState {
+    fn next(&self) -> Self {
+        match self {
+            Self::None => Self::Ui,
+            Self::Ui => Self::Physics,
+            Self::Physics => Self::Landmass,
+            Self::Landmass => Self::None,
+        }
+    }
+}
+
+fn toggled_state(state: DebugState) -> impl Condition<()> {
+    IntoSystem::into_system(move |current_state: Res<DebugState>| {
+        let was_just_changed = current_state.is_changed() && !current_state.is_added();
+        let entered_state = *current_state == state;
+        let exited_state = *current_state == state.next();
+        was_just_changed && (entered_state || exited_state)
+    })
 }

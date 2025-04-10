@@ -17,7 +17,6 @@ bevy-inspector-egui = "0.30.0"
 
 # TODO:
 # bevy_yarnspinner
-# landmass_oxidized_navigation
 # bevy_hanabi
 
 rand = "0.8.5"
@@ -83,3 +82,6 @@ opt-level = 3
 # Remove expensive debug assertions due to <https://github.com/bevyengine/bevy/issues/14291>
 [profile.dev.package.wgpu-types]
 debug-assertions = false
+
+[patch.crates-io]
+oxidized_navigation = { path = "../oxidized_navigation" }

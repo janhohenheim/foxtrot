@@ -22,7 +22,10 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         DebugUiPlugin,
         PhysicsDebugPlugin::default(),
-        Landmass3dDebugPlugin::default(),
+        Landmass3dDebugPlugin {
+            draw_on_start: false,
+            ..default()
+        },
         DefaultInspectorConfigPlugin,
     ));
     app.insert_gizmo_config(

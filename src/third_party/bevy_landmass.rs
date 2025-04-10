@@ -21,14 +21,12 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn setup_archipelago(mut commands: Commands) {
-    let archipelago_entity = commands
-        .spawn((
-            Name::new("Archipelago"),
-            Archipelago3d::new(AgentOptions::default_for_agent_radius(0.5)),
-            OxidizedArchipelago,
-            StateScoped(Screen::Gameplay),
-        ))
-        .id();
+    commands.spawn((
+        Name::new("Main Level Archipelago"),
+        Archipelago3d::new(AgentOptions::default_for_agent_radius(0.5)),
+        OxidizedArchipelago,
+        StateScoped(Screen::Gameplay),
+    ));
 }
 
 fn add_nav_mesh_affector_to_trenchbroom_worldspawn(

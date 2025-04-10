@@ -305,5 +305,5 @@
 // entity 6
 {
 "classname" "npc"
-"origin" "-104 264 24"
+"origin" "-104 264 56"
 }

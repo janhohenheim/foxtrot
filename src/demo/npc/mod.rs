@@ -33,6 +33,7 @@ pub(super) fn plugin(app: &mut App) {
             .in_set(RunFixedMainLoopSystem::AfterFixedMainLoop)
             .run_if(in_state(Screen::Gameplay)),
     );
+    app.add_systems(Update, print_agent_state.run_if(in_state(Screen::Gameplay)));
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -89,6 +90,12 @@ fn setup_npc_agent(
             },
             AgentTarget3d::Entity(*player),
         ));
+    }
+}
+
+fn print_agent_state(mut agent_query: Query<&AgentState>) {
+    for agent_state in agent_query.iter() {
+        info!("Agent state: {:?}", agent_state);
     }
 }
 

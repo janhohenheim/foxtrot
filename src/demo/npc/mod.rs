@@ -5,36 +5,16 @@ use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
 };
-use bevy_landmass::{
-    Agent3d,
-    prelude::{
-        AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
-    },
-};
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::{screens::Screen, third_party::bevy_trenchbroom::LoadTrenchbroomModel};
+use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel;
 
-use super::player::Player;
+mod ai;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(
-        RunFixedMainLoop,
-        (setup_npc_agent, set_controller_velocity)
-            .chain()
-            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
-            .run_if(in_state(Screen::Gameplay)),
-    );
-    app.add_systems(
-        RunFixedMainLoop,
-        sync_agent_velocity
-            .chain()
-            .in_set(RunFixedMainLoopSystem::AfterFixedMainLoop)
-            .run_if(in_state(Screen::Gameplay)),
-    );
-    app.add_systems(Update, print_agent_state.run_if(in_state(Screen::Gameplay)));
+    app.add_plugins(ai::plugin);
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -73,66 +53,5 @@ impl Npc {
                 Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0)
                     .with_rotation(Quat::from_rotation_y(PI)),
             ));
-    }
-}
-
-fn setup_npc_agent(
-    mut commands: Commands,
-    q_uninitialized: Query<Entity, (With<Npc>, Without<Agent3d>)>,
-    player: Option<Single<Entity, With<Player>>>,
-    archipelago: Option<Single<Entity, With<Archipelago3d>>>,
-) {
-    let Some(player) = player else {
-        return;
-    };
-    let Some(archipelago) = archipelago else {
-        return;
-    };
-    for entity in q_uninitialized.iter() {
-        commands.entity(entity).insert((
-            Agent3dBundle {
-                agent: Default::default(),
-                settings: AgentSettings {
-                    radius: NPC_RADIUS,
-                    desired_speed: 5.0,
-                    max_speed: 8.0,
-                },
-                archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-            },
-            AgentTarget3d::Entity(*player),
-        ));
-    }
-}
-
-fn print_agent_state(agent_query: Query<&AgentState>) {
-    for agent_state in agent_query.iter() {
-        info!("Agent state: {:?}", agent_state);
-    }
-}
-
-/// Use the desired velocity as the agent's velocity.
-fn set_controller_velocity(
-    mut agent_query: Query<(&mut TnuaController, &LandmassAgentDesiredVelocity)>,
-) {
-    for (mut controller, desired_velocity) in agent_query.iter_mut() {
-        let velocity = desired_velocity.velocity();
-        let forward = if velocity.length_squared() > 0.1 {
-            Dir3::try_from(velocity).ok()
-        } else {
-            None
-        };
-        controller.basis(TnuaBuiltinWalk {
-            desired_velocity: velocity,
-            desired_forward: forward,
-            float_height: NPC_FLOAT_HEIGHT,
-            spring_strength: 1000.0,
-            ..default()
-        });
-    }
-}
-
-fn sync_agent_velocity(mut agent_query: Query<(&LinearVelocity, &mut LandmassVelocity)>) {
-    for (avian_velocity, mut landmass_velocity) in agent_query.iter_mut() {
-        landmass_velocity.velocity = avian_velocity.0;
     }
 }

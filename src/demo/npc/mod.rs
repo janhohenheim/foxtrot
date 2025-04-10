@@ -105,7 +105,8 @@ fn set_controller_velocity(
 ) {
     for (mut controller, desired_velocity) in agent_query.iter_mut() {
         controller.basis(TnuaBuiltinWalk {
-            desired_velocity: desired_velocity.velocity(),
+            desired_velocity: desired_velocity.velocity() * 2.0,
+            desired_forward: Dir3::try_from(desired_velocity.velocity()).ok(),
             float_height: 1.5,
             ..default()
         });

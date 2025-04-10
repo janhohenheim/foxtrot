@@ -84,4 +84,4 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-oxidized_navigation = { path = "../oxidized_navigation" }
+oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "compound" }

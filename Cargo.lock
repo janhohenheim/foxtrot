@@ -4441,6 +4441,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
+source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=compound#cdd57250ff6e6b019cfbfbc9326ef730ef82dd13"
 dependencies = [
  "avian3d",
  "bevy",

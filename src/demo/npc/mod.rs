@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -12,7 +14,6 @@ use bevy_landmass::{
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
-use oxidized_navigation::NavMeshAffector;
 
 use crate::{screens::Screen, third_party::bevy_trenchbroom::LoadTrenchbroomModel};
 
@@ -43,6 +44,9 @@ pub(super) fn plugin(app: &mut App) {
 #[component(on_add = Self::on_add)]
 pub(crate) struct Npc;
 
+const NPC_RADIUS: f32 = 0.8;
+const NPC_FLOAT_HEIGHT: f32 = 1.0;
+
 impl Npc {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
         if world.is_scene_world() {
@@ -51,17 +55,23 @@ impl Npc {
         let model = world
             .resource::<AssetServer>()
             .load_trenchbroom_model::<Self>();
-        world.commands().entity(entity).insert((
-            Npc,
-            SceneRoot(model),
-            TrenchBroomGltfRotationFix,
-            TransformInterpolation,
-            Collider::capsule(0.5, 0.5),
-            TnuaController::default(),
-            TnuaAvian3dSensorShape(Collider::cylinder(0.49, 0.0)),
-            RigidBody::Dynamic,
-            LockedAxes::ROTATION_LOCKED,
-        ));
+        world
+            .commands()
+            .entity(entity)
+            .insert((
+                Npc,
+                TrenchBroomGltfRotationFix,
+                TransformInterpolation,
+                Collider::capsule(NPC_RADIUS, 0.3),
+                TnuaController::default(),
+                TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
+                RigidBody::Dynamic,
+                LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
+            ))
+            .with_child((
+                SceneRoot(model),
+                Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0),
+            ));
     }
 }
 
@@ -82,9 +92,9 @@ fn setup_npc_agent(
             Agent3dBundle {
                 agent: Default::default(),
                 settings: AgentSettings {
-                    radius: 0.5,
-                    desired_speed: 2.0,
-                    max_speed: 3.0,
+                    radius: NPC_RADIUS,
+                    desired_speed: 4.0,
+                    max_speed: 6.0,
                 },
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
@@ -93,7 +103,7 @@ fn setup_npc_agent(
     }
 }
 
-fn print_agent_state(mut agent_query: Query<&AgentState>) {
+fn print_agent_state(agent_query: Query<&AgentState>) {
     for agent_state in agent_query.iter() {
         info!("Agent state: {:?}", agent_state);
     }
@@ -105,18 +115,16 @@ fn set_controller_velocity(
 ) {
     for (mut controller, desired_velocity) in agent_query.iter_mut() {
         controller.basis(TnuaBuiltinWalk {
-            desired_velocity: desired_velocity.velocity() * 2.0,
+            desired_velocity: desired_velocity.velocity(),
             desired_forward: Dir3::try_from(desired_velocity.velocity()).ok(),
-            float_height: 1.5,
+            float_height: NPC_FLOAT_HEIGHT,
             ..default()
         });
-        info!("Set controller velocity to {}", desired_velocity.velocity());
     }
 }
 
 fn sync_agent_velocity(mut agent_query: Query<(&LinearVelocity, &mut LandmassVelocity)>) {
     for (avian_velocity, mut landmass_velocity) in agent_query.iter_mut() {
         landmass_velocity.velocity = avian_velocity.0;
-        info!("Sync agent velocity to {}", landmass_velocity.velocity);
     }
 }

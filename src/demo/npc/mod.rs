@@ -70,7 +70,8 @@ impl Npc {
             ))
             .with_child((
                 SceneRoot(model),
-                Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0),
+                Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0)
+                    .with_rotation(Quat::from_rotation_y(PI)),
             ));
     }
 }
@@ -93,8 +94,8 @@ fn setup_npc_agent(
                 agent: Default::default(),
                 settings: AgentSettings {
                     radius: NPC_RADIUS,
-                    desired_speed: 4.0,
-                    max_speed: 6.0,
+                    desired_speed: 5.0,
+                    max_speed: 8.0,
                 },
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
@@ -114,10 +115,17 @@ fn set_controller_velocity(
     mut agent_query: Query<(&mut TnuaController, &LandmassAgentDesiredVelocity)>,
 ) {
     for (mut controller, desired_velocity) in agent_query.iter_mut() {
+        let velocity = desired_velocity.velocity();
+        let forward = if velocity.length_squared() > 0.1 {
+            Dir3::try_from(velocity).ok()
+        } else {
+            None
+        };
         controller.basis(TnuaBuiltinWalk {
-            desired_velocity: desired_velocity.velocity(),
-            desired_forward: Dir3::try_from(desired_velocity.velocity()).ok(),
+            desired_velocity: velocity,
+            desired_forward: forward,
             float_height: NPC_FLOAT_HEIGHT,
+            spring_strength: 1000.0,
             ..default()
         });
     }

@@ -9,7 +9,6 @@ use bevy::{
     input::common_conditions::input_just_pressed,
     prelude::*,
 };
-use bevy_inspector_egui::DefaultInspectorConfigPlugin;
 use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
 
 use crate::screens::Screen;
@@ -28,7 +27,6 @@ pub(super) fn plugin(app: &mut App) {
             draw_on_start: false,
             ..default()
         },
-        DefaultInspectorConfigPlugin,
     ));
     app.insert_gizmo_config(
         PhysicsGizmos::default(),

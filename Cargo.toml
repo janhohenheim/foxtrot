@@ -13,7 +13,7 @@ bevy-tnua = "0.22.0"
 bevy-tnua-avian3d = "0.3.1"
 # navigation
 bevy_landmass = "0.8.0"
-oxidized_navigation = { version = "0.12.0", features = ["avian", "debug_draw"] }
+oxidized_navigation = { version = "0.12.0", features = ["avian"] }
 landmass_oxidized_navigation = "0.2.0"
 
 # TODO:
@@ -56,6 +56,7 @@ dev_native = [
     "bevy/file_watcher",
     # Enable embedded asset hot reloading for native dev builds.
     "bevy/embedded_watcher",
+    "oxidized_navigation/debug_draw",
 ]
 
 

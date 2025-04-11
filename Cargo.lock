@@ -916,9 +916,8 @@ dependencies = [
 
 [[package]]
 name = "bevy_landmass"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "942369b2ea320b32bfefa558c1467c6a309e74adba82d350d97f6aa236e6f208"
+version = "0.9.0-dev"
+source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
 dependencies = [
  "bevy",
  "landmass",
@@ -3152,9 +3151,8 @@ dependencies = [
 
 [[package]]
 name = "landmass"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97d94ee2e15bf84b0df1a2385f632f4f4aa577241c8b0a1b269b8e2ba3856d11"
+version = "0.8.0-dev"
+source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
 dependencies = [
  "disjoint",
  "dodgy_2d",
@@ -3168,9 +3166,8 @@ dependencies = [
 
 [[package]]
 name = "landmass_oxidized_navigation"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c73535704491c549ce5a8fc59aa37d6a7814e7ca2774a590fa2532e14b1a3363"
+version = "0.3.0-dev"
+source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
 dependencies = [
  "bevy",
  "bevy_landmass",
@@ -3974,7 +3971,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
-source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=compound#cdd57250ff6e6b019cfbfbc9326ef730ef82dd13"
+source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=open-prs#e094b61f2df3cb3909c3675efc27179bcaa97dc5"
 dependencies = [
  "avian3d",
  "bevy",

@@ -10,7 +10,7 @@ use oxidized_navigation::{NavMeshAffector, NavMeshSettings, OxidizedNavigationPl
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         Landmass3dPlugin::default(),
-        LandmassOxidizedNavigationPlugin,
+        LandmassOxidizedNavigationPlugin::default(),
         OxidizedNavigationPlugin::<Collider>::new(NavMeshSettings {
             step_height: 5,
             ..NavMeshSettings::from_agent_and_bounds(0.5, 2.0, 100.0, -20.0)

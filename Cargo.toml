@@ -12,9 +12,9 @@ bevy_enhanced_input = "0.9"
 bevy-tnua = "0.22.0"
 bevy-tnua-avian3d = "0.3.1"
 # navigation
-bevy_landmass = "0.8.0"
+bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/janhohenheim/landmass", branch = "schedule" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
-landmass_oxidized_navigation = "0.2.0"
+landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/janhohenheim/landmass", branch = "schedule" }
 
 # TODO:
 # bevy_yarnspinner
@@ -86,4 +86,4 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "compound" }
+oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "open-prs" }

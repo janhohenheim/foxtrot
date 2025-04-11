@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Npc;
 
 const NPC_RADIUS: f32 = 0.8;
-const NPC_FLOAT_HEIGHT: f32 = 1.0;
+const NPC_FLOAT_HEIGHT: f32 = 1.3;
 
 impl Npc {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {

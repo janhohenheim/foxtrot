@@ -24,8 +24,8 @@ fn setup_archipelago(mut commands: Commands) {
     commands.spawn((
         Name::new("Main Level Archipelago"),
         Archipelago3d::new(AgentOptions {
-            node_sample_distance: 2.0,
-            ..AgentOptions::default_for_agent_radius(0.5)
+            node_sample_distance: 1.0,
+            ..AgentOptions::default_for_agent_radius(0.6)
         }),
         OxidizedArchipelago,
         StateScoped(Screen::Gameplay),

@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         )
             .chain()
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
+            .before(LandmassSystemSet::SyncExistence)
             .run_if(in_state(Screen::Gameplay)),
     );
 }
@@ -70,7 +71,6 @@ fn set_controller_velocity(
         };
         let velocity = desired_velocity.velocity();
         let forward = Dir3::try_from(velocity).ok();
-        info!("Desired velocity: {velocity:?}");
         controller.basis(TnuaBuiltinWalk {
             desired_velocity: velocity,
             desired_forward: forward,

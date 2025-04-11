@@ -1,17 +1,11 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy_landmass::{
-    TargetReachedCondition,
-    prelude::{
-        AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
-    },
+use bevy_landmass::prelude::{
+    AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
 };
 use bevy_tnua::prelude::*;
 
-use crate::{
-    demo::player::{Player, PlayerTarget},
-    screens::Screen,
-};
+use crate::{demo::player::PlayerLandmassCharacter, screens::Screen};
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
@@ -32,7 +26,7 @@ pub(super) fn plugin(app: &mut App) {
 fn setup_npc_agent(
     mut commands: Commands,
     q_uninitialized: Query<Entity, (With<Npc>, Without<NpcAgent>)>,
-    player: Option<Single<&PlayerTarget>>,
+    player: Option<Single<&PlayerLandmassCharacter>>,
     archipelago: Option<Single<Entity, With<Archipelago3d>>>,
 ) {
     let Some(player) = player else {

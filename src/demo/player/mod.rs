@@ -80,7 +80,7 @@ impl Player {
 
 fn setup_player_character(
     mut commands: Commands,
-    player: Option<Single<Entity, (With<Player>, Without<PlayerTarget>)>>,
+    player: Option<Single<Entity, (With<Player>, Without<PlayerLandmassCharacter>)>>,
     archipelago: Option<Single<Entity, With<Archipelago3d>>>,
 ) {
     let Some(player) = player else {
@@ -89,7 +89,8 @@ fn setup_player_character(
     let Some(archipelago) = archipelago else {
         return;
     };
-    let player_target = commands
+
+    let player_character = commands
         .spawn((
             Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
             Character3dBundle {
@@ -102,8 +103,11 @@ fn setup_player_character(
         ))
         .set_parent(*player)
         .id();
-    commands.entity(*player).insert(PlayerTarget(player_target));
+
+    commands
+        .entity(*player)
+        .insert(PlayerLandmassCharacter(player_character));
 }
 
 #[derive(Component)]
-pub(crate) struct PlayerTarget(pub(crate) Entity);
+pub(crate) struct PlayerLandmassCharacter(pub(crate) Entity);

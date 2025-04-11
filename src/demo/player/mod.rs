@@ -46,6 +46,7 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Player;
 
 pub(crate) const PLAYER_RADIUS: f32 = 0.5;
+const PLAYER_FLOAT_HEIGHT: f32 = 1.5;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -79,7 +80,7 @@ impl Player {
 
 fn setup_player_character(
     mut commands: Commands,
-    player: Option<Single<Entity, (With<Player>, Without<Character<ThreeD>>)>>,
+    player: Option<Single<Entity, (With<Player>, Without<PlayerTarget>)>>,
     archipelago: Option<Single<Entity, With<Archipelago3d>>>,
 ) {
     let Some(player) = player else {
@@ -88,11 +89,21 @@ fn setup_player_character(
     let Some(archipelago) = archipelago else {
         return;
     };
-    commands.entity(*player).insert(Character3dBundle {
-        character: Character::default(),
-        settings: CharacterSettings {
-            radius: PLAYER_RADIUS,
-        },
-        archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-    });
+    let player_target = commands
+        .spawn((
+            Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
+            Character3dBundle {
+                character: Character::default(),
+                settings: CharacterSettings {
+                    radius: PLAYER_RADIUS,
+                },
+                archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+            },
+        ))
+        .set_parent(*player)
+        .id();
+    commands.entity(*player).insert(PlayerTarget(player_target));
 }
+
+#[derive(Component)]
+pub(crate) struct PlayerTarget(pub(crate) Entity);

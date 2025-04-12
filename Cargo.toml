@@ -12,9 +12,9 @@ bevy_enhanced_input = "0.9"
 bevy-tnua = "0.22.0"
 bevy-tnua-avian3d = "0.3.1"
 # navigation
-bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/janhohenheim/landmass", branch = "schedule" }
+bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
-landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/janhohenheim/landmass", branch = "schedule" }
+landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
 
 # TODO:
 # bevy_yarnspinner

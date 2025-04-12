@@ -9,7 +9,7 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::screens::Screen;
 
-use super::{Player, input::Rotate};
+use super::{Player, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);

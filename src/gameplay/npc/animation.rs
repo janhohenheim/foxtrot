@@ -37,8 +37,6 @@ fn setup_npc_animations(
     };
     let anim_player = anim_player_link.0;
 
-    // Create an animation graph containing a single animation. We want the "run"
-    // animation from our example asset, which has an index of two.
     let load_animation = |name: &str| -> Handle<AnimationClip> {
         asset_server.load(format!("{}#Animation{}", Npc::model_path(), name))
     };
@@ -51,7 +49,6 @@ fn setup_npc_animations(
     let [run_index, idle_index, walk_index] = indices.as_slice() else {
         unreachable!()
     };
-    // Store the animation graph as an asset.
     let graph_handle = graphs.add(graph);
 
     let animations = NpcAnimations {
@@ -69,7 +66,7 @@ fn setup_npc_animations(
 
 /// Managed by [`play_animations`]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) enum NpcAnimationState {
+pub enum NpcAnimationState {
     Standing,
     Airborne,
     Walking(f32),

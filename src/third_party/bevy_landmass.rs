@@ -1,5 +1,3 @@
-use crate::screens::Screen;
-
 use super::bevy_trenchbroom::Worldspawn;
 use avian3d::prelude::*;
 use bevy::prelude::*;
@@ -16,11 +14,14 @@ pub(super) fn plugin(app: &mut App) {
             ..NavMeshSettings::from_agent_and_bounds(0.5, 2.0, 100.0, -20.0)
         }),
     ));
-    app.add_systems(OnEnter(Screen::Gameplay), setup_archipelago);
+    app.add_systems(Startup, setup_archipelago);
     app.add_observer(add_nav_mesh_affector_to_trenchbroom_worldspawn);
 }
 
 fn setup_archipelago(mut commands: Commands) {
+    // This *should* be scoped to the `Screen::Gameplay` state, but doing so
+    // seems to never regenerate the nav mesh when the level is loaded the second
+    // time.
     commands.spawn((
         Name::new("Main Level Archipelago"),
         Archipelago3d::new(AgentOptions {
@@ -28,7 +29,6 @@ fn setup_archipelago(mut commands: Commands) {
             ..AgentOptions::default_for_agent_radius(0.6)
         }),
         OxidizedArchipelago,
-        StateScoped(Screen::Gameplay),
     ));
 }
 

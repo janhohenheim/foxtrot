@@ -2,7 +2,7 @@ use avian_pickup::prelude::*;
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 
-use super::default_input::{DropProp, PickupProp, ThrowProp};
+use super::default_input::{PickupProp, ThrowProp};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(pull_prop);
@@ -18,6 +18,7 @@ fn pull_prop(
     let Some(actor) = actors else {
         return;
     };
+    info!("Pulling prop");
     avian_pickup_input_writer.send(AvianPickupInput {
         action: AvianPickupAction::Pull,
         actor: *actor,
@@ -32,6 +33,7 @@ fn throw_prop(
     let Some(actor) = actors else {
         return;
     };
+    info!("Throwing prop");
     avian_pickup_input_writer.send(AvianPickupInput {
         action: AvianPickupAction::Throw,
         actor: *actor,
@@ -39,13 +41,14 @@ fn throw_prop(
 }
 
 fn drop_prop(
-    _trigger: Trigger<Started<DropProp>>,
+    _trigger: Trigger<Started<PickupProp>>,
     actors: Option<Single<Entity, With<AvianPickupActor>>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {
     let Some(actor) = actors else {
         return;
     };
+    info!("Dropping prop");
     avian_pickup_input_writer.send(AvianPickupInput {
         action: AvianPickupAction::Drop,
         actor: *actor,

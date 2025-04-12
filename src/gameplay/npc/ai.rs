@@ -8,7 +8,7 @@ use bevy_landmass::{
 };
 use bevy_tnua::prelude::*;
 
-use crate::{demo::player::PlayerLandmassCharacter, screens::Screen};
+use crate::{gameplay::player::PlayerLandmassCharacter, screens::Screen};
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 

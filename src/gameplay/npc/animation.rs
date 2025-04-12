@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
 use crate::{
-    demo::animation::AnimationPlayerLink, screens::Screen,
+    gameplay::animation::AnimationPlayerLink, screens::Screen,
     third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 

@@ -95,6 +95,7 @@ fn setup_player_character(
 
     let player_character = commands
         .spawn((
+            Name::new("Player Landmass Character"),
             Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
             Character3dBundle {
                 character: Character::default(),

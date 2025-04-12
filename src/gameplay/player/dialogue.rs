@@ -9,10 +9,12 @@ use crate::{
 use super::camera::PlayerCameraParent;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Startup, setup_dialogue_prompt);
+    app.register_type::<DialoguePrompt>();
+
+    app.add_systems(OnEnter(Screen::Gameplay), setup_dialogue_prompt);
     app.add_systems(
         Update,
-        (check_for_dialogue_opportunity, update_dialogue_prompt)
+        (check_for_dialogue_opportunity, update_dialogue_prompt_ui)
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
@@ -43,32 +45,54 @@ fn check_for_dialogue_opportunity(
         .and_then(|hit| q_yarn_node.get(hit.entity).ok())
         .cloned();
     if dialogue_prompt.0 != node {
-        println!("Dialogue opportunity: {:?}", node);
         dialogue_prompt.0 = node;
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Default, Reflect)]
+#[reflect(Component, Default)]
 struct DialoguePrompt(Option<YarnNode>);
 
 fn setup_dialogue_prompt(mut commands: Commands) {
-    commands.spawn((
-        Name::new("Dialogue Prompt"),
-        Node::default(),
-        Text::new(""),
-        DialoguePrompt(None),
-    ));
+    commands
+        .spawn((
+            Name::new("Dialogue Prompt"),
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            StateScoped(Screen::Gameplay),
+        ))
+        .with_child((
+            Node {
+                left: Val::Px(40.0),
+                align_items: AlignItems::Start,
+                justify_content: JustifyContent::Start,
+                ..default()
+            },
+            Text::new(""),
+            Visibility::Hidden,
+            DialoguePrompt::default(),
+        ));
 }
 
-fn update_dialogue_prompt(
-    mut dialogue_prompt: Option<Single<&mut DialoguePrompt, Changed<DialoguePrompt>>>,
+fn update_dialogue_prompt_ui(
+    dialogue_prompt: Option<
+        Single<(&mut Text, &mut Visibility, &DialoguePrompt), Changed<DialoguePrompt>>,
+    >,
 ) {
-    let Some(mut dialogue_prompt) = dialogue_prompt else {
+    let Some((mut text, mut visibility, dialogue_prompt)) = dialogue_prompt.map(|d| d.into_inner())
+    else {
         return;
     };
-    if dialogue_prompt.0.is_some() {
-        // TODO: show dialogue prompt
+    if let Some(node) = &dialogue_prompt.0 {
+        text.0 = format!("E: {}", node.prompt);
+        *visibility = Visibility::Inherited;
     } else {
-        // TODO: hide dialogue prompt
+        text.0 = String::new();
+        *visibility = Visibility::Hidden;
     }
 }

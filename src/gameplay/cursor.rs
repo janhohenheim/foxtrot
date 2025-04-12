@@ -32,6 +32,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
     let crosshair_texture = asset_server.load("ui/crosshair.png");
     commands
         .spawn((
+            Name::new("Crosshair"),
             Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
@@ -42,6 +43,9 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
             StateScoped(Screen::Gameplay),
         ))
         .with_children(|parent| {
-            parent.spawn(ImageNode::new(crosshair_texture));
+            parent.spawn((
+                Name::new("Crosshair Image"),
+                ImageNode::new(crosshair_texture),
+            ));
         });
 }

@@ -4,9 +4,9 @@
 //! - [Sprite animation](https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_animation.rs)
 //! - [Timers](https://github.com/bevyengine/bevy/blob/latest/examples/time/timers.rs)
 
-use bevy::prelude::*;
+use bevy::{asset::AssetPath, prelude::*, scene::SceneInstanceReady};
 use rand::prelude::*;
-use std::time::Duration;
+use std::{iter, time::Duration};
 
 use crate::{
     AppSet,
@@ -31,6 +31,77 @@ pub(super) fn plugin(app: &mut App) {
                 .in_set(AppSet::Update),
         ),
     );
+    app.add_observer(link_animation_player);
+    app.register_type::<AnimationPlayerLink>();
+}
+
+#[derive(Component)]
+pub(crate) struct AnimationPlayerAncestor;
+
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+pub(crate) struct AnimationPlayerLink(pub(crate) Entity);
+
+fn link_animation_player(
+    trigger: Trigger<SceneInstanceReady>,
+    mut commands: Commands,
+    q_parent: Query<&Parent>,
+    q_children: Query<&Children>,
+    q_animation_player: Query<Entity, With<AnimationPlayer>>,
+    q_ancestor: Query<Entity, With<AnimationPlayerAncestor>>,
+) {
+    let scene_root = trigger.entity();
+    let animation_player = q_children
+        .iter_descendants(scene_root)
+        .find(|child| q_animation_player.get(*child).is_ok());
+    let Some(animation_player) = animation_player else {
+        return;
+    };
+
+    let animation_ancestor = iter::once(animation_player)
+        .chain(q_parent.iter_ancestors(animation_player))
+        .find(|entity| q_ancestor.get(*entity).is_ok());
+    let Some(animation_ancestor) = animation_ancestor else {
+        return;
+    };
+
+    commands
+        .entity(animation_ancestor)
+        .insert(AnimationPlayerLink(animation_player));
+}
+
+#[derive(Debug, Reflect)]
+pub(crate) struct ModelAnimation {
+    pub(crate) graph_handle: Handle<AnimationGraph>,
+    pub(crate) index: AnimationNodeIndex,
+}
+
+pub(crate) trait LoadModelAnimation {
+    fn load_model_animation<'a>(
+        &self,
+        path: impl Into<AssetPath<'a>>,
+        graphs: &mut Assets<AnimationGraph>,
+    ) -> ModelAnimation;
+}
+
+impl LoadModelAnimation for AssetServer {
+    fn load_model_animation<'a>(
+        &self,
+        path: impl Into<AssetPath<'a>>,
+        graphs: &mut Assets<AnimationGraph>,
+    ) -> ModelAnimation {
+        let animation_handle = self.load(path);
+        let (graph, index) = AnimationGraph::from_clip(animation_handle);
+
+        // Store the animation graph as an asset.
+        let graph_handle = graphs.add(graph);
+
+        // Create a component that stores a reference to our animation.
+        ModelAnimation {
+            graph_handle,
+            index,
+        }
+    }
 }
 
 /// Update the sprite direction and animation state (idling/walking).

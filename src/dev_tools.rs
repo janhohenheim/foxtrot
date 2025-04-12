@@ -1,5 +1,6 @@
 //! Development tools for the game. This plugin is only enabled in dev builds.
 
+use aalo::prelude::*;
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
     dev_tools::{
@@ -27,6 +28,7 @@ pub(super) fn plugin(app: &mut App) {
             draw_on_start: false,
             ..default()
         },
+        AaloPlugin::new().world(),
     ));
     app.insert_gizmo_config(
         PhysicsGizmos::default(),

@@ -16,13 +16,18 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_player);
     app.add_systems(Update, sync_with_player);
+    app.register_type::<PlayerCameraParent>();
+    app.register_type::<WorldModelCamera>();
+    app.register_type::<CameraSensitivity>();
 }
 
-#[derive(Debug, Component)]
+#[derive(Debug, Component, Reflect)]
+#[reflect(Component)]
 #[require(Transform, Visibility)]
 pub(crate) struct PlayerCameraParent;
 
-#[derive(Debug, Component)]
+#[derive(Debug, Component, Reflect)]
+#[reflect(Component)]
 struct WorldModelCamera;
 
 /// Used implicitly by all entities without a `RenderLayers` component.
@@ -34,7 +39,8 @@ pub(crate) const DEFAULT_RENDER_LAYER: usize = 0;
 /// The light source belongs to both layers.
 pub(crate) const VIEW_MODEL_RENDER_LAYER: usize = 1;
 
-#[derive(Debug, Component, Deref, DerefMut)]
+#[derive(Debug, Component, Reflect, Deref, DerefMut)]
+#[reflect(Component)]
 pub(crate) struct CameraSensitivity(Vec2);
 
 impl Default for CameraSensitivity {

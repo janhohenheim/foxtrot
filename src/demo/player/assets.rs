@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{asset_tracking::LoadResource, third_party::bevy_trenchbroom::LoadTrenchbroomModel};
+use crate::{
+    asset_tracking::LoadResource, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
+};
 
 use super::Player;
 
@@ -22,7 +24,7 @@ impl FromWorld for PlayerAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
-            model: assets.load_trenchbroom_model::<Player>(),
+            model: assets.load(format!("{}#Scene0", Player::model_path())),
             steps: vec![
                 assets.load("audio/sound_effects/step1.ogg"),
                 assets.load("audio/sound_effects/step2.ogg"),

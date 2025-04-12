@@ -1,4 +1,4 @@
-use bevy::{asset::AssetPath, prelude::*};
+use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
 use crate::{

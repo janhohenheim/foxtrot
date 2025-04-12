@@ -15,7 +15,6 @@ bevy-tnua-avian3d = "0.3.1"
 bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
 landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
-aalo = { version = "0.0", optional = true }
 
 # TODO:
 # bevy_yarnspinner
@@ -48,7 +47,6 @@ dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
-    "aalo",
     # uncomment in 0.16
     # "bevy/bevy_ui_debug",
 ]

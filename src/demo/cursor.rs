@@ -3,7 +3,6 @@ use bevy::{prelude::*, window::CursorGrabMode};
 use crate::screens::Screen;
 
 pub(super) fn plugin(app: &mut App) {
-    #[cfg(not(feature = "dev"))]
     app.add_systems(Update, capture_cursor.run_if(in_state(Screen::Gameplay)));
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);

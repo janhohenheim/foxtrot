@@ -1,11 +1,14 @@
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::{events::Started, prelude::Actions};
-use bevy_yarnspinner::prelude::*;
+use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
     screens::Screen,
-    third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
+    third_party::{
+        avian3d::CollisionLayer,
+        bevy_yarnspinner::{YarnNode, is_dialogue_running},
+    },
 };
 
 mod ui;
@@ -28,7 +31,14 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         check_for_dialogue_opportunity
             .in_set(DialogueSet::UpdateOpportunity)
-            .run_if(in_state(Screen::Gameplay)),
+            .run_if(in_state(Screen::Gameplay))
+            .run_if(not(is_dialogue_running)),
+    );
+    app.add_systems(
+        Update,
+        restore_input_context
+            .run_if(in_state(Screen::Gameplay))
+            .run_if(on_event::<DialogueCompleteEvent>),
     );
 
     app.add_observer(interact_with_dialogue);
@@ -74,6 +84,7 @@ fn check_for_dialogue_opportunity(
 #[derive(Component, Default, Reflect)]
 #[reflect(Component, Default)]
 struct InteractionPrompt(Option<YarnNode>);
+
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
     mut commands: Commands,
@@ -90,11 +101,20 @@ fn interact_with_dialogue(
     let Some(player) = player else {
         return;
     };
-    let Some(node) = &mut interaction_prompt.0 else {
+    let Some(node) = interaction_prompt.0.take() else {
         return;
     };
     dialogue_runner.start_node(&node.yarn_node);
     commands
         .entity(*player)
         .remove::<Actions<DefaultInputContext>>();
+}
+
+fn restore_input_context(mut commands: Commands, player: Option<Single<Entity, With<Player>>>) {
+    let Some(player) = player else {
+        return;
+    };
+    commands
+        .entity(*player)
+        .insert(Actions::<DefaultInputContext>::default());
 }

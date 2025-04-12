@@ -16,11 +16,15 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-pub(super) fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>) {
+fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>) {
     commands.spawn((
         Name::new("Dialogue Runner"),
         yarn_project.create_dialogue_runner(),
     ));
+}
+
+pub(crate) fn is_dialogue_running(dialogue_runner: Option<Single<&DialogueRunner>>) -> bool {
+    dialogue_runner.is_some_and(|dialogue_runner| dialogue_runner.is_running())
 }
 
 #[derive(PointClass, Component, Debug, Clone, Reflect, Eq, PartialEq)]

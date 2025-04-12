@@ -4,11 +4,14 @@ use bevy_yarnspinner::events::DialogueStartEvent;
 use crate::{screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<(CrosshairState, CrosshairTextures)>();
+
     app.add_systems(
         Update,
         (
             capture_cursor.run_if(not(is_dialogue_running)),
             release_cursor.run_if(on_event::<DialogueStartEvent>),
+            update_crosshair,
         )
             .chain()
             .run_if(in_state(Screen::Gameplay)),
@@ -20,6 +23,7 @@ pub(super) fn plugin(app: &mut App) {
 fn capture_cursor(
     mut window: Single<&mut Window>,
     mouse_button_input: Res<ButtonInput<MouseButton>>,
+    crosshair: Option<Single<&mut Visibility, With<CrosshairState>>>,
 ) {
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
     window.cursor_options.visible = false;
@@ -29,16 +33,26 @@ fn capture_cursor(
         // See <https://github.com/bevyengine/bevy/issues/8949>
         window.cursor_options.grab_mode = CursorGrabMode::Confined;
     }
+    if let Some(mut crosshair) = crosshair {
+        **crosshair = Visibility::Inherited;
+    }
 }
 
-pub fn release_cursor(mut window: Single<&mut Window>) {
+pub fn release_cursor(
+    mut window: Single<&mut Window>,
+    crosshair: Option<Single<&mut Visibility, With<CrosshairState>>>,
+) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
+    if let Some(mut crosshair) = crosshair {
+        **crosshair = Visibility::Hidden;
+    }
 }
 
 /// Show a crosshair for better aiming
 fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let crosshair_texture = asset_server.load("ui/crosshair.png");
+    let crosshair_dot = asset_server.load("ui/crosshair_dot.png");
+    let crosshair_square = asset_server.load("ui/crosshair_square.png");
     commands
         .spawn((
             Name::new("Crosshair"),
@@ -54,7 +68,47 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         .with_children(|parent| {
             parent.spawn((
                 Name::new("Crosshair Image"),
-                ImageNode::new(crosshair_texture),
+                CrosshairState::Dot,
+                CrosshairTextures {
+                    dot: crosshair_dot.clone(),
+                    square: crosshair_square.clone(),
+                },
+                ImageNode::new(crosshair_dot),
             ));
         });
+}
+
+#[derive(Component, Clone, Copy, Default, Reflect)]
+#[reflect(Component, Default)]
+pub(crate) enum CrosshairState {
+    #[default]
+    Dot,
+    Square,
+}
+
+#[derive(Component, Default, Reflect)]
+#[reflect(Component, Default)]
+struct CrosshairTextures {
+    dot: Handle<Image>,
+    square: Handle<Image>,
+}
+
+fn update_crosshair(
+    crosshair: Option<
+        Single<(&CrosshairState, &CrosshairTextures, &mut ImageNode), Changed<CrosshairState>>,
+    >,
+) {
+    let Some((crosshair_state, crosshair_textures, mut image_node)) =
+        crosshair.map(|c| c.into_inner())
+    else {
+        return;
+    };
+    match crosshair_state {
+        CrosshairState::Dot => {
+            image_node.image = crosshair_textures.dot.clone();
+        }
+        CrosshairState::Square => {
+            image_node.image = crosshair_textures.square.clone();
+        }
+    }
 }

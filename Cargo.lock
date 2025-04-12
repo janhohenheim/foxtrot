@@ -917,7 +917,7 @@ dependencies = [
 [[package]]
 name = "bevy_landmass"
 version = "0.9.0-dev"
-source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
+source = "git+https://github.com/andriyDev/landmass?rev=aff41b15325145b525ce09dad824146fe70c073f#aff41b15325145b525ce09dad824146fe70c073f"
 dependencies = [
  "bevy",
  "landmass",
@@ -3152,7 +3152,7 @@ dependencies = [
 [[package]]
 name = "landmass"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
+source = "git+https://github.com/andriyDev/landmass?rev=aff41b15325145b525ce09dad824146fe70c073f#aff41b15325145b525ce09dad824146fe70c073f"
 dependencies = [
  "disjoint",
  "dodgy_2d",
@@ -3167,7 +3167,7 @@ dependencies = [
 [[package]]
 name = "landmass_oxidized_navigation"
 version = "0.3.0-dev"
-source = "git+https://github.com/janhohenheim/landmass?branch=schedule#a46a26a44b75e959f97fd2d7198f927ae7d97c61"
+source = "git+https://github.com/andriyDev/landmass?rev=aff41b15325145b525ce09dad824146fe70c073f#aff41b15325145b525ce09dad824146fe70c073f"
 dependencies = [
  "bevy",
  "bevy_landmass",

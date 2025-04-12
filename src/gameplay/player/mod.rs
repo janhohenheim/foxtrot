@@ -13,10 +13,11 @@ use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::screens::Screen;
+use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
 
 pub(crate) mod assets;
 pub(crate) mod camera;
+pub(crate) mod dialogue;
 pub(crate) mod input;
 pub(crate) mod movement;
 
@@ -27,6 +28,7 @@ pub(super) fn plugin(app: &mut App) {
         input::plugin,
         movement::plugin,
         camera::plugin,
+        dialogue::plugin,
     ));
     app.add_systems(
         RunFixedMainLoop,
@@ -74,6 +76,7 @@ impl Player {
                 combine_rule: CoefficientCombine::Multiply,
             },
             TransformInterpolation,
+            CollisionLayers::new(CollisionLayer::Player, LayerMask::ALL),
         ));
     }
 }

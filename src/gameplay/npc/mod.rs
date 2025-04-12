@@ -10,7 +10,9 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
+use crate::third_party::{
+    bevy_trenchbroom::GetTrenchbroomModelPath as _, bevy_yarnspinner::YarnNode,
+};
 
 use super::animation::AnimationPlayerAncestor;
 mod ai;
@@ -53,6 +55,7 @@ impl Npc {
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),
                 AnimationPlayerAncestor,
+                YarnNode::new("Npc"),
             ))
             .with_child((
                 SceneRoot(model),

@@ -2,14 +2,12 @@ use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::{events::Started, prelude::Actions};
 use bevy_yarnspinner::prelude::*;
-use input::DialogueInputContext;
 
 use crate::{
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
 };
 
-mod input;
 mod ui;
 
 use super::{
@@ -35,7 +33,7 @@ pub(super) fn plugin(app: &mut App) {
 
     app.add_observer(interact_with_dialogue);
 
-    app.add_plugins((input::plugin, ui::plugin));
+    app.add_plugins(ui::plugin);
 }
 
 #[derive(Debug, SystemSet, Hash, Eq, PartialEq, Clone, Copy)]
@@ -98,6 +96,5 @@ fn interact_with_dialogue(
     dialogue_runner.start_node(&node.yarn_node);
     commands
         .entity(*player)
-        .remove::<Actions<DefaultInputContext>>()
-        .insert(Actions::<DialogueInputContext>::default());
+        .remove::<Actions<DefaultInputContext>>();
 }

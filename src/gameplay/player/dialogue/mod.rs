@@ -1,16 +1,22 @@
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
-use bevy_enhanced_input::events::Started;
+use bevy_enhanced_input::{events::Started, prelude::Actions};
 use bevy_yarnspinner::prelude::*;
+use input::DialogueInputContext;
 
 use crate::{
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
 };
 
+mod input;
 mod ui;
 
-use super::{camera::PlayerCameraParent, default_input::Interact};
+use super::{
+    Player,
+    camera::PlayerCameraParent,
+    default_input::{DefaultInputContext, Interact},
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<InteractionPrompt>();
@@ -29,7 +35,7 @@ pub(super) fn plugin(app: &mut App) {
 
     app.add_observer(interact_with_dialogue);
 
-    app.add_plugins(ui::plugin);
+    app.add_plugins((input::plugin, ui::plugin));
 }
 
 #[derive(Debug, SystemSet, Hash, Eq, PartialEq, Clone, Copy)]
@@ -72,8 +78,10 @@ fn check_for_dialogue_opportunity(
 struct InteractionPrompt(Option<YarnNode>);
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
+    mut commands: Commands,
     interaction_prompt: Option<Single<&mut InteractionPrompt>>,
     dialogue_runner: Option<Single<&mut DialogueRunner>>,
+    player: Option<Single<Entity, With<Player>>>,
 ) {
     let Some(mut interaction_prompt) = interaction_prompt else {
         return;
@@ -81,7 +89,15 @@ fn interact_with_dialogue(
     let Some(mut dialogue_runner) = dialogue_runner else {
         return;
     };
-    if let Some(node) = &mut interaction_prompt.0 {
-        dialogue_runner.start_node(&node.yarn_node);
-    }
+    let Some(player) = player else {
+        return;
+    };
+    let Some(node) = &mut interaction_prompt.0 else {
+        return;
+    };
+    dialogue_runner.start_node(&node.yarn_node);
+    commands
+        .entity(*player)
+        .remove::<Actions<DefaultInputContext>>()
+        .insert(Actions::<DialogueInputContext>::default());
 }

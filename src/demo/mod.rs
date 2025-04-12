@@ -8,14 +8,12 @@ use bevy::prelude::*;
 mod animation;
 mod cursor;
 pub(crate) mod level;
-mod movement;
 mod npc;
 pub(crate) mod player;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         animation::plugin,
-        movement::plugin,
         player::plugin,
         level::plugin,
         cursor::plugin,

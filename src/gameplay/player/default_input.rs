@@ -1,12 +1,10 @@
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 
-use super::Player;
-
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
-    app.add_input_context::<Player>() // All contexts should be registered.
-        .add_observer(binding); // Add observer to setup bindings.
+    app.add_input_context::<DefaultInputContext>()
+        .add_observer(default_binding); // Add observer to setup bindings.
 }
 
 // All actions should implement the `InputAction` trait.
@@ -28,7 +26,13 @@ pub(crate) struct Interact;
 #[input_action(output = Vec2)]
 pub(crate) struct Rotate;
 
-fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Player>>) {
+#[derive(Debug, InputContext, Default)]
+pub(crate) struct DefaultInputContext;
+
+fn default_binding(
+    trigger: Trigger<Binding<DefaultInputContext>>,
+    mut players: Query<&mut Actions<DefaultInputContext>>,
+) {
     const DEFAULT_SPEED: f32 = 10.0;
     let mut actions = players.get_mut(trigger.entity()).unwrap();
 
@@ -62,4 +66,18 @@ fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Pl
         .bind::<Rotate>()
         .to((Input::mouse_motion(), GamepadStick::Right))
         .with_modifiers((Negate::all(), Scale::splat(DEFAULT_SENSITIVITY)));
+}
+
+#[derive(Debug, InputContext, Default)]
+pub(crate) struct DialogueInputContext;
+
+fn dialogue_binding(
+    trigger: Trigger<Binding<DialogueInputContext>>,
+    mut players: Query<&mut Actions<DialogueInputContext>>,
+) {
+    let mut actions = players.get_mut(trigger.entity()).unwrap();
+
+    actions
+        .bind::<Interact>()
+        .to((KeyCode::KeyE, GamepadButton::South));
 }

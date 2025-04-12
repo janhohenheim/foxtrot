@@ -8,20 +8,34 @@ use crate::{
     third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
 };
 
-use super::{camera::PlayerCameraParent, input::Interact};
+mod ui;
+
+use super::{camera::PlayerCameraParent, default_input::Interact};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<InteractionPrompt>();
 
-    app.add_systems(OnEnter(Screen::Gameplay), setup_interaction_prompt);
+    app.configure_sets(
+        Update,
+        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUI).chain(),
+    );
+
     app.add_systems(
         Update,
-        (check_for_dialogue_opportunity, update_interaction_prompt_ui)
-            .chain()
+        check_for_dialogue_opportunity
+            .in_set(DialogueSet::UpdateOpportunity)
             .run_if(in_state(Screen::Gameplay)),
     );
 
     app.add_observer(interact_with_dialogue);
+
+    app.add_plugins(ui::plugin);
+}
+
+#[derive(Debug, SystemSet, Hash, Eq, PartialEq, Clone, Copy)]
+pub(super) enum DialogueSet {
+    UpdateOpportunity,
+    UpdateUI,
 }
 
 fn check_for_dialogue_opportunity(
@@ -56,51 +70,6 @@ fn check_for_dialogue_opportunity(
 #[derive(Component, Default, Reflect)]
 #[reflect(Component, Default)]
 struct InteractionPrompt(Option<YarnNode>);
-
-fn setup_interaction_prompt(mut commands: Commands) {
-    commands
-        .spawn((
-            Name::new("Interaction Prompt"),
-            Node {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                left: Val::Percent(50.0),
-                align_items: AlignItems::Center,
-                ..default()
-            },
-            StateScoped(Screen::Gameplay),
-        ))
-        .with_children(|parent| {
-            parent.spawn((
-                Node {
-                    left: Val::Px(50.0),
-                    ..default()
-                },
-                Text::new(""),
-                Visibility::Hidden,
-                InteractionPrompt::default(),
-            ));
-        });
-}
-
-fn update_interaction_prompt_ui(
-    dialogue_prompt: Option<
-        Single<(&mut Text, &mut Visibility, &InteractionPrompt), Changed<InteractionPrompt>>,
-    >,
-) {
-    let Some((mut text, mut visibility, dialogue_prompt)) = dialogue_prompt.map(|d| d.into_inner())
-    else {
-        return;
-    };
-    if let Some(node) = &dialogue_prompt.0 {
-        text.0 = format!("E: {}", node.prompt);
-        *visibility = Visibility::Inherited;
-    } else {
-        text.0 = String::new();
-        *visibility = Visibility::Hidden;
-    }
-}
-
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
     interaction_prompt: Option<Single<&mut InteractionPrompt>>,

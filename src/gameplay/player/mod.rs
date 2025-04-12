@@ -12,20 +12,21 @@ use bevy_landmass::{Character, prelude::*};
 use bevy_tnua::prelude::*;
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
+use default_input::DefaultInputContext;
 
 use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
 
 pub(crate) mod assets;
 pub(crate) mod camera;
+pub(crate) mod default_input;
 pub(crate) mod dialogue;
-pub(crate) mod input;
 pub(crate) mod movement;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
     app.add_plugins((
         assets::plugin,
-        input::plugin,
+        default_input::plugin,
         movement::plugin,
         camera::plugin,
         dialogue::plugin,
@@ -38,9 +39,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[derive(
-    PointClass, Component, InputContext, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect,
-)]
+#[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 #[require(Transform, Visibility)]
 #[model("models/suzanne/Suzanne.gltf")]
@@ -58,7 +57,7 @@ impl Player {
         world.commands().entity(entity).insert((
             RigidBody::Dynamic,
             TrenchBroomGltfRotationFix,
-            Actions::<Player>::default(),
+            Actions::<DefaultInputContext>::default(),
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
             Collider::capsule(PLAYER_RADIUS, 1.0),

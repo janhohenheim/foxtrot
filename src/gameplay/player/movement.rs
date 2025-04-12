@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 use bevy_tnua::prelude::*;
 
-use super::input::{Jump, Move};
+use super::default_input::{Jump, Move};
 
 use super::PLAYER_FLOAT_HEIGHT;
 use super::{Player, camera::PlayerCameraParent};

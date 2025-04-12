@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
@@ -57,9 +59,12 @@ fn setup_npc_animations(
         walk: *walk_index,
         run: *run_index,
     };
-    commands
-        .entity(anim_player)
-        .insert((animations, AnimationGraphHandle(graph_handle)));
+    let transitions = AnimationTransitions::new();
+    commands.entity(anim_player).insert((
+        animations,
+        AnimationGraphHandle(graph_handle),
+        transitions,
+    ));
 }
 
 /// Managed by [`play_animations`]
@@ -77,11 +82,16 @@ fn play_animations(
         &TnuaController,
         &AnimationPlayerLink,
     )>,
-    mut q_animation: Query<(&NpcAnimations, &mut AnimationPlayer)>,
+    mut q_animation: Query<(
+        &NpcAnimations,
+        &mut AnimationPlayer,
+        &mut AnimationTransitions,
+    )>,
 ) {
     for (mut animating_state, controller, link) in query.iter_mut() {
         let animation_player_entity = link.0;
-        let Ok((animations, mut animation_player)) = q_animation.get_mut(animation_player_entity)
+        let Ok((animations, mut anim_player, mut transitions)) =
+            q_animation.get_mut(animation_player_entity)
         else {
             continue;
         };
@@ -92,7 +102,7 @@ fn play_animations(
             let speed = basis_state.running_velocity.length();
             if controller.is_airborne().unwrap() {
                 NpcAnimationState::Airborne
-            } else if speed > 10.0 {
+            } else if speed > 4.5 {
                 NpcAnimationState::Running(speed)
             } else if speed > 0.01 {
                 NpcAnimationState::Walking(speed)
@@ -101,9 +111,14 @@ fn play_animations(
             }
         }) {
             TnuaAnimatingStateDirective::Maintain { state } => {
-                if let NpcAnimationState::Running(speed) = state {
-                    let anim_speed = (speed / 7.0).max(1.0);
-                    //animation_player.set_speed(anim_speed);
+                if let NpcAnimationState::Running(speed) | NpcAnimationState::Walking(speed) = state
+                {
+                    if let Some((_index, playing_animation)) =
+                        anim_player.playing_animations_mut().next()
+                    {
+                        let anim_speed = (speed / 3.0).max(0.3);
+                        playing_animation.set_speed(anim_speed);
+                    }
                 }
             }
             TnuaAnimatingStateDirective::Alter {
@@ -112,17 +127,33 @@ fn play_animations(
                 old_state: _,
                 state,
             } => match state {
-                NpcAnimationState::Airborne | NpcAnimationState::Running(..) => {
-                    info!("playing run animation");
-                    animation_player.play(animations.run).repeat();
+                NpcAnimationState::Airborne => {
+                    transitions
+                        .play(&mut anim_player, animations.run, Duration::from_millis(200))
+                        .repeat();
                 }
                 NpcAnimationState::Standing => {
-                    info!("playing idle animation");
-                    animation_player.play(animations.idle).repeat();
+                    transitions
+                        .play(
+                            &mut anim_player,
+                            animations.idle,
+                            Duration::from_millis(500),
+                        )
+                        .repeat();
                 }
                 NpcAnimationState::Walking(_speed) => {
-                    info!("playing walk animation");
-                    animation_player.play(animations.walk).repeat();
+                    transitions
+                        .play(
+                            &mut anim_player,
+                            animations.walk,
+                            Duration::from_millis(300),
+                        )
+                        .repeat();
+                }
+                NpcAnimationState::Running(_speed) => {
+                    transitions
+                        .play(&mut anim_player, animations.run, Duration::from_millis(400))
+                        .repeat();
                 }
             },
         }

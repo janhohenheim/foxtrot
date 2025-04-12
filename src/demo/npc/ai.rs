@@ -1,7 +1,10 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy_landmass::prelude::{
-    AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
+use bevy_landmass::{
+    TargetReachedCondition,
+    prelude::{
+        AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
+    },
 };
 use bevy_tnua::prelude::*;
 
@@ -44,12 +47,13 @@ fn setup_npc_agent(
                     agent: Default::default(),
                     settings: AgentSettings {
                         radius: NPC_RADIUS,
-                        desired_speed: 5.0,
+                        desired_speed: 7.0,
                         max_speed: 8.0,
                     },
                     archipelago_ref: ArchipelagoRef3d::new(*archipelago),
                 },
                 AgentTarget3d::Entity(player.0),
+                TargetReachedCondition::Distance(Some(2.0)),
             ))
             .set_parent(entity)
             .id();

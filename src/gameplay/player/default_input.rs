@@ -67,17 +67,3 @@ fn default_binding(
         .to((Input::mouse_motion(), GamepadStick::Right))
         .with_modifiers((Negate::all(), Scale::splat(DEFAULT_SENSITIVITY)));
 }
-
-#[derive(Debug, InputContext, Default)]
-pub(crate) struct DialogueInputContext;
-
-fn dialogue_binding(
-    trigger: Trigger<Binding<DialogueInputContext>>,
-    mut players: Query<&mut Actions<DialogueInputContext>>,
-) {
-    let mut actions = players.get_mut(trigger.entity()).unwrap();
-
-    actions
-        .bind::<Interact>()
-        .to((KeyCode::KeyE, GamepadButton::South));
-}

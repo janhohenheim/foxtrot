@@ -21,6 +21,7 @@ pub(crate) mod camera;
 pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
+pub(crate) mod pickup;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
@@ -30,6 +31,7 @@ pub(super) fn plugin(app: &mut App) {
         movement::plugin,
         camera::plugin,
         dialogue::plugin,
+        pickup::plugin,
     ));
     app.add_systems(
         RunFixedMainLoop,

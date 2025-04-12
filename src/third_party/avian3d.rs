@@ -10,4 +10,5 @@ pub(crate) enum CollisionLayer {
     #[default]
     Default,
     Player,
+    Prop,
 }

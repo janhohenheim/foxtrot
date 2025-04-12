@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_trenchbroom::prelude::PointClass;
+use bevy_trenchbroom::prelude::BaseClass;
 use bevy_yarnspinner::prelude::*;
 use bevy_yarnspinner_example_dialogue_view::prelude::*;
 
@@ -27,7 +27,7 @@ pub(crate) fn is_dialogue_running(dialogue_runner: Option<Single<&DialogueRunner
     dialogue_runner.is_some_and(|dialogue_runner| dialogue_runner.is_running())
 }
 
-#[derive(PointClass, Component, Debug, Clone, Reflect, Eq, PartialEq)]
+#[derive(BaseClass, Component, Debug, Clone, Reflect, Eq, PartialEq)]
 #[reflect(Component, Default, Debug)]
 pub(crate) struct YarnNode {
     #[no_default]

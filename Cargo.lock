@@ -381,6 +381,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "avian_pickup"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "51bbe2a2ad37fbd48e28e07742940e2fbf989c8649d1fcd402c06f2d59a3c00b"
+dependencies = [
+ "avian3d",
+ "bevy",
+ "rand",
+]
+
+[[package]]
 name = "base64"
 version = "0.21.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2618,6 +2629,7 @@ name = "foxtrot"
 version = "0.1.0"
 dependencies = [
  "avian3d",
+ "avian_pickup",
  "bevy",
  "bevy-tnua",
  "bevy-tnua-avian3d",

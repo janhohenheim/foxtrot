@@ -2,12 +2,14 @@
 
 use std::f32::consts::FRAC_PI_2;
 
+use avian_pickup::prelude::*;
+use avian3d::prelude::*;
 use bevy::{
     color::palettes::tailwind, pbr::NotShadowCaster, prelude::*, render::view::RenderLayers,
 };
 use bevy_enhanced_input::prelude::*;
 
-use crate::screens::Screen;
+use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
 
 use super::{Player, default_input::Rotate};
 
@@ -71,6 +73,17 @@ fn spawn_view_model(
             PlayerCameraParent,
             CameraSensitivity::default(),
             StateScoped(Screen::Gameplay),
+            AvianPickupActor {
+                prop_filter: SpatialQueryFilter::from_mask(CollisionLayer::Prop),
+                obstacle_filter: SpatialQueryFilter::from_mask(CollisionLayer::Default),
+                actor_filter: SpatialQueryFilter::from_mask(CollisionLayer::Player),
+                interaction_distance: 5.0,
+                hold: AvianPickupActorHoldConfig {
+                    distance_to_allow_holding: 5.0,
+                    ..default()
+                },
+                ..default()
+            },
         ))
         .with_children(|parent| {
             parent.spawn((

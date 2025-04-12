@@ -58,6 +58,7 @@ impl Npc {
                 YarnNode::new("Npc"),
             ))
             .with_child((
+                Name::new("Npc Model"),
                 SceneRoot(model),
                 Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0)
                     .with_rotation(Quat::from_rotation_y(PI)),

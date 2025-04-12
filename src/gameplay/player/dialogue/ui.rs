@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::screens::Screen;
+use crate::{gameplay::cursor::CrosshairState, screens::Screen};
 
 use super::{DialogueSet, InteractionPrompt};
 
@@ -44,16 +44,26 @@ fn update_interaction_prompt_ui(
     dialogue_prompt: Option<
         Single<(&mut Text, &mut Visibility, &InteractionPrompt), Changed<InteractionPrompt>>,
     >,
+    crosshair: Option<Single<(&mut Visibility, &mut CrosshairState), Without<InteractionPrompt>>>,
 ) {
-    let Some((mut text, mut visibility, dialogue_prompt)) = dialogue_prompt.map(|d| d.into_inner())
+    let Some((mut text, mut prompt_visibility, dialogue_prompt)) =
+        dialogue_prompt.map(|d| d.into_inner())
+    else {
+        return;
+    };
+    let Some((mut crosshair_visibility, mut crosshair_state)) = crosshair.map(|c| c.into_inner())
     else {
         return;
     };
     if let Some(node) = &dialogue_prompt.0 {
         text.0 = format!("E: {}", node.prompt);
-        *visibility = Visibility::Inherited;
+        *prompt_visibility = Visibility::Inherited;
+        *crosshair_visibility = Visibility::Inherited;
+        *crosshair_state = CrosshairState::Square;
     } else {
         text.0 = String::new();
-        *visibility = Visibility::Hidden;
+        *prompt_visibility = Visibility::Hidden;
+        *crosshair_visibility = Visibility::Hidden;
+        *crosshair_state = CrosshairState::Dot;
     }
 }

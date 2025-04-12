@@ -29,13 +29,16 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
 pub(crate) struct Worldspawn;
 
-pub(crate) trait LoadTrenchbroomModel {
-    fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene>;
+pub(crate) trait GetTrenchbroomModelPath {
+    fn model_path() -> String;
 }
 
-impl LoadTrenchbroomModel for AssetServer {
-    fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene> {
-        let model = T::CLASS_INFO.model.unwrap().trim_matches('"');
-        self.load(format!("{model}#Scene0"))
+impl<T: QuakeClass> GetTrenchbroomModelPath for T {
+    fn model_path() -> String {
+        Self::CLASS_INFO
+            .model
+            .unwrap()
+            .trim_matches('"')
+            .to_string()
     }
 }

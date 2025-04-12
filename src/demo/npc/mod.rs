@@ -1,20 +1,24 @@
 use std::f32::consts::PI;
 
+use animation::NpcAnimationState;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
 };
-use bevy_tnua::prelude::*;
+use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel;
+use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
 
+use super::animation::AnimationPlayerAncestor;
 mod ai;
+mod animation;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins(ai::plugin);
+    app.add_plugins((ai::plugin, animation::plugin));
+    app.register_type::<Npc>();
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -34,7 +38,7 @@ impl Npc {
         }
         let model = world
             .resource::<AssetServer>()
-            .load_trenchbroom_model::<Self>();
+            .load(format!("{}#Scene0", Self::model_path()));
         world
             .commands()
             .entity(entity)
@@ -47,6 +51,8 @@ impl Npc {
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
+                TnuaAnimatingState::<NpcAnimationState>::default(),
+                AnimationPlayerAncestor,
             ))
             .with_child((
                 SceneRoot(model),

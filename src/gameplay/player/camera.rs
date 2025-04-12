@@ -77,9 +77,9 @@ fn spawn_view_model(
                 prop_filter: SpatialQueryFilter::from_mask(CollisionLayer::Prop),
                 obstacle_filter: SpatialQueryFilter::from_mask(CollisionLayer::Default),
                 actor_filter: SpatialQueryFilter::from_mask(CollisionLayer::Player),
-                interaction_distance: 5.0,
+                interaction_distance: 2.0,
                 hold: AvianPickupActorHoldConfig {
-                    distance_to_allow_holding: 5.0,
+                    distance_to_allow_holding: 1.8,
                     ..default()
                 },
                 ..default()

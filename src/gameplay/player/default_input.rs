@@ -26,6 +26,18 @@ pub(crate) struct Interact;
 #[input_action(output = Vec2)]
 pub(crate) struct Rotate;
 
+#[derive(Debug, InputAction)]
+#[input_action(output = bool)]
+pub(crate) struct PickupProp;
+
+#[derive(Debug, InputAction)]
+#[input_action(output = bool)]
+pub(crate) struct DropProp;
+
+#[derive(Debug, InputAction)]
+#[input_action(output = bool)]
+pub(crate) struct ThrowProp;
+
 #[derive(Debug, InputContext, Default)]
 pub(crate) struct DefaultInputContext;
 
@@ -66,4 +78,16 @@ fn default_binding(
         .bind::<Rotate>()
         .to((Input::mouse_motion(), GamepadStick::Right))
         .with_modifiers((Negate::all(), Scale::splat(DEFAULT_SENSITIVITY)));
+
+    actions
+        .bind::<PickupProp>()
+        .to((MouseButton::Right, GamepadButton::East));
+
+    actions
+        .bind::<DropProp>()
+        .to((MouseButton::Right, GamepadButton::East));
+
+    actions
+        .bind::<ThrowProp>()
+        .to((MouseButton::Left, GamepadButton::East));
 }

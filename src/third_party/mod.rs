@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 pub(crate) mod avian3d;
+mod avian_pickup;
 mod bevy_enhanced_input;
 mod bevy_landmass;
 mod bevy_tnua;
@@ -15,5 +16,6 @@ pub(super) fn plugin(app: &mut App) {
         bevy_tnua::plugin,
         bevy_landmass::plugin,
         bevy_yarnspinner::plugin,
+        avian_pickup::plugin,
     ));
 }

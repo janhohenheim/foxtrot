@@ -4,10 +4,10 @@ use bevy::prelude::*;
 
 use crate::screens::Screen;
 
-pub(super) fn plugin(_app: &mut App) {
-    // No setup required for this plugin.
-    // It's still good to have a function here so that we can add some setup
-    // later if needed.
+mod props;
+
+pub(super) fn plugin(app: &mut App) {
+    app.add_plugins((props::plugin,));
 }
 
 /// A [`Command`] to spawn the level.

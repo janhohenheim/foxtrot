@@ -333,4 +333,35 @@
 {
 "classname" "npc"
 "origin" "-104 264 56"
+"yarn_node" ""
+}
+// entity 7
+{
+"classname" "book"
+"origin" "-56 232 24"
+}
+// entity 8
+{
+"classname" "book"
+"origin" "-40 216 88"
+}
+// entity 9
+{
+"classname" "plate"
+"origin" "-24 200 24"
+}
+// entity 10
+{
+"classname" "plate"
+"origin" "40 200 24"
+}
+// entity 11
+{
+"classname" "mug"
+"origin" "8 248 24"
+}
+// entity 12
+{
+"classname" "mug"
+"origin" "-8 296 24"
 }

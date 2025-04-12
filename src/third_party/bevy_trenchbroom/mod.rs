@@ -26,7 +26,7 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 #[derive(SolidClass, Component, Reflect, Default)]
 #[reflect(Component)]
 #[require(BspWorldspawn)]
-#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
+#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
 pub(crate) struct Worldspawn;
 
 pub(crate) trait GetTrenchbroomModelPath {

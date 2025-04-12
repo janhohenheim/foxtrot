@@ -1,9 +1,18 @@
 use bevy::{prelude::*, window::CursorGrabMode};
+use bevy_yarnspinner::events::DialogueStartEvent;
 
-use crate::screens::Screen;
+use crate::{screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, capture_cursor.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(
+        Update,
+        (
+            capture_cursor.run_if(not(is_dialogue_running)),
+            release_cursor.run_if(on_event::<DialogueStartEvent>),
+        )
+            .chain()
+            .run_if(in_state(Screen::Gameplay)),
+    );
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }
@@ -22,7 +31,7 @@ fn capture_cursor(
     }
 }
 
-fn release_cursor(mut window: Single<&mut Window>) {
+pub fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
 }

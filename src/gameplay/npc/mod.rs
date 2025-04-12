@@ -31,7 +31,7 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Npc;
 
 const NPC_RADIUS: f32 = 0.8;
-const NPC_FLOAT_HEIGHT: f32 = 1.3;
+const NPC_FLOAT_HEIGHT: f32 = 1.0;
 
 impl Npc {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -48,7 +48,7 @@ impl Npc {
                 Npc,
                 TrenchBroomGltfRotationFix,
                 TransformInterpolation,
-                Collider::capsule(NPC_RADIUS, 0.3),
+                Collider::capsule(NPC_RADIUS, 0.1),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
                 RigidBody::Dynamic,

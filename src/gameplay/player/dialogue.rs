@@ -1,7 +1,10 @@
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 
-use crate::{screens::Screen, third_party::bevy_yarnspinner::YarnNode};
+use crate::{
+    screens::Screen,
+    third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
+};
 
 use super::camera::PlayerCameraParent;
 
@@ -34,7 +37,7 @@ fn check_for_dialogue_opportunity(
         camera_transform.forward(),
         MAX_INTERACTION_DISTANCE,
         true,
-        &SpatialQueryFilter::default(),
+        &SpatialQueryFilter::from_mask(CollisionLayer::Default),
     );
     let node = hit
         .and_then(|hit| q_yarn_node.get(hit.entity).ok())

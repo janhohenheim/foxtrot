@@ -1,35 +1,39 @@
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
+use bevy_enhanced_input::events::Started;
+use bevy_yarnspinner::prelude::*;
 
 use crate::{
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode},
 };
 
-use super::camera::PlayerCameraParent;
+use super::{camera::PlayerCameraParent, input::Interact};
 
 pub(super) fn plugin(app: &mut App) {
-    app.register_type::<DialoguePrompt>();
+    app.register_type::<InteractionPrompt>();
 
-    app.add_systems(OnEnter(Screen::Gameplay), setup_dialogue_prompt);
+    app.add_systems(OnEnter(Screen::Gameplay), setup_interaction_prompt);
     app.add_systems(
         Update,
-        (check_for_dialogue_opportunity, update_dialogue_prompt_ui)
+        (check_for_dialogue_opportunity, update_interaction_prompt_ui)
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
+
+    app.add_observer(interact_with_dialogue);
 }
 
 fn check_for_dialogue_opportunity(
     player: Option<Single<&GlobalTransform, With<PlayerCameraParent>>>,
-    dialogue_prompt: Option<Single<&mut DialoguePrompt>>,
+    interaction_prompt: Option<Single<&mut InteractionPrompt>>,
     q_yarn_node: Query<&YarnNode>,
     spatial_query: SpatialQuery,
 ) {
     let Some(player) = player else {
         return;
     };
-    let Some(mut dialogue_prompt) = dialogue_prompt else {
+    let Some(mut interaction_prompt) = interaction_prompt else {
         return;
     };
     let camera_transform = player.compute_transform();
@@ -44,19 +48,19 @@ fn check_for_dialogue_opportunity(
     let node = hit
         .and_then(|hit| q_yarn_node.get(hit.entity).ok())
         .cloned();
-    if dialogue_prompt.0 != node {
-        dialogue_prompt.0 = node;
+    if interaction_prompt.0 != node {
+        interaction_prompt.0 = node;
     }
 }
 
 #[derive(Component, Default, Reflect)]
 #[reflect(Component, Default)]
-struct DialoguePrompt(Option<YarnNode>);
+struct InteractionPrompt(Option<YarnNode>);
 
-fn setup_dialogue_prompt(mut commands: Commands) {
+fn setup_interaction_prompt(mut commands: Commands) {
     commands
         .spawn((
-            Name::new("Dialogue Prompt"),
+            Name::new("Interaction Prompt"),
             Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
@@ -74,14 +78,14 @@ fn setup_dialogue_prompt(mut commands: Commands) {
                 },
                 Text::new(""),
                 Visibility::Hidden,
-                DialoguePrompt::default(),
+                InteractionPrompt::default(),
             ));
         });
 }
 
-fn update_dialogue_prompt_ui(
+fn update_interaction_prompt_ui(
     dialogue_prompt: Option<
-        Single<(&mut Text, &mut Visibility, &DialoguePrompt), Changed<DialoguePrompt>>,
+        Single<(&mut Text, &mut Visibility, &InteractionPrompt), Changed<InteractionPrompt>>,
     >,
 ) {
     let Some((mut text, mut visibility, dialogue_prompt)) = dialogue_prompt.map(|d| d.into_inner())
@@ -94,5 +98,21 @@ fn update_dialogue_prompt_ui(
     } else {
         text.0 = String::new();
         *visibility = Visibility::Hidden;
+    }
+}
+
+fn interact_with_dialogue(
+    _trigger: Trigger<Started<Interact>>,
+    interaction_prompt: Option<Single<&mut InteractionPrompt>>,
+    dialogue_runner: Option<Single<&mut DialogueRunner>>,
+) {
+    let Some(mut interaction_prompt) = interaction_prompt else {
+        return;
+    };
+    let Some(mut dialogue_runner) = dialogue_runner else {
+        return;
+    };
+    if let Some(node) = &mut interaction_prompt.0 {
+        dialogue_runner.start_node(&node.yarn_node);
     }
 }

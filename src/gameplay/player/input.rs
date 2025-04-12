@@ -21,6 +21,10 @@ pub(crate) struct Move;
 pub(crate) struct Jump;
 
 #[derive(Debug, InputAction)]
+#[input_action(output = bool)]
+pub(crate) struct Interact;
+
+#[derive(Debug, InputAction)]
 #[input_action(output = Vec2)]
 pub(crate) struct Rotate;
 
@@ -48,6 +52,10 @@ fn binding(trigger: Trigger<Binding<Player>>, mut players: Query<&mut Actions<Pl
     actions
         .bind::<Jump>()
         .to((KeyCode::Space, GamepadButton::South));
+
+    actions
+        .bind::<Interact>()
+        .to((KeyCode::KeyE, GamepadButton::South));
 
     const DEFAULT_SENSITIVITY: f32 = 0.002;
     actions

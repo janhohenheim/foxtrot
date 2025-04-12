@@ -6,7 +6,7 @@
 
 use std::iter;
 
-use bevy::{asset::AssetPath, prelude::*, scene::SceneInstanceReady};
+use bevy::{prelude::*, scene::SceneInstanceReady};
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<AnimationPlayerLink>();
     app.add_observer(link_animation_player);
@@ -45,38 +45,4 @@ fn link_animation_player(
     commands
         .entity(animation_ancestor)
         .insert(AnimationPlayerLink(animation_player));
-}
-
-#[derive(Debug, Reflect)]
-pub(crate) struct ModelAnimation {
-    pub(crate) graph_handle: Handle<AnimationGraph>,
-    pub(crate) index: AnimationNodeIndex,
-}
-
-pub(crate) trait LoadModelAnimation {
-    fn load_model_animation<'a>(
-        &self,
-        path: impl Into<AssetPath<'a>>,
-        graphs: &mut Assets<AnimationGraph>,
-    ) -> ModelAnimation;
-}
-
-impl LoadModelAnimation for AssetServer {
-    fn load_model_animation<'a>(
-        &self,
-        path: impl Into<AssetPath<'a>>,
-        graphs: &mut Assets<AnimationGraph>,
-    ) -> ModelAnimation {
-        let animation_handle = self.load(path);
-        let (graph, index) = AnimationGraph::from_clip(animation_handle);
-
-        // Store the animation graph as an asset.
-        let graph_handle = graphs.add(graph);
-
-        // Create a component that stores a reference to our animation.
-        ModelAnimation {
-            graph_handle,
-            index,
-        }
-    }
 }

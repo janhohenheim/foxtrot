@@ -60,23 +60,23 @@ fn setup_dialogue_prompt(mut commands: Commands) {
             Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
-                justify_content: JustifyContent::Center,
+                left: Val::Percent(50.0),
                 align_items: AlignItems::Center,
                 ..default()
             },
             StateScoped(Screen::Gameplay),
         ))
-        .with_child((
-            Node {
-                left: Val::Px(40.0),
-                align_items: AlignItems::Start,
-                justify_content: JustifyContent::Start,
-                ..default()
-            },
-            Text::new(""),
-            Visibility::Hidden,
-            DialoguePrompt::default(),
-        ));
+        .with_children(|parent| {
+            parent.spawn((
+                Node {
+                    left: Val::Px(50.0),
+                    ..default()
+                },
+                Text::new(""),
+                Visibility::Hidden,
+                DialoguePrompt::default(),
+            ));
+        });
 }
 
 fn update_dialogue_prompt_ui(

@@ -1,0 +1,50 @@
+title: Npc
+---
+The Follower: Well well well, look who it is. I've been waiting for you.
+-> Who, me?
+  The Follower: Well, not you in particular, but someone like you.
+-> Who are you?
+-> I mistyped. Leave me be.
+  <<jump Quit>>
+The Follower: I'm the Follower. I follow people. I go places. I show folks like you how to use Foxtrot.
+-> What's Foxtrot?
+  The Follower: Foxtrot is here. It it the very fabric of this tiny space. It simply *is*.
+  -> What do you mean?
+    The Follower: It's a *template*, kid. You use it as a primordial singularity to create your own worlds.
+      -> Alright, how do I use it?
+-> And how would I do that?
+-> I heard enough. Leave me be.
+  <<jump Quit>>
+The Follower: There's a big ol' button on GitHub. Says "Use this template". Rest is history.
+-> What do I do then?
+  The Follower: You make a world. You make a story. You make a game. You make a piece of yourself.
+  -> How does Foxtrot help me with that?
+-> What does Foxtrot offer?
+The Follower: It smashes together a bunch of crates that you need for many games. 3D character driven games, that is. Game development is hard enough as it is, so Foxtrot tries to make it easier for you.
+<<jump Features>>
+===
+
+title: Features
+---
+The Follower: What feature do you care about?
+-> Movement
+  The Follower: You can move around with WASD. You can jump with space. You can look around with the mouse. You can interact with the world with E. Shift makes you sprint past all your problems.
+  The Follower: The character controller's name is Tnua. Heard that's Hebrew for "motion" or something. Uses XPBD for physics.
+-> Camera
+  The Follower: Zoom in and out to fling the camera around. You'll notice that this changed the view from third to first person or top down.
+  The Follower: It's pretty smooth, thanks to bevy_dolly.
+-> Dialogue
+  The Follower: You can talk to people. You can make them say things. You can make them say different things depending on what you've done.
+  The Follower: It's all based on yarnspinner, which is a port of Yarn Spinner. Google that combination of words and you'll sure find all you need.
+-> Dev Editor
+  The Follower: See the little stop button in the upper left corner? That opens bevy_editor_pls. In its list of windows, you'll find Foxtrot Dev.
+  The Follower: It's a little editor that lets you edit the world. You can add and remove entities and so on. Extend it with whatever you need for debugging.
+-> I've heard enough
+  <<jump Quit>>
+<<jump Features>>
+===
+
+title: Quit
+---
+The Follower: As you wish. I'll be following you.
+===

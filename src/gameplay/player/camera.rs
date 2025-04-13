@@ -1,9 +1,6 @@
 //! See <https://bevyengine.org/examples/camera/first-person-view-model/>
 
-use std::{
-    f32::consts::{FRAC_PI_2, PI},
-    iter,
-};
+use std::{f32::consts::FRAC_PI_2, iter};
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
@@ -130,11 +127,7 @@ fn spawn_view_model(
                 Name::new("PlayerArm"),
                 PlayerViewModel,
                 SceneRoot(assets.model.clone()),
-                Transform::from_xyz(0.0, 1.0, 1.0)
-                    .with_scale(Vec3::splat(1.0))
-                    .with_rotation(Quat::from_rotation_y(PI)),
-                // Ensure the arm is only rendered by the view model camera.
-                RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
+                Transform::from_xyz(0.0, 0.0, -0.5),
             ));
         });
 }
@@ -160,9 +153,10 @@ fn configure_player_view_model(
         .filter(|e| q_mesh.contains(*e))
     {
         commands.entity(child).insert((
+            // Ensure the arm is only rendered by the view model camera.
             RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
             // The arm is free-floating, so shadows would look weird.
-            //NotShadowCaster,
+            NotShadowCaster,
         ));
     }
 }

@@ -1,11 +1,9 @@
 //! The title screen that appears when the game starts.
 
-use bevy::{prelude::*, scene::SceneInstanceReady};
+use bevy::prelude::*;
 
 use crate::{
-    gameplay::level::{Level, spawn_level as spawn_level_command},
-    screens::Screen,
-    theme::prelude::*,
+    gameplay::level::spawn_level as spawn_level_command, screens::Screen, theme::prelude::*,
 };
 
 pub(super) fn plugin(app: &mut App) {

@@ -1,11 +1,11 @@
 use std::time::Duration;
 
 use bevy::prelude::*;
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
+use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{gameplay::animation::AnimationPlayerLink, screens::Screen};
 
-use super::{Player, assets::PlayerAssets};
+use super::assets::PlayerAssets;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<PlayerAnimations>();
@@ -51,7 +51,6 @@ pub(crate) enum PlayerAnimationState {
 fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<PlayerAnimationState>,
-        &TnuaController,
         &AnimationPlayerLink,
     )>,
     mut q_animation: Query<(
@@ -60,14 +59,14 @@ fn play_animations(
         &mut AnimationTransitions,
     )>,
 ) {
-    for (mut animating_state, controller, link) in query.iter_mut() {
+    for (mut animating_state, link) in query.iter_mut() {
         let animation_player_entity = link.0;
         let Ok((animations, mut anim_player, mut transitions)) =
             q_animation.get_mut(animation_player_entity)
         else {
             continue;
         };
-        match animating_state.update_by_discriminant({ PlayerAnimationState::Idle }) {
+        match animating_state.update_by_discriminant(PlayerAnimationState::Idle) {
             TnuaAnimatingStateDirective::Maintain { .. } => {}
             TnuaAnimatingStateDirective::Alter {
                 // We don't need the old state here, but it's available for transition

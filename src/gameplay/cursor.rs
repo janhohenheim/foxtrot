@@ -1,4 +1,6 @@
-use bevy::{prelude::*, window::CursorGrabMode};
+use std::any::TypeId;
+
+use bevy::{prelude::*, utils::HashSet, window::CursorGrabMode};
 use bevy_yarnspinner::events::DialogueStartEvent;
 
 use crate::{screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
@@ -68,7 +70,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         .with_children(|parent| {
             parent.spawn((
                 Name::new("Crosshair Image"),
-                CrosshairState::Dot,
+                CrosshairState::default(),
                 CrosshairTextures {
                     dot: crosshair_dot.clone(),
                     square: crosshair_square.clone(),
@@ -78,12 +80,10 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-#[derive(Component, Clone, Copy, Default, Reflect)]
+#[derive(Component, Clone, Default, Reflect)]
 #[reflect(Component, Default)]
-pub(crate) enum CrosshairState {
-    #[default]
-    Dot,
-    Square,
+pub(crate) struct CrosshairState {
+    pub(crate) wants_square: HashSet<TypeId>,
 }
 
 #[derive(Component, Default, Reflect)]
@@ -103,12 +103,9 @@ fn update_crosshair(
     else {
         return;
     };
-    match crosshair_state {
-        CrosshairState::Dot => {
-            image_node.image = crosshair_textures.dot.clone();
-        }
-        CrosshairState::Square => {
-            image_node.image = crosshair_textures.square.clone();
-        }
+    if crosshair_state.wants_square.is_empty() {
+        image_node.image = crosshair_textures.dot.clone();
+    } else {
+        image_node.image = crosshair_textures.square.clone();
     }
 }

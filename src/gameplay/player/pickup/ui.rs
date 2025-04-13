@@ -1,3 +1,5 @@
+use std::any::Any as _;
+
 use avian_pickup::actor::AvianPickupActor;
 use avian3d::prelude::*;
 use bevy::prelude::*;
@@ -30,9 +32,10 @@ fn check_for_pickup_opportunity(
         true,
         &SpatialQueryFilter::from_mask(CollisionLayer::Prop),
     );
+    let system_id = check_for_pickup_opportunity.type_id();
     if hit.is_some() {
-        **crosshair = CrosshairState::Square;
+        crosshair.wants_square.insert(system_id);
     } else {
-        **crosshair = CrosshairState::Dot;
+        crosshair.wants_square.remove(&system_id);
     }
 }

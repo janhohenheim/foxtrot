@@ -59,7 +59,7 @@ fn setup_npc_animations(
 
 /// Managed by [`play_animations`]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum NpcAnimationState {
+pub(crate) enum NpcAnimationState {
     Standing,
     Airborne,
     Walking(f32),

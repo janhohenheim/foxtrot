@@ -2,6 +2,7 @@
 //! Note that this is separate from the `movement` module as that could be used
 //! for other characters as well.
 
+use animation::PlayerAnimationState;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -9,13 +10,14 @@ use bevy::{
 };
 use bevy_enhanced_input::prelude::*;
 use bevy_landmass::{Character, prelude::*};
-use bevy_tnua::prelude::*;
+use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
 
 use crate::third_party::avian3d::CollisionLayer;
 
+mod animation;
 pub(crate) mod assets;
 pub(crate) mod camera;
 pub(crate) mod default_input;
@@ -32,6 +34,7 @@ pub(super) fn plugin(app: &mut App) {
         camera::plugin,
         dialogue::plugin,
         pickup::plugin,
+        animation::plugin,
     ));
     app.add_observer(setup_player_character);
 }
@@ -73,6 +76,7 @@ impl Player {
             },
             TransformInterpolation,
             CollisionLayers::new(CollisionLayer::Player, LayerMask::ALL),
+            TnuaAnimatingState::<PlayerAnimationState>::default(),
         ));
     }
 }

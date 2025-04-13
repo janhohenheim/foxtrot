@@ -18,11 +18,16 @@ pub(crate) struct PlayerAssets {
     pub(crate) model: Handle<Scene>,
     #[dependency]
     pub(crate) steps: Vec<Handle<AudioSource>>,
+    #[dependency]
+    pub(crate) idle_animation: Handle<AnimationClip>,
 }
 
 impl FromWorld for PlayerAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
+        let load_animation = |name: &str| -> Handle<AnimationClip> {
+            assets.load(format!("{}#Animation{}", Player::model_path(), name))
+        };
         Self {
             model: assets.load(format!("{}#Scene0", Player::model_path())),
             steps: vec![
@@ -31,6 +36,7 @@ impl FromWorld for PlayerAssets {
                 assets.load("audio/sound_effects/step3.ogg"),
                 assets.load("audio/sound_effects/step4.ogg"),
             ],
+            idle_animation: load_animation("9"),
         }
     }
 }

@@ -44,7 +44,7 @@ tracing = { version = "0.1", features = [
 
 [dependencies.bevy_trenchbroom]
 git = "https://github.com/Noxmore/bevy_trenchbroom"
-rev = "9311daa90d542b2bf4fb5145178bb411f11c54e5"
+branch = "main"
 features = ["avian"]
 
 [features]

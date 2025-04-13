@@ -964,7 +964,7 @@ dependencies = [
 [[package]]
 name = "bevy_landmass"
 version = "0.9.0-dev"
-source = "git+https://github.com/andriyDev/landmass?branch=node_sample_distance#06ca44d40b455aa1ad67c5d45b141e34bc37e776"
+source = "git+https://github.com/andriyDev/landmass?branch=main#7d94af5d3514647da5ebf66f6d45e3be614df9f3"
 dependencies = [
  "bevy",
  "landmass",
@@ -3415,7 +3415,7 @@ dependencies = [
 [[package]]
 name = "landmass"
 version = "0.8.0-dev"
-source = "git+https://github.com/andriyDev/landmass?branch=node_sample_distance#06ca44d40b455aa1ad67c5d45b141e34bc37e776"
+source = "git+https://github.com/andriyDev/landmass?branch=main#7d94af5d3514647da5ebf66f6d45e3be614df9f3"
 dependencies = [
  "disjoint",
  "dodgy_2d",
@@ -3430,7 +3430,7 @@ dependencies = [
 [[package]]
 name = "landmass_oxidized_navigation"
 version = "0.3.0-dev"
-source = "git+https://github.com/andriyDev/landmass?branch=node_sample_distance#06ca44d40b455aa1ad67c5d45b141e34bc37e776"
+source = "git+https://github.com/andriyDev/landmass?branch=main#7d94af5d3514647da5ebf66f6d45e3be614df9f3"
 dependencies = [
  "bevy",
  "bevy_landmass",

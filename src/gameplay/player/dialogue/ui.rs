@@ -2,7 +2,7 @@ use std::any::Any;
 
 use bevy::prelude::*;
 
-use crate::{gameplay::cursor::CrosshairState, screens::Screen};
+use crate::{gameplay::crosshair::CrosshairState, screens::Screen};
 
 use super::{DialogueSet, InteractionPrompt};
 

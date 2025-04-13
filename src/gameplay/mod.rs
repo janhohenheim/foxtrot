@@ -6,7 +6,7 @@
 use bevy::prelude::*;
 
 mod animation;
-mod cursor;
+mod crosshair;
 pub(crate) mod level;
 mod npc;
 pub(crate) mod player;
@@ -16,7 +16,7 @@ pub(super) fn plugin(app: &mut App) {
         animation::plugin,
         player::plugin,
         level::plugin,
-        cursor::plugin,
+        crosshair::plugin,
         npc::plugin,
     ));
 }

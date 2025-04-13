@@ -9,7 +9,6 @@ use super::{Npc, assets::NpcAssets};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<NpcAnimations>();
-    app.add_observer(setup_npc_animations);
     app.add_systems(Update, play_animations.run_if(in_state(Screen::Gameplay)));
 }
 
@@ -21,18 +20,14 @@ struct NpcAnimations {
     run: AnimationNodeIndex,
 }
 
-fn setup_npc_animations(
+pub(crate) fn setup_npc_animations(
     trigger: Trigger<OnAdd, AnimationPlayerLink>,
-    q_npc: Query<&AnimationPlayerLink, With<Npc>>,
+    q_anim_player_link: Query<&AnimationPlayerLink>,
     mut commands: Commands,
     assets: Res<NpcAssets>,
     mut graphs: ResMut<Assets<AnimationGraph>>,
 ) {
-    let anim_player_link = trigger.entity();
-    let Ok(anim_player_link) = q_npc.get(anim_player_link) else {
-        return;
-    };
-    let anim_player = anim_player_link.0;
+    let anim_player = q_anim_player_link.get(trigger.entity()).unwrap().0;
 
     let (graph, indices) = AnimationGraph::from_clips([
         assets.run_animation.clone(),

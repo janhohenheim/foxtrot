@@ -9,7 +9,6 @@ use super::{Player, assets::PlayerAssets};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<PlayerAnimations>();
-    app.add_observer(setup_player_animations);
     app.add_systems(Update, play_animations.run_if(in_state(Screen::Gameplay)));
 }
 
@@ -19,18 +18,14 @@ pub(crate) struct PlayerAnimations {
     idle: AnimationNodeIndex,
 }
 
-fn setup_player_animations(
+pub(crate) fn setup_player_animations(
     trigger: Trigger<OnAdd, AnimationPlayerLink>,
-    q_player: Query<&AnimationPlayerLink, With<Player>>,
+    q_anim_player_link: Query<&AnimationPlayerLink>,
     mut commands: Commands,
     assets: Res<PlayerAssets>,
     mut graphs: ResMut<Assets<AnimationGraph>>,
 ) {
-    let anim_player_link = trigger.entity();
-    let Ok(anim_player_link) = q_player.get(anim_player_link) else {
-        return;
-    };
-    let anim_player = anim_player_link.0;
+    let anim_player = q_anim_player_link.get(trigger.entity()).unwrap().0;
 
     let (graph, indices) = AnimationGraph::from_clips([assets.idle_animation.clone()]);
     let [idle_index] = indices.as_slice() else {

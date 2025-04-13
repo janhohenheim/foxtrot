@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(Component)]
 pub(crate) struct AnimationPlayerAncestor;
 
-#[derive(Component, Reflect)]
+#[derive(Component, Reflect, Clone, Copy)]
 #[reflect(Component)]
 pub(crate) struct AnimationPlayerLink(pub(crate) Entity);
 

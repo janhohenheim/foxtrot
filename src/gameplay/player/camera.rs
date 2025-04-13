@@ -5,11 +5,18 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    pbr::NotShadowCaster, prelude::*, render::view::RenderLayers, scene::SceneInstanceReady,
+    pbr::NotShadowCaster,
+    prelude::*,
+    render::view::{NoCpuCulling, NoFrustumCulling, RenderLayers},
+    scene::SceneInstanceReady,
 };
 use bevy_enhanced_input::prelude::*;
 
-use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
+use crate::{
+    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
+    screens::Screen,
+    third_party::avian3d::CollisionLayer,
+};
 
 use super::{Player, assets::PlayerAssets, default_input::Rotate};
 
@@ -93,6 +100,7 @@ fn spawn_view_model(
                 },
                 ..default()
             },
+            AnimationPlayerAncestor,
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -115,7 +123,10 @@ fn spawn_view_model(
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
-                    fov: 85.0_f32.to_radians(),
+                    // We use whatever FOV we set in the animation software, e.g. Blender.
+                    // Tip: if you want to set a camera in Blender to the same defaults as Bevy,
+                    // see [this issue](https://github.com/kaosat-dev/Blenvy/issues/223)
+                    fov: 62.0_f32.to_radians(),
                     ..default()
                 }),
                 // Only render objects belonging to the view model.
@@ -127,14 +138,24 @@ fn spawn_view_model(
                 Name::new("PlayerArm"),
                 PlayerViewModel,
                 SceneRoot(assets.model.clone()),
-                Transform::from_xyz(0.0, 0.0, -0.5),
             ));
-        });
+        })
+        .observe(add_anim_player_link_to_player);
 }
 
 #[derive(Debug, Component, Reflect)]
 #[reflect(Component)]
 pub(crate) struct PlayerViewModel;
+
+fn add_anim_player_link_to_player(
+    trigger: Trigger<OnAdd, AnimationPlayerLink>,
+    q_anim_player: Query<&AnimationPlayerLink>,
+    player: Single<Entity, With<Player>>,
+    mut commands: Commands,
+) {
+    let anim_player_link = q_anim_player.get(trigger.entity()).unwrap();
+    commands.entity(*player).insert(*anim_player_link);
+}
 
 fn configure_player_view_model(
     trigger: Trigger<SceneInstanceReady>,
@@ -157,6 +178,10 @@ fn configure_player_view_model(
             RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
             // The arm is free-floating, so shadows would look weird.
             NotShadowCaster,
+            // The arm's origin is at the origin of the camera, so there is a high risk
+            // of it being culled. We want the view model to be visible at all times,
+            // so we disable frustum culling.
+            NoFrustumCulling,
         ));
     }
 }

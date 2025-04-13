@@ -4,11 +4,12 @@ use bevy::prelude::*;
 
 use crate::screens::Screen;
 
+mod assets;
 mod props;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Level>();
-    app.add_plugins((props::plugin,));
+    app.add_plugins((props::plugin, assets::plugin));
 }
 
 /// A [`Command`] to spawn the level.

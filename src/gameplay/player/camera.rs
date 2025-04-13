@@ -134,18 +134,12 @@ fn spawn_view_model(
             ));
 
             // Spawn the player's right arm.
-            parent.spawn((
-                Name::new("PlayerArm"),
-                PlayerViewModel,
-                SceneRoot(assets.model.clone()),
-            ));
+            parent
+                .spawn((Name::new("PlayerArm"), SceneRoot(assets.model.clone())))
+                .observe(configure_player_view_model);
         })
         .observe(add_anim_player_link_to_player);
 }
-
-#[derive(Debug, Component, Reflect)]
-#[reflect(Component)]
-pub(crate) struct PlayerViewModel;
 
 fn add_anim_player_link_to_player(
     trigger: Trigger<OnAdd, AnimationPlayerLink>,
@@ -160,14 +154,10 @@ fn add_anim_player_link_to_player(
 fn configure_player_view_model(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,
-    player_view_model: Query<(), With<PlayerViewModel>>,
     q_children: Query<&Children>,
     q_mesh: Query<(), With<Mesh3d>>,
 ) {
     let view_model = trigger.entity();
-    if !player_view_model.contains(view_model) {
-        return;
-    }
 
     for child in iter::once(view_model)
         .chain(q_children.iter_descendants(view_model))

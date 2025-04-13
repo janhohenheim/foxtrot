@@ -46,27 +46,24 @@ fn update_interaction_prompt_ui(
     dialogue_prompt: Option<
         Single<(&mut Text, &mut Visibility, &InteractionPrompt), Changed<InteractionPrompt>>,
     >,
-    crosshair: Option<Single<(&mut Visibility, &mut CrosshairState), Without<InteractionPrompt>>>,
+    crosshair: Option<Single<&mut CrosshairState>>,
 ) {
     let Some((mut text, mut prompt_visibility, dialogue_prompt)) =
         dialogue_prompt.map(|d| d.into_inner())
     else {
         return;
     };
-    let Some((mut crosshair_visibility, mut crosshair_state)) = crosshair.map(|c| c.into_inner())
-    else {
+    let Some(mut crosshair) = crosshair.map(|c| c.into_inner()) else {
         return;
     };
     let system_id = update_interaction_prompt_ui.type_id();
     if let Some(node) = &dialogue_prompt.0 {
         text.0 = format!("E: {}", node.prompt);
         *prompt_visibility = Visibility::Inherited;
-        *crosshair_visibility = Visibility::Inherited;
-        crosshair_state.wants_square.insert(system_id);
+        crosshair.wants_square.insert(system_id);
     } else {
         text.0 = String::new();
         *prompt_visibility = Visibility::Hidden;
-        *crosshair_visibility = Visibility::Hidden;
-        crosshair_state.wants_square.remove(&system_id);
+        crosshair.wants_square.remove(&system_id);
     }
 }

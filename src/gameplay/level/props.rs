@@ -1,12 +1,9 @@
-use std::iter;
-
 use crate::third_party::avian3d::CollisionLayer;
 use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
-    scene::SceneInstanceReady,
 };
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};

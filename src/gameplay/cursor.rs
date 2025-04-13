@@ -22,7 +22,7 @@ pub(super) fn plugin(app: &mut App) {
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
-    app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
+    app.add_systems(OnEnter(Screen::SpawnLevel), spawn_crosshair);
     app.add_systems(OnExit(Screen::Gameplay), release_cursor.param_warn_once());
 }
 

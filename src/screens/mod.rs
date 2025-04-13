@@ -3,6 +3,7 @@
 mod credits;
 mod gameplay;
 mod loading;
+mod spawn_level;
 mod splash;
 mod title;
 
@@ -15,6 +16,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         credits::plugin,
         gameplay::plugin,
+        spawn_level::plugin,
         loading::plugin,
         splash::plugin,
         title::plugin,
@@ -29,5 +31,6 @@ pub(crate) enum Screen {
     Loading,
     Title,
     Credits,
+    SpawnLevel,
     Gameplay,
 }

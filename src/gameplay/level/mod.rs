@@ -7,6 +7,7 @@ use crate::screens::Screen;
 mod props;
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<Level>();
     app.add_plugins((props::plugin,));
 }
 
@@ -24,5 +25,10 @@ pub(crate) fn spawn_level(world: &mut World) {
             asset_server.load("maps/foxtrot/foxtrot.map#Scene"),
         ),
         StateScoped(Screen::Gameplay),
+        Level,
     ));
 }
+
+#[derive(Debug, Component, Reflect)]
+#[reflect(Component)]
+pub(crate) struct Level;

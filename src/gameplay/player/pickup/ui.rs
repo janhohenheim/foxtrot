@@ -6,11 +6,17 @@ use bevy::prelude::*;
 
 use crate::{
     gameplay::{cursor::CrosshairState, player::camera::PlayerCameraParent},
+    screens::Screen,
     third_party::avian3d::CollisionLayer,
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, check_for_pickup_opportunity.param_warn_once());
+    app.add_systems(
+        Update,
+        check_for_pickup_opportunity
+            .param_warn_once()
+            .run_if(in_state(Screen::Gameplay)),
+    );
     app.add_observer(hide_crosshair_when_picking_up.param_warn_once());
     app.add_observer(show_crosshair_when_not_picking_up.param_warn_once());
 }

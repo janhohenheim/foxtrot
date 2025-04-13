@@ -17,7 +17,12 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_player.param_warn_once());
-    app.add_systems(Update, sync_with_player.param_warn_once());
+    app.add_systems(
+        Update,
+        sync_with_player
+            .param_warn_once()
+            .run_if(in_state(Screen::Gameplay)),
+    );
     app.register_type::<PlayerCameraParent>();
     app.register_type::<WorldModelCamera>();
     app.register_type::<CameraSensitivity>();

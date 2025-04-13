@@ -39,7 +39,7 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
 #[require(Transform, Visibility)]
-#[model("models/suzanne/Suzanne.gltf")]
+#[model("models/view_model/view_model.gltf")]
 #[component(on_add = Self::on_add)]
 pub(crate) struct Player;
 

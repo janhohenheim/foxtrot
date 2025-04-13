@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Resource)]
 pub(crate) struct PlayerAssets {
     #[dependency]
-    model: Handle<Scene>,
+    pub(crate) model: Handle<Scene>,
     #[dependency]
     pub(crate) steps: Vec<Handle<AudioSource>>,
 }

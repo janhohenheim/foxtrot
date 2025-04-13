@@ -6,7 +6,7 @@
 use bevy::prelude::*;
 
 mod animation;
-mod crosshair;
+pub(crate) mod crosshair;
 pub(crate) mod level;
 mod npc;
 pub(crate) mod player;

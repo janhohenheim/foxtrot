@@ -6,7 +6,7 @@ use bevy::{prelude::*, utils::HashSet};
 use crate::screens::Screen;
 
 mod assets;
-mod cursor;
+pub(crate) mod cursor;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CrosshairState>();

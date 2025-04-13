@@ -8,20 +8,31 @@ use crate::{screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running}
 use super::CrosshairState;
 
 pub(super) fn plugin(app: &mut App) {
+    app.init_resource::<IsCursorForcedFreed>();
     app.add_systems(
         Update,
         (
             capture_cursor
                 .param_warn_once()
-                .run_if(not(is_dialogue_running)),
+                .run_if(not(is_dialogue_running))
+                .run_if(not(is_cursor_forced_freed)),
             release_cursor
                 .param_warn_once()
+                .run_if(on_event::<DialogueStartEvent>.or(is_cursor_forced_freed)),
+            hide_crosshair
+                .never_param_warn()
                 .run_if(on_event::<DialogueStartEvent>),
         )
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
-    app.add_systems(OnExit(Screen::Gameplay), release_cursor.param_warn_once());
+    app.add_systems(
+        OnExit(Screen::Gameplay),
+        (
+            release_cursor.param_warn_once(),
+            hide_crosshair.never_param_warn(),
+        ),
+    );
 }
 
 fn capture_cursor(
@@ -40,13 +51,19 @@ fn capture_cursor(
     crosshair.wants_invisible.remove(&release_cursor.type_id());
 }
 
-pub fn release_cursor(
-    mut window: Single<&mut Window>,
-    crosshair: Option<Single<&mut CrosshairState>>,
-) {
+pub fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
-    if let Some(mut crosshair) = crosshair {
-        crosshair.wants_invisible.insert(release_cursor.type_id());
-    }
 }
+
+pub fn hide_crosshair(mut crosshair: Single<&mut CrosshairState>) {
+    crosshair.wants_invisible.insert(hide_crosshair.type_id());
+}
+
+pub(crate) fn is_cursor_forced_freed(val: Res<IsCursorForcedFreed>) -> bool {
+    val.0
+}
+
+#[derive(Debug, Resource, Default, Reflect)]
+#[reflect(Resource)]
+pub(crate) struct IsCursorForcedFreed(pub(crate) bool);

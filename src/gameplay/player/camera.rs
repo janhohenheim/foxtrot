@@ -1,22 +1,26 @@
 //! See <https://bevyengine.org/examples/camera/first-person-view-model/>
 
-use std::f32::consts::FRAC_PI_2;
+use std::{
+    f32::consts::{FRAC_PI_2, PI},
+    iter,
+};
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    color::palettes::tailwind, pbr::NotShadowCaster, prelude::*, render::view::RenderLayers,
+    pbr::NotShadowCaster, prelude::*, render::view::RenderLayers, scene::SceneInstanceReady,
 };
 use bevy_enhanced_input::prelude::*;
 
 use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
 
-use super::{Player, default_input::Rotate};
+use super::{Player, assets::PlayerAssets, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_camera_yaw_and_pitch.param_warn_once());
+    app.add_observer(configure_player_view_model);
     app.add_systems(
         Update,
         sync_camera_translation_with_player
@@ -66,12 +70,8 @@ impl Default for CameraSensitivity {
 fn spawn_view_model(
     _trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    assets: Res<PlayerAssets>,
 ) {
-    let arm = meshes.add(Cuboid::new(0.1, 0.1, 0.5));
-    let arm_material = materials.add(Color::from(tailwind::TEAL_200));
-
     commands
         .spawn((
             Name::new("PlayerCameraParent"),
@@ -118,7 +118,7 @@ fn spawn_view_model(
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
-                    fov: 70.0_f32.to_radians(),
+                    fov: 85.0_f32.to_radians(),
                     ..default()
                 }),
                 // Only render objects belonging to the view model.
@@ -128,15 +128,43 @@ fn spawn_view_model(
             // Spawn the player's right arm.
             parent.spawn((
                 Name::new("PlayerArm"),
-                Mesh3d(arm),
-                MeshMaterial3d(arm_material),
-                Transform::from_xyz(0.2, -0.1, -0.25),
+                PlayerViewModel,
+                SceneRoot(assets.model.clone()),
+                Transform::from_xyz(0.0, 1.0, 1.0)
+                    .with_scale(Vec3::splat(1.0))
+                    .with_rotation(Quat::from_rotation_y(PI)),
                 // Ensure the arm is only rendered by the view model camera.
                 RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
-                // The arm is free-floating, so shadows would look weird.
-                NotShadowCaster,
             ));
         });
+}
+
+#[derive(Debug, Component, Reflect)]
+#[reflect(Component)]
+pub(crate) struct PlayerViewModel;
+
+fn configure_player_view_model(
+    trigger: Trigger<SceneInstanceReady>,
+    mut commands: Commands,
+    player_view_model: Query<(), With<PlayerViewModel>>,
+    q_children: Query<&Children>,
+    q_mesh: Query<(), With<Mesh3d>>,
+) {
+    let view_model = trigger.entity();
+    if !player_view_model.contains(view_model) {
+        return;
+    }
+
+    for child in iter::once(view_model)
+        .chain(q_children.iter_descendants(view_model))
+        .filter(|e| q_mesh.contains(*e))
+    {
+        commands.entity(child).insert((
+            RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
+            // The arm is free-floating, so shadows would look weird.
+            //NotShadowCaster,
+        ));
+    }
 }
 
 fn rotate_camera_yaw_and_pitch(

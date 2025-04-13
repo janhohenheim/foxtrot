@@ -3,12 +3,9 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
-use crate::{
-    gameplay::animation::AnimationPlayerLink, screens::Screen,
-    third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
-};
+use crate::{gameplay::animation::AnimationPlayerLink, screens::Screen};
 
-use super::Npc;
+use super::{Npc, assets::NpcAssets};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<NpcAnimations>();
@@ -28,7 +25,7 @@ fn setup_npc_animations(
     trigger: Trigger<OnAdd, AnimationPlayerLink>,
     q_npc: Query<&AnimationPlayerLink, With<Npc>>,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    assets: Res<NpcAssets>,
     mut graphs: ResMut<Assets<AnimationGraph>>,
 ) {
     let anim_player_link = trigger.entity();
@@ -37,15 +34,11 @@ fn setup_npc_animations(
     };
     let anim_player = anim_player_link.0;
 
-    let load_animation = |name: &str| -> Handle<AnimationClip> {
-        asset_server.load(format!("{}#Animation{}", Npc::model_path(), name))
-    };
-
-    let run_handle = load_animation("0");
-    let idle_handle = load_animation("1");
-    let walk_handle = load_animation("2");
-
-    let (graph, indices) = AnimationGraph::from_clips([run_handle, idle_handle, walk_handle]);
+    let (graph, indices) = AnimationGraph::from_clips([
+        assets.run_animation.clone(),
+        assets.idle_animation.clone(),
+        assets.walk_animation.clone(),
+    ]);
     let [run_index, idle_index, walk_index] = indices.as_slice() else {
         unreachable!()
     };

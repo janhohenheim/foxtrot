@@ -18,6 +18,8 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Resource)]
 pub(crate) struct LevelAssets {
     #[dependency]
+    pub(crate) level: Handle<Scene>,
+    #[dependency]
     pub(crate) book_model: Handle<Scene>,
     #[dependency]
     pub(crate) plate_model: Handle<Scene>,
@@ -47,6 +49,8 @@ impl FromWorld for LevelAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
+            //  Run ./scripts/compile_maps.sh and change .map to .bsp when you're done prototyping and want some extra performance
+            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
             book_model: load_model::<Book>(assets),
             plate_model: load_model::<Plate>(assets),
             mug_model: load_model::<Mug>(assets),

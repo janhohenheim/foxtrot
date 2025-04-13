@@ -1,6 +1,6 @@
 use std::any::Any as _;
 
-use avian_pickup::actor::AvianPickupActor;
+use avian_pickup::{actor::AvianPickupActor, prop::HeldProp};
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
@@ -10,7 +10,9 @@ use crate::{
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, check_for_pickup_opportunity);
+    app.add_systems(Update, (check_for_pickup_opportunity,));
+    app.add_observer(hide_crosshair_when_picking_up);
+    app.add_observer(show_crosshair_when_not_picking_up);
 }
 
 fn check_for_pickup_opportunity(
@@ -38,4 +40,28 @@ fn check_for_pickup_opportunity(
     } else {
         crosshair.wants_square.remove(&system_id);
     }
+}
+
+fn hide_crosshair_when_picking_up(
+    _trigger: Trigger<OnAdd, HeldProp>,
+    crosshair: Option<Single<&mut CrosshairState>>,
+) {
+    let Some(mut crosshair) = crosshair else {
+        return;
+    };
+    crosshair
+        .wants_invisible
+        .insert(hide_crosshair_when_picking_up.type_id());
+}
+
+fn show_crosshair_when_not_picking_up(
+    _trigger: Trigger<OnRemove, HeldProp>,
+    crosshair: Option<Single<&mut CrosshairState>>,
+) {
+    let Some(mut crosshair) = crosshair else {
+        return;
+    };
+    crosshair
+        .wants_invisible
+        .remove(&hide_crosshair_when_picking_up.type_id());
 }

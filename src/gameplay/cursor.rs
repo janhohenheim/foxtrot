@@ -1,4 +1,4 @@
-use std::any::TypeId;
+use std::any::{Any, TypeId};
 
 use bevy::{prelude::*, utils::HashSet, window::CursorGrabMode};
 use bevy_yarnspinner::events::DialogueStartEvent;
@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
 fn capture_cursor(
     mut window: Single<&mut Window>,
     mouse_button_input: Res<ButtonInput<MouseButton>>,
-    crosshair: Option<Single<&mut Visibility, With<CrosshairState>>>,
+    crosshair: Option<Single<&mut CrosshairState>>,
 ) {
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
     window.cursor_options.visible = false;
@@ -36,18 +36,18 @@ fn capture_cursor(
         window.cursor_options.grab_mode = CursorGrabMode::Confined;
     }
     if let Some(mut crosshair) = crosshair {
-        **crosshair = Visibility::Inherited;
+        crosshair.wants_invisible.remove(&release_cursor.type_id());
     }
 }
 
 pub fn release_cursor(
     mut window: Single<&mut Window>,
-    crosshair: Option<Single<&mut Visibility, With<CrosshairState>>>,
+    crosshair: Option<Single<&mut CrosshairState>>,
 ) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
     if let Some(mut crosshair) = crosshair {
-        **crosshair = Visibility::Hidden;
+        crosshair.wants_invisible.insert(release_cursor.type_id());
     }
 }
 
@@ -84,6 +84,7 @@ fn spawn_crosshair(mut commands: Commands, asset_server: Res<AssetServer>) {
 #[reflect(Component, Default)]
 pub(crate) struct CrosshairState {
     pub(crate) wants_square: HashSet<TypeId>,
+    pub(crate) wants_invisible: HashSet<TypeId>,
 }
 
 #[derive(Component, Default, Reflect)]
@@ -95,10 +96,18 @@ struct CrosshairTextures {
 
 fn update_crosshair(
     crosshair: Option<
-        Single<(&CrosshairState, &CrosshairTextures, &mut ImageNode), Changed<CrosshairState>>,
+        Single<
+            (
+                &CrosshairState,
+                &CrosshairTextures,
+                &mut ImageNode,
+                &mut Visibility,
+            ),
+            Changed<CrosshairState>,
+        >,
     >,
 ) {
-    let Some((crosshair_state, crosshair_textures, mut image_node)) =
+    let Some((crosshair_state, crosshair_textures, mut image_node, mut visibility)) =
         crosshair.map(|c| c.into_inner())
     else {
         return;
@@ -107,5 +116,11 @@ fn update_crosshair(
         image_node.image = crosshair_textures.dot.clone();
     } else {
         image_node.image = crosshair_textures.square.clone();
+    }
+
+    if crosshair_state.wants_invisible.is_empty() {
+        *visibility = Visibility::Inherited;
+    } else {
+        *visibility = Visibility::Hidden;
     }
 }

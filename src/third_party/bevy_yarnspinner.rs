@@ -12,13 +12,7 @@ pub(super) fn plugin(app: &mut App) {
         YarnSpinnerPlugin::default(),
         ExampleYarnSpinnerDialogueViewPlugin::default(),
     ));
-    app.add_systems(
-        PreUpdate,
-        setup_dialogue_runner
-            .run_if(resource_exists::<YarnProject>)
-            .run_if(not(any_with_component::<DialogueRunner>))
-            .run_if(in_state(Screen::Gameplay)),
-    );
+    app.add_systems(OnEnter(Screen::Gameplay), setup_dialogue_runner);
     app.add_systems(
         OnExit(Screen::Gameplay),
         abort_all_dialogues_when_leaving_gameplay,

@@ -422,8 +422,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua"
 version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f00b5ff9efc5a8668b89b78441a2437162d2bccf51e99adec4b62f906ff122af"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -433,8 +432,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d2eff61a168007adee7ee2f89e46b7954731fb4d0aaeb032237331d735a2281"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
 dependencies = [
  "avian3d",
  "bevy",
@@ -444,8 +442,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9d79d86617e235c4ae7fec209b517cca99adcf5b33bdd46326f42b66eccadd1"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
 dependencies = [
  "bevy",
 ]

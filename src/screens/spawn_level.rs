@@ -14,7 +14,6 @@ pub(super) fn plugin(app: &mut App) {
         (spawn_level, spawn_spawn_level_screen),
     );
     app.add_systems(OnEnter(Screen::SpawnLevel), spawn_spawn_level_screen);
-    app.add_observer(advance_to_gameplay_screen);
 }
 
 fn spawn_spawn_level_screen(mut commands: Commands) {
@@ -28,15 +27,4 @@ fn spawn_spawn_level_screen(mut commands: Commands) {
 
 fn spawn_level(mut commands: Commands) {
     commands.queue(spawn_level_command);
-}
-
-fn advance_to_gameplay_screen(
-    trigger: Trigger<SceneInstanceReady>,
-    q_level: Query<(), With<Level>>,
-    mut next_screen: ResMut<NextState<Screen>>,
-) {
-    let level_entity = trigger.entity();
-    if q_level.contains(level_entity) {
-        next_screen.set(Screen::Gameplay);
-    }
 }

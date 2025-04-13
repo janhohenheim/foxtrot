@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use animation::NpcAnimationState;
+use animation::{NpcAnimationState, setup_npc_animations};
 use assets::NpcAssets;
 use avian3d::prelude::*;
 use bevy::{
@@ -60,6 +60,7 @@ impl Npc {
                 SceneRoot(model),
                 Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0)
                     .with_rotation(Quat::from_rotation_y(PI)),
-            ));
+            ))
+            .observe(setup_npc_animations);
     }
 }

@@ -6,15 +6,24 @@ edition = "2024"
 
 [dependencies]
 bevy = { version = "0.15.3", features = ["wayland"] }
-avian3d = "0.2.1"
 bevy_enhanced_input = "0.9"
+
+# physics
+avian3d = "0.2.1"
+avian_pickup = "0.1.0"
+
 # character controller
 bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
 bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
+
 # navigation
 bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
 landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
+
+# dialogue
+bevy_yarnspinner = "0.4.0"
+bevy_yarnspinner_example_dialogue_view = "0.4.0"
 
 # TODO:
 # bevy_hanabi
@@ -32,9 +41,6 @@ tracing = { version = "0.1", features = [
     "max_level_debug",
     "release_max_level_warn",
 ] }
-bevy_yarnspinner = "0.4.0"
-bevy_yarnspinner_example_dialogue_view = "0.4.0"
-avian_pickup = "0.1.0"
 
 [dependencies.bevy_trenchbroom]
 git = "https://github.com/Noxmore/bevy_trenchbroom"

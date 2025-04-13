@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
         },
     );
     app.add_observer(advance_debug_state);
-    app.add_observer(toggle_cursor_forced_free);
+    app.add_observer(toogle_aalo_inspector);
     app.add_observer(disable_aalo_inspector_on_spawn);
     app.add_systems(
         Update,
@@ -83,7 +83,7 @@ fn disable_aalo_inspector_on_spawn(
     **aalo_inspector = Visibility::Hidden;
 }
 
-fn toggle_cursor_forced_free(
+fn toogle_aalo_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
     mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,

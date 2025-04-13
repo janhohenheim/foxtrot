@@ -7,11 +7,11 @@ use bevy::prelude::*;
 ///
 /// ```
 /// use bevy::{audio::Volume, prelude::*};
-/// use foxtrot::audio::Music;
+/// use crate::audio::Music;
 ///
 /// fn set_music_volume(mut sink_query: Query<&mut AudioSink, With<Music>>) {
 ///     for mut sink in &mut sink_query {
-///         sink.set_volume(Volume::Linear(0.5));
+///         sink.set_volume(Volume::new(0.5));
 ///     }
 /// }
 /// ```
@@ -25,11 +25,11 @@ pub(crate) struct Music;
 ///
 /// ```
 /// use bevy::{audio::Volume, prelude::*};
-/// use foxtrot::audio::SoundEffect;
+/// use crate::audio::SoundEffect;
 ///
 /// fn set_sound_effect_volume(mut sink_query: Query<&mut AudioSink, With<SoundEffect>>) {
 ///     for mut sink in &mut sink_query {
-///         sink.set_volume(Volume::Linear(0.5));
+///         sink.set_volume(Volume::new(0.5));
 ///     }
 /// }
 /// ```

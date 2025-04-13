@@ -11,21 +11,25 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            capture_cursor.run_if(not(is_dialogue_running)),
-            release_cursor.run_if(on_event::<DialogueStartEvent>),
+            capture_cursor
+                .param_warn_once()
+                .run_if(not(is_dialogue_running)),
+            release_cursor
+                .param_warn_once()
+                .run_if(on_event::<DialogueStartEvent>),
             update_crosshair,
         )
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
-    app.add_systems(OnExit(Screen::Gameplay), release_cursor);
+    app.add_systems(OnExit(Screen::Gameplay), release_cursor.param_warn_once());
 }
 
 fn capture_cursor(
     mut window: Single<&mut Window>,
     mouse_button_input: Res<ButtonInput<MouseButton>>,
-    crosshair: Option<Single<&mut CrosshairState>>,
+    mut crosshair: Single<&mut CrosshairState>,
 ) {
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
     window.cursor_options.visible = false;
@@ -35,20 +39,13 @@ fn capture_cursor(
         // See <https://github.com/bevyengine/bevy/issues/8949>
         window.cursor_options.grab_mode = CursorGrabMode::Confined;
     }
-    if let Some(mut crosshair) = crosshair {
-        crosshair.wants_invisible.remove(&release_cursor.type_id());
-    }
+    crosshair.wants_invisible.remove(&release_cursor.type_id());
 }
 
-pub fn release_cursor(
-    mut window: Single<&mut Window>,
-    crosshair: Option<Single<&mut CrosshairState>>,
-) {
+pub fn release_cursor(mut window: Single<&mut Window>, mut crosshair: Single<&mut CrosshairState>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
-    if let Some(mut crosshair) = crosshair {
-        crosshair.wants_invisible.insert(release_cursor.type_id());
-    }
+    crosshair.wants_invisible.insert(release_cursor.type_id());
 }
 
 /// Show a crosshair for better aiming

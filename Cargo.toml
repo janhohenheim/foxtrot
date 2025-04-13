@@ -19,7 +19,6 @@ landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.co
 # TODO:
 # bevy_hanabi
 # bevy_seedling
-# bevy_cobweb
 
 rand = "0.8.5"
 

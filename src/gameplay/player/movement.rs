@@ -9,7 +9,8 @@ use super::{Player, camera::PlayerCameraParent};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, reset_movement);
-    app.add_observer(apply_movement).add_observer(jump);
+    app.add_observer(apply_movement.param_warn_once())
+        .add_observer(jump);
 }
 
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
@@ -24,13 +25,10 @@ fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
     mut controllers: Query<&mut TnuaController, With<Player>>,
-    transform: Option<Single<&Transform, With<PlayerCameraParent>>>,
+    transform: Single<&Transform, With<PlayerCameraParent>>,
 ) {
     let Ok(mut controller) = controllers.get_mut(trigger.entity()) else {
         error!("Triggered movement for entity with missing components");
-        return;
-    };
-    let Some(transform) = transform else {
         return;
     };
     // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:

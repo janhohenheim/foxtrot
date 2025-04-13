@@ -16,7 +16,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
         (
-            setup_npc_agent,
+            setup_npc_agent.param_warn_once(),
             sync_agent_velocity,
             set_controller_velocity,
         )
@@ -30,15 +30,9 @@ pub(super) fn plugin(app: &mut App) {
 fn setup_npc_agent(
     mut commands: Commands,
     q_uninitialized: Query<Entity, (With<Npc>, Without<NpcAgent>)>,
-    player: Option<Single<&PlayerLandmassCharacter>>,
-    archipelago: Option<Single<Entity, With<Archipelago3d>>>,
+    player: Single<&PlayerLandmassCharacter>,
+    archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let Some(player) = player else {
-        return;
-    };
-    let Some(archipelago) = archipelago else {
-        return;
-    };
     for entity in q_uninitialized.iter() {
         let agent = commands
             .spawn((

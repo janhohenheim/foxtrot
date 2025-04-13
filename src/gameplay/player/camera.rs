@@ -16,8 +16,8 @@ use super::{Player, default_input::Rotate};
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
-    app.add_observer(rotate_player);
-    app.add_systems(Update, sync_with_player);
+    app.add_observer(rotate_player.param_warn_once());
+    app.add_systems(Update, sync_with_player.param_warn_once());
     app.register_type::<PlayerCameraParent>();
     app.register_type::<WorldModelCamera>();
     app.register_type::<CameraSensitivity>();
@@ -136,11 +136,8 @@ fn spawn_view_model(
 
 fn rotate_player(
     trigger: Trigger<Fired<Rotate>>,
-    player: Option<Single<&mut Transform, With<PlayerCameraParent>>>,
+    mut transform: Single<&mut Transform, With<PlayerCameraParent>>,
 ) {
-    let Some(mut transform) = player else {
-        return;
-    };
     let delta = trigger.value;
 
     if delta != Vec2::ZERO {
@@ -170,14 +167,10 @@ fn rotate_player(
 }
 
 fn sync_with_player(
-    player_camera_parent: Option<Single<&mut Transform, With<PlayerCameraParent>>>,
-    player: Option<Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>>,
+    mut player_camera_parent: Single<&mut Transform, With<PlayerCameraParent>>,
+    player: Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>,
 ) {
-    if let Some(mut player_camera_parent) = player_camera_parent {
-        if let Some(player) = player {
-            player_camera_parent.translation = player.translation;
-        }
-    }
+    player_camera_parent.translation = player.translation;
 }
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {

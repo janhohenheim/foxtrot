@@ -36,6 +36,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
         setup_player_character
+            .param_warn_once()
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
             .run_if(in_state(Screen::Gameplay)),
     );
@@ -84,16 +85,9 @@ impl Player {
 
 fn setup_player_character(
     mut commands: Commands,
-    player: Option<Single<Entity, (With<Player>, Without<PlayerLandmassCharacter>)>>,
-    archipelago: Option<Single<Entity, With<Archipelago3d>>>,
+    player: Single<Entity, (With<Player>, Without<PlayerLandmassCharacter>)>,
+    archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let Some(player) = player else {
-        return;
-    };
-    let Some(archipelago) = archipelago else {
-        return;
-    };
-
     let player_character = commands
         .spawn((
             Name::new("Player Landmass Character"),

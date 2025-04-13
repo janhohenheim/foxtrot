@@ -5,7 +5,7 @@ use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
 use crate::{gameplay::animation::AnimationPlayerLink, screens::Screen};
 
-use super::{Npc, assets::NpcAssets};
+use super::assets::NpcAssets;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<NpcAnimations>();

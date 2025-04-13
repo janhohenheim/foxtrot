@@ -7,7 +7,7 @@ use avian3d::prelude::*;
 use bevy::{
     pbr::NotShadowCaster,
     prelude::*,
-    render::view::{NoCpuCulling, NoFrustumCulling, RenderLayers},
+    render::view::{NoFrustumCulling, RenderLayers},
     scene::SceneInstanceReady,
 };
 use bevy_enhanced_input::prelude::*;

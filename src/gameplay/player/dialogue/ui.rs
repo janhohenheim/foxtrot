@@ -1,3 +1,5 @@
+use std::any::Any;
+
 use bevy::prelude::*;
 
 use crate::{gameplay::cursor::CrosshairState, screens::Screen};
@@ -55,15 +57,16 @@ fn update_interaction_prompt_ui(
     else {
         return;
     };
+    let system_id = update_interaction_prompt_ui.type_id();
     if let Some(node) = &dialogue_prompt.0 {
         text.0 = format!("E: {}", node.prompt);
         *prompt_visibility = Visibility::Inherited;
         *crosshair_visibility = Visibility::Inherited;
-        *crosshair_state = CrosshairState::Square;
+        crosshair_state.wants_square.insert(system_id);
     } else {
         text.0 = String::new();
         *prompt_visibility = Visibility::Hidden;
         *crosshair_visibility = Visibility::Hidden;
-        *crosshair_state = CrosshairState::Dot;
+        crosshair_state.wants_square.remove(&system_id);
     }
 }

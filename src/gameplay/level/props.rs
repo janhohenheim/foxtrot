@@ -39,7 +39,8 @@ fn on_add_dynamic_prop<T: QuakeClass>(mut world: DeferredWorld, entity: Entity, 
         TransformInterpolation,
         ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-            .with_default_density(20.0),
+            // About the density of oak wood (600-800 kg/m^3)
+            .with_default_density(800.0),
         RigidBody::Dynamic,
         SceneRoot(model),
         TnuaNotPlatform,

@@ -24,7 +24,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_camera_yaw_and_pitch.param_warn_once());
-    app.add_observer(configure_player_view_model);
     app.add_systems(
         Update,
         sync_camera_translation_with_player

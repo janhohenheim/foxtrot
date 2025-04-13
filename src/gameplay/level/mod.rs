@@ -1,7 +1,7 @@
 //! Spawn the main level.
 
 use assets::LevelAssets;
-use bevy::prelude::*;
+use bevy::{prelude::*, scene::SceneInstanceReady};
 
 use crate::screens::Screen;
 
@@ -18,14 +18,23 @@ pub(super) fn plugin(app: &mut App) {
 /// We use this style when a command requires no configuration.
 pub(crate) fn spawn_level(world: &mut World) {
     let assets = world.resource::<LevelAssets>();
-    world.spawn((
-        Name::new("Level"),
-        SceneRoot(assets.level.clone()),
-        StateScoped(Screen::Gameplay),
-        Level,
-    ));
+    world
+        .spawn((
+            Name::new("Level"),
+            SceneRoot(assets.level.clone()),
+            StateScoped(Screen::Gameplay),
+            Level,
+        ))
+        .observe(advance_to_gameplay_screen);
 }
 
 #[derive(Debug, Component, Reflect)]
 #[reflect(Component)]
 pub(crate) struct Level;
+
+fn advance_to_gameplay_screen(
+    _trigger: Trigger<SceneInstanceReady>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
+    next_screen.set(Screen::Gameplay);
+}

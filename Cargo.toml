@@ -9,8 +9,8 @@ bevy = { version = "0.15.3", features = ["wayland"] }
 avian3d = "0.2.1"
 bevy_enhanced_input = "0.9"
 # character controller
-bevy-tnua = "0.22.0"
-bevy-tnua-avian3d = "0.3.1"
+bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
+bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
 # navigation
 bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
@@ -19,7 +19,6 @@ landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.co
 # TODO:
 # bevy_hanabi
 # bevy_seedling
-# avian_pickup
 # bevy_cobweb
 
 rand = "0.8.5"

@@ -1,6 +1,7 @@
 use std::f32::consts::PI;
 
 use animation::NpcAnimationState;
+use assets::NpcAssets;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -10,16 +11,15 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::{
-    bevy_trenchbroom::GetTrenchbroomModelPath as _, bevy_yarnspinner::YarnNode,
-};
+use crate::third_party::bevy_yarnspinner::YarnNode;
 
 use super::animation::AnimationPlayerAncestor;
 mod ai;
 mod animation;
+mod assets;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((ai::plugin, animation::plugin));
+    app.add_plugins((ai::plugin, animation::plugin, assets::plugin));
     app.register_type::<Npc>();
 }
 
@@ -38,9 +38,7 @@ impl Npc {
         if world.is_scene_world() {
             return;
         }
-        let model = world
-            .resource::<AssetServer>()
-            .load(format!("{}#Scene0", Self::model_path()));
+        let model = world.resource::<NpcAssets>().model.clone();
         world
             .commands()
             .entity(entity)

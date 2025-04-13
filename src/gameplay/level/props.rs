@@ -1,5 +1,4 @@
 use crate::third_party::avian3d::CollisionLayer;
-use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -7,6 +6,8 @@ use bevy::{
 };
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};
+
+use super::assets::LevelAssets;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(add_not_platform_to_props);
@@ -31,9 +32,7 @@ fn on_add_dynamic_prop<T: QuakeClass>(mut world: DeferredWorld, entity: Entity, 
     if world.is_scene_world() {
         return;
     }
-    let model = world
-        .resource::<AssetServer>()
-        .load(format!("{}#Scene0", T::model_path()));
+    let model = world.resource::<LevelAssets>().model_for_class::<T>();
     world.commands().entity(entity).insert((
         TrenchBroomGltfRotationFix,
         TransformInterpolation,

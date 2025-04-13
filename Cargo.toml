@@ -41,6 +41,7 @@ tracing = { version = "0.1", features = [
     "max_level_debug",
     "release_max_level_warn",
 ] }
+aalo = { version = "0.0.4", optional = true }
 
 [dependencies.bevy_trenchbroom]
 git = "https://github.com/Noxmore/bevy_trenchbroom"
@@ -56,6 +57,7 @@ dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
+    "aalo",
     # uncomment in 0.16
     # "bevy/bevy_ui_debug",
 ]

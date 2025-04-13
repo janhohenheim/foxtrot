@@ -1,25 +1,32 @@
 //! Development tools for the game. This plugin is only enabled in dev builds.
 
+use aalo::prelude::*;
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
     dev_tools::{
         states::log_transitions,
         ui_debug_overlay::{DebugUiPlugin, UiDebugOptions},
     },
-    input::common_conditions::input_just_pressed,
     prelude::*,
 };
+use bevy_enhanced_input::prelude::*;
 use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
+use input::{ForceFreeCursor, ToggleDebugUi};
 
-use crate::screens::Screen;
+mod input;
+
+use crate::{gameplay::crosshair::cursor::IsCursorForcedFreed, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
     app.add_systems(Update, log_transitions::<Screen>);
 
+    app.add_plugins(input::plugin);
+
     app.init_resource::<DebugState>();
 
-    // Toggle the debug overlay for UI.
+    app.add_plugins(AaloPlugin::new().world().unnest_children());
+
     app.add_plugins((
         DebugUiPlugin,
         PhysicsDebugPlugin::default(),
@@ -35,10 +42,11 @@ pub(super) fn plugin(app: &mut App) {
             ..default()
         },
     );
+    app.add_observer(advance_debug_state);
+    app.add_observer(toggle_cursor_forced_free);
     app.add_systems(
         Update,
         (
-            advance_debug_state.run_if(input_just_pressed(TOGGLE_KEY)),
             toggle_debug_ui.run_if(toggled_state(DebugState::Ui)),
             toggle_physics_debug_ui.run_if(toggled_state(DebugState::Physics)),
             toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
@@ -47,9 +55,10 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-const TOGGLE_KEY: KeyCode = KeyCode::Backquote;
-
-fn advance_debug_state(mut debug_state: ResMut<DebugState>) {
+fn advance_debug_state(
+    _trigger: Trigger<Started<ToggleDebugUi>>,
+    mut debug_state: ResMut<DebugState>,
+) {
     *debug_state = debug_state.next();
 }
 
@@ -64,6 +73,13 @@ fn toggle_physics_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
 
 fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
     **debug = !**debug;
+}
+
+fn toggle_cursor_forced_free(
+    _trigger: Trigger<Started<ForceFreeCursor>>,
+    mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
+) {
+    is_cursor_forced_free.0 = !is_cursor_forced_free.0;
 }
 
 #[derive(Debug, Resource, Default, Eq, PartialEq)]

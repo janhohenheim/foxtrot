@@ -33,13 +33,7 @@ pub(super) fn plugin(app: &mut App) {
         dialogue::plugin,
         pickup::plugin,
     ));
-    app.add_systems(
-        RunFixedMainLoop,
-        setup_player_character
-            .param_warn_once()
-            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
-            .run_if(in_state(Screen::Gameplay)),
-    );
+    app.add_observer(setup_player_character);
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -84,10 +78,11 @@ impl Player {
 }
 
 fn setup_player_character(
+    trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
-    player: Single<Entity, (With<Player>, Without<PlayerLandmassCharacter>)>,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
+    let player = trigger.entity();
     let player_character = commands
         .spawn((
             Name::new("Player Landmass Character"),
@@ -100,11 +95,11 @@ fn setup_player_character(
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
         ))
-        .set_parent(*player)
+        .set_parent(player)
         .id();
 
     commands
-        .entity(*player)
+        .entity(player)
         .insert(PlayerLandmassCharacter(player_character));
 }
 

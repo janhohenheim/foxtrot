@@ -2,6 +2,7 @@
 //! This reduces stuttering, especially for audio on WASM.
 
 use bevy::prelude::*;
+use bevy_yarnspinner::prelude::YarnProject;
 
 use crate::{asset_tracking::ResourceHandles, screens::Screen, theme::prelude::*};
 
@@ -30,6 +31,9 @@ fn continue_to_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Title);
 }
 
-fn all_assets_loaded(resource_handles: Res<ResourceHandles>) -> bool {
-    resource_handles.is_all_done()
+fn all_assets_loaded(
+    resource_handles: Res<ResourceHandles>,
+    yarn_project: Option<Res<YarnProject>>,
+) -> bool {
+    resource_handles.is_all_done() && yarn_project.is_some()
 }

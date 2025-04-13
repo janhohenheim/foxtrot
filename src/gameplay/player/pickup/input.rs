@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use avian_pickup::prelude::*;
 use bevy_enhanced_input::prelude::*;
 
-use crate::gameplay::player::default_input::{PickupProp, ThrowProp};
+use crate::gameplay::player::default_input::{DropProp, PickupProp};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(pull_prop.param_warn_once());
@@ -23,7 +23,7 @@ fn pull_prop(
 }
 
 fn throw_prop(
-    _trigger: Trigger<Started<ThrowProp>>,
+    _trigger: Trigger<Started<PickupProp>>,
     actor: Single<Entity, With<AvianPickupActor>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {
@@ -34,7 +34,7 @@ fn throw_prop(
 }
 
 fn drop_prop(
-    _trigger: Trigger<Started<PickupProp>>,
+    _trigger: Trigger<Started<DropProp>>,
     actor: Single<Entity, With<AvianPickupActor>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {

@@ -22,8 +22,8 @@ fn dev_tools_input_binding(
     _trigger: Trigger<Binding<DevToolsInputContext>>,
     mut actions: Single<&mut Actions<DevToolsInputContext>>,
 ) {
-    actions.bind::<ToggleDebugUi>().to(KeyCode::Backquote);
-    actions.bind::<ForceFreeCursor>().to(KeyCode::Backspace);
+    actions.bind::<ToggleDebugUi>().to(KeyCode::F3);
+    actions.bind::<ForceFreeCursor>().to(KeyCode::Backquote);
 }
 
 fn setup_dev_tools_input(mut commands: Commands) {

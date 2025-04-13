@@ -44,6 +44,7 @@ pub(super) fn plugin(app: &mut App) {
     );
     app.add_observer(advance_debug_state);
     app.add_observer(toggle_cursor_forced_free);
+    app.add_observer(disable_aalo_inspector_on_spawn);
     app.add_systems(
         Update,
         (
@@ -75,11 +76,24 @@ fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
     **debug = !**debug;
 }
 
+fn disable_aalo_inspector_on_spawn(
+    _trigger: Trigger<OnAdd, InspectorMarker>,
+    mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,
+) {
+    **aalo_inspector = Visibility::Hidden;
+}
+
 fn toggle_cursor_forced_free(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
+    mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,
 ) {
     is_cursor_forced_free.0 = !is_cursor_forced_free.0;
+    **aalo_inspector = match **aalo_inspector {
+        Visibility::Inherited => Visibility::Hidden,
+        Visibility::Hidden => Visibility::Inherited,
+        Visibility::Visible => Visibility::Inherited,
+    };
 }
 
 #[derive(Debug, Resource, Default, Eq, PartialEq)]

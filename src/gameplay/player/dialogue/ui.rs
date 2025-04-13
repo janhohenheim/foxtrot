@@ -7,7 +7,7 @@ use crate::{gameplay::cursor::CrosshairState, screens::Screen};
 use super::{DialogueSet, InteractionPrompt};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Gameplay), setup_interaction_prompt);
+    app.add_systems(OnEnter(Screen::SpawnLevel), setup_interaction_prompt);
     app.add_systems(
         Update,
         update_interaction_prompt_ui
@@ -44,13 +44,14 @@ fn setup_interaction_prompt(mut commands: Commands) {
 }
 
 fn update_interaction_prompt_ui(
-    dialogue_prompt: Single<
-        (&mut Text, &mut Visibility, &InteractionPrompt),
-        Changed<InteractionPrompt>,
-    >,
+    dialogue_prompt: Single<(&mut Text, &mut Visibility, Ref<InteractionPrompt>)>,
     mut crosshair: Single<&mut CrosshairState>,
 ) {
     let (mut text, mut prompt_visibility, dialogue_prompt) = dialogue_prompt.into_inner();
+    if !dialogue_prompt.is_changed() {
+        return;
+    }
+
     let system_id = update_interaction_prompt_ui.type_id();
     if let Some(node) = &dialogue_prompt.0 {
         text.0 = format!("E: {}", node.prompt);

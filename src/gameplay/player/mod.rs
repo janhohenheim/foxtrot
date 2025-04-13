@@ -14,7 +14,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
 
-use crate::{screens::Screen, third_party::avian3d::CollisionLayer};
+use crate::third_party::avian3d::CollisionLayer;
 
 pub(crate) mod assets;
 pub(crate) mod camera;

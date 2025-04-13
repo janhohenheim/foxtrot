@@ -2,17 +2,12 @@
 
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
-use crate::{
-    asset_tracking::LoadResource, audio::Music,
-    gameplay::level::spawn_level as spawn_level_command, screens::Screen,
-};
+use crate::{asset_tracking::LoadResource, audio::Music, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Gameplay), spawn_level);
-
     app.register_type::<GameplayMusic>();
     app.load_resource::<GameplayMusic>();
-    app.add_systems(OnEnter(Screen::Gameplay), start_gameplay_music);
+    app.add_systems(OnEnter(Screen::SpawnLevel), start_gameplay_music);
     app.add_systems(OnExit(Screen::Gameplay), stop_gameplay_music);
 
     app.add_systems(
@@ -20,10 +15,6 @@ pub(super) fn plugin(app: &mut App) {
         return_to_title_screen
             .run_if(in_state(Screen::Gameplay).and(input_just_pressed(KeyCode::Escape))),
     );
-}
-
-fn spawn_level(mut commands: Commands) {
-    commands.queue(spawn_level_command);
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]

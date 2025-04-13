@@ -16,10 +16,10 @@ use super::{Player, default_input::Rotate};
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
-    app.add_observer(rotate_player.param_warn_once());
+    app.add_observer(rotate_camera_yaw_and_pitch.param_warn_once());
     app.add_systems(
         Update,
-        sync_with_player
+        sync_camera_translation_with_player
             .param_warn_once()
             .run_if(in_state(Screen::Gameplay)),
     );
@@ -139,7 +139,7 @@ fn spawn_view_model(
         });
 }
 
-fn rotate_player(
+fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
     mut transform: Single<&mut Transform, With<PlayerCameraParent>>,
 ) {
@@ -171,7 +171,7 @@ fn rotate_player(
     }
 }
 
-fn sync_with_player(
+fn sync_camera_translation_with_player(
     mut player_camera_parent: Single<&mut Transform, With<PlayerCameraParent>>,
     player: Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>,
 ) {

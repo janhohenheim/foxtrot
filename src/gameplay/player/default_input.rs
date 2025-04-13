@@ -32,7 +32,7 @@ pub(crate) struct PickupProp;
 
 #[derive(Debug, InputAction)]
 #[input_action(output = bool)]
-pub(crate) struct ThrowProp;
+pub(crate) struct DropProp;
 
 #[derive(Debug, InputContext, Default)]
 pub(crate) struct DefaultInputContext;
@@ -77,9 +77,9 @@ fn default_binding(
 
     actions
         .bind::<PickupProp>()
-        .to((MouseButton::Right, GamepadButton::East));
+        .to((MouseButton::Left, GamepadButton::East));
 
     actions
-        .bind::<ThrowProp>()
-        .to((MouseButton::Left, GamepadButton::East));
+        .bind::<DropProp>()
+        .to((MouseButton::Right, GamepadButton::East));
 }

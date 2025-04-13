@@ -17,6 +17,7 @@ use super::{
     Player,
     camera::PlayerCameraParent,
     default_input::{DefaultInputContext, Interact},
+    pickup::is_holding_prop,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -33,7 +34,8 @@ pub(super) fn plugin(app: &mut App) {
             .param_warn_once()
             .in_set(DialogueSet::UpdateOpportunity)
             .run_if(in_state(Screen::Gameplay))
-            .run_if(not(is_dialogue_running)),
+            .run_if(not(is_dialogue_running))
+            .run_if(not(is_holding_prop)),
     );
     app.add_systems(
         Update,

@@ -30,6 +30,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         check_for_dialogue_opportunity
+            .param_warn_once()
             .in_set(DialogueSet::UpdateOpportunity)
             .run_if(in_state(Screen::Gameplay))
             .run_if(not(is_dialogue_running)),
@@ -37,11 +38,12 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         restore_input_context
+            .param_warn_once()
             .run_if(in_state(Screen::Gameplay))
             .run_if(on_event::<DialogueCompleteEvent>),
     );
 
-    app.add_observer(interact_with_dialogue);
+    app.add_observer(interact_with_dialogue.param_warn_once());
 
     app.add_plugins(ui::plugin);
 }
@@ -53,17 +55,11 @@ pub(super) enum DialogueSet {
 }
 
 fn check_for_dialogue_opportunity(
-    player: Option<Single<&GlobalTransform, With<PlayerCameraParent>>>,
-    interaction_prompt: Option<Single<&mut InteractionPrompt>>,
+    player: Single<&GlobalTransform, With<PlayerCameraParent>>,
+    mut interaction_prompt: Single<&mut InteractionPrompt>,
     q_yarn_node: Query<&YarnNode>,
     spatial_query: SpatialQuery,
 ) {
-    let Some(player) = player else {
-        return;
-    };
-    let Some(mut interaction_prompt) = interaction_prompt else {
-        return;
-    };
     let camera_transform = player.compute_transform();
     const MAX_INTERACTION_DISTANCE: f32 = 3.0;
     let hit = spatial_query.cast_ray(
@@ -88,19 +84,10 @@ struct InteractionPrompt(Option<YarnNode>);
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
     mut commands: Commands,
-    interaction_prompt: Option<Single<&mut InteractionPrompt>>,
-    dialogue_runner: Option<Single<&mut DialogueRunner>>,
-    player: Option<Single<Entity, With<Player>>>,
+    mut interaction_prompt: Single<&mut InteractionPrompt>,
+    mut dialogue_runner: Single<&mut DialogueRunner>,
+    player: Single<Entity, With<Player>>,
 ) {
-    let Some(mut interaction_prompt) = interaction_prompt else {
-        return;
-    };
-    let Some(mut dialogue_runner) = dialogue_runner else {
-        return;
-    };
-    let Some(player) = player else {
-        return;
-    };
     let Some(node) = interaction_prompt.0.take() else {
         return;
     };
@@ -110,10 +97,7 @@ fn interact_with_dialogue(
         .remove::<Actions<DefaultInputContext>>();
 }
 
-fn restore_input_context(mut commands: Commands, player: Option<Single<Entity, With<Player>>>) {
-    let Some(player) = player else {
-        return;
-    };
+fn restore_input_context(mut commands: Commands, player: Single<Entity, With<Player>>) {
     commands
         .entity(*player)
         .insert(Actions::<DefaultInputContext>::default());

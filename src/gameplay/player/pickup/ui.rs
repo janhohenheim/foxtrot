@@ -10,22 +10,17 @@ use crate::{
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, (check_for_pickup_opportunity,));
-    app.add_observer(hide_crosshair_when_picking_up);
-    app.add_observer(show_crosshair_when_not_picking_up);
+    app.add_systems(Update, check_for_pickup_opportunity.param_warn_once());
+    app.add_observer(hide_crosshair_when_picking_up.param_warn_once());
+    app.add_observer(show_crosshair_when_not_picking_up.param_warn_once());
 }
 
 fn check_for_pickup_opportunity(
-    player: Option<Single<(&GlobalTransform, &AvianPickupActor), With<PlayerCameraParent>>>,
+    player: Single<(&GlobalTransform, &AvianPickupActor), With<PlayerCameraParent>>,
     spatial_query: SpatialQuery,
-    crosshair: Option<Single<&mut CrosshairState>>,
+    mut crosshair: Single<&mut CrosshairState>,
 ) {
-    let Some((player, pickup_actor)) = player.map(|p| p.into_inner()) else {
-        return;
-    };
-    let Some(mut crosshair) = crosshair else {
-        return;
-    };
+    let (player, pickup_actor) = player.into_inner();
     let camera_transform = player.compute_transform();
     let hit = spatial_query.cast_ray(
         camera_transform.translation,
@@ -44,11 +39,8 @@ fn check_for_pickup_opportunity(
 
 fn hide_crosshair_when_picking_up(
     _trigger: Trigger<OnAdd, HeldProp>,
-    crosshair: Option<Single<&mut CrosshairState>>,
+    mut crosshair: Single<&mut CrosshairState>,
 ) {
-    let Some(mut crosshair) = crosshair else {
-        return;
-    };
     crosshair
         .wants_invisible
         .insert(hide_crosshair_when_picking_up.type_id());
@@ -56,11 +48,8 @@ fn hide_crosshair_when_picking_up(
 
 fn show_crosshair_when_not_picking_up(
     _trigger: Trigger<OnRemove, HeldProp>,
-    crosshair: Option<Single<&mut CrosshairState>>,
+    mut crosshair: Single<&mut CrosshairState>,
 ) {
-    let Some(mut crosshair) = crosshair else {
-        return;
-    };
     crosshair
         .wants_invisible
         .remove(&hide_crosshair_when_picking_up.type_id());

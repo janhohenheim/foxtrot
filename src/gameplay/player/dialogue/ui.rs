@@ -11,6 +11,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         update_interaction_prompt_ui
+            .param_warn_once()
             .in_set(DialogueSet::UpdateUI)
             .run_if(in_state(Screen::Gameplay)),
     );
@@ -43,19 +44,13 @@ fn setup_interaction_prompt(mut commands: Commands) {
 }
 
 fn update_interaction_prompt_ui(
-    dialogue_prompt: Option<
-        Single<(&mut Text, &mut Visibility, &InteractionPrompt), Changed<InteractionPrompt>>,
+    dialogue_prompt: Single<
+        (&mut Text, &mut Visibility, &InteractionPrompt),
+        Changed<InteractionPrompt>,
     >,
-    crosshair: Option<Single<&mut CrosshairState>>,
+    mut crosshair: Single<&mut CrosshairState>,
 ) {
-    let Some((mut text, mut prompt_visibility, dialogue_prompt)) =
-        dialogue_prompt.map(|d| d.into_inner())
-    else {
-        return;
-    };
-    let Some(mut crosshair) = crosshair.map(|c| c.into_inner()) else {
-        return;
-    };
+    let (mut text, mut prompt_visibility, dialogue_prompt) = dialogue_prompt.into_inner();
     let system_id = update_interaction_prompt_ui.type_id();
     if let Some(node) = &dialogue_prompt.0 {
         text.0 = format!("E: {}", node.prompt);

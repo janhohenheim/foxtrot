@@ -1,7 +1,7 @@
 use super::bevy_trenchbroom::Worldspawn;
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy_landmass::prelude::*;
+use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
 use oxidized_navigation::{NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin};
 
@@ -25,8 +25,13 @@ fn setup_archipelago(mut commands: Commands) {
     commands.spawn((
         Name::new("Main Level Archipelago"),
         Archipelago3d::new(AgentOptions {
-            node_sample_distance: 1.0,
-            ..AgentOptions::default_for_agent_radius(0.6)
+            point_sample_distance: PointSampleDistance3d {
+                horizontal_distance: 0.25,
+                distance_above: 1.0,
+                distance_below: 2.0,
+                vertical_preference_ratio: 2.0,
+            },
+            ..AgentOptions::from_agent_radius(0.6)
         }),
         OxidizedArchipelago,
     ));

@@ -42,10 +42,15 @@ fn capture_cursor(
     crosshair.wants_invisible.remove(&release_cursor.type_id());
 }
 
-pub fn release_cursor(mut window: Single<&mut Window>, mut crosshair: Single<&mut CrosshairState>) {
+pub fn release_cursor(
+    mut window: Single<&mut Window>,
+    crosshair: Option<Single<&mut CrosshairState>>,
+) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
-    crosshair.wants_invisible.insert(release_cursor.type_id());
+    if let Some(mut crosshair) = crosshair {
+        crosshair.wants_invisible.insert(release_cursor.type_id());
+    }
 }
 
 /// Show a crosshair for better aiming

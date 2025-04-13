@@ -17,9 +17,9 @@ bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua",
 bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
 
 # navigation
-bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
+bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", branch = "node_sample_distance" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
-landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", rev = "aff41b15325145b525ce09dad824146fe70c073f" }
+landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", branch = "node_sample_distance" }
 
 # dialogue
 bevy_yarnspinner = "0.4.0"

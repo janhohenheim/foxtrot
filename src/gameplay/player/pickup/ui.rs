@@ -5,7 +5,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    gameplay::{cursor::CrosshairState, player::camera::PlayerCameraParent},
+    gameplay::{crosshair::CrosshairState, player::camera::PlayerCameraParent},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
 };

@@ -7,7 +7,7 @@ use crate::{
     asset_tracking::LoadResource, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
-use super::{dynamic_props::*, specific_props::*};
+use super::props::*;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<LevelAssets>();

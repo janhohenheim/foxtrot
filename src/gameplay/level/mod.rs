@@ -8,6 +8,7 @@ use crate::screens::Screen;
 mod assets;
 pub(crate) mod dynamic_props;
 pub(crate) mod prop_util;
+pub(crate) mod props;
 pub(crate) mod specific_props;
 
 pub(super) fn plugin(app: &mut App) {
@@ -16,6 +17,7 @@ pub(super) fn plugin(app: &mut App) {
         prop_util::plugin,
         dynamic_props::plugin,
         specific_props::plugin,
+        props::plugin,
         assets::plugin,
     ));
 }

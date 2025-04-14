@@ -1,7 +1,7 @@
 use crate::gameplay::level::{
     assets::LevelAssets,
-    dynamic_props::{CandleUnlit, dynamic_bundle},
-    prop_util::create_prop,
+    dynamic_props::dynamic_bundle,
+    props::{Candle, CandleUnlit},
 };
 use avian_pickup::prop::HeldProp;
 use bevy::{
@@ -12,9 +12,7 @@ use bevy_trenchbroom::prelude::*;
 
 pub(super) fn plugin(_app: &mut App) {}
 
-create_prop!(Candle, "models/candle/candle.gltf", on_add = setup_candle);
-
-fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
     if world.is_scene_world() {
         return;
     }
@@ -36,5 +34,5 @@ fn extinguish_candle(
     commands.entity(candle).despawn_descendants();
     commands
         .entity(candle)
-        .insert(SceneRoot(level_assets.model_for_class::<CandleUnlit>()));
+        .with_child(SceneRoot(level_assets.model_for_class::<CandleUnlit>()));
 }

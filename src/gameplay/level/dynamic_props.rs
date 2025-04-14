@@ -30,11 +30,15 @@ pub(crate) fn dynamic_bundle() -> impl Bundle {
     (
         TrenchBroomGltfRotationFix,
         TransformInterpolation,
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
-            .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-            // About the density of oak wood (600-800 kg/m^3)
-            .with_default_density(800.0),
+        collider_constructor_hierarchy(),
         RigidBody::Dynamic,
         TnuaNotPlatform,
     )
+}
+
+pub(crate) fn collider_constructor_hierarchy() -> ColliderConstructorHierarchy {
+    ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
+        .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+        // About the density of oak wood (600-800 kg/m^3)
+        .with_default_density(800.0)
 }

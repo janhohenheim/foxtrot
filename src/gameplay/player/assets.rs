@@ -20,6 +20,8 @@ pub(crate) struct PlayerAssets {
     pub(crate) steps: Vec<Handle<AudioSource>>,
     #[dependency]
     pub(crate) idle_animation: Handle<AnimationClip>,
+    #[dependency]
+    pub(crate) start_idle_animation: Handle<AnimationClip>,
 }
 
 impl FromWorld for PlayerAssets {
@@ -37,6 +39,7 @@ impl FromWorld for PlayerAssets {
                 assets.load("audio/sound_effects/step4.ogg"),
             ],
             idle_animation: load_animation("9"),
+            start_idle_animation: load_animation("10"),
         }
     }
 }

@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 pub(crate) struct PlayerAnimations {
     idle: AnimationNodeIndex,
-    start_idle: AnimationNodeIndex,
+    a_pose: AnimationNodeIndex,
 }
 
 pub(crate) fn setup_player_animations(
@@ -33,16 +33,16 @@ pub(crate) fn setup_player_animations(
 
     let (graph, indices) = AnimationGraph::from_clips([
         assets.idle_animation.clone(),
-        assets.start_idle_animation.clone(),
+        assets.a_pose_animation.clone(),
     ]);
-    let [idle_index, start_idle_index] = indices.as_slice() else {
+    let [idle_index, a_pose_index] = indices.as_slice() else {
         unreachable!()
     };
     let graph_handle = graphs.add(graph);
 
     let animations = PlayerAnimations {
         idle: *idle_index,
-        start_idle: *start_idle_index,
+        a_pose: *a_pose_index,
     };
     let transitions = AnimationTransitions::new();
     commands.entity(anim_player).insert((
@@ -69,8 +69,6 @@ fn play_animations(
         &mut AnimationPlayer,
         &mut AnimationTransitions,
     )>,
-    assets: Res<PlayerAssets>,
-    animation_clips: Res<Assets<AnimationClip>>,
     crosshair_state: Single<&CrosshairState>,
 ) {
     for (mut animating_state, link) in query.iter_mut() {
@@ -96,31 +94,18 @@ fn play_animations(
                 state,
             } => match state {
                 PlayerAnimationState::None => {
-                    transitions
-                        .play(
-                            &mut anim_player,
-                            animations.start_idle,
-                            Duration::from_millis(100),
-                        )
-                        .set_speed(-1.0);
+                    transitions.play(
+                        &mut anim_player,
+                        animations.a_pose,
+                        Duration::from_millis(400),
+                    );
                 }
                 PlayerAnimationState::Idle => {
-                    let start_idle_animation =
-                        animation_clips.get(&assets.start_idle_animation).unwrap();
-                    const SPEEDUP: f32 = 2.0;
-                    let start_idle_duration = start_idle_animation.duration() / SPEEDUP;
-                    transitions
-                        .play(
-                            &mut anim_player,
-                            animations.start_idle,
-                            Duration::from_millis(0),
-                        )
-                        .set_speed(SPEEDUP);
                     transitions
                         .play(
                             &mut anim_player,
                             animations.idle,
-                            Duration::from_secs_f32(start_idle_duration),
+                            Duration::from_millis(150),
                         )
                         .repeat();
                 }

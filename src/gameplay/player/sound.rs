@@ -12,7 +12,7 @@ use super::{Player, assets::PlayerAssets};
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
-        (play_jump_grunt, play_step_sound).run_if(in_state(Screen::Gameplay)),
+        (play_jump_grunt, play_step_sound, play_land_sound).run_if(in_state(Screen::Gameplay)),
     );
 }
 
@@ -40,10 +40,16 @@ fn play_jump_grunt(
     *is_jumping = true;
 
     let rng = &mut rand::thread_rng();
-    let sound_effect = player_assets.jump_grunts.choose(rng).unwrap();
+    let grunt = player_assets.jump_grunts.choose(rng).unwrap();
+    let jump_start = player_assets.jump_start_sounds.choose(rng).unwrap();
 
     commands.spawn((
-        AudioPlayer(sound_effect.clone()),
+        AudioPlayer(grunt.clone()),
+        PlaybackSettings::DESPAWN,
+        SoundEffect,
+    ));
+    commands.spawn((
+        AudioPlayer(jump_start.clone()),
         PlaybackSettings::DESPAWN,
         SoundEffect,
     ));
@@ -72,6 +78,28 @@ fn play_step_sound(
     }
     let rng = &mut rand::thread_rng();
     let sound_effect = player_assets.steps.choose(rng).unwrap();
+
+    commands.spawn((AudioPlayer(sound_effect.clone()), PlaybackSettings::DESPAWN));
+}
+
+fn play_land_sound(
+    mut commands: Commands,
+    player: Single<&TnuaController, With<Player>>,
+    player_assets: Res<PlayerAssets>,
+    mut was_airborne: Local<bool>,
+) {
+    let is_airborne = player.is_airborne().unwrap_or(true);
+    if is_airborne {
+        *was_airborne = true;
+        return;
+    }
+    if !*was_airborne {
+        return;
+    }
+    *was_airborne = false;
+
+    let rng = &mut rand::thread_rng();
+    let sound_effect = player_assets.land_sounds.choose(rng).unwrap();
 
     commands.spawn((AudioPlayer(sound_effect.clone()), PlaybackSettings::DESPAWN));
 }

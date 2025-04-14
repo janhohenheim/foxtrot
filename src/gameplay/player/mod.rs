@@ -79,6 +79,7 @@ impl Player {
                     static_coefficient: 0.0,
                     combine_rule: CoefficientCombine::Multiply,
                 },
+                ColliderDensity(200.0),
                 TransformInterpolation,
                 CollisionLayers::new(CollisionLayer::Player, LayerMask::ALL),
                 TnuaAnimatingState::<PlayerAnimationState>::default(),

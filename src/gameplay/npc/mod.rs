@@ -17,7 +17,7 @@ use super::animation::AnimationPlayerAncestor;
 mod ai;
 mod animation;
 mod assets;
-mod sound;  
+mod sound;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((ai::plugin, animation::plugin, assets::plugin, sound::plugin));
@@ -50,6 +50,7 @@ impl Npc {
                 Collider::capsule(NPC_RADIUS, 0.1),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
+                ColliderDensity(200.0),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),

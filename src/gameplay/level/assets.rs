@@ -7,7 +7,7 @@ use crate::{
     asset_tracking::LoadResource, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
-use super::props::*;
+use super::{dynamic_props::*, specific_props::*};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<LevelAssets>();
@@ -25,6 +25,10 @@ pub(crate) struct LevelAssets {
     pub(crate) plate_model: Handle<Scene>,
     #[dependency]
     pub(crate) mug_model: Handle<Scene>,
+    #[dependency]
+    pub(crate) candle_unlit_model: Handle<Scene>,
+    #[dependency]
+    pub(crate) candle_model: Handle<Scene>,
 }
 
 impl LevelAssets {
@@ -36,6 +40,10 @@ impl LevelAssets {
             self.plate_model.clone()
         } else if type_id == TypeId::of::<Mug>() {
             self.mug_model.clone()
+        } else if type_id == TypeId::of::<CandleUnlit>() {
+            self.candle_unlit_model.clone()
+        } else if type_id == TypeId::of::<Candle>() {
+            self.candle_model.clone()
         } else {
             panic!(
                 "No model for class with type id: {:?}. Did you forget to add it to the `LevelAssets`?",
@@ -54,6 +62,8 @@ impl FromWorld for LevelAssets {
             book_model: load_model::<Book>(assets),
             plate_model: load_model::<Plate>(assets),
             mug_model: load_model::<Mug>(assets),
+            candle_unlit_model: load_model::<CandleUnlit>(assets),
+            candle_model: load_model::<Candle>(assets),
         }
     }
 }

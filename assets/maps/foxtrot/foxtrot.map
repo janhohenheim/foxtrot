@@ -365,3 +365,8 @@
 "classname" "mug"
 "origin" "-8 296 24"
 }
+// entity 13
+{
+"classname" "candle"
+"origin" "88 248 24"
+}

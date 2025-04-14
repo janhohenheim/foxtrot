@@ -21,6 +21,10 @@ pub(crate) struct PlayerAssets {
     #[dependency]
     pub(crate) jump_grunts: Vec<Handle<AudioSource>>,
     #[dependency]
+    pub(crate) land_sounds: Vec<Handle<AudioSource>>,
+    #[dependency]
+    pub(crate) jump_start_sounds: Vec<Handle<AudioSource>>,
+    #[dependency]
     pub(crate) idle_animation: Handle<AnimationClip>,
     #[dependency]
     pub(crate) a_pose_animation: Handle<AnimationClip>,
@@ -50,6 +54,22 @@ impl FromWorld for PlayerAssets {
                 assets.load("audio/sound_effects/jump_grunt/jump_grunt_2.ogg"),
                 assets.load("audio/sound_effects/jump_grunt/jump_grunt_3.ogg"),
                 assets.load("audio/sound_effects/jump_grunt/jump_grunt_4.ogg"),
+            ],
+            land_sounds: vec![
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_01.ogg"),
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_02.ogg"),
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_03.ogg"),
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_04.ogg"),
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_05.ogg"),
+                assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_06.ogg"),
+            ],
+            jump_start_sounds: vec![
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_01.ogg"),
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_02.ogg"),
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_03.ogg"),
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_04.ogg"),
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_05.ogg"),
+                assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_06.ogg"),
             ],
             idle_animation: load_animation("9"),
             a_pose_animation: load_animation("5"),

@@ -35,10 +35,15 @@ impl FromWorld for PlayerAssets {
         Self {
             model: assets.load(format!("{}#Scene0", Player::model_path())),
             steps: vec![
-                assets.load("audio/sound_effects/step1.ogg"),
-                assets.load("audio/sound_effects/step2.ogg"),
-                assets.load("audio/sound_effects/step3.ogg"),
-                assets.load("audio/sound_effects/step4.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_01.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_02.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_03.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_04.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_05.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_06.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_07.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_08.ogg"),
+                assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_09.ogg"),
             ],
             jump_grunts: vec![
                 assets.load("audio/sound_effects/jump_grunt/jump_grunt_1.ogg"),

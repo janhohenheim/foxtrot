@@ -2,7 +2,6 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_tnua::TnuaNotPlatform;
 
-
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(add_not_platform_to_props);
 }
@@ -12,7 +11,17 @@ macro_rules! create_prop {
         create_prop!($name, $model, on_add = setup_dynamic_prop::<$name>);
     };
     ($name:ident, $model:expr, on_add = $on_add:ty) => {
-        #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
+        #[derive(
+            bevy_trenchbroom::prelude::PointClass,
+            Component,
+            Debug,
+            Clone,
+            Copy,
+            PartialEq,
+            Eq,
+            Default,
+            Reflect,
+        )]
         #[reflect(Component)]
         #[require(Transform, Visibility)]
         #[model($model)]

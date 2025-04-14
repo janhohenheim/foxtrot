@@ -23,8 +23,8 @@ pub(crate) mod camera;
 pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
+pub mod movement_sound;
 pub(crate) mod pickup;
-pub mod sound;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
@@ -36,7 +36,7 @@ pub(super) fn plugin(app: &mut App) {
         dialogue::plugin,
         pickup::plugin,
         animation::plugin,
-        sound::plugin,
+        movement_sound::plugin,
     ));
     app.add_observer(setup_player_character);
 }

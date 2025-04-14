@@ -17,6 +17,8 @@ pub(crate) struct PlayerAssets {
     #[dependency]
     pub(crate) model: Handle<Scene>,
     #[dependency]
+    pub(crate) throw_sound: Handle<AudioSource>,
+    #[dependency]
     pub(crate) steps: Vec<Handle<AudioSource>>,
     #[dependency]
     pub(crate) jump_grunts: Vec<Handle<AudioSource>>,
@@ -38,6 +40,7 @@ impl FromWorld for PlayerAssets {
         };
         Self {
             model: assets.load(format!("{}#Scene0", Player::model_path())),
+            throw_sound: assets.load("audio/sound_effects/throw.ogg"),
             steps: vec![
                 assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_01.ogg"),
                 assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_02.ogg"),

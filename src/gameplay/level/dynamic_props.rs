@@ -8,32 +8,35 @@ use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};
 
 use super::assets::LevelAssets;
+use super::prop_util::create_prop;
 
-pub(super) fn plugin(app: &mut App) {
-    app.add_observer(add_not_platform_to_props);
-}
+pub(super) fn plugin(_app: &mut App) {}
 
 macro_rules! dynamic_prop {
     ($name:ident, $model:expr) => {
-        #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
-        #[reflect(Component)]
-        #[require(Transform, Visibility)]
-        #[model($model)]
-        #[component(on_add = on_add_dynamic_prop::<$name>)]
-        pub(crate) struct $name;
+        create_prop!($name, $model, on_add = setup_dynamic_prop::<$name>);
     };
 }
 
+// Add your new props here!
 dynamic_prop!(Book, "models/book/book.gltf");
 dynamic_prop!(Plate, "models/plate/plate.gltf");
 dynamic_prop!(Mug, "models/mug/mug.gltf");
+dynamic_prop!(CandleUnlit, "models/candle_unlit/candle_unlit.gltf");
 
-fn on_add_dynamic_prop<T: QuakeClass>(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+fn setup_dynamic_prop<T: QuakeClass>(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
     if world.is_scene_world() {
         return;
     }
     let model = world.resource::<LevelAssets>().model_for_class::<T>();
-    world.commands().entity(entity).insert((
+    world
+        .commands()
+        .entity(entity)
+        .insert((dynamic_bundle(), SceneRoot(model)));
+}
+
+pub(crate) fn dynamic_bundle() -> impl Bundle {
+    (
         TrenchBroomGltfRotationFix,
         TransformInterpolation,
         ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
@@ -41,20 +44,6 @@ fn on_add_dynamic_prop<T: QuakeClass>(mut world: DeferredWorld, entity: Entity, 
             // About the density of oak wood (600-800 kg/m^3)
             .with_default_density(800.0),
         RigidBody::Dynamic,
-        SceneRoot(model),
         TnuaNotPlatform,
-    ));
-}
-
-fn add_not_platform_to_props(
-    trigger: Trigger<OnAdd, ColliderParent>,
-    mut commands: Commands,
-    q_collider_parent: Query<&ColliderParent>,
-    q_tnua_not_platform: Query<&TnuaNotPlatform>,
-) {
-    let parent = q_collider_parent.get(trigger.entity()).unwrap();
-    if !q_tnua_not_platform.contains(parent.get()) {
-        return;
-    }
-    commands.entity(trigger.entity()).insert(TnuaNotPlatform);
+    )
 }

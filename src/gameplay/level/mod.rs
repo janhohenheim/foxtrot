@@ -6,11 +6,18 @@ use bevy::{prelude::*, scene::SceneInstanceReady};
 use crate::screens::Screen;
 
 mod assets;
-mod props;
+pub(crate) mod dynamic_props;
+pub(crate) mod prop_util;
+pub(crate) mod specific_props;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Level>();
-    app.add_plugins((props::plugin, assets::plugin));
+    app.add_plugins((
+        prop_util::plugin,
+        dynamic_props::plugin,
+        specific_props::plugin,
+        assets::plugin,
+    ));
 }
 
 /// A [`Command`] to spawn the level.

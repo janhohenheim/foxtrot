@@ -18,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_observer(hide_crosshair_when_picking_up.param_warn_once());
-    app.add_observer(show_crosshair_when_not_picking_up.param_warn_once());
+    app.add_observer(show_crosshair_when_not_picking_up.never_param_warn());
 }
 
 fn check_for_pickup_opportunity(

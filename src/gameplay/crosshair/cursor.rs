@@ -19,19 +19,13 @@ pub(super) fn plugin(app: &mut App) {
             release_cursor
                 .param_warn_once()
                 .run_if(on_event::<DialogueStartEvent>.or(is_cursor_forced_freed)),
-            hide_crosshair
-                .never_param_warn()
-                .run_if(on_event::<DialogueStartEvent>),
         )
             .chain()
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_systems(
         OnExit(Screen::Gameplay),
-        (
-            release_cursor.param_warn_once(),
-            hide_crosshair.never_param_warn(),
-        ),
+        (release_cursor.param_warn_once(),),
     );
 }
 
@@ -54,10 +48,6 @@ fn capture_cursor(
 pub fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
-}
-
-pub fn hide_crosshair(mut crosshair: Single<&mut CrosshairState>) {
-    crosshair.wants_invisible.insert(hide_crosshair.type_id());
 }
 
 pub(crate) fn is_cursor_forced_freed(val: Res<IsCursorForcedFreed>) -> bool {

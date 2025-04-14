@@ -1,9 +1,9 @@
 use std::any::TypeId;
 
 use assets::CursorAssets;
-use bevy::{prelude::*, render::view::RenderLayers, utils::HashSet};
+use bevy::{prelude::*, utils::HashSet};
 
-use crate::{UI_RENDER_LAYER, screens::Screen};
+use crate::screens::Screen;
 
 mod assets;
 pub(crate) mod cursor;
@@ -30,7 +30,6 @@ fn spawn_crosshair(mut commands: Commands, assets: Res<CursorAssets>) {
                 ..default()
             },
             StateScoped(Screen::Gameplay),
-            RenderLayers::layer(UI_RENDER_LAYER),
         ))
         .with_children(|parent| {
             parent.spawn((

@@ -1,9 +1,9 @@
 use std::any::Any;
 
-use bevy::{prelude::*, render::view::RenderLayers};
+use bevy::prelude::*;
 use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
 
-use crate::{UI_RENDER_LAYER, gameplay::crosshair::CrosshairState, screens::Screen};
+use crate::{gameplay::crosshair::CrosshairState, screens::Screen};
 
 use super::{DialogueSet, InteractionPrompt};
 
@@ -38,7 +38,6 @@ fn setup_interaction_prompt(mut commands: Commands) {
                 ..default()
             },
             StateScoped(Screen::Gameplay),
-            RenderLayers::layer(UI_RENDER_LAYER),
         ))
         .with_children(|parent| {
             parent.spawn((

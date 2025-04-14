@@ -1,14 +1,8 @@
 //! Helper traits for creating common widgets.
 
-use bevy::{
-    ecs::system::EntityCommands, hierarchy::ChildBuild, prelude::*, render::view::RenderLayers,
-    ui::Val::*,
-};
+use bevy::{ecs::system::EntityCommands, hierarchy::ChildBuild, prelude::*, ui::Val::*};
 
-use crate::{
-    UI_RENDER_LAYER,
-    theme::{interaction::InteractionPalette, palette::*},
-};
+use crate::theme::{interaction::InteractionPalette, palette::*};
 
 /// An extension trait for spawning UI widgets.
 pub(crate) trait Widgets {
@@ -40,7 +34,6 @@ impl<T: Spawn> Widgets for T {
                 hovered: BUTTON_HOVERED_BACKGROUND,
                 pressed: BUTTON_PRESSED_BACKGROUND,
             },
-            RenderLayers::layer(UI_RENDER_LAYER),
         ));
         entity.with_children(|children| {
             ChildBuild::spawn(
@@ -50,7 +43,6 @@ impl<T: Spawn> Widgets for T {
                     Text(text.into()),
                     TextFont::from_font_size(40.0),
                     TextColor(BUTTON_TEXT),
-                    RenderLayers::layer(UI_RENDER_LAYER),
                 ),
             );
         });
@@ -69,7 +61,6 @@ impl<T: Spawn> Widgets for T {
                 ..default()
             },
             BackgroundColor(NODE_BACKGROUND),
-            RenderLayers::layer(UI_RENDER_LAYER),
         ));
         entity.with_children(|children| {
             ChildBuild::spawn(
@@ -79,7 +70,6 @@ impl<T: Spawn> Widgets for T {
                     Text(text.into()),
                     TextFont::from_font_size(40.0),
                     TextColor(HEADER_TEXT),
-                    RenderLayers::layer(UI_RENDER_LAYER),
                 ),
             );
         });
@@ -96,7 +86,6 @@ impl<T: Spawn> Widgets for T {
                 width: Px(500.0),
                 ..default()
             },
-            RenderLayers::layer(UI_RENDER_LAYER),
         ));
         entity
     }
@@ -123,7 +112,6 @@ impl Containers for Commands<'_, '_> {
                 position_type: PositionType::Absolute,
                 ..default()
             },
-            RenderLayers::layer(UI_RENDER_LAYER),
         ))
     }
 }

@@ -6,12 +6,12 @@ mod gameplay;
 mod screens;
 mod theme;
 mod third_party;
+mod ui_camera;
 
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
     prelude::*,
-    render::view::RenderLayers,
 };
 
 pub struct AppPlugin;
@@ -23,9 +23,6 @@ impl Plugin for AppPlugin {
             Update,
             (AppSet::TickTimers, AppSet::RecordInput, AppSet::Update).chain(),
         );
-
-        // Spawn the main camera.
-        app.add_systems(Startup, spawn_camera);
 
         // Add Bevy plugins.
         app.add_plugins(
@@ -57,6 +54,7 @@ impl Plugin for AppPlugin {
         // Add other plugins.
         app.add_plugins((
             third_party::plugin,
+            ui_camera::plugin,
             asset_tracking::plugin,
             gameplay::plugin,
             screens::plugin,
@@ -80,21 +78,4 @@ enum AppSet {
     RecordInput,
     /// Do everything else (consider splitting this into further variants).
     Update,
-}
-
-const UI_RENDER_LAYER: usize = 2;
-
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((
-        Name::new("UI Camera"),
-        Camera2d,
-        // Render all UI to this camera.
-        IsDefaultUiCamera,
-        RenderLayers::layer(UI_RENDER_LAYER),
-        Camera {
-            // Bump the order to render on top of the view model.
-            order: 2,
-            ..default()
-        },
-    ));
 }

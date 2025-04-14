@@ -79,7 +79,11 @@ fn play_step_sound(
     let rng = &mut rand::thread_rng();
     let sound_effect = player_assets.steps.choose(rng).unwrap();
 
-    commands.spawn((AudioPlayer(sound_effect.clone()), PlaybackSettings::DESPAWN));
+    commands.spawn((
+        AudioPlayer(sound_effect.clone()),
+        PlaybackSettings::DESPAWN,
+        SoundEffect,
+    ));
 }
 
 fn play_land_sound(
@@ -101,5 +105,9 @@ fn play_land_sound(
     let rng = &mut rand::thread_rng();
     let sound_effect = player_assets.land_sounds.choose(rng).unwrap();
 
-    commands.spawn((AudioPlayer(sound_effect.clone()), PlaybackSettings::DESPAWN));
+    commands.spawn((
+        AudioPlayer(sound_effect.clone()),
+        PlaybackSettings::DESPAWN,
+        SoundEffect,
+    ));
 }

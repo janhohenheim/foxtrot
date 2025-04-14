@@ -22,6 +22,8 @@ pub(crate) struct NpcAssets {
     pub(crate) walk_animation: Handle<AnimationClip>,
     #[dependency]
     pub(crate) run_animation: Handle<AnimationClip>,
+    #[dependency]
+    pub(crate) steps: Vec<Handle<AudioSource>>,
 }
 
 impl FromWorld for NpcAssets {
@@ -35,6 +37,18 @@ impl FromWorld for NpcAssets {
             run_animation: load_animation("0"),
             idle_animation: load_animation("1"),
             walk_animation: load_animation("2"),
+            steps: vec![
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_01.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_02.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_03.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_04.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_05.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_06.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_07.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_08.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_09.ogg"),
+                assets.load("audio/sound_effects/run/Footsteps_Rock_Run_10.ogg"),
+            ],
         }
     }
 }

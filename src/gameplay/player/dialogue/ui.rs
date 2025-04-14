@@ -1,6 +1,7 @@
 use std::any::Any;
 
 use bevy::{prelude::*, render::view::RenderLayers};
+use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
 
 use crate::{UI_RENDER_LAYER, gameplay::crosshair::CrosshairState, screens::Screen};
 
@@ -13,6 +14,14 @@ pub(super) fn plugin(app: &mut App) {
         update_interaction_prompt_ui
             .param_warn_once()
             .in_set(DialogueSet::UpdateUI)
+            .run_if(in_state(Screen::Gameplay)),
+    );
+    app.add_systems(
+        Update,
+        (
+            hide_crosshair_on_dialogue_start.run_if(on_event::<DialogueStartEvent>),
+            show_crosshair_on_dialogue_end.run_if(on_event::<DialogueCompleteEvent>),
+        )
             .run_if(in_state(Screen::Gameplay)),
     );
 }
@@ -63,4 +72,16 @@ fn update_interaction_prompt_ui(
         *prompt_visibility = Visibility::Hidden;
         crosshair.wants_square.remove(&system_id);
     }
+}
+
+fn hide_crosshair_on_dialogue_start(mut crosshair: Single<&mut CrosshairState>) {
+    crosshair
+        .wants_invisible
+        .insert(hide_crosshair_on_dialogue_start.type_id());
+}
+
+fn show_crosshair_on_dialogue_end(mut crosshair: Single<&mut CrosshairState>) {
+    crosshair
+        .wants_invisible
+        .remove(&hide_crosshair_on_dialogue_start.type_id());
 }

@@ -1,6 +1,6 @@
 //! The screen state for the main gameplay.
 
-use bevy::{input::common_conditions::input_just_pressed, prelude::*};
+use bevy::{audio::Volume, input::common_conditions::input_just_pressed, prelude::*};
 
 use crate::{asset_tracking::LoadResource, audio::Music, screens::Screen};
 
@@ -29,7 +29,7 @@ impl FromWorld for GameplayMusic {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
-            music: assets.load("audio/music/Fluffing A Duck.ogg"),
+            music: assets.load("audio/music/Ambiance_Rain_Calm_Loop_Stereo.ogg"),
             entity: None,
         }
     }
@@ -40,7 +40,7 @@ fn start_gameplay_music(mut commands: Commands, mut music: ResMut<GameplayMusic>
         commands
             .spawn((
                 AudioPlayer(music.music.clone()),
-                PlaybackSettings::LOOP,
+                PlaybackSettings::LOOP.with_volume(Volume::new(1.5)),
                 Music,
             ))
             .id(),

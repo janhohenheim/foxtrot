@@ -100,6 +100,7 @@ fn spawn_view_model(
                 ..default()
             },
             AnimationPlayerAncestor,
+            SpatialListener::new(0.4),
         ))
         .with_children(|parent| {
             parent.spawn((

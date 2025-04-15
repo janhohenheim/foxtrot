@@ -3,6 +3,7 @@ pub(crate) mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
+mod props;
 mod screens;
 mod theme;
 mod third_party;
@@ -59,6 +60,7 @@ impl Plugin for AppPlugin {
             gameplay::plugin,
             screens::plugin,
             theme::plugin,
+            props::plugin,
         ));
 
         // Enable dev tools for dev builds.

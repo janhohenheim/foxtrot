@@ -7,7 +7,7 @@ use bevy::{
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};
 
-use super::assets::LevelAssets;
+use super::load_model;
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -19,7 +19,7 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
     if world.is_scene_world() {
         return;
     }
-    let model = world.resource::<LevelAssets>().model_for_class::<T>();
+    let model = load_model::<T>(world.resource::<AssetServer>());
     world
         .commands()
         .entity(entity)
@@ -30,15 +30,11 @@ pub(crate) fn dynamic_bundle() -> impl Bundle {
     (
         TrenchBroomGltfRotationFix,
         TransformInterpolation,
-        collider_constructor_hierarchy(),
+        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
+            .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+            // About the density of oak wood (600-800 kg/m^3)
+            .with_default_density(800.0),
         RigidBody::Dynamic,
         TnuaNotPlatform,
     )
-}
-
-pub(crate) fn collider_constructor_hierarchy() -> ColliderConstructorHierarchy {
-    ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
-        .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-        // About the density of oak wood (600-800 kg/m^3)
-        .with_default_density(800.0)
 }

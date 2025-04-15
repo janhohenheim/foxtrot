@@ -18,12 +18,5 @@ fn spawn_ui_camera(mut commands: Commands) {
             order: 2,
             ..default()
         },
-        RenderLayers::layer(UI_RENDER_LAYER),
     ));
-}
-
-fn render_ui_to_ui_camera(trigger: Trigger<OnAdd, Node>, mut commands: Commands) {
-    commands
-        .entity(trigger.entity())
-        .insert(RenderLayers::from_layers(&[UI_RENDER_LAYER]));
 }

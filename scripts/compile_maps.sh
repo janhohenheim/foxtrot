@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 help_text="Usage: $0 [options]
 Options:

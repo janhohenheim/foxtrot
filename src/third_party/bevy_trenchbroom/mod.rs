@@ -1,25 +1,47 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prelude::*};
+use proxy::RegisterProxies as _;
+
+use crate::{
+    gameplay::{npc::Npc, player::Player},
+    props::RegisterProps as _,
+};
 
 mod proxy;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins(TrenchBroomPlugin(
-        TrenchBroomConfig::new("foxtrot").texture_exclusions(
-            ["*_disp_*", "*_arm_*", "*_nor_*"]
-                .into_iter()
-                .map(String::from)
-                .collect::<Vec<_>>(),
-        ),
-    ));
+    app.add_plugins(TrenchBroomPlugin({
+        let config = TrenchBroomConfig::new("foxtrot")
+            .texture_exclusions(
+                ["*_disp_*", "*_arm_*", "*_nor_*"]
+                    .into_iter()
+                    .map(String::from)
+                    .collect::<Vec<_>>(),
+            )
+            // In Wasm, TrenchBroom classes are not automatically registered.
+            // So, we need to manually register the classes here
+            .register_props()
+            .register_proxies()
+            .register_class::<Worldspawn>()
+            .register_class::<Npc>()
+            .register_class::<Player>();
+        #[cfg(target_arch = "wasm32")]
+        let config = config.no_bsp_lighting(true);
+        config
+    }));
     app.add_systems(Startup, write_trenchbroom_config);
     app.add_plugins(proxy::plugin);
 }
 
 fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
-    info!("Writing TrenchBroom config");
-    if let Err(err) = server.config.write_to_default_folder() {
-        error!("Could not write TrenchBroom config: {err}");
+    #[cfg(target_arch = "wasm32")]
+    let _ = server;
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        info!("Writing TrenchBroom config");
+        if let Err(err) = server.config.write_to_default_folder() {
+            error!("Could not write TrenchBroom config: {err}");
+        }
     }
 }
 

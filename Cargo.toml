@@ -45,7 +45,8 @@ aalo = { version = "0.0.4", optional = true }
 [dependencies.bevy_trenchbroom]
 git = "https://github.com/Noxmore/bevy_trenchbroom"
 branch = "main"
-features = ["avian"]
+features = ["avian", "client"]
+default-features = false
 
 [features]
 default = [
@@ -68,6 +69,16 @@ dev_native = [
     "bevy/embedded_watcher",
     "oxidized_navigation/debug_draw",
 ]
+
+
+[package.metadata.bevy_cli.release]
+# Disable debug functionality in release builds
+default_features = false
+
+[package.metadata.bevy_cli.web.dev]
+# Disable native-only debug functionality in web builds
+default_features = false
+features = ["dev"]
 
 
 [lints.clippy]
@@ -97,3 +108,13 @@ debug-assertions = false
 
 [patch.crates-io]
 oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation" }
+
+# This profile will be used for `bevy run web` automatically
+[profile.web-release]
+# Default to release profile values.
+inherits = "release"
+# Optimize with size in mind (also try "z", sometimes it is better).
+# Slightly slows compile times, great improvements to file size and runtime performance.
+opt-level = "s"
+# Strip all debugging information from the binary to slightly reduce file size.
+strip = "debuginfo"

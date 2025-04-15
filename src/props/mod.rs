@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_trenchbroom::config::TrenchBroomConfig;
 use dynamic::setup_dynamic_prop;
 
 mod dynamic;
@@ -10,6 +11,20 @@ pub(super) fn plugin(app: &mut App) {
 
 // We can define a new prop here to make it show up in TrenchBroom.
 // Afterwards, we still need to add it to the `LevelAssets` struct to preload it for a given level.
+
+pub(crate) trait RegisterProps {
+    fn register_props(self) -> TrenchBroomConfig;
+}
+
+impl RegisterProps for TrenchBroomConfig {
+    fn register_props(self) -> TrenchBroomConfig {
+        self.register_class::<Book>()
+            .register_class::<Plate>()
+            .register_class::<Mug>()
+            .register_class::<CandleUnlit>()
+            .register_class::<Candle>()
+    }
+}
 
 create_prop!(
     Book,

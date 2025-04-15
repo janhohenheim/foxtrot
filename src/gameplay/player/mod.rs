@@ -46,6 +46,8 @@ pub(super) fn plugin(app: &mut App) {
 #[require(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
 #[component(on_add = Self::on_add)]
+// In Wasm, TrenchBroom classes are not automatically registered.
+// So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Player;
 
 pub(crate) const PLAYER_RADIUS: f32 = 0.5;

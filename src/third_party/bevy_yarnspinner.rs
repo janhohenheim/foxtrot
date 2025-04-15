@@ -9,7 +9,8 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<YarnNode>();
 
     app.add_plugins((
-        YarnSpinnerPlugin::default(),
+        // In Wasm, we need to load the dialogue file manually. If we're not targeting Wasm, we can just use `YarnSpinnerPlugin::default()` instead.
+        YarnSpinnerPlugin::with_yarn_sources(vec![YarnFileSource::file("dialogue/npc.yarn")]),
         ExampleYarnSpinnerDialogueViewPlugin::default(),
     ));
     app.add_systems(OnEnter(Screen::Gameplay), setup_dialogue_runner);

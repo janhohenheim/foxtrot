@@ -29,6 +29,8 @@ pub(super) fn plugin(app: &mut App) {
 #[require(Transform, Visibility)]
 #[model("models/fox/Fox.gltf")]
 #[component(on_add = Self::on_add)]
+// In Wasm, TrenchBroom classes are not automatically registered.
+// So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Npc;
 
 const NPC_RADIUS: f32 = 0.8;

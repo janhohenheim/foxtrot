@@ -1,7 +1,17 @@
 use bevy::prelude::{PointLight as BevyPointLight, *};
-use bevy_trenchbroom::prelude::PointClass;
+use bevy_trenchbroom::{config::TrenchBroomConfig, prelude::PointClass};
 
 pub(super) fn plugin(_app: &mut App) {}
+
+pub(crate) trait RegisterProxies {
+    fn register_proxies(self) -> TrenchBroomConfig;
+}
+
+impl RegisterProxies for TrenchBroomConfig {
+    fn register_proxies(self) -> TrenchBroomConfig {
+        self.register_class::<PointLight>()
+    }
+}
 
 /// A light that emits light in all directions from a central point.
 ///

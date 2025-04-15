@@ -8,7 +8,7 @@ use bevy::prelude::*;
 mod animation;
 pub(crate) mod crosshair;
 pub(crate) mod level;
-mod npc;
+pub(crate) mod npc;
 pub(crate) mod player;
 
 pub(super) fn plugin(app: &mut App) {

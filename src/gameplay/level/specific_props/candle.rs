@@ -30,4 +30,4 @@ pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: Compon
             RigidBody::Dynamic,
         ))
         .with_child((collider_constructor_hierarchy(), SceneRoot(model)));
-
+}

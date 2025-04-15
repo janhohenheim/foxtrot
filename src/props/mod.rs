@@ -2,11 +2,10 @@ use bevy::prelude::*;
 use dynamic::setup_dynamic_prop;
 
 mod dynamic;
-pub(crate) mod loading;
 mod specific;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((loading::plugin, dynamic::plugin, specific::plugin));
+    app.add_plugins((dynamic::plugin, specific::plugin));
 }
 
 // We can define a new prop here to make it show up in TrenchBroom.

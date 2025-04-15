@@ -30,10 +30,11 @@ impl FromWorld for NpcAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         let load_animation = |name: &str| -> Handle<AnimationClip> {
-            assets.load(format!("{}#Animation{}", Npc::model_path(), name))
+            let file_path = Npc::file_path();
+            assets.load(format!("{file_path}#Animation{name}"))
         };
         Self {
-            model: assets.load(format!("{}#Scene0", Npc::model_path())),
+            model: assets.load(Npc::scene_path()),
             run_animation: load_animation("0"),
             idle_animation: load_animation("1"),
             walk_animation: load_animation("2"),

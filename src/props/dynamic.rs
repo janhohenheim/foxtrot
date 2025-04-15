@@ -1,4 +1,5 @@
 use crate::third_party::avian3d::CollisionLayer;
+use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -6,8 +7,6 @@ use bevy::{
 };
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};
-
-use super::loading::LoadModel as _;
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -19,14 +18,23 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
     if world.is_scene_world() {
         return;
     }
-    let model = world.resource::<AssetServer>().load_model::<T>();
-    world
-        .commands()
-        .entity(entity)
-        .insert((dynamic_bundle(), SceneRoot(model)));
+
+    let bundle = dynamic_bundle::<T>(&world);
+    world.commands().entity(entity).insert(bundle);
 }
 
-pub(crate) fn dynamic_bundle() -> impl Bundle {
+pub(crate) fn dynamic_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle {
+    let model = {
+        let assets = world.resource::<AssetServer>();
+        let model = assets.load(T::scene_path());
+        if !assets.is_loaded_with_dependencies(model.id()) {
+            warn!(
+                "Model \"{}\" was not preloaded and will load during gameplay. Did you forget to add it to the `LevelAssets` resource?",
+                T::scene_path()
+            );
+        }
+        model
+    };
     (
         TrenchBroomGltfRotationFix,
         TransformInterpolation,
@@ -36,5 +44,6 @@ pub(crate) fn dynamic_bundle() -> impl Bundle {
             .with_default_density(800.0),
         RigidBody::Dynamic,
         TnuaNotPlatform,
+        SceneRoot(model),
     )
 }

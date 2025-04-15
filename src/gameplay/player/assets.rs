@@ -36,10 +36,11 @@ impl FromWorld for PlayerAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         let load_animation = |name: &str| -> Handle<AnimationClip> {
-            assets.load(format!("{}#Animation{}", Player::model_path(), name))
+            let file_path = Player::file_path();
+            assets.load(format!("{file_path}#Animation{name}"))
         };
         Self {
-            model: assets.load(format!("{}#Scene0", Player::model_path())),
+            model: assets.load(Player::scene_path()),
             throw_sound: assets.load("audio/sound_effects/throw.ogg"),
             steps: vec![
                 assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_01.ogg"),

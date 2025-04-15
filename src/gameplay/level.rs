@@ -3,8 +3,7 @@
 use bevy::{prelude::*, scene::SceneInstanceReady};
 
 use crate::{
-    props::{loading::LoadModel as _, *},
-    screens::Screen,
+    props::*, screens::Screen, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -53,14 +52,13 @@ impl FromWorld for LevelAssets {
         Self {
             //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
-            // We preload all props used in the level here. If we miss one, we don't get an error or anything like that,
-            // but it will load during gameplay, which may cause a hiccup.
+            // We preload all props used in the level here. The template is setup such that we get a helpful warning if we miss one.
             props: vec![
-                assets.load_model::<Book>(),
-                assets.load_model::<Candle>(),
-                assets.load_model::<CandleUnlit>(),
-                assets.load_model::<Mug>(),
-                assets.load_model::<Plate>(),
+                assets.load(Book::scene_path()),
+                assets.load(Candle::scene_path()),
+                assets.load(CandleUnlit::scene_path()),
+                assets.load(Mug::scene_path()),
+                assets.load(Plate::scene_path()),
             ],
         }
     }

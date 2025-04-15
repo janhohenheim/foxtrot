@@ -4,7 +4,7 @@ use bevy::{
 };
 use bevy_trenchbroom::prelude::*;
 
-use crate::props::{Candle, dynamic::dynamic_bundle, loading::LoadModel as _};
+use crate::props::{Candle, dynamic::dynamic_bundle};
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -12,9 +12,6 @@ pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: Compon
     if world.is_scene_world() {
         return;
     }
-    let model = world.resource::<AssetServer>().load_model::<Candle>();
-    world
-        .commands()
-        .entity(entity)
-        .insert((dynamic_bundle(), SceneRoot(model)));
+    let bundle = dynamic_bundle::<Candle>(&world);
+    world.commands().entity(entity).insert(bundle);
 }

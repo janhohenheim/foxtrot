@@ -3,7 +3,7 @@
 use bevy::{prelude::*, scene::SceneInstanceReady};
 
 use crate::{
-    props::{load_model, *},
+    props::{loading::LoadModel as _, *},
     screens::Screen,
 };
 
@@ -56,11 +56,11 @@ impl FromWorld for LevelAssets {
             // We preload all props used in the level here. If we miss one, we don't get an error or anything like that,
             // but it will load during gameplay, which may cause a hiccup.
             props: vec![
-                load_model::<Book>(assets),
-                load_model::<Candle>(assets),
-                load_model::<CandleUnlit>(assets),
-                load_model::<Mug>(assets),
-                load_model::<Plate>(assets),
+                assets.load_model::<Book>(),
+                assets.load_model::<Candle>(),
+                assets.load_model::<CandleUnlit>(),
+                assets.load_model::<Mug>(),
+                assets.load_model::<Plate>(),
             ],
         }
     }

@@ -35,10 +35,6 @@ pub(crate) struct PlayerAssets {
 impl FromWorld for PlayerAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
-        let load_animation = |name: &str| -> Handle<AnimationClip> {
-            let file_path = Player::file_path();
-            assets.load(format!("{file_path}#Animation{name}"))
-        };
         Self {
             model: assets.load(Player::scene_path()),
             throw_sound: assets.load("audio/sound_effects/throw.ogg"),
@@ -75,8 +71,8 @@ impl FromWorld for PlayerAssets {
                 assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_05.ogg"),
                 assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_06.ogg"),
             ],
-            idle_animation: load_animation("9"),
-            a_pose_animation: load_animation("5"),
+            idle_animation: assets.load(Player::animation_path(9)),
+            a_pose_animation: assets.load(Player::animation_path(5)),
         }
     }
 }

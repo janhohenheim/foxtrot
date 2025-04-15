@@ -30,16 +30,19 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 pub(crate) struct Worldspawn;
 
 pub(crate) trait GetTrenchbroomModelPath {
-    fn scene_path() -> String;
     fn file_path() -> String;
+    fn scene_path() -> String {
+        format!("{file_path}#Scene0", file_path = Self::file_path())
+    }
+    fn animation_path(index: u32) -> String {
+        format!(
+            "{file_path}#Animation{index}",
+            file_path = Self::file_path()
+        )
+    }
 }
 
 impl<T: QuakeClass> GetTrenchbroomModelPath for T {
-    fn scene_path() -> String {
-        let file_path = Self::file_path();
-        format!("{file_path}#Scene0")
-    }
-
     fn file_path() -> String {
         Self::CLASS_INFO
             .model

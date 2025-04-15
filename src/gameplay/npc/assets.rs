@@ -29,15 +29,11 @@ pub(crate) struct NpcAssets {
 impl FromWorld for NpcAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
-        let load_animation = |name: &str| -> Handle<AnimationClip> {
-            let file_path = Npc::file_path();
-            assets.load(format!("{file_path}#Animation{name}"))
-        };
         Self {
             model: assets.load(Npc::scene_path()),
-            run_animation: load_animation("0"),
-            idle_animation: load_animation("1"),
-            walk_animation: load_animation("2"),
+            run_animation: assets.load(Npc::animation_path(0)),
+            idle_animation: assets.load(Npc::animation_path(1)),
+            walk_animation: assets.load(Npc::animation_path(2)),
             steps: vec![
                 assets.load("audio/sound_effects/run/Footsteps_Rock_Run_01.ogg"),
                 assets.load("audio/sound_effects/run/Footsteps_Rock_Run_02.ogg"),

@@ -1,14 +1,10 @@
 use crate::gameplay::level::{
-    assets::LevelAssets,
-    dynamic_props::{collider_constructor_hierarchy, dynamic_bundle},
-    props::{Candle, CandleUnlit},
+    assets::LevelAssets, dynamic_props::collider_constructor_hierarchy, props::Candle,
 };
-use avian_pickup::prop::HeldProp;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
-    scene::SceneInstance,
 };
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::prelude::*;

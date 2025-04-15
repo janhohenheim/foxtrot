@@ -96,4 +96,4 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "open-prs" }
+oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation" }

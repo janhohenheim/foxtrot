@@ -2,7 +2,6 @@ use bevy::{prelude::*, render::view::RenderLayers};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, spawn_ui_camera);
-    app.add_observer(render_ui_to_ui_camera);
 }
 
 const UI_RENDER_LAYER: usize = 2;

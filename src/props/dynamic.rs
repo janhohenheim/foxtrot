@@ -7,7 +7,7 @@ use bevy::{
 use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::{class::QuakeClass, prelude::*};
 
-use super::load_model;
+use super::loading::LoadModel as _;
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -19,7 +19,7 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
     if world.is_scene_world() {
         return;
     }
-    let model = load_model::<T>(world.resource::<AssetServer>());
+    let model = world.resource::<AssetServer>().load_model::<T>();
     world
         .commands()
         .entity(entity)

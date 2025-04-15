@@ -1575,7 +1575,6 @@ dependencies = [
  "enumflags2",
  "float-ord",
  "image",
- "inventory",
  "itertools 0.14.0",
  "json",
  "ndshape",
@@ -3694,15 +3693,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "inventory"
-version = "0.3.20"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab08d7cd2c5897f2c949e5383ea7c7db03fb19130ffcfbf7eda795137ae3cb83"
-dependencies = [
- "rustversion",
 ]
 
 [[package]]

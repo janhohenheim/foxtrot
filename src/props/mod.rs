@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use dynamic::setup_dynamic_prop;
-use macro_impl::create_prop;
 
 mod dynamic;
 pub(crate) mod loading;
@@ -10,7 +9,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((loading::plugin, dynamic::plugin, specific::plugin));
 }
 
-// We can add a new prop here.
+// We can define a new prop here to make it show up in TrenchBroom.
 // Afterwards, we still need to add it to the `LevelAssets` struct to preload it for a given level.
 
 create_prop!(
@@ -40,27 +39,26 @@ create_prop!(
     on_add = specific::setup_candle
 );
 
-// This is nested in a module so that Rust allows us to define it at the end of the file.
-mod macro_impl {
-    macro_rules! create_prop {
-        ($name:ident, $model:expr, on_add = $on_add:ty) => {
-            #[derive(
-                bevy_trenchbroom::prelude::PointClass,
-                Component,
-                Debug,
-                Clone,
-                Copy,
-                PartialEq,
-                Eq,
-                Default,
-                Reflect,
-            )]
-            #[reflect(Component)]
-            #[require(Transform, Visibility)]
-            #[model($model)]
-            #[component(on_add = $on_add)]
-            pub(crate) struct $name;
-        };
-    }
-    pub(super) use create_prop;
+// This macro does nothing fancy, it's just here to save us some boilerplate when defining new prop classes :)
+macro_rules! create_prop {
+    ($name:ident, $model:expr, on_add = $on_add:ty) => {
+        #[derive(
+            bevy_trenchbroom::prelude::PointClass,
+            Component,
+            Debug,
+            Clone,
+            Copy,
+            PartialEq,
+            Eq,
+            Default,
+            Reflect,
+        )]
+        #[reflect(Component)]
+        #[require(Transform, Visibility)]
+        #[model($model)]
+        #[component(on_add = $on_add)]
+        pub(crate) struct $name;
+    };
 }
+// This `use` allows us to use the macro before its definition.
+use create_prop;

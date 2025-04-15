@@ -256,9 +256,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.97"
+version = "1.0.98"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
+checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
 name = "apply"
@@ -1561,7 +1561,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#000619b6fb4b8a81dffee9663a05eee38ad5c66e"
+source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#023350e858c88fea8418f0ae04ba76fdfab0c6bf"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1591,7 +1591,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#000619b6fb4b8a81dffee9663a05eee38ad5c66e"
+source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#023350e858c88fea8418f0ae04ba76fdfab0c6bf"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -4851,7 +4851,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
-source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=open-prs#e094b61f2df3cb3909c3675efc27179bcaa97dc5"
+source = "git+https://github.com/TheGrimsey/oxidized_navigation#2eb1293a1be26d14f70f444bfc6bfe2b56718369"
 dependencies = [
  "avian3d",
  "bevy",
@@ -5397,9 +5397,9 @@ dependencies = [
 
 [[package]]
 name = "ravif"
-version = "0.11.11"
+version = "0.11.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2413fd96bd0ea5cdeeb37eaf446a22e6ed7b981d792828721e74ded1980a45c6"
+checksum = "d6a5f31fcf7500f9401fea858ea4ab5525c99f2322cfcee732c0e6c74208c0c6"
 dependencies = [
  "avif-serialize",
  "imgref",

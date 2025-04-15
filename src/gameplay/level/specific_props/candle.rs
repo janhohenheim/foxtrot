@@ -29,19 +29,5 @@ pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: Compon
             TrenchBroomGltfRotationFix,
             RigidBody::Dynamic,
         ))
-        .with_child((collider_constructor_hierarchy(), SceneRoot(model)))
-        .observe(extinguish_candle);
-}
+        .with_child((collider_constructor_hierarchy(), SceneRoot(model)));
 
-fn extinguish_candle(
-    trigger: Trigger<OnAdd, HeldProp>,
-    mut commands: Commands,
-    level_assets: Res<LevelAssets>,
-) {
-    let candle = trigger.entity();
-    commands.entity(candle).despawn_descendants();
-    commands.entity(candle).with_child((
-        SceneRoot(level_assets.model_for_class::<CandleUnlit>()),
-        collider_constructor_hierarchy(),
-    ));
-}

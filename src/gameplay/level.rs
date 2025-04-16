@@ -59,6 +59,7 @@ impl FromWorld for LevelAssets {
                 assets.load(CandleUnlit::scene_path()),
                 assets.load(Mug::scene_path()),
                 assets.load(Plate::scene_path()),
+                assets.load(Drawers::scene_path()),
             ],
         }
     }

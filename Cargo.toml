@@ -43,8 +43,8 @@ tracing = { version = "0.1", features = [
 aalo = { version = "0.0.4", optional = true }
 
 [dependencies.bevy_trenchbroom]
-git = "https://github.com/Noxmore/bevy_trenchbroom"
-branch = "main"
+git = "https://github.com/janhohenheim/bevy_trenchbroom"
+branch = "write-pref"
 features = ["avian", "client"]
 default-features = false
 

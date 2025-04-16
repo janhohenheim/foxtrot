@@ -1561,7 +1561,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#023350e858c88fea8418f0ae04ba76fdfab0c6bf"
+source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=write-pref#57e3cd8d333a82c5e92d18b231391bf0c2d9ab6b"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1582,6 +1582,7 @@ dependencies = [
  "qbsp",
  "quake-util",
  "serde",
+ "serde_json",
  "strum 0.27.1",
  "thiserror 2.0.12",
  "wgpu-types",
@@ -1590,7 +1591,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.7.0"
-source = "git+https://github.com/Noxmore/bevy_trenchbroom?branch=main#023350e858c88fea8418f0ae04ba76fdfab0c6bf"
+source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=write-pref#57e3cd8d333a82c5e92d18b231391bf0c2d9ab6b"
 dependencies = [
  "heck",
  "proc-macro2",

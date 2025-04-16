@@ -3,7 +3,7 @@ use std::any::TypeId;
 use assets::CursorAssets;
 use bevy::{prelude::*, utils::HashSet};
 
-use crate::screens::Screen;
+use crate::{AppSet, screens::Screen};
 
 mod assets;
 pub(crate) mod cursor;
@@ -11,7 +11,12 @@ pub(crate) mod cursor;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CrosshairState>();
 
-    app.add_systems(Update, update_crosshair.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(
+        Update,
+        update_crosshair
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::ChangeUi),
+    );
     app.add_systems(OnEnter(Screen::SpawnLevel), spawn_crosshair);
 
     app.add_plugins((assets::plugin, cursor::plugin));

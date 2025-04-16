@@ -5,14 +5,16 @@ use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 use rand::seq::SliceRandom as _;
 
-use crate::{audio::SoundEffect, screens::Screen};
+use crate::{AppSet, audio::SoundEffect, screens::Screen};
 
 use super::{Player, assets::PlayerAssets};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
-        (play_jump_grunt, play_step_sound, play_land_sound).run_if(in_state(Screen::Gameplay)),
+        (play_jump_grunt, play_step_sound, play_land_sound)
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::PlaySounds),
     );
 }
 

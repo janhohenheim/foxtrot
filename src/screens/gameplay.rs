@@ -2,7 +2,7 @@
 
 use bevy::{audio::Volume, input::common_conditions::input_just_pressed, prelude::*};
 
-use crate::{asset_tracking::LoadResource, audio::Music, screens::Screen};
+use crate::{AppSet, asset_tracking::LoadResource, audio::Music, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<GameplayMusic>();
@@ -13,7 +13,8 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         return_to_title_screen
-            .run_if(in_state(Screen::Gameplay).and(input_just_pressed(KeyCode::Escape))),
+            .run_if(in_state(Screen::Gameplay).and(input_just_pressed(KeyCode::Escape)))
+            .in_set(AppSet::Update),
     );
 }
 

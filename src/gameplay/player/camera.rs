@@ -13,6 +13,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
+    AppSet,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
@@ -28,7 +29,8 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         sync_camera_translation_with_player
             .param_warn_once()
-            .run_if(in_state(Screen::Gameplay)),
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::Update),
     );
     app.register_type::<PlayerCameraParent>();
     app.register_type::<WorldModelCamera>();

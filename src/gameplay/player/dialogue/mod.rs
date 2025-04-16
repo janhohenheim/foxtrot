@@ -4,6 +4,7 @@ use bevy_enhanced_input::{events::Started, prelude::Actions};
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
+    AppSet,
     screens::Screen,
     third_party::{
         avian3d::CollisionLayer,
@@ -25,7 +26,9 @@ pub(super) fn plugin(app: &mut App) {
 
     app.configure_sets(
         Update,
-        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUI).chain(),
+        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUI)
+            .chain()
+            .in_set(AppSet::ChangeUi),
     );
 
     app.add_systems(
@@ -42,7 +45,8 @@ pub(super) fn plugin(app: &mut App) {
         restore_input_context
             .param_warn_once()
             .run_if(in_state(Screen::Gameplay))
-            .run_if(on_event::<DialogueCompleteEvent>),
+            .run_if(on_event::<DialogueCompleteEvent>)
+            .in_set(AppSet::Update),
     );
 
     app.add_observer(interact_with_dialogue.param_warn_once());

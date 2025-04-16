@@ -1,14 +1,15 @@
 use avian_pickup::output::PropThrown;
 use bevy::{audio::Volume, prelude::*};
 
-use crate::{audio::SoundEffect, gameplay::player::assets::PlayerAssets, screens::Screen};
+use crate::{AppSet, audio::SoundEffect, gameplay::player::assets::PlayerAssets, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         play_throw_sound
             .run_if(on_event::<PropThrown>)
-            .run_if(in_state(Screen::Gameplay)),
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::PlaySounds),
     );
 }
 

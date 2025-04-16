@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::config::TrenchBroomConfig;
-use dynamic::setup_dynamic_prop;
+use generic::{setup_dynamic_prop, setup_static_prop};
 
-mod dynamic;
+mod generic;
 mod specific;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((dynamic::plugin, specific::plugin));
+    app.add_plugins((generic::plugin, specific::plugin));
 }
 
 // We can define a new prop here to make it show up in TrenchBroom.
@@ -23,8 +23,11 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<Mug>()
             .register_class::<CandleUnlit>()
             .register_class::<Candle>()
+            .register_class::<Drawers>()
     }
 }
+
+// generic dynamic props
 
 create_prop!(
     Book,
@@ -46,6 +49,16 @@ create_prop!(
     "models/candle_unlit/candle_unlit.gltf",
     on_add = setup_dynamic_prop::<CandleUnlit>
 );
+
+// generic static props
+
+create_prop!(
+    Drawers,
+    "models/drawers/drawers.gltf",
+    on_add = setup_static_prop::<Drawers>
+);
+
+// props with a specific setup function
 
 create_prop!(
     Candle,

@@ -370,3 +370,8 @@
 "origin" "200 328 216"
 "shadows_enabled" "true"
 }
+// entity 14
+{
+"classname" "drawers"
+"origin" "-56 376 16"
+}

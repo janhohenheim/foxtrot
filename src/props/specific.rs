@@ -4,7 +4,7 @@ use bevy::{
 };
 use bevy_trenchbroom::prelude::*;
 
-use crate::props::{Candle, dynamic::dynamic_bundle};
+use crate::props::{Candle, generic::dynamic_bundle};
 
 pub(super) fn plugin(_app: &mut App) {}
 

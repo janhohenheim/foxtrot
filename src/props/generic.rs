@@ -66,13 +66,5 @@ pub(crate) fn static_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle
 }
 
 fn load_model<T: QuakeClass>(world: &DeferredWorld) -> Handle<Scene> {
-    let assets = world.resource::<AssetServer>();
-    let model = assets.load(T::scene_path());
-    if !assets.is_loaded_with_dependencies(model.id()) {
-        warn!(
-            "Model \"{}\" was not preloaded and will load during gameplay. Did you forget to add it to the `LevelAssets` resource?",
-            T::scene_path()
-        );
-    }
-    model
+    world.resource::<AssetServer>().load(T::scene_path())
 }

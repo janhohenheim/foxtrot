@@ -566,7 +566,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua"
 version = "0.22.0"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -576,7 +576,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.3.1"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
 dependencies = [
  "avian3d",
  "bevy",
@@ -586,7 +586,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.6.0"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#b139c1f4b014573b5f6bb5520d217135402bb11f"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
 dependencies = [
  "bevy",
 ]
@@ -2613,9 +2613,9 @@ dependencies = [
 
 [[package]]
 name = "enclose"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bef4f6f904480430009ad8f22edc9573e26e4f137365f014d7ea998d5341639a"
+checksum = "eef75b364b1baff88ff28dc34e4c7c0ebd138abd76f4e58e24e37d9b7f54b8f1"
 
 [[package]]
 name = "enumflags2"
@@ -3908,9 +3908,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.171"
+version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c19937216e9d3aa9956d9bb8dfc0b0c8beb6058fc4f7a4dc4d850edf86a237d6"
+checksum = "d750af042f7ef4f724306de029d18836c26c1765a54a6a3f094cbd23a7267ffa"
 
 [[package]]
 name = "libfuzzer-sys"
@@ -5144,9 +5144,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]

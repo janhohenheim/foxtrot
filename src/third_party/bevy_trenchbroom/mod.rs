@@ -12,6 +12,7 @@ mod proxy;
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
         let config = TrenchBroomConfig::new("foxtrot")
+            .generic_material_extension("material.toml")
             .texture_exclusions(
                 ["*_disp_*", "*_arm_*", "*_nor_*"]
                     .into_iter()

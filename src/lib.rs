@@ -37,7 +37,7 @@ impl Plugin for AppPlugin {
                 })
                 .set(WindowPlugin {
                     primary_window: Window {
-                        title: "Bevy New 2D".to_string(),
+                        title: "Foxtrot".to_string(),
                         fit_canvas_to_parent: true,
                         ..default()
                     }

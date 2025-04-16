@@ -1,95 +1,120 @@
 [package]
-authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
-edition = "2021"
 name = "foxtrot"
-version = "0.5.0"
-license = "MIT OR Apache-2.0 OR CC0-1.0"
-exclude = ["assets/"]
-description = "The all-in-one Bevy 3D game template for desktop."
-repository = "https://github.com/janhohenheim/foxtrot"
-keywords = ["gamedev", "bevy", "template", "game"]
-categories = ["game-development"]
-homepage = "https://janhohenheim.github.io/foxtrot/"
-
-[features]
-default = ["dev"]
-dev = [
-    "dep:bevy_editor_pls",
-    "bevy/file_watcher",
-    "bevy/dynamic_linking",
-    "oxidized_navigation/debug_draw",
-]
-tracing = ["bevy/trace_chrome"]
-
-[dependencies.bevy]
-version = "0.13"
-features = [
-    "jpeg",
-]
+authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
+version = "0.1.0"
+edition = "2024"
 
 [dependencies]
-# keep the following in sync with Bevy's dependencies
-## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_winit/Cargo.toml#L32
-winit = { version = "0.29", default-features = false }
-## https://github.com/bevyengine/bevy/blob/v0.13.1/crates/bevy_render/Cargo.toml#L61
-image = { version = "0.24", default-features = false }
-## This greatly improves WGPU's performance due to its heavy use of trace! calls
-log = { version = "0.4", features = ["max_level_debug", "release_max_level_warn"] }
+bevy = { version = "0.15.3", features = ["wayland"] }
+bevy_enhanced_input = "0.9"
 
-# generic dependencies
-serde = { version = "1", features = ["derive"] }
-anyhow = "1"
+# physics
+avian3d = "0.2.1"
+avian_pickup = "0.1.0"
 
-# Bevy plugins
-bevy_kira_audio = "0.19"
-bevy_asset_loader = { version = "0.20", features = ["progress_tracking", "standard_dynamic_assets"] }
-bevy_common_assets = { version = "0.10", features = ["ron", "toml"] }
-bevy_egui = "0.25" # version governed by bevy_editor_pls and leafwing-input-manager
-oxidized_navigation = { version = "0.10", features = ["xpbd"] }
-iyes_progress = "0.11"
-leafwing-input-manager = { version = "0.13", features = ["egui"] }
-bevy_dolly = "0.0.3"
-bevy_editor_pls = { version = "0.8.1", optional = true }
-bevy_hanabi = { version = "0.11", default-features = false, features = ["3d"] }
-bevy_yarnspinner = "0.2"
-bevy_yarnspinner_example_dialogue_view = "0.2.1"
-bevy-tnua-xpbd3d = "0.4"
-bevy_xpbd_3d = { version = "0.4", features = ["simd"] }
-bevy-tnua = "0.18"
-bevy_atmosphere = "0.9"
-warbler_grass = "0.6"
-bevy_gltf_blueprints = "0.10"
-bevy_registry_export = "0.3"
+# character controller
+bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
+bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
 
-[build-dependencies]
-embed-resource = "2"
+# navigation
+bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
+oxidized_navigation = { version = "0.12.0", features = ["avian"] }
+landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
 
-# Enable a small amount of optimization in debug mode
+# dialogue
+bevy_yarnspinner = "0.4.0"
+bevy_yarnspinner_example_dialogue_view = "0.4.0"
+
+# TODO:
+# bevy_hanabi
+
+rand = "0.8.5"
+
+# Compile low-severity logs out of native builds for performance.
+log = { version = "0.4", features = [
+    "max_level_debug",
+    "release_max_level_warn",
+] }
+# Compile low-severity logs out of web builds for performance.
+tracing = { version = "0.1", features = [
+    "max_level_debug",
+    "release_max_level_warn",
+] }
+aalo = { version = "0.0.4", optional = true }
+
+[dependencies.bevy_trenchbroom]
+git = "https://github.com/noxmore/bevy_trenchbroom"
+branch = "main"
+features = ["avian", "client"]
+default-features = false
+
+[features]
+default = [
+    # Default to a native dev build.
+    "dev_native",
+]
+dev = [
+    # Improve compile times for dev builds by linking Bevy as a dynamic library.
+    "bevy/dynamic_linking",
+    "bevy/bevy_dev_tools",
+    "aalo",
+    # uncomment in 0.16
+    # "bevy/bevy_ui_debug",
+]
+dev_native = [
+    "dev",
+    # Enable asset hot reloading for native dev builds.
+    "bevy/file_watcher",
+    # Enable embedded asset hot reloading for native dev builds.
+    "bevy/embedded_watcher",
+    "oxidized_navigation/debug_draw",
+]
+
+
+[package.metadata.bevy_cli.release]
+# Disable debug functionality in release builds
+default_features = false
+
+[package.metadata.bevy_cli.web.dev]
+# Disable native-only debug functionality in web builds
+default_features = false
+features = ["dev"]
+
+
+[lints.clippy]
+# Bevy supplies arguments to systems via dependency injection, so it's natural for systems to
+# request more than 7 arguments, which would undesirably trigger this lint.
+too_many_arguments = "allow"
+# Queries may access many components, which would undesirably trigger this lint.
+type_complexity = "allow"
+# Make sure macros use their standard braces, such as `[]` for `bevy_ecs::children!`.
+nonstandard_macro_braces = "warn"
+
+
+# Compile with Performance Optimizations:
+# https://bevyengine.org/learn/quick-start/getting-started/setup/#compile-with-performance-optimizations
+
+# Enable a small amount of optimization in the dev profile.
 [profile.dev]
 opt-level = 1
 
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+# Enable a large amount of optimization in the dev profile for dependencies.
 [profile.dev.package."*"]
 opt-level = 3
 
-# High optimizations for distributing the game
-[profile.release]
-opt-level = 3
-lto = true
-codegen-units = 1
-strip = true
+# Remove expensive debug assertions due to <https://github.com/bevyengine/bevy/issues/14291>
+[profile.dev.package.wgpu-types]
+debug-assertions = false
 
 [patch.crates-io]
-# Patches that replace syn 1 with syn 2
-# Note that windows still uses syn 1 through
-# * com-macros and com_macros_support (unlikely to receive updates)
-# * windows-implement and windows-interface (updated to syn 2 in Bevy 0.14.0-rc.2)
-egui_dock = { git = "https://github.com/bash/egui_dock.git", branch = "backport-syn-update" } # This change is not PR-worthy. Instead, I made a PR to the actually affected dependency `duplicate`: https://github.com/Emoun/duplicate/pull/62
+oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation" }
 
-# These patches mainly remove strum and are included in bevy_yarnspinner 0.3.0-rc
-bevy_yarnspinner = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }
-bevy_yarnspinner_example_dialogue_view = { git = "https://github.com/YarnSpinnerTool/YarnSpinner-Rust.git", rev = "c6ab0c9e8c3a5a98f741aaae6adef1cfc272db30" }
-
-# Bug fixes
-bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi/", rev = "b9a98bdf51be07f8127d2f16b68f1eb86259242f" }
-
+# This profile will be used for `bevy run web` automatically
+[profile.web-release]
+# Default to release profile values.
+inherits = "release"
+# Optimize with size in mind (also try "z", sometimes it is better).
+# Slightly slows compile times, great improvements to file size and runtime performance.
+opt-level = "s"
+# Strip all debugging information from the binary to slightly reduce file size.
+strip = "debuginfo"

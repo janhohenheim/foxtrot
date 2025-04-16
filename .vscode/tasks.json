@@ -1,0 +1,87 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run native dev",
+            "type": "shell",
+            "command": "bevy",
+            "args": [
+                "run",
+            ],
+            "options": {
+                "env": {
+                    "RUST_BACKTRACE": "full"
+                }
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run native release",
+            "type": "shell",
+            "command": "bevy",
+            "args": [
+                "run",
+                "--release",
+                "--no-default-features"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Run web dev",
+            "type": "process",
+            "command": "bevy",
+            "args": [
+                "run",
+                "--yes",
+                "--no-default-features",
+                "web"
+            ],
+            "options": {
+                "env": {
+                    "RUST_BACKTRACE": "full"
+                }
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Run web release",
+            "type": "process",
+            "command": "bevy",
+            "args": [
+                "run",
+                "--yes",
+                "--release",
+                "--no-default-features",
+                "web"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        }
+    ]
+}

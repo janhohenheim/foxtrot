@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{
+    AppSet,
     gameplay::{animation::AnimationPlayerLink, crosshair::CrosshairState},
     screens::Screen,
 };
@@ -12,7 +13,12 @@ use super::assets::PlayerAssets;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<PlayerAnimations>();
-    app.add_systems(Update, play_animations.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(
+        Update,
+        play_animations
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::PlayAnimations),
+    );
 }
 
 #[derive(Debug, Component, Reflect)]

@@ -15,7 +15,7 @@ use input::{ForceFreeCursor, ToggleDebugUi};
 
 mod input;
 
-use crate::{gameplay::crosshair::cursor::IsCursorForcedFreed, screens::Screen};
+use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
@@ -52,7 +52,8 @@ pub(super) fn plugin(app: &mut App) {
             toggle_physics_debug_ui.run_if(toggled_state(DebugState::Physics)),
             toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
         )
-            .chain(),
+            .chain()
+            .in_set(AppSet::ChangeUi),
     );
 }
 

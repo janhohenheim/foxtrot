@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{asset_tracking::LoadResource, audio::SoundEffect};
+use crate::{AppSet, asset_tracking::LoadResource, audio::SoundEffect};
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<InteractionPalette>();
@@ -12,7 +12,8 @@ pub(super) fn plugin(app: &mut App) {
             apply_interaction_palette,
             trigger_interaction_sound_effect,
         )
-            .run_if(resource_exists::<InteractionAssets>),
+            .run_if(resource_exists::<InteractionAssets>)
+            .in_set(AppSet::ChangeUi),
     );
 }
 

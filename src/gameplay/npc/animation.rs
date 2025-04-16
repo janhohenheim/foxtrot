@@ -3,13 +3,18 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
-use crate::{gameplay::animation::AnimationPlayerLink, screens::Screen};
+use crate::{AppSet, gameplay::animation::AnimationPlayerLink, screens::Screen};
 
 use super::assets::NpcAssets;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<NpcAnimations>();
-    app.add_systems(Update, play_animations.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(
+        Update,
+        play_animations
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::PlayAnimations),
+    );
 }
 
 #[derive(Debug, Component, Reflect)]

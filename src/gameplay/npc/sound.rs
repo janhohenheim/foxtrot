@@ -8,12 +8,17 @@ use bevy::{
 use bevy_tnua::prelude::*;
 use rand::seq::SliceRandom as _;
 
-use crate::{audio::SoundEffect, screens::Screen};
+use crate::{AppSet, audio::SoundEffect, screens::Screen};
 
 use super::{Npc, assets::NpcAssets};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, play_step_sound.run_if(in_state(Screen::Gameplay)));
+    app.add_systems(
+        Update,
+        play_step_sound
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::PlaySounds),
+    );
 }
 
 fn play_step_sound(

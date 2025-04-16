@@ -20,7 +20,17 @@ pub struct AppPlugin;
 impl Plugin for AppPlugin {
     fn build(&self, app: &mut App) {
         // Order new `AppStep` variants by adding them here:
-        app.configure_sets(Update, (AppSet::TickTimers, AppSet::Update).chain());
+        app.configure_sets(
+            Update,
+            (
+                AppSet::TickTimers,
+                AppSet::ChangeUi,
+                AppSet::PlaySounds,
+                AppSet::PlayAnimations,
+                AppSet::Update,
+            )
+                .chain(),
+        );
 
         // Add Bevy plugins.
         app.add_plugins(
@@ -73,6 +83,12 @@ impl Plugin for AppPlugin {
 enum AppSet {
     /// Tick timers.
     TickTimers,
+    /// Change UI.
+    ChangeUi,
+    /// Play sounds.
+    PlaySounds,
+    /// Play animations.
+    PlayAnimations,
     /// Do everything else (consider splitting this into further variants).
     Update,
 }

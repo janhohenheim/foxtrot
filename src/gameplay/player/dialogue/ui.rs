@@ -3,7 +3,7 @@ use std::any::Any;
 use bevy::prelude::*;
 use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
 
-use crate::{gameplay::crosshair::CrosshairState, screens::Screen};
+use crate::{AppSet, gameplay::crosshair::CrosshairState, screens::Screen};
 
 use super::{DialogueSet, InteractionPrompt};
 
@@ -22,7 +22,8 @@ pub(super) fn plugin(app: &mut App) {
             hide_crosshair_on_dialogue_start.run_if(on_event::<DialogueStartEvent>),
             show_crosshair_on_dialogue_end.run_if(on_event::<DialogueCompleteEvent>),
         )
-            .run_if(in_state(Screen::Gameplay)),
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::ChangeUi),
     );
 }
 

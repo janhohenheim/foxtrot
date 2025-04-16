@@ -39,8 +39,11 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
     #[cfg(not(target_arch = "wasm32"))]
     {
         info!("Writing TrenchBroom config");
-        if let Err(err) = server.config.write_to_default_folder() {
-            error!("Could not write TrenchBroom config: {err}");
+        if let Err(err) = server.config.write_game_config_to_default_directory() {
+            error!("Could not write TrenchBroom game config: {err}");
+        }
+        if let Err(err) = server.config.add_game_to_preferences_in_default_directory() {
+            error!("Could not add game to TrenchBroom preferences: {err}");
         }
     }
 }

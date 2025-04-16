@@ -1,157 +1,328 @@
-name: release-flow
+name: Release
 
 on:
+  # Trigger this workflow when a tag is pushed in the format `v1.2.3`.
   push:
     tags:
+      # Pattern syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
       - "v[0-9]+.[0-9]+.[0-9]+*"
+  # Trigger this workflow manually via workflow dispatch.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number in the format `v1.2.3`"
+        required: true
+        type: string
 
+# Configure the release workflow by editing the following values.
 env:
-  # heads-up: this value is used as a pattern in a sed command as a workaround for a trunk issue
-  #   if you use special characters, take a look at the 'Make paths relative' step in the 'build-web' job
-  GAME_EXECUTABLE_NAME: foxtrot
-  GAME_OSX_APP_NAME: Foxtrot
+  # The base filename of the binary produced by `cargo build`.
+  cargo_build_binary_name: foxtrot
 
-  CARGO_TERM_COLOR: always
-  CARGO_TOOLCHAIN: stable
-  # Sparse cargo registry for faster updates
-  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  # The path to the assets directory.
+  assets_path: assets
 
-permissions:
-  contents: write
+  # Whether to build and package a release for a given target platform.
+  build_for_web: true
+  build_for_linux: true
+  build_for_windows: true
+  build_for_macos: true
 
+  # Whether to upload the packages produced by this workflow to a GitHub release.
+  upload_to_github: true
+
+  # The itch.io project to upload to in the format `user-name/project-name`.
+  # There will be no upload to itch.io if this is commented out.
+  upload_to_itch: janhohenheim/foxtrot
+
+  ############
+  # ADVANCED #
+  ############
+
+  # The ID of the app produced by this workflow.
+  # Applies to macOS releases.
+  # Must contain only A-Z, a-z, 0-9, hyphen, and period: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleidentifier
+  app_id: janhohenheim.foxtrot
+
+  # The base filename of the binary in the package produced by this workflow.
+  # Applies to Windows, macOS, and Linux releases.
+  # Defaults to `cargo_build_binary_name` if commented out.
+  #app_binary_name: foxtrot
+
+  # The name of the `.zip` or `.dmg` file produced by this workflow.
+  # Defaults to `app_binary_name` if commented out.
+  #app_package_name: foxtrot
+
+  # The display name of the app produced by this workflow.
+  # Applies to macOS releases.
+  # Defaults to `app_package_name` if commented out.
+  #app_display_name: Foxtrot
+
+  # The short display name of the app produced by this workflow.
+  # Applies to macOS releases.
+  # Must be 15 or fewer characters: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundlename
+  # Defaults to `app_display_name` if commented out.
+  #app_short_name: Foxtrot
+
+  # Before enabling LFS, please take a look at GitHub's documentation for costs and quota limits:
+  # https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-storage-and-bandwidth-usage
+  git_lfs: false
+
+  # Enabling this only helps with consecutive releases to the same tag (and takes up cache storage space).
+  # See: https://github.com/orgs/community/discussions/27059
+  use_github_cache: false
 jobs:
-  build-macOS:
-    runs-on: macos-latest
-
-    env:
-      # macOS 11.0 Big Sur is the first version of macOS to support universal binaries
-      MACOSX_DEPLOYMENT_TARGET: 11.0
-    steps:
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Remove build script
-        run: |
-          rm build.rs
-      - name: Install rust toolchain for Apple Silicon
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.CARGO_TOOLCHAIN }}
-          target: aarch64-apple-darwin
-      - name: Build release for Apple Silicon
-        run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --target=aarch64-apple-darwin
-      - name: Install rust toolchain for Apple x86
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.CARGO_TOOLCHAIN }}
-          target: x86_64-apple-darwin
-      - name: Build release for x86 Apple
-        run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path) cargo build --release --target=x86_64-apple-darwin
-      - name: Create Universal Binary
-        run: |
-          lipo -create -output target/release/${{ env.GAME_EXECUTABLE_NAME }} target/aarch64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }} target/x86_64-apple-darwin/release/${{ env.GAME_EXECUTABLE_NAME }}
-      - name: Create release
-        run: |
-          mkdir -p build/macos/src/Game.app/Contents/MacOS/assets
-          cp -r assets/ build/macos/src/Game.app/Contents/MacOS/assets
-          cp -r credits/ build/macos/src/Game.app/Contents/MacOS/credits
-          cp target/release/${{ env.GAME_EXECUTABLE_NAME }} build/macos/src/Game.app/Contents/MacOS/
-          strip build/macos/src/Game.app/Contents/MacOS/${{ env.GAME_EXECUTABLE_NAME }}
-          mv build/macos/src/Game.app build/macos/src/${{ env.GAME_OSX_APP_NAME }}.app
-          ln -s /Applications build/macos/src/
-          hdiutil create -fs HFS+ -volname "${{ env.GAME_OSX_APP_NAME }}" -srcfolder build/macos/src ${{ env.GAME_EXECUTABLE_NAME }}.dmg
-      - name: Upload release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.GAME_EXECUTABLE_NAME }}.dmg
-          asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_macOS.dmg
-          tag: ${{ github.ref }}
-          overwrite: true
-
-  build-linux:
+  # Forward some environment variables as outputs of this job.
+  # This is needed because the `env` context can't be used in the `if:` condition of a job:
+  # https://docs.github.com/en/actions/learn-github-actions/contexts#context-availability
+  forward-env:
     runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: "true"
+    outputs:
+      upload_to_itch: ${{ env.upload_to_itch }}
+
+  # Determine the version number for this workflow.
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version number from tag
+        id: tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> "${GITHUB_OUTPUT}"
+    outputs:
+      # Use the input from workflow dispatch, or fall back to the git tag.
+      version: ${{ inputs.version || steps.tag.outputs.tag }}
+
+  # Build and package a release for each platform.
+  build:
+    needs:
+      - get-version
+    env:
+      version: ${{ needs.get-version.outputs.version }}
+    strategy:
+      matrix:
+        include:
+          - platform: web
+            targets: wasm32-unknown-unknown
+            profile: web-release
+            binary_ext: .wasm
+            package_ext: .zip
+            runner: ubuntu-latest
+
+          - platform: linux
+            targets: x86_64-unknown-linux-gnu
+            profile: release
+            features: bevy/wayland
+            package_ext: .zip
+            runner: ubuntu-latest
+
+          - platform: windows
+            targets: x86_64-pc-windows-msvc
+            profile: release
+            binary_ext: .exe
+            package_ext: .zip
+            runner: windows-latest
+
+          - platform: macos
+            targets: x86_64-apple-darwin aarch64-apple-darwin
+            profile: release
+            app_suffix: .app/Contents/MacOS
+            package_ext: .dmg
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      # Required to create a GitHub release: https://docs.github.com/en/rest/releases/releases#create-a-release
+      contents: write
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
+      - name: Set up environment
+        run: |
+          # Default values:
+          echo "app_binary_name=${app_binary_name:=${{ env.cargo_build_binary_name }}}" >> "${GITHUB_ENV}"
+          echo "app_package_name=${app_package_name:=${app_binary_name}}" >> "${GITHUB_ENV}"
+          echo "app_display_name=${app_display_name:=${app_package_name}}" >> "${GITHUB_ENV}"
+          echo "app_short_name=${app_short_name:=${app_display_name}}" >> "${GITHUB_ENV}"
+
+          # File paths:
+          echo "app=tmp/app/${app_package_name}"'${{ matrix.app_suffix }}' >> "${GITHUB_ENV}"
+          echo "package=${app_package_name}-"'${{ matrix.platform }}${{ matrix.package_ext }}' >> "${GITHUB_ENV}"
+
+          # macOS environment:
+          if [ '${{ matrix.platform }}' == 'macos' ]; then
+            echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "${GITHUB_ENV}" # macOS 11.0 Big Sur is the first version to support universal binaries.
+            echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> "${GITHUB_ENV}"
+          fi
+
+          # Check if building for this platform is enabled.
+          echo 'is_platform_enabled=${{
+            (matrix.platform == 'web' && env.build_for_web == 'true') ||
+            (matrix.platform == 'linux' && env.build_for_linux == 'true') ||
+            (matrix.platform == 'windows' && env.build_for_windows == 'true') ||
+            (matrix.platform == 'macos' && env.build_for_macos == 'true')
+          }}' >> "${GITHUB_ENV}"
+
       - name: Checkout repository
+        if: ${{ env.is_platform_enabled == 'true' }}
         uses: actions/checkout@v4
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ env.CARGO_TOOLCHAIN }}
-      - name: Install Dependencies
-        run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
-      - name: Build release
+          lfs: ${{ env.git_lfs }}
+
+      - name: Install Rust toolchain
+        if: ${{ env.is_platform_enabled == 'true' }}
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.targets }}
+
+      - name: Populate cargo cache
+        if: ${{ env.is_platform_enabled == 'true' && env.use_github_cache == 'true' }}
+        uses: Leafwing-Studios/cargo-cache@v2
+        with:
+          sweep-cache: true
+
+      - name: Install dependencies (Linux)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
+
+      - name: Prepare output directories
+        if: ${{ env.is_platform_enabled == 'true' }}
+        run: rm -rf tmp; mkdir -p tmp/binary '${{ env.app }}'
+
+      - name: Install and run Bevy CLI (Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
-          cargo build --release
-      - name: Prepare release
+          cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
+          bevy build --locked --profile='${{ matrix.profile }}' --no-default-features --features='${{ matrix.features }}' --yes web --bundle
+
+      - name: Add web bundle to app (Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
+        run: mv 'target/bevy_web/${{ matrix.profile }}/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
+
+      - name: Build binaries (non-Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
-          strip target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          chmod +x target/release/${{ env.GAME_EXECUTABLE_NAME }}
-          mv target/release/${{ env.GAME_EXECUTABLE_NAME }} .
-      - name: Bundle release
+          for target in ${{ matrix.targets }}; do
+            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features --features='${{ matrix.features }}'
+            mv target/"${target}"/'${{ matrix.profile }}/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
+          done
+
+      - name: Add binaries to app (non-Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
-          tar -czf ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz ${{ env.GAME_EXECUTABLE_NAME }} assets credits
-      - name: Upload release
+          if [ '${{ matrix.platform }}' == 'macos' ]; then
+            lipo tmp/binary/*'${{ matrix.binary_ext }}' -create -output '${{ env.app }}/${{ env.app_binary_name }}${{ matrix.binary_ext }}'
+          else
+            mv tmp/binary/*'${{ matrix.binary_ext }}' '${{ env.app }}/${{ env.app_binary_name }}${{ matrix.binary_ext }}'
+          fi
+
+      - name: Add assets to app (non-Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
+        run: cp -r ./'${{ env.assets_path }}' '${{ env.app }}' || true # Ignore error if assets folder does not exist
+
+      - name: Add metadata to app (macOS)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'macos' }}
+        run: |
+          cat >'${{ env.app }}/../Info.plist' <<EOF
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+                <dict>
+                    <key>CFBundleDevelopmentRegion</key>
+                    <string>en</string>
+                    <key>CFBundleDisplayName</key>
+                    <string>${{ env.app_display_name }}</string>
+                    <key>CFBundleExecutable</key>
+                    <string>${{ env.app_binary_name }}</string>
+                    <key>CFBundleIdentifier</key>
+                    <string>${{ env.app_id }}</string>
+                    <key>CFBundleName</key>
+                    <string>${{ env.app_short_name }}</string>
+                    <key>CFBundleShortVersionString</key>
+                    <string>${{ env.version }}</string>
+                    <key>CFBundleVersion</key>
+                    <string>${{ env.version }}</string>
+                    <key>CFBundleInfoDictionaryVersion</key>
+                    <string>6.0</string>
+                    <key>CFBundlePackageType</key>
+                    <string>APPL</string>
+                    <key>CFBundleSupportedPlatforms</key>
+                    <array>
+                        <string>MacOSX</string>
+                    </array>
+                </dict>
+            </plist>
+          EOF
+
+      - name: Package app (non-Windows)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'windows' }}
+        working-directory: tmp/app
+        run: |
+          if [ '${{ matrix.platform }}' == 'macos' ]; then
+            ln -s /Applications .
+            hdiutil create -fs HFS+ -volname '${{ env.app_package_name }}' -srcfolder . '${{ env.package }}'
+          else
+            zip --recurse-paths '${{ env.package }}' '${{ env.app_package_name }}'
+          fi
+
+      - name: Package app (Windows)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'windows' }}
+        working-directory: tmp/app
+        shell: pwsh
+        run: Compress-Archive -Path '${{ env.app_package_name }}' -DestinationPath '${{ env.package }}'
+
+      - name: Upload package to workflow artifacts
+        if: ${{ env.is_platform_enabled == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          path: tmp/app/${{ env.package }}
+          name: package-${{ matrix.platform }}
+          retention-days: 1
+
+      - name: Upload package to GitHub release
+        if: ${{ env.is_platform_enabled == 'true' && env.upload_to_github == 'true' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.GAME_EXECUTABLE_NAME }}_linux.tar.gz
-          asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_linux.tar.gz
-          tag: ${{ github.ref }}
+          file: tmp/app/${{ env.package }}
+          asset_name: ${{ env.package }}
+          release_name: ${{ env.version }}
+          tag: ${{ env.version }}
           overwrite: true
 
-  build-windows:
-    runs-on: windows-latest
+  # Upload all packages to itch.io.
+  upload-to-itch:
+    runs-on: ubuntu-latest
+    needs:
+      - forward-env
+      - get-version
+      - build
+    if: ${{ needs.forward-env.outputs.upload_to_itch != '' }}
 
     steps:
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install rust toolchain
-        uses: dtolnay/rust-toolchain@master
+      - name: Download all packages
+        uses: actions/download-artifact@v4
         with:
-          toolchain: ${{ env.CARGO_TOOLCHAIN }}
-      - name: Install dotnet
-        uses: actions/setup-dotnet@v3
-        with:
-          global-json-file: build/windows/installer/global.json
-      - name: Build release
+          pattern: package-*
+          path: tmp
+
+      - name: Install butler
         run: |
-          cargo build --release
-      - name: Prepare release
+          curl -L -o butler.zip 'https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default'
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Upload all packages to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_CREDENTIALS }}
         run: |
-          mkdir target/release/assets && cp -r assets target/release/assets
-          mkdir target/release/credits && cp -r credits target/release/credits
-      - name: Zip release
-        uses: vimtor/action-zip@v1
-        with:
-          files: target/release/assets/ target/release/credits/ target/release/${{ env.GAME_EXECUTABLE_NAME }}.exe
-          dest: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
-      - name: Create Installer
-        run: dotnet build -c Release build/windows/installer/Installer.wixproj --output installer
-      - name: Upload release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.GAME_EXECUTABLE_NAME }}_windows.zip
-          asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.zip
-          tag: ${{ github.ref }}
-          overwrite: true
-      - name: Upload installer
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: installer/en-US/installer.msi
-          asset_name: ${{ env.GAME_EXECUTABLE_NAME }}_${{ steps.tag.outputs.tag }}_windows.msi
-          tag: ${{ github.ref }}
-          overwrite: true
+          for channel in $(ls tmp); do
+            ./butler push \
+              --fix-permissions \
+              --userversion='${{ needs.get-version.outputs.version }}' \
+              tmp/"${channel}"/* \
+              '${{ env.upload_to_itch }}':"${channel#package-}"
+          done

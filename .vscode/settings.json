@@ -1,0 +1,5 @@
+{
+    // Allow `rust-analyzer` and `cargo` to run simultaneously.
+    // This uses extra storage space, so consider commenting it out.
+    "rust-analyzer.cargo.targetDir": true
+}

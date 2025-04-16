@@ -1561,7 +1561,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.7.0"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=write-pref#57e3cd8d333a82c5e92d18b231391bf0c2d9ab6b"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9847e7e3038e5559dd7b24b0a040a8657e2beddb"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1591,7 +1591,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.7.0"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=write-pref#57e3cd8d333a82c5e92d18b231391bf0c2d9ab6b"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9847e7e3038e5559dd7b24b0a040a8657e2beddb"
 dependencies = [
  "heck",
  "proc-macro2",

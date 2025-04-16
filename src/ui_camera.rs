@@ -1,10 +1,8 @@
-use bevy::{prelude::*, render::view::RenderLayers};
+use bevy::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, spawn_ui_camera);
 }
-
-const UI_RENDER_LAYER: usize = 2;
 
 fn spawn_ui_camera(mut commands: Commands) {
     commands.spawn((

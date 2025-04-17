@@ -2918,6 +2918,7 @@ dependencies = [
  "bevy_trenchbroom",
  "bevy_yarnspinner",
  "bevy_yarnspinner_example_dialogue_view",
+ "bitflags 2.9.0",
  "landmass_oxidized_navigation",
  "log",
  "oxidized_navigation",

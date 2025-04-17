@@ -13,7 +13,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
-    AppSet,
+    AppSet, RenderLayer,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
@@ -45,15 +45,6 @@ pub(crate) struct PlayerCameraParent;
 #[derive(Debug, Component, Reflect)]
 #[reflect(Component)]
 struct WorldModelCamera;
-
-/// Used implicitly by all entities without a `RenderLayers` component.
-/// Our world model camera and all objects other than the player are on this layer.
-/// The light source belongs to both layers.
-const DEFAULT_RENDER_LAYER: usize = 0;
-
-/// Used by the view model camera and the player's arm.
-/// The light source belongs to both layers.
-const VIEW_MODEL_RENDER_LAYER: usize = 1;
 
 #[derive(Debug, Component, Reflect, Deref, DerefMut)]
 #[reflect(Component)]
@@ -113,6 +104,7 @@ fn spawn_view_model(
                     fov: 90.0_f32.to_radians(),
                     ..default()
                 }),
+                RenderLayers::from(RenderLayer::DEFAULT | RenderLayer::PARTICLES),
             ));
 
             // Spawn view model camera.
@@ -132,7 +124,7 @@ fn spawn_view_model(
                     ..default()
                 }),
                 // Only render objects belonging to the view model.
-                RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
+                RenderLayers::from(RenderLayer::VIEW_MODEL),
             ));
 
             // Spawn the player's right arm.
@@ -167,7 +159,7 @@ fn configure_player_view_model(
     {
         commands.entity(child).insert((
             // Ensure the arm is only rendered by the view model camera.
-            RenderLayers::layer(VIEW_MODEL_RENDER_LAYER),
+            RenderLayers::from(RenderLayer::VIEW_MODEL),
             // The arm is free-floating, so shadows would look weird.
             NotShadowCaster,
             // The arm's origin is at the origin of the camera, so there is a high risk
@@ -219,8 +211,7 @@ fn sync_camera_translation_with_player(
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {
     let entity = trigger.entity();
-    commands.entity(entity).insert(RenderLayers::from_layers(&[
-        DEFAULT_RENDER_LAYER,
-        VIEW_MODEL_RENDER_LAYER,
-    ]));
+    commands.entity(entity).insert(RenderLayers::from(
+        RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
+    ));
 }

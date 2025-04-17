@@ -9,10 +9,13 @@ mod theme;
 mod third_party;
 mod ui_camera;
 
+use bitflags::bitflags;
+
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
     prelude::*,
+    render::view::RenderLayers,
 };
 
 pub struct AppPlugin;
@@ -91,4 +94,26 @@ enum AppSet {
     PlayAnimations,
     /// Do everything else (consider splitting this into further variants).
     Update,
+}
+
+bitflags! {
+    pub struct RenderLayer: u32 {
+        /// Used implicitly by all entities without a `RenderLayers` component.
+        /// Our world model camera and all objects other than the player are on this layer.
+        /// The light source belongs to both layers.
+        const DEFAULT = 0b00000001;
+        /// Used by the view model camera and the player's arm.
+        /// The light source belongs to both layers.
+        const VIEW_MODEL = 0b00000010;
+        /// Since we use multiple cameras, we need to be explicit about
+        /// which one is allowed to render particles.
+        const PARTICLES = 0b00000100;
+    }
+}
+
+impl From<RenderLayer> for RenderLayers {
+    fn from(layer: RenderLayer) -> Self {
+        // Bevy's default render layer is 0, so we need to subtract 1 from our bitfalgs to get the correct value.
+        RenderLayers::from_iter(layer.iter().map(|l| l.bits() as usize - 1))
+    }
 }

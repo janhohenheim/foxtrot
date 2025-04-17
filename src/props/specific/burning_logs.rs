@@ -1,11 +1,15 @@
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
+    render::view::RenderLayers,
 };
 use bevy_hanabi::prelude::*;
 use bevy_trenchbroom::util::IsSceneWorld as _;
 
-use crate::props::{BurningLogs, generic::static_bundle};
+use crate::{
+    RenderLayer,
+    props::{BurningLogs, generic::static_bundle},
+};
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -15,10 +19,11 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     }
     let bundle = static_bundle::<BurningLogs>(&world);
     let effect_handle = setup(&mut world.resource_mut::<Assets<EffectAsset>>());
-    world
-        .commands()
-        .entity(entity)
-        .insert((bundle, ParticleEffect::new(effect_handle)));
+    world.commands().entity(entity).insert((
+        bundle,
+        ParticleEffect::new(effect_handle),
+        RenderLayers::from(RenderLayer::PARTICLES),
+    ));
 }
 
 fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {

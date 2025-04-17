@@ -1,9 +1,9 @@
 use super::bevy_trenchbroom::Worldspawn;
-use avian3d::prelude::*;
+use avian3d::prelude::Collider;
 use bevy::prelude::*;
 use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
-use oxidized_navigation::{NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin};
+use oxidized_navigation::{ NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((

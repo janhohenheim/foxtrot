@@ -11,7 +11,7 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_yarnspinner::YarnNode;
+use crate::third_party::{bevy_trenchbroom::fix_gltf_rotation, bevy_yarnspinner::YarnNode};
 
 use super::animation::AnimationPlayerAncestor;
 mod ai;
@@ -45,9 +45,9 @@ impl Npc {
         world
             .commands()
             .entity(entity)
+            .queue(fix_gltf_rotation)
             .insert((
                 Npc,
-                TrenchBroomGltfRotationFix,
                 TransformInterpolation,
                 Collider::capsule(NPC_RADIUS, 0.1),
                 TnuaController::default(),

@@ -27,49 +27,51 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
 }
 
 fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
+    // Color gradient for fire: bright yellow → orange → dark red → transparent
     let mut gradient = Gradient::new();
-    // start red
-    gradient.add_key(0.0, Vec4::new(1., 0., 0., 1.));
-    // then yellow
-    gradient.add_key(0.5, Vec4::new(1., 1., 0., 1.));
-    // then black
-    gradient.add_key(1.0, Vec4::splat(0.));
+    gradient.add_key(0.0, Vec4::new(1.0, 0.8, 0.0, 1.0)); // bright yellow
+    gradient.add_key(0.3, Vec4::new(1.0, 0.4, 0.0, 1.0)); // orange
+    gradient.add_key(0.6, Vec4::new(0.6, 0.0, 0.0, 0.8)); // dark red
+    gradient.add_key(1.0, Vec4::new(0.0, 0.0, 0.0, 0.0)); // transparent
 
     let writer = ExprWriter::new();
-    let zero = writer.lit(0.);
-    let y = writer.lit(3.).uniform(writer.lit(5.));
-    let v = zero.clone().vec3(y, zero);
-    let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, v.expr());
+
+    // Random upward velocity with some lateral randomness for flicker
+    let vx = writer.lit(-0.5).uniform(writer.lit(0.5));
+    let vy = writer.lit(3.0).uniform(writer.lit(6.0));
+    let vz = writer.lit(-0.5).uniform(writer.lit(0.5));
+    let velocity = vx.vec3(vy, vz);
 
     let mut module = writer.finish();
 
+    let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, velocity.expr());
+
+    // Spawn from small spherical area at the base
     let init_pos = SetPositionSphereModifier {
         center: module.lit(Vec3::ZERO),
-        radius: module.lit(0.5),
-        dimension: ShapeDimension::Surface,
+        radius: module.lit(0.2),
+        dimension: ShapeDimension::Volume,
     };
 
-    let lifetime = module.lit(10.);
+    // Short lifetime for fire particles
+    let lifetime = module.lit(1.0);
     let init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
 
-    let accel = module.lit(Vec3::new(0., 0.5, 0.));
+    // Constant upward acceleration (mimics heat rise)
+    let accel = module.lit(Vec3::new(0.0, 1.0, 0.0));
     let update_accel = AccelModifier::new(accel);
 
     const MAX_PARTICLES: u32 = 32768;
-    let effect = EffectAsset::new(MAX_PARTICLES, SpawnerSettings::rate(5.0.into()), module)
-        .with_name("BurningLogs")
+    let effect = EffectAsset::new(MAX_PARTICLES, SpawnerSettings::rate(100.0.into()), module)
+        .with_name("FireEffect")
         .init(init_pos)
         .init(init_vel)
         .init(init_lifetime)
         .update(update_accel)
-        // Render the particles with a color gradient over their
-        // lifetime. This maps the gradient key 0 to the particle spawn
-        // time, and the gradient key 1 to the particle death (10s).
         .render(ColorOverLifetimeModifier {
             gradient,
             ..default()
         });
 
-    // Insert into the asset system
     effects.add(effect)
 }

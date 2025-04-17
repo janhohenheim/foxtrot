@@ -55,25 +55,23 @@ fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
 pub(crate) struct Worldspawn;
 
-pub(crate) trait GetTrenchbroomModelPath {
-    fn file_path() -> String;
+pub(crate) fn fix_gltf_rotation(mut world: EntityWorldMut) {
+    trenchbroom_gltf_rotation_fix(&mut world);
+}
+
+pub(crate) trait GetTrenchbroomModelPath: QuakeClass {
     fn scene_path() -> String {
-        format!("{file_path}#Scene0", file_path = Self::file_path())
+        format!(
+            "{file_path}#Scene0",
+            file_path = Self::CLASS_INFO.model_path().unwrap()
+        )
     }
     fn animation_path(index: u32) -> String {
         format!(
             "{file_path}#Animation{index}",
-            file_path = Self::file_path()
+            file_path = Self::CLASS_INFO.model_path().unwrap()
         )
     }
 }
 
-impl<T: QuakeClass> GetTrenchbroomModelPath for T {
-    fn file_path() -> String {
-        Self::CLASS_INFO
-            .model
-            .unwrap()
-            .trim_matches('"')
-            .to_string()
-    }
-}
+impl<T: QuakeClass> GetTrenchbroomModelPath for T {}

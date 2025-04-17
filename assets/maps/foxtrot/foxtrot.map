@@ -375,3 +375,8 @@
 "classname" "drawers"
 "origin" "-56 376 16"
 }
+// entity 15
+{
+"classname" "burning_logs"
+"origin" "-24 -8 24"
+}

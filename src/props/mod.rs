@@ -24,6 +24,7 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<CandleUnlit>()
             .register_class::<Candle>()
             .register_class::<Drawers>()
+            .register_class::<BurningLogs>()
     }
 }
 

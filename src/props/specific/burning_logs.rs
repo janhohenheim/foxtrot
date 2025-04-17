@@ -28,12 +28,16 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
 
 fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let mut gradient = Gradient::new();
+    // start red
     gradient.add_key(0.0, Vec4::new(1., 0., 0., 1.));
+    // then yellow
+    gradient.add_key(0.5, Vec4::new(1., 1., 0., 1.));
+    // then black
     gradient.add_key(1.0, Vec4::splat(0.));
 
     let writer = ExprWriter::new();
     let zero = writer.lit(0.);
-    let y = writer.lit(3.).uniform(writer.lit(10.));
+    let y = writer.lit(3.).uniform(writer.lit(5.));
     let v = zero.clone().vec3(y, zero);
     let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, v.expr());
 
@@ -48,7 +52,7 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let lifetime = module.lit(10.);
     let init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
 
-    let accel = module.lit(Vec3::new(0., 1., 0.));
+    let accel = module.lit(Vec3::new(0., 0.5, 0.));
     let update_accel = AccelModifier::new(accel);
 
     const MAX_PARTICLES: u32 = 32768;
@@ -63,7 +67,6 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
         // time, and the gradient key 1 to the particle death (10s).
         .render(ColorOverLifetimeModifier {
             gradient,
-            blend: ColorBlendMode::Add,
             ..default()
         });
 

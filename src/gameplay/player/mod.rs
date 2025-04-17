@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
-#[require(Transform, Visibility)]
+#[base(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
 #[component(on_add = Self::on_add)]
 // In Wasm, TrenchBroom classes are not automatically registered.

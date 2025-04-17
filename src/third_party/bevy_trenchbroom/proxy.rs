@@ -31,6 +31,6 @@ impl RegisterProxies for TrenchBroomConfig {
 ///
 /// Source: [Wikipedia](https://en.wikipedia.org/wiki/Lumen_(unit)#Lighting)
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
-#[require(BevyPointLight)]
+#[base(BevyPointLight)]
 #[reflect(Component, Default, Debug)]
 struct PointLight;

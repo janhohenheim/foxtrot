@@ -66,6 +66,12 @@ create_prop!(
     on_add = specific::setup_candle
 );
 
+create_prop!(
+    BurningLogs,
+    "models/burning_logs/burning_logs.gltf",
+    on_add = specific::setup_burning_logs
+);
+
 // This macro does nothing fancy, it's just here to save us some boilerplate when defining new prop classes :)
 macro_rules! create_prop {
     ($name:ident, $model:expr, on_add = $on_add:ty) => {

@@ -13,7 +13,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
-    AppSet, RenderLayer,
+    AppSet, CameraOrder, RenderLayer,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
@@ -100,6 +100,10 @@ fn spawn_view_model(
                 Name::new("WorldModelCamera"),
                 WorldModelCamera,
                 Camera3d::default(),
+                Camera {
+                    order: CameraOrder::World.into(),
+                    ..default()
+                },
                 Projection::from(PerspectiveProjection {
                     fov: 90.0_f32.to_radians(),
                     ..default()
@@ -113,7 +117,7 @@ fn spawn_view_model(
                 Camera3d::default(),
                 Camera {
                     // Bump the order to render on top of the world model.
-                    order: 1,
+                    order: CameraOrder::ViewModel.into(),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {

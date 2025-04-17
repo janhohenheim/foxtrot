@@ -96,6 +96,18 @@ enum AppSet {
     Update,
 }
 
+enum CameraOrder {
+    World,
+    ViewModel,
+    UI,
+}
+
+impl From<CameraOrder> for isize {
+    fn from(order: CameraOrder) -> Self {
+        order as isize
+    }
+}
+
 bitflags! {
     pub struct RenderLayer: u32 {
         /// Used implicitly by all entities without a `RenderLayers` component.

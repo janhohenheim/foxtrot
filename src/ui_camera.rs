@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::CameraOrder;
+
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, spawn_ui_camera);
 }
@@ -12,7 +14,7 @@ fn spawn_ui_camera(mut commands: Commands) {
         IsDefaultUiCamera,
         Camera {
             // Bump the order to render on top of the view model.
-            order: 2,
+            order: CameraOrder::UI.into(),
             ..default()
         },
     ));

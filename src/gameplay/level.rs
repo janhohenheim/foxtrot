@@ -53,7 +53,14 @@ impl FromWorld for LevelAssets {
             //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
             // We preload all props used in the level here. The template is setup such that we get a helpful warning if we miss one.
-            props: vec![],
+            props: vec![
+                assets.load(Book::scene_path()),
+                assets.load(Candle::scene_path()),
+                assets.load(CandleUnlit::scene_path()),
+                assets.load(Mug::scene_path()),
+                assets.load(Plate::scene_path()),
+                assets.load(Drawers::scene_path()),
+            ],
         }
     }
 }

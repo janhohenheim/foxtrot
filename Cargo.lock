@@ -1748,7 +1748,7 @@ dependencies = [
  "bitflags 2.9.0",
  "cexpr",
  "clang-sys",
- "itertools 0.11.0",
+ "itertools 0.13.0",
  "log",
  "prettyplease",
  "proc-macro2",
@@ -4842,7 +4842,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
-source = "git+https://github.com/TheGrimsey/oxidized_navigation#2eb1293a1be26d14f70f444bfc6bfe2b56718369"
+source = "git+https://github.com/TheGrimsey/oxidized_navigation#20ae63257d08bdfacd9ede312c16d9a479471700"
 dependencies = [
  "avian3d",
  "bevy",
@@ -5187,7 +5187,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81bddcdb20abf9501610992b6759a4c888aef7d1a7247ef75e2404275ac24af1"
 dependencies = [
  "anyhow",
- "itertools 0.11.0",
+ "itertools 0.12.1",
  "proc-macro2",
  "quote",
  "syn",
@@ -5195,9 +5195,9 @@ dependencies = [
 
 [[package]]
 name = "qbsp"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e60e97fe376d71a6b52045d05e217b79a3b7123ac5b8183cfdb988739916c4d5"
+checksum = "21d2d7c41ab511dff18f769c048cfd009fcc4c3b01312a09450e943b0863c50a"
 dependencies = [
  "bevy_reflect",
  "derive_more 2.0.1",
@@ -5213,9 +5213,9 @@ dependencies = [
 
 [[package]]
 name = "qbsp_macros"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9da70958a8100c253a0824b835d0c4be0bbbc80ff7897c60be96e6e49827cdc1"
+checksum = "f9e287a24329cc2a06e6e3a7ab4873edf8a5294bc922e969808178d0f798eebb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5973,9 +5973,9 @@ dependencies = [
 
 [[package]]
 name = "svg_fmt"
-version = "0.4.4"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce5d813d71d82c4cbc1742135004e4a79fd870214c155443451c139c9470a0aa"
+checksum = "0193cc4331cfd2f3d2011ef287590868599a2f33c3e69bc22c1a3d3acf9e02fb"
 
 [[package]]
 name = "swash"

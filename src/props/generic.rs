@@ -1,5 +1,5 @@
-use crate::third_party::avian3d::CollisionLayer;
 use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
+use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation};
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -20,7 +20,11 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
     }
 
     let bundle = dynamic_bundle::<T>(&world);
-    world.commands().entity(entity).insert(bundle);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle);
 }
 
 pub(crate) fn setup_static_prop<T: QuakeClass>(
@@ -33,13 +37,16 @@ pub(crate) fn setup_static_prop<T: QuakeClass>(
     }
 
     let bundle = static_bundle::<T>(&world);
-    world.commands().entity(entity).insert(bundle);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle);
 }
 
 pub(crate) fn dynamic_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle {
     let model = load_model::<T>(world);
     (
-        TrenchBroomGltfRotationFix,
         TransformInterpolation,
         ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
@@ -54,7 +61,6 @@ pub(crate) fn dynamic_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundl
 pub(crate) fn static_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle {
     let model = load_model::<T>(world);
     (
-        TrenchBroomGltfRotationFix,
         ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
             .with_default_layers(CollisionLayers::new(
                 CollisionLayer::Default,

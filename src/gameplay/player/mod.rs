@@ -15,7 +15,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
 
-use crate::third_party::avian3d::CollisionLayer;
+use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation};
 
 mod animation;
 pub(crate) mod assets;
@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
 #[reflect(Component)]
-#[require(Transform, Visibility)]
+#[base(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
 #[component(on_add = Self::on_add)]
 // In Wasm, TrenchBroom classes are not automatically registered.
@@ -61,9 +61,9 @@ impl Player {
         world
             .commands()
             .entity(entity)
+            .queue(fix_gltf_rotation)
             .insert((
                 RigidBody::Dynamic,
-                TrenchBroomGltfRotationFix,
                 Actions::<DefaultInputContext>::default(),
                 // The player character needs to be configured as a dynamic rigid body of the physics
                 // engine.

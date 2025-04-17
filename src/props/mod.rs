@@ -81,7 +81,7 @@ macro_rules! create_prop {
             Reflect,
         )]
         #[reflect(Component)]
-        #[require(Transform, Visibility)]
+        #[base(Transform, Visibility)]
         #[model($model)]
         #[component(on_add = $on_add)]
         pub(crate) struct $name;

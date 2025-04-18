@@ -8,6 +8,7 @@ use bevy::{
     render::view::RenderLayers,
     scene::SceneInstanceReady,
 };
+#[cfg(feature = "native")]
 use bevy_hanabi::prelude::*;
 use bevy_trenchbroom::util::IsSceneWorld as _;
 
@@ -49,21 +50,19 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     if world.is_scene_world() {
         return;
     }
-    let bundle = static_bundle::<BurningLogs>(&world);
-    let effect_handle = setup(&mut world.resource_mut::<Assets<EffectAsset>>());
-    let texture: Handle<Image> = world.resource_mut::<AssetServer>().load(TEXTURE_PATH);
+    let static_bundle = static_bundle::<BurningLogs>(&world);
+    #[cfg(feature = "native")]
+    let particle_bundle = particle_bundle(&mut world);
     let sound_effect: Handle<AudioSource> = world.resource_mut::<AssetServer>().load(SOUND_PATH);
+
     world
         .commands()
         .entity(entity)
         .queue(fix_gltf_rotation)
         .insert((
-            bundle,
-            ParticleEffect::new(effect_handle),
-            RenderLayers::from(RenderLayer::PARTICLES),
-            EffectMaterial {
-                images: vec![texture.clone()],
-            },
+            static_bundle,
+            #[cfg(feature = "native")]
+            particle_bundle,
             AudioPlayer(sound_effect.clone()),
             PlaybackSettings::LOOP
                 .with_spatial(true)
@@ -96,6 +95,7 @@ fn flicker_light(time: Res<Time>, mut query: Query<&mut PointLight, With<Flicker
         light.intensity = BASE_INTENSITY + flicker * BASE_INTENSITY * flicker_percentage;
     }
 }
+
 fn insert_not_shadow_caster(
     trigger: Trigger<SceneInstanceReady>,
     is_mesh: Query<&Mesh3d>,
@@ -112,7 +112,21 @@ fn insert_not_shadow_caster(
     }
 }
 
-fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
+#[cfg(feature = "native")]
+fn particle_bundle(world: &mut DeferredWorld) -> impl Bundle {
+    let effect_handle = setup_particles(&mut world.resource_mut::<Assets<EffectAsset>>());
+    let texture: Handle<Image> = world.resource_mut::<AssetServer>().load(TEXTURE_PATH);
+    (
+        ParticleEffect::new(effect_handle),
+        RenderLayers::from(RenderLayer::PARTICLES),
+        EffectMaterial {
+            images: vec![texture.clone()],
+        },
+    )
+}
+
+#[cfg(feature = "native")]
+fn setup_particles(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let writer = ExprWriter::new();
 
     // Random upward velocity with some lateral randomness for flicker

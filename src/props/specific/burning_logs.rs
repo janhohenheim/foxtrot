@@ -68,6 +68,10 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
         .init(init_vel)
         .init(init_lifetime)
         .update(update_accel)
+        .render(OrientModifier {
+            mode: OrientMode::FaceCameraPosition,
+            rotation: None,
+        })
         .render(ColorOverLifetimeModifier {
             gradient,
             ..default()

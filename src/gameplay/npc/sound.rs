@@ -6,7 +6,6 @@ use bevy::{
     prelude::*,
 };
 use bevy_tnua::prelude::*;
-use rand::seq::SliceRandom as _;
 
 use crate::{AppSet, audio::SoundEffect, screens::Screen};
 
@@ -24,7 +23,7 @@ pub(super) fn plugin(app: &mut App) {
 fn play_step_sound(
     mut commands: Commands,
     npc: Single<(Entity, &TnuaController, &LinearVelocity), With<Npc>>,
-    npc_assets: Res<NpcAssets>,
+    mut npc_assets: ResMut<NpcAssets>,
     time: Res<Time>,
     mut timer: Local<Option<Timer>>,
 ) {
@@ -50,7 +49,7 @@ fn play_step_sound(
     let factor = 1.0 - (speed - speed_to_half_duration) / speed_to_half_duration;
     timer.set_duration(Duration::from_millis((base_millis as f32 * factor) as u64));
     let rng = &mut rand::thread_rng();
-    let sound_effect = npc_assets.steps.choose(rng).unwrap();
+    let sound_effect = npc_assets.steps.pick(rng).clone();
 
     commands.entity(entity).with_child((
         Transform::default(),

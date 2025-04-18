@@ -378,5 +378,5 @@
 // entity 15
 {
 "classname" "burning_logs"
-"origin" "-24 -8 24"
+"origin" "8 440 24"
 }

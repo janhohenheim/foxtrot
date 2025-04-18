@@ -133,7 +133,7 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     };
 
     // Short lifetime for fire particles
-    let lifetime = SetAttributeModifier::new(Attribute::LIFETIME, module.lit(0.7));
+    let lifetime = SetAttributeModifier::new(Attribute::LIFETIME, module.lit(0.4));
 
     // Constant upward acceleration (mimics heat rise)
     let accel = module.lit(Vec3::Y * 0.4);

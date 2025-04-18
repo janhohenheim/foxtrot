@@ -355,27 +355,14 @@
 "origin" "-104 712 120"
 "shadows_enabled" "true"
 "color" "1 0.2 0.2"
-"intensity" "1e+06"
+"intensity" "1e+04"
 }
 // entity 12
-{
-"classname" "point_light"
-"origin" "8 -72 88"
-"shadows_enabled" "true"
-"color" "1 1 1"
-}
-// entity 13
-{
-"classname" "point_light"
-"origin" "200 328 216"
-"shadows_enabled" "true"
-}
-// entity 14
 {
 "classname" "drawers"
 "origin" "-56 376 16"
 }
-// entity 15
+// entity 13
 {
 "classname" "burning_logs"
 "origin" "8 440 16"

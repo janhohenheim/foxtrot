@@ -15,7 +15,7 @@ use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed};
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
 
-    app.add_plugins(AaloPlugin::new().world());
+    app.add_plugins(AaloPlugin::new().world().unnest_children());
 
     app.add_plugins((
         DebugUiPlugin,

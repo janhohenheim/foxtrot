@@ -3,11 +3,12 @@
 use bevy::{prelude::*, scene::SceneInstanceReady};
 
 use crate::{
-    props::*, screens::Screen, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
+    asset_tracking::LoadResource, props::*, screens::Screen,
+    third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.init_resource::<LevelAssets>();
+    app.load_resource::<LevelAssets>();
     app.register_type::<Level>();
 }
 
@@ -37,13 +38,12 @@ fn advance_to_gameplay_screen(
     next_screen.set(Screen::Gameplay);
 }
 
-#[derive(Resource, Asset, Clone, Reflect)]
-#[reflect(Resource)]
+#[derive(Resource, Asset, Clone, TypePath)]
 struct LevelAssets {
     #[dependency]
     pub(crate) level: Handle<Scene>,
     #[dependency]
-    pub(crate) props: Vec<Handle<Scene>>,
+    pub(crate) props: Vec<UntypedHandle>,
 }
 
 impl FromWorld for LevelAssets {
@@ -53,14 +53,18 @@ impl FromWorld for LevelAssets {
             //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
             // We preload all props used in the level here. The template is setup such that we get a helpful warning if we miss one.
-            props: vec![
-                assets.load(Book::scene_path()),
-                assets.load(Candle::scene_path()),
-                assets.load(CandleUnlit::scene_path()),
-                assets.load(Mug::scene_path()),
-                assets.load(Plate::scene_path()),
-                assets.load(Drawers::scene_path()),
-            ],
+            props: [
+                Book::scene_path(),
+                Candle::scene_path(),
+                CandleUnlit::scene_path(),
+                Mug::scene_path(),
+                Plate::scene_path(),
+                Drawers::scene_path(),
+            ]
+            .into_iter()
+            .map(|path| assets.load::<Scene>(path).untyped())
+            .chain(BurningLogs::preload(assets))
+            .collect(),
         }
     }
 }

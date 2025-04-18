@@ -24,6 +24,7 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<CandleUnlit>()
             .register_class::<Candle>()
             .register_class::<Drawers>()
+            .register_class::<BurningLogs>()
     }
 }
 
@@ -64,6 +65,12 @@ create_prop!(
     Candle,
     "models/candle/candle.gltf",
     on_add = specific::setup_candle
+);
+
+create_prop!(
+    BurningLogs,
+    "models/burning_logs/burning_logs.gltf",
+    on_add = specific::setup_burning_logs
 );
 
 // This macro does nothing fancy, it's just here to save us some boilerplate when defining new prop classes :)

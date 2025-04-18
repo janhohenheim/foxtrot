@@ -15,7 +15,7 @@ use crate::{
     AppSet, RenderLayer,
     props::{BurningLogs, generic::static_bundle},
     screens::Screen,
-    third_party::bevy_trenchbroom::fix_gltf_rotation,
+    third_party::bevy_trenchbroom::{GetTrenchbroomModelPath as _, fix_gltf_rotation},
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -28,6 +28,21 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+impl BurningLogs {
+    pub(crate) fn preload(asset_server: &AssetServer) -> Vec<UntypedHandle> {
+        vec![
+            asset_server
+                .load::<Scene>(BurningLogs::scene_path())
+                .untyped(),
+            asset_server.load::<Image>(TEXTURE_PATH).untyped(),
+            asset_server.load::<AudioSource>(SOUND_PATH).untyped(),
+        ]
+    }
+}
+
+const TEXTURE_PATH: &str = "images/Flame.png";
+const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
+
 const BASE_INTENSITY: f32 = 150_000.0;
 
 pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -36,10 +51,8 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     }
     let bundle = static_bundle::<BurningLogs>(&world);
     let effect_handle = setup(&mut world.resource_mut::<Assets<EffectAsset>>());
-    let circle: Handle<Image> = world.resource_mut::<AssetServer>().load("images/Flame.png");
-    let sound_effect: Handle<AudioSource> = world
-        .resource_mut::<AssetServer>()
-        .load("audio/music/loop_flames_03.ogg");
+    let texture: Handle<Image> = world.resource_mut::<AssetServer>().load(TEXTURE_PATH);
+    let sound_effect: Handle<AudioSource> = world.resource_mut::<AssetServer>().load(SOUND_PATH);
     world
         .commands()
         .entity(entity)
@@ -49,7 +62,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
             ParticleEffect::new(effect_handle),
             RenderLayers::from(RenderLayer::PARTICLES),
             EffectMaterial {
-                images: vec![circle.clone()],
+                images: vec![texture.clone()],
             },
             AudioPlayer(sound_effect.clone()),
             PlaybackSettings::LOOP

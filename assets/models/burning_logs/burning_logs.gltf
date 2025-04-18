@@ -15,35 +15,28 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"candle0",
+			"name":"Object_#0",
 			"scale":[
-				0.019999999552965164,
-				0.019999999552965164,
-				0.019999999552965164
-			],
-			"translation":[
-				0,
-				0.020747536793351173,
-				0
+				2.596606969833374,
+				2.596606969833374,
+				2.596606969833374
 			]
 		}
 	],
 	"materials":[
 		{
-			"doubleSided":true,
-			"name":"candle_material",
+			"name":"burntwood",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
-				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"metallicFactor":0
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Cylinder",
+			"name":"Mesh_0.003",
 			"primitives":[
 				{
 					"attributes":{
@@ -65,70 +58,70 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/png",
-			"name":"candle_texture",
-			"uri":"candle_texture.png"
+			"mimeType":"image/jpeg",
+			"name":"burning_logs_ed",
+			"uri":"burning_logs_ed.jpg"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":80,
+			"count":184,
 			"max":[
-				1.3817225694656372,
-				3.505650520324707,
-				0.8090170621871948
+				0.17370179295539856,
+				0.12287624180316925,
+				0.06332483887672424
 			],
 			"min":[
-				-0.9510564804077148,
-				-1,
-				-1
+				-0.17208585143089294,
+				0.00025083497166633606,
+				-0.10956898331642151
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":80,
+			"count":184,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":80,
+			"count":184,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":120,
+			"count":528,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":960,
+			"byteLength":2208,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":960,
-			"byteOffset":960,
+			"byteLength":2208,
+			"byteOffset":2208,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":640,
-			"byteOffset":1920,
+			"byteLength":1472,
+			"byteOffset":4416,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":240,
-			"byteOffset":2560,
+			"byteLength":1056,
+			"byteOffset":5888,
 			"target":34963
 		}
 	],
@@ -140,8 +133,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":2800,
-			"uri":"candle.bin"
+			"byteLength":6944,
+			"uri":"burning_logs.bin"
 		}
 	]
 }

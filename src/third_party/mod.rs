@@ -3,9 +3,10 @@ use bevy::prelude::*;
 pub(crate) mod avian3d;
 mod avian_pickup;
 mod bevy_enhanced_input;
+#[cfg(feature = "native")]
+mod bevy_hanabi;
 mod bevy_landmass;
 mod bevy_tnua;
-mod bevy_hanabi;
 pub(crate) mod bevy_trenchbroom;
 pub(crate) mod bevy_yarnspinner;
 
@@ -18,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         bevy_landmass::plugin,
         bevy_yarnspinner::plugin,
         avian_pickup::plugin,
+        #[cfg(feature = "native")]
         bevy_hanabi::plugin,
     ));
 }

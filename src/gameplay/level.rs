@@ -3,11 +3,12 @@
 use bevy::{prelude::*, scene::SceneInstanceReady};
 
 use crate::{
-    props::*, screens::Screen, third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
+    asset_tracking::LoadResource, props::*, screens::Screen,
+    third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.init_resource::<LevelAssets>();
+    app.load_resource::<LevelAssets>();
     app.register_type::<Level>();
 }
 

@@ -127,8 +127,8 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
 
     // Spawn from small spherical area at the base
     let init_pos = SetPositionSphereModifier {
-        center: module.lit(Vec3::ZERO),
-        radius: module.lit(0.4),
+        center: module.lit(Vec3::Y * 0.2),
+        radius: module.lit(0.35),
         dimension: ShapeDimension::Volume,
     };
 

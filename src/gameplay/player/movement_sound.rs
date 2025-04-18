@@ -3,7 +3,6 @@ use std::time::Duration;
 use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
-use rand::seq::SliceRandom as _;
 
 use crate::{AppSet, audio::SoundEffect, screens::Screen};
 
@@ -21,7 +20,7 @@ pub(super) fn plugin(app: &mut App) {
 fn play_jump_grunt(
     mut commands: Commands,
     player: Single<&TnuaController, With<Player>>,
-    player_assets: Res<PlayerAssets>,
+    mut player_assets: ResMut<PlayerAssets>,
     mut is_jumping: Local<bool>,
 ) {
     let Some((_jump, jump_state)) = player.concrete_action::<TnuaBuiltinJump>() else {
@@ -42,8 +41,8 @@ fn play_jump_grunt(
     *is_jumping = true;
 
     let rng = &mut rand::thread_rng();
-    let grunt = player_assets.jump_grunts.choose(rng).unwrap();
-    let jump_start = player_assets.jump_start_sounds.choose(rng).unwrap();
+    let grunt = player_assets.jump_grunts.pick(rng).clone();
+    let jump_start = player_assets.jump_start_sounds.pick(rng).clone();
 
     commands.spawn((
         AudioPlayer(grunt.clone()),
@@ -60,7 +59,7 @@ fn play_jump_grunt(
 fn play_step_sound(
     mut commands: Commands,
     player: Single<(&TnuaController, &LinearVelocity), With<Player>>,
-    player_assets: Res<PlayerAssets>,
+    mut player_assets: ResMut<PlayerAssets>,
     time: Res<Time>,
     mut timer: Local<Option<Timer>>,
 ) {
@@ -79,7 +78,7 @@ fn play_step_sound(
         return;
     }
     let rng = &mut rand::thread_rng();
-    let sound_effect = player_assets.steps.choose(rng).unwrap();
+    let sound_effect = player_assets.steps.pick(rng).clone();
 
     commands.spawn((
         AudioPlayer(sound_effect.clone()),
@@ -91,7 +90,7 @@ fn play_step_sound(
 fn play_land_sound(
     mut commands: Commands,
     player: Single<&TnuaController, With<Player>>,
-    player_assets: Res<PlayerAssets>,
+    mut player_assets: ResMut<PlayerAssets>,
     mut was_airborne: Local<bool>,
 ) {
     let is_airborne = player.is_airborne().unwrap_or(true);
@@ -105,7 +104,7 @@ fn play_land_sound(
     *was_airborne = false;
 
     let rng = &mut rand::thread_rng();
-    let sound_effect = player_assets.land_sounds.choose(rng).unwrap();
+    let sound_effect = player_assets.land_sounds.pick(rng).clone();
 
     commands.spawn((
         AudioPlayer(sound_effect.clone()),

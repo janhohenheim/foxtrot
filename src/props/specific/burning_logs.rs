@@ -36,8 +36,8 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
         AudioPlayer(sound_effect.clone()),
         PlaybackSettings::LOOP
             .with_spatial(true)
-            .with_volume(Volume::new(0.2))
-            .with_spatial_scale(SpatialScale::new(0.02)),
+            .with_volume(Volume::new(0.25))
+            .with_spatial_scale(SpatialScale::new(0.3)),
     ));
 }
 
@@ -52,21 +52,23 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let writer = ExprWriter::new();
 
     // Random upward velocity with some lateral randomness for flicker
-    let vx = writer.lit(-0.5).uniform(writer.lit(0.5));
-    let vy = writer.lit(3.0).uniform(writer.lit(6.0));
-    let vz = writer.lit(-0.5).uniform(writer.lit(0.5));
-    let velocity = vx.vec3(vy, vz);
+    let min_velocity = writer.lit(Vec3::new(-0.5, 3.0, -0.5));
+    let max_velocity = writer.lit(Vec3::new(0.5, 6.0, 0.5));
+    let velocity = min_velocity.uniform(max_velocity);
 
+    // Load the texture
     let particle_texture_modifier = ParticleTextureModifier {
         texture_slot: writer.lit(0u32).expr(),
         sample_mapping: ImageSampleMapping::Modulate,
     };
 
+    // Random rotation
     let rotation = writer.lit(0.0).uniform(writer.lit(TAU)).expr();
 
     let mut module = writer.finish();
     module.add_texture_slot("shape");
 
+    // Set the velocity
     let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, velocity.expr());
 
     // Spawn from small spherical area at the base
@@ -84,13 +86,16 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let accel = module.lit(Vec3::new(0.0, 1.0, 0.0));
     let update_accel = AccelModifier::new(accel);
 
+    // Additive blending to simulate light emission
+    let alpha_mode = bevy_hanabi::AlphaMode::Add;
+
     const MAX_PARTICLES: u32 = 32768;
     let effect = EffectAsset::new(MAX_PARTICLES, SpawnerSettings::rate(100.0.into()), module)
         .with_name("FireEffect")
         .init(init_pos)
         .init(init_vel)
         .init(init_lifetime)
-        .with_alpha_mode(bevy_hanabi::AlphaMode::Add)
+        .with_alpha_mode(alpha_mode)
         .update(update_accel)
         .render(OrientModifier {
             rotation: Some(rotation),

@@ -4,6 +4,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(validate_mesh);
     app.add_observer(validate_material);
     app.add_observer(validate_scene);
+    app.add_observer(validate_audio);
 }
 
 fn validate_mesh(
@@ -40,4 +41,13 @@ fn validate_asset<T: Asset>(handle: &Handle<T>, assets: &AssetServer, type_name:
     if !assets.is_loaded_with_dependencies(handle) {
         warn!("{type_name} at path \"{path}\" was not preloaded and will load during gameplay.",);
     }
+}
+
+fn validate_audio(
+    trigger: Trigger<OnAdd, AudioPlayer>,
+    q_audio: Query<&AudioPlayer>,
+    assets: Res<AssetServer>,
+) {
+    let handle = &q_audio.get(trigger.entity()).unwrap().0;
+    validate_asset(handle, &assets, "Audio");
 }

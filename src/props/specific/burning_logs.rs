@@ -1,6 +1,7 @@
 use std::f32::consts::TAU;
 
 use bevy::{
+    audio::{SpatialScale, Volume},
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
     render::view::RenderLayers,
@@ -22,6 +23,9 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     let bundle = static_bundle::<BurningLogs>(&world);
     let effect_handle = setup(&mut world.resource_mut::<Assets<EffectAsset>>());
     let circle: Handle<Image> = world.resource_mut::<AssetServer>().load("images/Flame.png");
+    let sound_effect: Handle<AudioSource> = world
+        .resource_mut::<AssetServer>()
+        .load("audio/music/loop_flames_03.ogg");
     world.commands().entity(entity).insert((
         bundle,
         ParticleEffect::new(effect_handle),
@@ -29,6 +33,11 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
         EffectMaterial {
             images: vec![circle.clone()],
         },
+        AudioPlayer(sound_effect.clone()),
+        PlaybackSettings::LOOP
+            .with_spatial(true)
+            .with_volume(Volume::new(0.2))
+            .with_spatial_scale(SpatialScale::new(0.02)),
     ));
 }
 

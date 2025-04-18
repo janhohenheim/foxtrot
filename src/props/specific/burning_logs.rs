@@ -1,3 +1,5 @@
+use std::f32::consts::TAU;
+
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
@@ -19,10 +21,14 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     }
     let bundle = static_bundle::<BurningLogs>(&world);
     let effect_handle = setup(&mut world.resource_mut::<Assets<EffectAsset>>());
+    let circle: Handle<Image> = world.resource_mut::<AssetServer>().load("images/Flame.png");
     world.commands().entity(entity).insert((
         bundle,
         ParticleEffect::new(effect_handle),
         RenderLayers::from(RenderLayer::PARTICLES),
+        EffectMaterial {
+            images: vec![circle.clone()],
+        },
     ));
 }
 
@@ -42,7 +48,15 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let vz = writer.lit(-0.5).uniform(writer.lit(0.5));
     let velocity = vx.vec3(vy, vz);
 
+    let particle_texture_modifier = ParticleTextureModifier {
+        texture_slot: writer.lit(0u32).expr(),
+        sample_mapping: ImageSampleMapping::Modulate,
+    };
+
+    let rotation = writer.lit(0.0).uniform(writer.lit(TAU)).expr();
+
     let mut module = writer.finish();
+    module.add_texture_slot("shape");
 
     let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, velocity.expr());
 
@@ -67,15 +81,17 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
         .init(init_pos)
         .init(init_vel)
         .init(init_lifetime)
+        .with_alpha_mode(bevy_hanabi::AlphaMode::Add)
         .update(update_accel)
         .render(OrientModifier {
-            mode: OrientMode::FaceCameraPosition,
-            rotation: None,
+            rotation: Some(rotation),
+            ..default()
         })
         .render(ColorOverLifetimeModifier {
             gradient,
             ..default()
-        });
+        })
+        .render(particle_texture_modifier);
 
     effects.add(effect)
 }

@@ -3,18 +3,31 @@ use std::f32::consts::TAU;
 use bevy::{
     audio::{SpatialScale, Volume},
     ecs::{component::ComponentId, world::DeferredWorld},
+    pbr::NotShadowCaster,
     prelude::*,
     render::view::RenderLayers,
+    scene::SceneInstanceReady,
 };
 use bevy_hanabi::prelude::*;
 use bevy_trenchbroom::util::IsSceneWorld as _;
 
 use crate::{
-    RenderLayer,
+    AppSet, RenderLayer,
     props::{BurningLogs, generic::static_bundle},
+    screens::Screen,
 };
 
-pub(super) fn plugin(_app: &mut App) {}
+pub(super) fn plugin(app: &mut App) {
+    app.register_type::<Flicker>();
+    app.add_systems(
+        Update,
+        flicker_light
+            .run_if(in_state(Screen::Gameplay))
+            .in_set(AppSet::Update),
+    );
+}
+
+const BASE_INTENSITY: f32 = 300_000.0;
 
 pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
     if world.is_scene_world() {
@@ -26,19 +39,61 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     let sound_effect: Handle<AudioSource> = world
         .resource_mut::<AssetServer>()
         .load("audio/music/loop_flames_03.ogg");
-    world.commands().entity(entity).insert((
-        bundle,
-        ParticleEffect::new(effect_handle),
-        RenderLayers::from(RenderLayer::PARTICLES),
-        EffectMaterial {
-            images: vec![circle.clone()],
-        },
-        AudioPlayer(sound_effect.clone()),
-        PlaybackSettings::LOOP
-            .with_spatial(true)
-            .with_volume(Volume::new(0.25))
-            .with_spatial_scale(SpatialScale::new(0.3)),
-    ));
+    world
+        .commands()
+        .entity(entity)
+        .insert((
+            bundle,
+            ParticleEffect::new(effect_handle),
+            RenderLayers::from(RenderLayer::PARTICLES),
+            EffectMaterial {
+                images: vec![circle.clone()],
+            },
+            AudioPlayer(sound_effect.clone()),
+            PlaybackSettings::LOOP
+                .with_spatial(true)
+                .with_volume(Volume::new(0.25))
+                .with_spatial_scale(SpatialScale::new(0.3)),
+        ))
+        .observe(insert_not_shadow_caster)
+        .with_child((
+            PointLight {
+                color: Color::srgb(1.0, 0.7, 0.4),
+                intensity: BASE_INTENSITY,
+                //range: 5.0,
+                radius: 0.6,
+                shadows_enabled: true,
+                ..default()
+            },
+            Transform::from_xyz(0.0, 0.2, 0.0),
+            Flicker,
+        ));
+}
+
+#[derive(Debug, Component, Reflect)]
+#[reflect(Component)]
+struct Flicker;
+
+fn flicker_light(time: Res<Time>, mut query: Query<&mut PointLight, With<Flicker>>) {
+    for mut light in &mut query {
+        let flickers_per_second = 20.0;
+        let flicker_percentage = 0.1;
+        let flicker = (time.elapsed_secs() * flickers_per_second).sin();
+        light.intensity = BASE_INTENSITY + flicker * BASE_INTENSITY * flicker_percentage;
+    }
+}
+fn insert_not_shadow_caster(
+    trigger: Trigger<SceneInstanceReady>,
+    is_mesh: Query<&Mesh3d>,
+    children: Query<&Children>,
+    mut commands: Commands,
+) {
+    for child in children
+        .iter_descendants(trigger.entity())
+        .filter(|e| is_mesh.get(*e).is_ok())
+    {
+        commands.entity(child).insert(NotShadowCaster);
+    }
 }
 
 fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {

@@ -5,9 +5,13 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
+    core_pipeline::tonemapping::Tonemapping,
     pbr::NotShadowCaster,
     prelude::*,
-    render::view::{NoFrustumCulling, RenderLayers},
+    render::{
+        camera::Exposure,
+        view::{NoFrustumCulling, RenderLayers},
+    },
     scene::SceneInstanceReady,
 };
 use bevy_enhanced_input::prelude::*;
@@ -68,6 +72,10 @@ fn spawn_view_model(
     mut commands: Commands,
     assets: Res<PlayerAssets>,
 ) {
+    commands.insert_resource(AmbientLight {
+        color: Color::srgb(1.0, 0.7, 0.4),
+        brightness: 60.0,
+    });
     commands
         .spawn((
             Name::new("PlayerCameraParent"),
@@ -109,6 +117,8 @@ fn spawn_view_model(
                     ..default()
                 }),
                 RenderLayers::from(RenderLayer::DEFAULT | RenderLayer::PARTICLES),
+                Exposure::INDOOR,
+                Tonemapping::AcesFitted,
             ));
 
             // Spawn view model camera.
@@ -129,6 +139,8 @@ fn spawn_view_model(
                 }),
                 // Only render objects belonging to the view model.
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
+                Exposure::INDOOR,
+                Tonemapping::AcesFitted,
             ));
 
             // Spawn the player's right arm.

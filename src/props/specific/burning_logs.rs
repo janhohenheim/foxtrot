@@ -42,24 +42,15 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
 }
 
 fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
-    // Color gradient for fire: bright yellow → orange → dark red → transparent
-    let mut gradient = Gradient::new();
-    gradient.add_key(0.0, Vec4::new(1.0, 0.8, 0.0, 1.0)); // bright yellow
-    gradient.add_key(0.3, Vec4::new(1.0, 0.4, 0.0, 1.0)); // orange
-    gradient.add_key(0.6, Vec4::new(0.6, 0.0, 0.0, 0.8)); // dark red
-    gradient.add_key(1.0, Vec4::new(0.0, 0.0, 0.0, 0.0)); // transparent
-    let color_over_lifetime = ColorOverLifetimeModifier {
-        gradient,
-        ..default()
-    };
-
     let writer = ExprWriter::new();
 
     // Random upward velocity with some lateral randomness for flicker
-    const LATERAL_EXTENT: f32 = 0.3;
-    let min_velocity = writer.lit(Vec3::new(-LATERAL_EXTENT, 1.0, -LATERAL_EXTENT));
-    let max_velocity = writer.lit(Vec3::new(LATERAL_EXTENT, 2.0, LATERAL_EXTENT));
-    let velocity = min_velocity.uniform(max_velocity);
+    let mean_velocity = writer.lit(Vec3::new(0.0, 1.5, 0.0));
+    let sd_velocity = writer.lit(Vec3::new(0.2, 0.5, 0.2));
+    let velocity = SetAttributeModifier::new(
+        Attribute::VELOCITY,
+        mean_velocity.normal(sd_velocity).expr(),
+    );
 
     // Load the texture
     let particle_texture_modifier = ParticleTextureModifier {
@@ -70,14 +61,11 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     // Random rotation
     let orientation = OrientModifier {
         rotation: Some(writer.lit(0.0).uniform(writer.lit(TAU)).expr()),
-        ..default()
+        mode: OrientMode::FaceCameraPosition,
     };
 
     let mut module = writer.finish();
     module.add_texture_slot("shape");
-
-    // Set the velocity
-    let init_vel = SetAttributeModifier::new(Attribute::VELOCITY, velocity.expr());
 
     // Spawn from small spherical area at the base
     let init_pos = SetPositionSphereModifier {
@@ -87,8 +75,7 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     };
 
     // Short lifetime for fire particles
-    let lifetime = module.lit(0.7);
-    let init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
+    let lifetime = SetAttributeModifier::new(Attribute::LIFETIME, module.lit(0.7));
 
     // Constant upward acceleration (mimics heat rise)
     let accel = module.lit(Vec3::Y * 0.4);
@@ -96,6 +83,18 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
 
     // Additive blending to simulate light emission
     let alpha_mode = bevy_hanabi::AlphaMode::Add;
+
+    // Color gradient for fire: transparent → bright yellow → orange → dark red → transparent
+    let mut gradient = Gradient::new();
+    gradient.add_key(0.0, Vec4::new(0.0, 0.0, 0.0, 0.0)); // transparent
+    gradient.add_key(0.1, Vec4::new(1.0, 0.8, 0.0, 1.0)); // bright yellow
+    gradient.add_key(0.3, Vec4::new(1.0, 0.4, 0.0, 1.0)); // orange
+    gradient.add_key(0.6, Vec4::new(0.6, 0.0, 0.0, 0.8)); // dark red
+    gradient.add_key(1.0, Vec4::new(0.0, 0.0, 0.0, 0.0)); // transparent
+    let color_over_lifetime = ColorOverLifetimeModifier {
+        gradient,
+        ..default()
+    };
 
     // Size over lifetime modifier: small -> larger -> fade out
     let mut size_curve = Gradient::new();
@@ -112,8 +111,8 @@ fn setup(effects: &mut Assets<EffectAsset>) -> Handle<EffectAsset> {
     let effect = EffectAsset::new(MAX_PARTICLES, SpawnerSettings::rate(150.0.into()), module)
         .with_name("FireEffect")
         .init(init_pos)
-        .init(init_vel)
-        .init(init_lifetime)
+        .init(velocity)
+        .init(lifetime)
         .with_alpha_mode(alpha_mode)
         .update(update_accel)
         .render(orientation)

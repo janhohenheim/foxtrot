@@ -3,7 +3,7 @@ use std::f32::consts::TAU;
 use bevy::{
     audio::{SpatialScale, Volume},
     ecs::{component::ComponentId, world::DeferredWorld},
-    pbr::NotShadowCaster,
+    pbr::{NotShadowCaster, NotShadowReceiver},
     prelude::*,
     render::view::RenderLayers,
     scene::SceneInstanceReady,
@@ -15,6 +15,7 @@ use crate::{
     AppSet, RenderLayer,
     props::{BurningLogs, generic::static_bundle},
     screens::Screen,
+    third_party::bevy_trenchbroom::fix_gltf_rotation,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -27,7 +28,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-const BASE_INTENSITY: f32 = 300_000.0;
+const BASE_INTENSITY: f32 = 150_000.0;
 
 pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
     if world.is_scene_world() {
@@ -42,6 +43,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     world
         .commands()
         .entity(entity)
+        .queue(fix_gltf_rotation)
         .insert((
             bundle,
             ParticleEffect::new(effect_handle),
@@ -60,8 +62,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),
                 intensity: BASE_INTENSITY,
-                //range: 5.0,
-                radius: 0.6,
+                radius: 0.5,
                 shadows_enabled: true,
                 ..default()
             },
@@ -92,7 +93,9 @@ fn insert_not_shadow_caster(
         .iter_descendants(trigger.entity())
         .filter(|e| is_mesh.get(*e).is_ok())
     {
-        commands.entity(child).insert(NotShadowCaster);
+        commands
+            .entity(child)
+            .insert((NotShadowCaster, NotShadowReceiver));
     }
 }
 

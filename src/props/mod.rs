@@ -24,9 +24,6 @@ impl RegisterProps for TrenchBroomConfig {
         self.register_class::<Book>()
             .register_class::<Plate>()
             .register_class::<Mug>()
-            .register_class::<CandleUnlit>()
-            .register_class::<Candle>()
-            .register_class::<Drawers>()
             .register_class::<BurningLogs>()
             .register_class::<Grate>()
             .register_class::<Table>()
@@ -51,19 +48,9 @@ create_prop!(
     "models/mug/mug.gltf",
     on_add = setup_dynamic_prop_with_convex_hull::<Mug>
 );
-create_prop!(
-    CandleUnlit,
-    "models/candle_unlit/candle_unlit.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<CandleUnlit>
-);
 
 // generic static props
 
-create_prop!(
-    Drawers,
-    "models/drawers/drawers.gltf",
-    on_add = setup_static_prop_with_convex_hull::<Drawers>
-);
 create_prop!(
     Grate,
     "models/grate/grate.gltf",
@@ -77,12 +64,6 @@ create_prop!(
 );
 
 // props with a specific setup function
-
-create_prop!(
-    Candle,
-    "models/candle/candle.gltf",
-    on_add = specific::setup_candle
-);
 
 create_prop!(
     Chair,

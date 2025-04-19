@@ -4,7 +4,10 @@ use super::input::{ForceFreeCursor, ToggleDebugUi};
 use aalo::prelude::*;
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
-    dev_tools::ui_debug_overlay::{DebugUiPlugin, UiDebugOptions},
+    dev_tools::{
+        fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin},
+        ui_debug_overlay::{DebugUiPlugin, UiDebugOptions},
+    },
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
@@ -14,6 +17,13 @@ use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
+
+    app.add_plugins(FpsOverlayPlugin {
+        config: FpsOverlayConfig {
+            enabled: false,
+            ..default()
+        },
+    });
 
     app.add_plugins(AaloPlugin::new().world().unnest_children());
 
@@ -38,6 +48,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
+            toggle_fps_overlay.run_if(toggled_state(DebugState::None)),
             toggle_debug_ui.run_if(toggled_state(DebugState::Ui)),
             toggle_physics_debug_ui.run_if(toggled_state(DebugState::Physics)),
             toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
@@ -65,6 +76,10 @@ fn toggle_physics_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
 
 fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
     **debug = !**debug;
+}
+
+fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
+    config.enabled = !config.enabled;
 }
 
 fn disable_aalo_inspector_on_spawn(

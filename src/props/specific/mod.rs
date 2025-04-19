@@ -6,7 +6,7 @@ use bevy::{
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
-    props::{Candle, generic::dynamic_bundle},
+    props::generic::dynamic_bundle,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation},
 };
 pub(crate) use burning_logs::*;
@@ -17,18 +17,6 @@ mod burning_logs;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(burning_logs::plugin);
-}
-
-pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
-    if world.is_scene_world() {
-        return;
-    }
-    let bundle = dynamic_bundle::<Candle>(&world, ColliderConstructor::ConvexHullFromMesh);
-    world
-        .commands()
-        .entity(entity)
-        .queue(fix_gltf_rotation)
-        .insert(bundle);
 }
 
 pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {

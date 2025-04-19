@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::config::TrenchBroomConfig;
-use generic::{setup_dynamic_prop, setup_static_prop};
+use generic::{
+    setup_dynamic_prop_with_convex_hull, setup_static_prop_with_convex_decomposition,
+    setup_static_prop_with_convex_hull,
+};
 
 mod generic;
 mod specific;
@@ -36,22 +39,22 @@ impl RegisterProps for TrenchBroomConfig {
 create_prop!(
     Book,
     "models/book/book.gltf",
-    on_add = setup_dynamic_prop::<Book>
+    on_add = setup_dynamic_prop_with_convex_hull::<Book>
 );
 create_prop!(
     Plate,
     "models/plate/plate.gltf",
-    on_add = setup_dynamic_prop::<Plate>
+    on_add = setup_dynamic_prop_with_convex_hull::<Plate>
 );
 create_prop!(
     Mug,
     "models/mug/mug.gltf",
-    on_add = setup_dynamic_prop::<Mug>
+    on_add = setup_dynamic_prop_with_convex_hull::<Mug>
 );
 create_prop!(
     CandleUnlit,
     "models/candle_unlit/candle_unlit.gltf",
-    on_add = setup_dynamic_prop::<CandleUnlit>
+    on_add = setup_dynamic_prop_with_convex_hull::<CandleUnlit>
 );
 
 // generic static props
@@ -59,18 +62,18 @@ create_prop!(
 create_prop!(
     Drawers,
     "models/drawers/drawers.gltf",
-    on_add = setup_static_prop::<Drawers>
+    on_add = setup_static_prop_with_convex_hull::<Drawers>
 );
 create_prop!(
     Grate,
     "models/grate/grate.gltf",
-    on_add = setup_static_prop::<Grate>
+    on_add = setup_static_prop_with_convex_hull::<Grate>
 );
 
 create_prop!(
     Table,
     "models/table/table.gltf",
-    on_add = setup_static_prop::<Table>
+    on_add = setup_static_prop_with_convex_decomposition::<Table>
 );
 
 // props with a specific setup function

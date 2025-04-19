@@ -21,10 +21,7 @@ pub(crate) trait RegisterProps {
 
 impl RegisterProps for TrenchBroomConfig {
     fn register_props(self) -> TrenchBroomConfig {
-        self.register_class::<Book>()
-            .register_class::<Plate>()
-            .register_class::<Mug>()
-            .register_class::<BurningLogs>()
+        self.register_class::<BurningLogs>()
             .register_class::<Grate>()
             .register_class::<Table>()
             .register_class::<Chair>()
@@ -33,33 +30,17 @@ impl RegisterProps for TrenchBroomConfig {
 
 // generic dynamic props
 
-create_prop!(
-    Book,
-    "models/book/book.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Book>
-);
-create_prop!(
-    Plate,
-    "models/plate/plate.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Plate>
-);
-create_prop!(
-    Mug,
-    "models/mug/mug.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Mug>
-);
-
 // generic static props
 
 create_prop!(
     Grate,
-    "models/grate/grate.gltf",
+    "models/darkmod/fireplace/grate.gltf",
     on_add = setup_static_prop_with_convex_hull::<Grate>
 );
 
 create_prop!(
     Table,
-    "models/table/table.gltf",
+    "models/darkmod/furniture/tables/rtable1.gltf",
     on_add = setup_static_prop_with_convex_decomposition::<Table>
 );
 
@@ -67,13 +48,13 @@ create_prop!(
 
 create_prop!(
     Chair,
-    "models/chair/chair.gltf",
+    "models/darkmod/furniture/seating/wchair1.gltf",
     on_add = specific::setup_chair
 );
 
 create_prop!(
     BurningLogs,
-    "models/burning_logs/burning_logs.gltf",
+    "models/darkmod/fireplace/burntwood.gltf",
     on_add = specific::setup_burning_logs
 );
 

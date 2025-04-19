@@ -15,20 +15,23 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Object_#0",
+			"name":"wchair1",
 			"scale":[
-				2.596606969833374,
-				2.596606969833374,
-				2.596606969833374
+				0.033135972917079926,
+				0.033135972917079926,
+				0.033135972917079926
 			]
 		}
 	],
 	"materials":[
 		{
-			"name":"burntwood",
+			"name":"wchair1.004",
+			"normalTexture":{
+				"index":0
+			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":0
+					"index":1
 				},
 				"metallicFactor":0
 			}
@@ -36,7 +39,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.003",
+			"name":"Mesh_0.064",
 			"primitives":[
 				{
 					"attributes":{
@@ -54,74 +57,83 @@
 		{
 			"sampler":0,
 			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
 		}
 	],
 	"images":[
 		{
+			"mimeType":"image/png",
+			"name":"wchair1_local",
+			"uri":"wchair1_local.png"
+		},
+		{
 			"mimeType":"image/jpeg",
-			"name":"burning_logs_ed",
-			"uri":"burning_logs_ed.jpg"
+			"name":"wchair1_d_ed",
+			"uri":"wchair1_d_ed.jpg"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":184,
+			"count":443,
 			"max":[
-				0.17370179295539856,
-				0.12287624180316925,
-				0.06332483887672424
+				9.923090934753418,
+				49.68634796142578,
+				11.637279510498047
 			],
 			"min":[
-				-0.17208585143089294,
-				0.00025083497166633606,
-				-0.10956898331642151
+				-9.923090934753418,
+				0.008693695068359375,
+				-11.637279510498047
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":184,
+			"count":443,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":184,
+			"count":443,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":528,
+			"count":1206,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":2208,
+			"byteLength":5316,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2208,
-			"byteOffset":2208,
+			"byteLength":5316,
+			"byteOffset":5316,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1472,
-			"byteOffset":4416,
+			"byteLength":3544,
+			"byteOffset":10632,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1056,
-			"byteOffset":5888,
+			"byteLength":2412,
+			"byteOffset":14176,
 			"target":34963
 		}
 	],
@@ -133,8 +145,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":6944,
-			"uri":"burning_logs.bin"
+			"byteLength":16588,
+			"uri":"wchair1.bin"
 		}
 	]
 }

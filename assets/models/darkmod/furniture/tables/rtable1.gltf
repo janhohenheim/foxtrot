@@ -15,26 +15,30 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Layer_0.016"
+			"name":"rtable1"
 		}
 	],
 	"materials":[
 		{
-			"name":"wchair1.003",
-			"normalTexture":{
-				"index":0
-			},
+			"name":"tdm_table_round_01",
 			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.800000011920929,
+					0.800000011920929,
+					0.800000011920929,
+					1
+				],
 				"baseColorTexture":{
-					"index":1
+					"index":0
 				},
-				"metallicFactor":0
+				"metallicFactor":0,
+				"roughnessFactor":0.7470178008079529
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.045",
+			"name":"Mesh_0.013",
 			"primitives":[
 				{
 					"attributes":{
@@ -52,83 +56,74 @@
 		{
 			"sampler":0,
 			"source":0
-		},
-		{
-			"sampler":0,
-			"source":1
 		}
 	],
 	"images":[
 		{
-			"mimeType":"image/png",
-			"name":"wchair1_local",
-			"uri":"wchair1_local.png"
-		},
-		{
 			"mimeType":"image/jpeg",
-			"name":"wchair1_d_ed",
-			"uri":"wchair1_d_ed.jpg"
+			"name":"rtable2b_ed",
+			"uri":"rtable2b_ed.jpg"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":443,
+			"count":603,
 			"max":[
-				0.2836243510246277,
-				1.419914722442627,
-				0.33261972665786743
+				1.17689847946167,
+				1.2228811979293823,
+				1.1793432235717773
 			],
 			"min":[
-				-0.2836243510246277,
-				1.515553958597593e-05,
-				-0.33261972665786743
+				-1.17689847946167,
+				0.0002778897469397634,
+				-1.1793432235717773
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":443,
+			"count":603,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":443,
+			"count":603,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":1206,
+			"count":2568,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":5316,
+			"byteLength":7236,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5316,
-			"byteOffset":5316,
+			"byteLength":7236,
+			"byteOffset":7236,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3544,
-			"byteOffset":10632,
+			"byteLength":4824,
+			"byteOffset":14472,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2412,
-			"byteOffset":14176,
+			"byteLength":5136,
+			"byteOffset":19296,
 			"target":34963
 		}
 	],
@@ -140,8 +135,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":16588,
-			"uri":"chair.bin"
+			"byteLength":24432,
+			"uri":"rtable1.bin"
 		}
 	]
 }

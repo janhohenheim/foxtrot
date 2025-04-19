@@ -54,9 +54,6 @@ impl FromWorld for LevelAssets {
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
             // We preload all props used in the level here. The template is setup such that we get a helpful warning if we miss one.
             props: [
-                Book::scene_path(),
-                Mug::scene_path(),
-                Plate::scene_path(),
                 Chair::scene_path(),
                 Table::scene_path(),
                 Grate::scene_path(),

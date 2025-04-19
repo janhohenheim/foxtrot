@@ -1,15 +1,11 @@
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
-    pbr::{NotShadowCaster, NotShadowReceiver},
     prelude::*,
-    render::view::RenderLayers,
-    scene::SceneInstanceReady,
 };
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
-    RenderLayer,
     props::generic::dynamic_bundle,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation},
 };

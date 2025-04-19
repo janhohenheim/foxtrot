@@ -44,7 +44,7 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
     if world.is_scene_world() {
         return;
     }
-    let model = world.load_model::<Crate>();
+    let model = world.load_trenchbroom_model::<Crate>();
     world
         .commands()
         .entity(entity)

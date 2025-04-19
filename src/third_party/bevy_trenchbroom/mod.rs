@@ -77,17 +77,17 @@ pub(crate) trait GetTrenchbroomModelPath: QuakeClass {
 impl<T: QuakeClass> GetTrenchbroomModelPath for T {}
 
 pub(crate) trait LoadTrenchbroomModel {
-    fn load_model<T: QuakeClass>(&self) -> Handle<Scene>;
+    fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene>;
 }
 
 impl LoadTrenchbroomModel for DeferredWorld<'_> {
-    fn load_model<T: QuakeClass>(&self) -> Handle<Scene> {
-        self.resource::<AssetServer>().load_model::<T>()
+    fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene> {
+        self.resource::<AssetServer>().load_trenchbroom_model::<T>()
     }
 }
 
 impl LoadTrenchbroomModel for AssetServer {
-    fn load_model<T: QuakeClass>(&self) -> Handle<Scene> {
+    fn load_trenchbroom_model<T: QuakeClass>(&self) -> Handle<Scene> {
         self.load(T::scene_path())
     }
 }

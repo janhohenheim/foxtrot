@@ -1,15 +1,14 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::config::TrenchBroomConfig;
-use generic::{
-    setup_dynamic_prop_with_convex_hull, setup_static_prop_with_convex_decomposition,
-    setup_static_prop_with_convex_hull,
-};
+use generic::*;
+use specific::*;
 
+mod effects;
 mod generic;
 mod specific;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((generic::plugin, specific::plugin));
+    app.add_plugins((generic::plugin, specific::plugin, effects::plugin));
 }
 
 // We can define a new prop here to make it show up in TrenchBroom.
@@ -25,6 +24,8 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<Grate>()
             .register_class::<Table>()
             .register_class::<Chair>()
+            .register_class::<Bookshelf>()
+            .register_class::<LampSitting>()
     }
 }
 
@@ -44,7 +45,19 @@ create_prop!(
     on_add = setup_static_prop_with_convex_decomposition::<Table>
 );
 
+create_prop!(
+    Bookshelf,
+    "models/darkmod/furniture/shelves/bookshelf02.gltf",
+    on_add = setup_static_prop_with_convex_hull::<Bookshelf>
+);
+
 // props with a specific setup function
+
+create_prop!(
+    LampSitting,
+    "models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf",
+    on_add = setup_lamp_sitting
+);
 
 create_prop!(
     Chair,

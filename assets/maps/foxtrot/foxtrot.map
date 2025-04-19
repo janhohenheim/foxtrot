@@ -400,3 +400,13 @@
 "origin" "72 452 18"
 "angles" "0 15 0"
 }
+// entity 11
+{
+"classname" "bookshelf"
+"origin" "-278 346 16"
+}
+// entity 12
+{
+"classname" "lamp_sitting"
+"origin" "104 420 64"
+}

@@ -32,12 +32,6 @@ impl RegisterProps for TrenchBroomConfig {
 
 // generic dynamic props
 
-create_prop!(
-    Crate,
-    "models/darkmod/containers/crate01.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Crate>
-);
-
 // generic static props
 
 create_prop!(
@@ -76,6 +70,12 @@ create_prop!(
     BurningLogs,
     "models/darkmod/fireplace/burntwood.gltf",
     on_add = specific::setup_burning_logs
+);
+
+create_prop!(
+    Crate,
+    "models/darkmod/containers/crate01.gltf",
+    on_add = setup_crate
 );
 
 // This macro does nothing fancy, it's just here to save us some boilerplate when defining new prop classes :)

@@ -10,7 +10,7 @@ use bevy_trenchbroom::{class::QuakeClass, prelude::*};
 
 pub(super) fn plugin(_app: &mut App) {}
 
-pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
+pub(crate) fn setup_dynamic_prop_with_convex_hull<T: QuakeClass>(
     mut world: DeferredWorld,
     entity: Entity,
     _id: ComponentId,
@@ -19,7 +19,7 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
         return;
     }
 
-    let bundle = dynamic_bundle::<T>(&world);
+    let bundle = dynamic_bundle::<T>(&world, ColliderConstructor::ConvexHullFromMesh);
     world
         .commands()
         .entity(entity)
@@ -27,7 +27,7 @@ pub(crate) fn setup_dynamic_prop<T: QuakeClass>(
         .insert(bundle);
 }
 
-pub(crate) fn setup_static_prop<T: QuakeClass>(
+pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
     mut world: DeferredWorld,
     entity: Entity,
     _id: ComponentId,
@@ -36,7 +36,7 @@ pub(crate) fn setup_static_prop<T: QuakeClass>(
         return;
     }
 
-    let bundle = static_bundle::<T>(&world);
+    let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexHullFromMesh);
     world
         .commands()
         .entity(entity)
@@ -44,11 +44,31 @@ pub(crate) fn setup_static_prop<T: QuakeClass>(
         .insert(bundle);
 }
 
-pub(crate) fn dynamic_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle {
+pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
+    mut world: DeferredWorld,
+    entity: Entity,
+    _id: ComponentId,
+) {
+    if world.is_scene_world() {
+        return;
+    }
+
+    let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexDecompositionFromMesh);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle);
+}
+
+pub(crate) fn dynamic_bundle<T: QuakeClass>(
+    world: &DeferredWorld,
+    constructor: ColliderConstructor,
+) -> impl Bundle {
     let model = load_model::<T>(world);
     (
         TransformInterpolation,
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
+        ColliderConstructorHierarchy::new(constructor)
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
             // About the density of oak wood (600-800 kg/m^3)
             .with_default_density(800.0),
@@ -58,14 +78,16 @@ pub(crate) fn dynamic_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundl
     )
 }
 
-pub(crate) fn static_bundle<T: QuakeClass>(world: &DeferredWorld) -> impl Bundle {
+pub(crate) fn static_bundle<T: QuakeClass>(
+    world: &DeferredWorld,
+    constructor: ColliderConstructor,
+) -> impl Bundle {
     let model = load_model::<T>(world);
     (
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
-            .with_default_layers(CollisionLayers::new(
-                CollisionLayer::Default,
-                LayerMask::ALL,
-            )),
+        ColliderConstructorHierarchy::new(constructor).with_default_layers(CollisionLayers::new(
+            CollisionLayer::Default,
+            LayerMask::ALL,
+        )),
         RigidBody::Static,
         SceneRoot(model),
     )

@@ -1,5 +1,6 @@
 use std::f32::consts::TAU;
 
+use avian3d::prelude::*;
 use bevy::{
     audio::{SpatialScale, Volume},
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -50,7 +51,8 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     if world.is_scene_world() {
         return;
     }
-    let static_bundle = static_bundle::<BurningLogs>(&world);
+    let static_bundle =
+        static_bundle::<BurningLogs>(&world, ColliderConstructor::ConvexHullFromMesh);
     #[cfg(feature = "native")]
     let particle_bundle = particle_bundle(&mut world);
     let sound_effect: Handle<AudioSource> = world.resource_mut::<AssetServer>().load(SOUND_PATH);

@@ -425,6 +425,18 @@
 // entity 16
 {
 "classname" "chair"
-"origin" "136 420 16"
+"origin" "130 420 18"
 "angles" "0 -75 0"
+}
+// entity 17
+{
+"classname" "chair"
+"origin" "92 360 18"
+"angles" "0 -165 0"
+}
+// entity 18
+{
+"classname" "chair"
+"origin" "72 452 18"
+"angles" "0 15 0"
 }

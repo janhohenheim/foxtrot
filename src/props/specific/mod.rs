@@ -7,7 +7,7 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::{
     props::{Candle, generic::dynamic_bundle},
-    third_party::avian3d::CollisionLayer,
+    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation},
 };
 pub(crate) use burning_logs::*;
 
@@ -23,20 +23,28 @@ pub(crate) fn setup_candle(mut world: DeferredWorld, entity: Entity, _id: Compon
     if world.is_scene_world() {
         return;
     }
-    let bundle = dynamic_bundle::<Candle>(&world);
-    world.commands().entity(entity).insert(bundle);
+    let bundle = dynamic_bundle::<Candle>(&world, ColliderConstructor::ConvexHullFromMesh);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle);
 }
 
 pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
     if world.is_scene_world() {
         return;
     }
-    let bundle = dynamic_bundle::<Chair>(&world);
-    world.commands().entity(entity).insert(bundle).insert(
-        // Use a convex decomposition, as otherwise the flat seat part of the chair would not exist.
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexDecompositionFromMesh)
-            .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-            // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
-            .with_default_density(10_000.0),
-    );
+    let bundle = dynamic_bundle::<Chair>(&world, ColliderConstructor::ConvexDecompositionFromMesh);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle)
+        .insert(
+            ColliderConstructorHierarchy::new(ColliderConstructor::ConvexDecompositionFromMesh)
+                .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+                // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
+                .with_default_density(10_000.0),
+        );
 }

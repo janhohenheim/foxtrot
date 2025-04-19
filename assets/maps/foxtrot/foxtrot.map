@@ -382,11 +382,6 @@
 }
 // entity 9
 {
-"classname" "candle"
-"origin" "88 248 24"
-}
-// entity 10
-{
 "classname" "point_light"
 "origin" "-56 392 312"
 "range" "50"
@@ -394,7 +389,7 @@
 "shadow_normal_bias" "0.6"
 "shadows_enabled" "true"
 }
-// entity 11
+// entity 10
 {
 "classname" "point_light"
 "origin" "-104 712 120"
@@ -402,39 +397,34 @@
 "color" "1 0.2 0.2"
 "intensity" "1e+04"
 }
-// entity 12
-{
-"classname" "drawers"
-"origin" "-56 376 16"
-}
-// entity 13
+// entity 11
 {
 "classname" "burning_logs"
 "origin" "-52 532 16"
 }
-// entity 14
+// entity 12
 {
 "classname" "grate"
 "origin" "-52 520 16"
 }
-// entity 15
+// entity 13
 {
 "classname" "table"
 "origin" "84 408 16"
 }
-// entity 16
+// entity 14
 {
 "classname" "chair"
 "origin" "130 420 18"
 "angles" "0 -75 0"
 }
-// entity 17
+// entity 15
 {
 "classname" "chair"
 "origin" "92 360 18"
 "angles" "0 -165 0"
 }
-// entity 18
+// entity 16
 {
 "classname" "chair"
 "origin" "72 452 18"

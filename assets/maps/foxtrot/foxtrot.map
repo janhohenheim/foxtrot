@@ -422,3 +422,9 @@
 "classname" "table"
 "origin" "84 408 16"
 }
+// entity 16
+{
+"classname" "chair"
+"origin" "136 420 16"
+"angles" "0 -75 0"
+}

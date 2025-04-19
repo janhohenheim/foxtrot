@@ -60,6 +60,9 @@ impl FromWorld for LevelAssets {
                 Mug::scene_path(),
                 Plate::scene_path(),
                 Drawers::scene_path(),
+                Chair::scene_path(),
+                Table::scene_path(),
+                Grate::scene_path(),
             ]
             .into_iter()
             .map(|path| assets.load::<Scene>(path).untyped())

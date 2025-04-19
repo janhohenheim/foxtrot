@@ -89,7 +89,8 @@ fn spawn_view_model(
                 interaction_distance: 2.0,
                 pull: AvianPickupActorPullConfig {
                     impulse: 20.0,
-                    ..default()
+                    // We are not limiting ourselves to the mass of props.
+                    max_prop_mass: 10_000.0,
                 },
                 hold: AvianPickupActorHoldConfig {
                     distance_to_allow_holding: 2.0,

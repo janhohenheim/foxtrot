@@ -26,10 +26,17 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<Chair>()
             .register_class::<Bookshelf>()
             .register_class::<LampSitting>()
+            .register_class::<Crate>()
     }
 }
 
 // generic dynamic props
+
+create_prop!(
+    Crate,
+    "models/darkmod/containers/crate01.gltf",
+    on_add = setup_dynamic_prop_with_convex_hull::<Crate>
+);
 
 // generic static props
 

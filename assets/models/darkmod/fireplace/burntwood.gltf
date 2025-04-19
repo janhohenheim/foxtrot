@@ -15,30 +15,28 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"plate",
-			"translation":[
-				0,
-				0.009999996982514858,
-				0
+			"name":"burntwood",
+			"scale":[
+				2.596606969833374,
+				2.596606969833374,
+				2.596606969833374
 			]
 		}
 	],
 	"materials":[
 		{
-			"doubleSided":true,
-			"name":"bath_material.001",
+			"name":"burntwood",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
-				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"metallicFactor":0
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Circle",
+			"name":"Mesh_0.003",
 			"primitives":[
 				{
 					"attributes":{
@@ -60,70 +58,70 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/png",
-			"name":"bath_texture",
-			"uri":"bath_texture.png"
+			"mimeType":"image/jpeg",
+			"name":"burning_logs_ed",
+			"uri":"burning_logs_ed.jpg"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":112,
+			"count":184,
 			"max":[
-				0.2500001788139343,
-				0.021802667528390884,
-				0.2721538543701172
+				0.17370179295539856,
+				0.12287624180316925,
+				0.06332483887672424
 			],
 			"min":[
-				-0.2500001788139343,
-				-0.010944657027721405,
-				-0.22784648835659027
+				-0.17208585143089294,
+				0.00025083497166633606,
+				-0.10956898331642151
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":112,
+			"count":184,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":112,
+			"count":184,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":180,
+			"count":528,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1344,
+			"byteLength":2208,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1344,
-			"byteOffset":1344,
+			"byteLength":2208,
+			"byteOffset":2208,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":896,
-			"byteOffset":2688,
+			"byteLength":1472,
+			"byteOffset":4416,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":360,
-			"byteOffset":3584,
+			"byteLength":1056,
+			"byteOffset":5888,
 			"target":34963
 		}
 	],
@@ -135,8 +133,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":3944,
-			"uri":"plate.bin"
+			"byteLength":6944,
+			"uri":"burntwood.bin"
 		}
 	]
 }

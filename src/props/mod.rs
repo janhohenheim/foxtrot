@@ -27,6 +27,7 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<BurningLogs>()
             .register_class::<Grate>()
             .register_class::<Table>()
+            .register_class::<Chair>()
     }
 }
 
@@ -78,6 +79,12 @@ create_prop!(
     Candle,
     "models/candle/candle.gltf",
     on_add = specific::setup_candle
+);
+
+create_prop!(
+    Chair,
+    "models/chair/chair.gltf",
+    on_add = specific::setup_chair
 );
 
 create_prop!(

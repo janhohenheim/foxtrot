@@ -25,6 +25,7 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<Candle>()
             .register_class::<Drawers>()
             .register_class::<BurningLogs>()
+            .register_class::<Grate>()
     }
 }
 
@@ -57,6 +58,11 @@ create_prop!(
     Drawers,
     "models/drawers/drawers.gltf",
     on_add = setup_static_prop::<Drawers>
+);
+create_prop!(
+    Grate,
+    "models/grate/grate.gltf",
+    on_add = setup_static_prop::<Grate>
 );
 
 // props with a specific setup function

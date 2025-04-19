@@ -410,5 +410,10 @@
 // entity 13
 {
 "classname" "burning_logs"
-"origin" "-52 524 16"
+"origin" "-52 532 16"
+}
+// entity 14
+{
+"classname" "grate"
+"origin" "-52 520 16"
 }

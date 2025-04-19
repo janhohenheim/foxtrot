@@ -51,7 +51,7 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Player;
 
 pub(crate) const PLAYER_RADIUS: f32 = 0.5;
-const PLAYER_FLOAT_HEIGHT: f32 = 1.5;
+const PLAYER_FLOAT_HEIGHT: f32 = 1.3;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {

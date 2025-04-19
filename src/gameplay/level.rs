@@ -17,26 +17,17 @@ pub(super) fn plugin(app: &mut App) {
 /// We use this style when a command requires no configuration.
 pub(crate) fn spawn_level(world: &mut World) {
     let assets = world.resource::<LevelAssets>();
-    world
-        .spawn((
-            Name::new("Level"),
-            SceneRoot(assets.level.clone()),
-            StateScoped(Screen::Gameplay),
-            Level,
-        ))
-        .observe(advance_to_gameplay_screen);
+    world.spawn((
+        Name::new("Level"),
+        SceneRoot(assets.level.clone()),
+        StateScoped(Screen::Gameplay),
+        Level,
+    ));
 }
 
 #[derive(Debug, Component, Reflect)]
 #[reflect(Component)]
 pub(crate) struct Level;
-
-fn advance_to_gameplay_screen(
-    _trigger: Trigger<SceneInstanceReady>,
-    mut next_screen: ResMut<NextState<Screen>>,
-) {
-    next_screen.set(Screen::Gameplay);
-}
 
 #[derive(Resource, Asset, Clone, TypePath)]
 struct LevelAssets {
@@ -59,6 +50,7 @@ impl FromWorld for LevelAssets {
                 Grate::scene_path(),
                 Bookshelf::scene_path(),
                 LampSitting::scene_path(),
+                Crate::scene_path(),
             ]
             .into_iter()
             .map(|path| assets.load::<Scene>(path).untyped())

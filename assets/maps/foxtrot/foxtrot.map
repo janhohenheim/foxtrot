@@ -410,3 +410,8 @@
 "classname" "lamp_sitting"
 "origin" "104 420 64"
 }
+// entity 13
+{
+"classname" "crate"
+"origin" "-152 380 24"
+}

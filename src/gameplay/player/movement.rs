@@ -44,7 +44,7 @@ fn apply_movement(
         float_height: PLAYER_FLOAT_HEIGHT,
         // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
         // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
-        spring_strength: 800.0,
+        spring_strength: 1_600.0,
         ..Default::default()
     });
 }

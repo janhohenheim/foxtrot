@@ -23,7 +23,7 @@ use crate::{
     third_party::avian3d::CollisionLayer,
 };
 
-use super::{Player, assets::PlayerAssets, default_input::Rotate};
+use super::{PLAYER_FLOAT_HEIGHT, Player, assets::PlayerAssets, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
@@ -222,7 +222,9 @@ fn sync_camera_translation_with_player(
     mut player_camera_parent: Single<&mut Transform, With<PlayerCameraParent>>,
     player: Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>,
 ) {
-    player_camera_parent.translation = player.translation;
+    let camera_height = 1.84;
+    player_camera_parent.translation =
+        player.translation + Vec3::Y * (camera_height - PLAYER_FLOAT_HEIGHT);
 }
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {

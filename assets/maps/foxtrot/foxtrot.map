@@ -417,3 +417,8 @@
 "classname" "grate"
 "origin" "-52 520 16"
 }
+// entity 15
+{
+"classname" "table"
+"origin" "84 408 16"
+}

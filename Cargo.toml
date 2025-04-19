@@ -10,7 +10,7 @@ bevy_enhanced_input = "0.9"
 
 # physics
 avian3d = "0.2.1"
-avian_pickup = { version = "0.1.4", path = "../avian_pickup" }
+avian_pickup = "0.1.5"
 
 # character controller
 bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }

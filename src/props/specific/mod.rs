@@ -7,11 +7,14 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::{
     props::generic::dynamic_bundle,
-    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation},
+    third_party::{
+        avian3d::CollisionLayer,
+        bevy_trenchbroom::{LoadTrenchbroomModel as _, fix_gltf_rotation},
+    },
 };
 pub(crate) use burning_logs::*;
 
-use super::{Chair, LampSitting, effects::insert_not_shadow_caster};
+use super::{Chair, Crate, LampSitting, effects::insert_not_shadow_caster};
 
 mod burning_logs;
 
@@ -35,6 +38,26 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
                 // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
                 .with_default_density(10_000.0),
         );
+}
+
+pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+    if world.is_scene_world() {
+        return;
+    }
+    let model = world.load_model::<Crate>();
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert((
+            TransformInterpolation,
+            ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
+                .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+                // About the density of oak wood (600-800 kg/m^3)
+                .with_default_density(1600.0),
+            RigidBody::Dynamic,
+            SceneRoot(model),
+        ));
 }
 
 pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {

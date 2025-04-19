@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{ecs::world::DeferredWorld, prelude::*};
 use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prelude::*};
 use proxy::RegisterProxies as _;
 
@@ -75,3 +75,19 @@ pub(crate) trait GetTrenchbroomModelPath: QuakeClass {
 }
 
 impl<T: QuakeClass> GetTrenchbroomModelPath for T {}
+
+pub(crate) trait LoadTrenchbroomModel {
+    fn load_model<T: QuakeClass>(&self) -> Handle<Scene>;
+}
+
+impl LoadTrenchbroomModel for DeferredWorld<'_> {
+    fn load_model<T: QuakeClass>(&self) -> Handle<Scene> {
+        self.resource::<AssetServer>().load_model::<T>()
+    }
+}
+
+impl LoadTrenchbroomModel for AssetServer {
+    fn load_model<T: QuakeClass>(&self) -> Handle<Scene> {
+        self.load(T::scene_path())
+    }
+}

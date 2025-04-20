@@ -20,7 +20,12 @@ pub(super) fn plugin(app: &mut App) {
             step_height: 3,
             max_contour_simplification_error: 0.7,
             max_traversable_slope_radians: NPC_MAX_SLOPE,
-            ..NavMeshSettings::from_agent_and_bounds(NPC_RADIUS, NPC_HEIGHT, 100.0, -20.0)
+            ..NavMeshSettings::from_agent_and_bounds(
+                NPC_RADIUS * 0.95,
+                NPC_HEIGHT * 0.95,
+                100.0,
+                -20.0,
+            )
         }),
     ));
     app.add_systems(Startup, setup_archipelago);

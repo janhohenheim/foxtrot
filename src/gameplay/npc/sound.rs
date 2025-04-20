@@ -44,7 +44,7 @@ fn play_step_sound(
     if speed < 1.0 {
         return;
     }
-    // at speed = 5 m/s, halve the duration
+    // At speed = 5 m/s, halve the duration.
     let speed_to_half_duration = 5.0;
     let factor = 1.0 - (speed - speed_to_half_duration) / speed_to_half_duration;
     timer.set_duration(Duration::from_millis((base_millis as f32 * factor) as u64));
@@ -53,7 +53,7 @@ fn play_step_sound(
 
     commands.entity(entity).with_child((
         Transform::default(),
-        AudioPlayer(sound_effect.clone()),
+        AudioPlayer(sound_effect),
         PlaybackSettings::DESPAWN
             .with_spatial(true)
             .with_speed(1.5)

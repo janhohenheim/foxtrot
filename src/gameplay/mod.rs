@@ -14,9 +14,9 @@ pub(crate) mod player;
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         animation::plugin,
-        player::plugin,
-        level::plugin,
         crosshair::plugin,
+        level::plugin,
         npc::plugin,
+        player::plugin,
     ));
 }

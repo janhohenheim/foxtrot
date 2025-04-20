@@ -36,7 +36,7 @@ pub(crate) struct PlayerAssets {
 impl FromWorld for PlayerAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
-        let mut rng = rand::thread_rng();
+        let rng = &mut rand::thread_rng();
         Self {
             model: assets.load(Player::scene_path()),
             throw_sound: assets.load("audio/sound_effects/throw.ogg"),
@@ -52,7 +52,7 @@ impl FromWorld for PlayerAssets {
                     assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_08.ogg"),
                     assets.load("audio/sound_effects/step/Footsteps_Rock_Walk_09.ogg"),
                 ],
-                &mut rng,
+                rng,
             )
             .unwrap(),
             jump_grunts: ShuffleBag::try_new(
@@ -62,7 +62,7 @@ impl FromWorld for PlayerAssets {
                     assets.load("audio/sound_effects/jump_grunt/jump_grunt_3.ogg"),
                     assets.load("audio/sound_effects/jump_grunt/jump_grunt_4.ogg"),
                 ],
-                &mut rng,
+                rng,
             )
             .unwrap(),
             land_sounds: ShuffleBag::try_new(
@@ -74,7 +74,7 @@ impl FromWorld for PlayerAssets {
                     assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_05.ogg"),
                     assets.load("audio/sound_effects/land/Footsteps_Rock_Jump_Land_06.ogg"),
                 ],
-                &mut rng,
+                rng,
             )
             .unwrap(),
             jump_start_sounds: ShuffleBag::try_new(
@@ -86,7 +86,7 @@ impl FromWorld for PlayerAssets {
                     assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_05.ogg"),
                     assets.load("audio/sound_effects/jump_start/Footsteps_Rock_Jump_Start_06.ogg"),
                 ],
-                &mut rng,
+                rng,
             )
             .unwrap(),
             idle_animation: assets.load(Player::animation_path(9)),

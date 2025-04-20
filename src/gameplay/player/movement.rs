@@ -9,15 +9,15 @@ use super::{Player, camera::PlayerCameraParent};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, reset_movement);
-    app.add_observer(apply_movement.param_warn_once())
-        .add_observer(jump);
+    app.add_observer(apply_movement.param_warn_once());
+    app.add_observer(jump);
 }
 
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
-    for mut controller in controllers.iter_mut() {
+    for mut controller in &mut controllers {
         controller.basis(TnuaBuiltinWalk {
             float_height: PLAYER_FLOAT_HEIGHT,
-            ..Default::default()
+            ..default()
         });
     }
 }
@@ -45,7 +45,7 @@ fn apply_movement(
         // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
         // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
         spring_strength: 1_600.0,
-        ..Default::default()
+        ..default()
     });
 }
 
@@ -55,6 +55,6 @@ fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaControlle
         // The height is the only mandatory field of the jump button.
         height: 1.5,
         // `TnuaBuiltinJump` also has customization fields with sensible defaults.
-        ..Default::default()
+        ..default()
     });
 }

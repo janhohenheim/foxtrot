@@ -1,3 +1,7 @@
+//! Crosshair and cursor handling.
+//! The crosshair is a UI element that is used to indicate the player's aim. We change the crosshair when the player is looking at a prop or an NPC.
+//! This is done by registering which systems are interested in the crosshair state.
+
 use std::any::TypeId;
 
 use assets::CursorAssets;

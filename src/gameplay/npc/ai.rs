@@ -1,3 +1,5 @@
+//! NPC AI. In this case, the only AI is the ability to move towards the player.
+
 use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
@@ -31,6 +33,8 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+/// Setup the NPC agent. An "agent" is what `bevy_landmass` can move around.
+/// Since we use a floating character controller, we need to offset the agent's position by the character's float height.
 fn setup_npc_agent(
     mut commands: Commands,
     q_uninitialized: Query<Entity, (With<Npc>, Without<NpcAgent>)>,
@@ -59,6 +63,7 @@ fn setup_npc_agent(
     }
 }
 
+/// A link from the NPC itself to its agent entity.
 #[derive(Component)]
 struct NpcAgent(Entity);
 

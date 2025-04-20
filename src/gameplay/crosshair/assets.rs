@@ -1,3 +1,5 @@
+//! Preload crosshair assets.
+
 use bevy::prelude::*;
 
 use crate::asset_tracking::LoadResource;

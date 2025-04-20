@@ -1,3 +1,5 @@
+//! Player pickup handling.
+
 use avian_pickup::prop::HeldProp;
 use bevy::prelude::*;
 

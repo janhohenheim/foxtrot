@@ -11,7 +11,9 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::{bevy_trenchbroom::fix_gltf_rotation, bevy_yarnspinner::YarnNode};
+use crate::third_party::{
+    avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation, bevy_yarnspinner::YarnNode,
+};
 
 use super::animation::AnimationPlayerAncestor;
 mod ai;
@@ -57,6 +59,7 @@ impl Npc {
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),
                 AnimationPlayerAncestor,
+                CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
                 YarnNode::new("Npc"),
             ))
             .with_child((

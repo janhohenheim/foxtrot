@@ -1,4 +1,7 @@
-//! See <https://bevyengine.org/examples/camera/first-person-view-model/>
+//! The cameras for the world and the view model.
+//!
+//! The code is adapted from <https://bevyengine.org/examples/camera/first-person-view-model/>.
+//! See that example for more information.
 
 use std::{f32::consts::FRAC_PI_2, iter};
 
@@ -36,36 +39,14 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::Update),
     );
-    app.register_type::<PlayerCameraParent>();
-    app.register_type::<WorldModelCamera>();
-    app.register_type::<CameraSensitivity>();
+    app.register_type::<PlayerCamera>();
 }
 
+/// The parent entity of the player's cameras.
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 #[require(Transform, Visibility)]
-pub(crate) struct PlayerCameraParent;
-
-#[derive(Component, Debug, Reflect)]
-#[reflect(Component)]
-struct WorldModelCamera;
-
-#[derive(Component, Debug, Reflect, Deref, DerefMut)]
-#[reflect(Component)]
-pub(crate) struct CameraSensitivity(Vec2);
-
-impl Default for CameraSensitivity {
-    fn default() -> Self {
-        Self(
-            // These factors are just arbitrary mouse sensitivity values.
-            // It's often nicer to have a faster horizontal sensitivity than vertical.
-            // We use a component for them so that we can make them user-configurable at runtime
-            // for accessibility reasons.
-            // It also allows you to inspect them in an editor if you `Reflect` the component.
-            Vec2::new(0.003, 0.002),
-        )
-    }
-}
+pub(crate) struct PlayerCamera;
 
 fn spawn_view_model(
     _trigger: Trigger<OnAdd, Player>,
@@ -79,13 +60,12 @@ fn spawn_view_model(
     commands
         .spawn((
             Name::new("PlayerCameraParent"),
-            PlayerCameraParent,
-            CameraSensitivity::default(),
+            PlayerCamera,
             StateScoped(Screen::Gameplay),
             AvianPickupActor {
                 prop_filter: SpatialQueryFilter::from_mask(CollisionLayer::Prop),
                 obstacle_filter: SpatialQueryFilter::from_mask(CollisionLayer::Default),
-                actor_filter: SpatialQueryFilter::from_mask(CollisionLayer::Player),
+                actor_filter: SpatialQueryFilter::from_mask(CollisionLayer::Character),
                 interaction_distance: 2.0,
                 pull: AvianPickupActorPullConfig {
                     impulse: 20.0,
@@ -107,7 +87,6 @@ fn spawn_view_model(
         .with_children(|parent| {
             parent.spawn((
                 Name::new("WorldModelCamera"),
-                WorldModelCamera,
                 Camera3d::default(),
                 Camera {
                     order: CameraOrder::World.into(),
@@ -191,7 +170,7 @@ fn configure_player_view_model(
 
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
-    mut transform: Single<&mut Transform, With<PlayerCameraParent>>,
+    mut transform: Single<&mut Transform, With<PlayerCamera>>,
 ) {
     let delta = trigger.value;
 
@@ -222,8 +201,8 @@ fn rotate_camera_yaw_and_pitch(
 }
 
 fn sync_camera_translation_with_player(
-    mut player_camera_parent: Single<&mut Transform, With<PlayerCameraParent>>,
-    player: Single<&Transform, (With<Player>, Without<PlayerCameraParent>)>,
+    mut player_camera_parent: Single<&mut Transform, With<PlayerCamera>>,
+    player: Single<&Transform, (With<Player>, Without<PlayerCamera>)>,
 ) {
     let camera_height = 1.84;
     player_camera_parent.translation =

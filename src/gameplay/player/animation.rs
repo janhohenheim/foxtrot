@@ -1,3 +1,5 @@
+//! Player animations.
+
 use std::time::Duration;
 
 use bevy::prelude::*;

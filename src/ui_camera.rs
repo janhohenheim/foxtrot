@@ -14,7 +14,7 @@ fn spawn_ui_camera(mut commands: Commands) {
         IsDefaultUiCamera,
         Camera {
             // Bump the order to render on top of the view model.
-            order: CameraOrder::UI.into(),
+            order: CameraOrder::Ui.into(),
             ..default()
         },
     ));

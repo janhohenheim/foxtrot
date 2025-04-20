@@ -171,7 +171,7 @@ fn update(
         return;
     };
 
-    for (mut ball, mut transform) in balls.iter_mut() {
+    for (mut ball, mut transform) in &mut balls {
         let mut pos = transform.translation.xy() + ball.velocity * time.delta_secs();
         let mut collision = false;
 

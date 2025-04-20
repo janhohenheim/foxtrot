@@ -65,7 +65,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
             static_bundle,
             #[cfg(feature = "native")]
             particle_bundle,
-            AudioPlayer(sound_effect.clone()),
+            AudioPlayer(sound_effect),
             PlaybackSettings::LOOP
                 .with_spatial(true)
                 .with_volume(Volume::new(0.25))
@@ -85,7 +85,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
         ));
 }
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 struct Flicker;
 

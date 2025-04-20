@@ -14,8 +14,7 @@ pub(super) fn plugin(app: &mut App) {
         (
             capture_cursor
                 .param_warn_once()
-                .run_if(not(is_dialogue_running))
-                .run_if(not(is_cursor_forced_freed)),
+                .run_if(not(is_dialogue_running).and(not(is_cursor_forced_freed))),
             release_cursor
                 .param_warn_once()
                 .run_if(on_event::<DialogueStartEvent>.or(is_cursor_forced_freed)),
@@ -24,10 +23,7 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::ChangeUi),
     );
-    app.add_systems(
-        OnExit(Screen::Gameplay),
-        (release_cursor.param_warn_once(),),
-    );
+    app.add_systems(OnExit(Screen::Gameplay), release_cursor.param_warn_once());
 }
 
 fn capture_cursor(
@@ -55,6 +51,6 @@ pub(crate) fn is_cursor_forced_freed(val: Res<IsCursorForcedFreed>) -> bool {
     val.0
 }
 
-#[derive(Debug, Resource, Default, Reflect)]
+#[derive(Resource, Debug, Default, Reflect)]
 #[reflect(Resource)]
 pub(crate) struct IsCursorForcedFreed(pub(crate) bool);

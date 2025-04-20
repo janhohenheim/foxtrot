@@ -29,14 +29,14 @@ pub(crate) mod pickup;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Player>();
     app.add_plugins((
-        assets::plugin,
-        default_input::plugin,
-        movement::plugin,
-        camera::plugin,
-        dialogue::plugin,
-        pickup::plugin,
         animation::plugin,
+        assets::plugin,
+        camera::plugin,
+        default_input::plugin,
+        dialogue::plugin,
+        movement::plugin,
         movement_sound::plugin,
+        pickup::plugin,
     ));
     app.add_observer(setup_player_character);
 }

@@ -16,7 +16,7 @@ use crate::third_party::{
 };
 
 use super::animation::AnimationPlayerAncestor;
-mod ai;
+pub(crate) mod ai;
 mod animation;
 mod assets;
 mod sound;

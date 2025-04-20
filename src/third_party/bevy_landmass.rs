@@ -1,7 +1,7 @@
 //! [Landmass](https://github.com/andriyDev/landmass) powers out agent navigation.
 //! The underlying navmesh is generated using [Oxidized Navigation](https://github.com/TheGrimsey/oxidized_navigation).
 
-use crate::gameplay::npc::{NPC_HEIGHT, NPC_RADIUS};
+use crate::gameplay::npc::{NPC_HEIGHT, NPC_RADIUS, ai::NPC_MAX_SLOPE};
 
 use super::bevy_trenchbroom::Worldspawn;
 use avian3d::prelude::*;
@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         OxidizedNavigationPlugin::<AvianCollider>::new(NavMeshSettings {
             step_height: 3,
             max_contour_simplification_error: 0.7,
+            max_traversable_slope_radians: NPC_MAX_SLOPE,
             ..NavMeshSettings::from_agent_and_bounds(
                 NPC_RADIUS * 0.9,
                 NPC_HEIGHT * 0.9,

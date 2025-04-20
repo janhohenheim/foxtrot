@@ -14,6 +14,8 @@ use crate::{gameplay::player::PlayerLandmassCharacter, screens::Screen};
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
+pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 8.0;
+
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
@@ -76,7 +78,7 @@ fn set_controller_velocity(
             desired_forward: forward,
             float_height: NPC_FLOAT_HEIGHT,
             spring_strength: 1500.0,
-            max_slope: TAU / 8.0,
+            max_slope: NPC_MAX_SLOPE,
             ..default()
         });
     }

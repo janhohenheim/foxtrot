@@ -21,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub(crate) struct PlayerAnimations {
     idle: AnimationNodeIndex,
@@ -77,7 +77,7 @@ fn play_animations(
     )>,
     crosshair_state: Single<&CrosshairState>,
 ) {
-    for (mut animating_state, link) in query.iter_mut() {
+    for (mut animating_state, link) in &mut query {
         let animation_player_entity = link.0;
         let Ok((animations, mut anim_player, mut transitions)) =
             q_animation.get_mut(animation_player_entity)

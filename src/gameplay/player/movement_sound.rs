@@ -44,13 +44,9 @@ fn play_jump_grunt(
     let grunt = player_assets.jump_grunts.pick(rng).clone();
     let jump_start = player_assets.jump_start_sounds.pick(rng).clone();
 
+    commands.spawn((AudioPlayer(grunt), PlaybackSettings::DESPAWN, SoundEffect));
     commands.spawn((
-        AudioPlayer(grunt.clone()),
-        PlaybackSettings::DESPAWN,
-        SoundEffect,
-    ));
-    commands.spawn((
-        AudioPlayer(jump_start.clone()),
+        AudioPlayer(jump_start),
         PlaybackSettings::DESPAWN,
         SoundEffect,
     ));
@@ -81,7 +77,7 @@ fn play_step_sound(
     let sound_effect = player_assets.steps.pick(rng).clone();
 
     commands.spawn((
-        AudioPlayer(sound_effect.clone()),
+        AudioPlayer(sound_effect),
         PlaybackSettings::DESPAWN,
         SoundEffect,
     ));
@@ -107,7 +103,7 @@ fn play_land_sound(
     let sound_effect = player_assets.land_sounds.pick(rng).clone();
 
     commands.spawn((
-        AudioPlayer(sound_effect.clone()),
+        AudioPlayer(sound_effect),
         PlaybackSettings::DESPAWN,
         SoundEffect,
     ));

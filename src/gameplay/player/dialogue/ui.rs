@@ -13,7 +13,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         update_interaction_prompt_ui
             .param_warn_once()
-            .in_set(DialogueSet::UpdateUI)
+            .in_set(DialogueSet::UpdateUi)
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_systems(

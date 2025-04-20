@@ -1,6 +1,6 @@
 //! Spawn the main level.
 
-use bevy::{prelude::*, scene::SceneInstanceReady};
+use bevy::prelude::*;
 
 use crate::{
     asset_tracking::LoadResource, props::*, screens::Screen,
@@ -25,7 +25,7 @@ pub(crate) fn spawn_level(world: &mut World) {
     ));
 }
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub(crate) struct Level;
 

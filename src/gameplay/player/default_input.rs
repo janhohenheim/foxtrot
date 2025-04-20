@@ -3,8 +3,9 @@ use bevy_enhanced_input::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
-    app.add_input_context::<DefaultInputContext>()
-        .add_observer(default_binding); // Add observer to setup bindings.
+    app.add_input_context::<DefaultInputContext>();
+    // Add observer to set up bindings.
+    app.add_observer(default_binding);
 }
 
 // All actions should implement the `InputAction` trait.

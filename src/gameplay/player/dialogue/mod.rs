@@ -26,7 +26,7 @@ pub(super) fn plugin(app: &mut App) {
 
     app.configure_sets(
         Update,
-        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUI)
+        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUi)
             .chain()
             .in_set(AppSet::ChangeUi),
     );
@@ -36,16 +36,17 @@ pub(super) fn plugin(app: &mut App) {
         check_for_dialogue_opportunity
             .param_warn_once()
             .in_set(DialogueSet::UpdateOpportunity)
-            .run_if(in_state(Screen::Gameplay))
-            .run_if(not(is_dialogue_running))
-            .run_if(not(is_holding_prop)),
+            .run_if(
+                in_state(Screen::Gameplay)
+                    .and(not(is_dialogue_running))
+                    .and(not(is_holding_prop)),
+            ),
     );
     app.add_systems(
         Update,
         restore_input_context
             .param_warn_once()
-            .run_if(in_state(Screen::Gameplay))
-            .run_if(on_event::<DialogueCompleteEvent>)
+            .run_if(in_state(Screen::Gameplay).and(on_event::<DialogueCompleteEvent>))
             .in_set(AppSet::Update),
     );
 
@@ -57,7 +58,7 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(Debug, SystemSet, Hash, Eq, PartialEq, Clone, Copy)]
 pub(super) enum DialogueSet {
     UpdateOpportunity,
-    UpdateUI,
+    UpdateUi,
 }
 
 fn check_for_dialogue_opportunity(

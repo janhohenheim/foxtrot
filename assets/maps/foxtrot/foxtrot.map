@@ -380,24 +380,24 @@
 // entity 7
 {
 "classname" "table"
-"origin" "84 408 16"
+"origin" "-172 376 16"
 }
 // entity 8
 {
 "classname" "chair"
-"origin" "130 420 18"
+"origin" "-126 388 18"
 "angles" "0 -75 0"
 }
 // entity 9
 {
 "classname" "chair"
-"origin" "92 360 18"
+"origin" "-164 328 18"
 "angles" "0 -165 0"
 }
 // entity 10
 {
 "classname" "chair"
-"origin" "72 452 18"
+"origin" "-184 420 18"
 "angles" "0 15 0"
 }
 // entity 11
@@ -408,10 +408,30 @@
 // entity 12
 {
 "classname" "lamp_sitting"
-"origin" "104 420 64"
+"origin" "-152 388 64"
 }
 // entity 13
 {
 "classname" "crate"
-"origin" "-152 380 24"
+"origin" "-232 524 24"
+}
+// entity 14
+{
+"classname" "bookshelf"
+"origin" "-278 410 16"
+}
+// entity 15
+{
+"classname" "bookshelf"
+"origin" "-278 474 16"
+}
+// entity 16
+{
+"classname" "crate"
+"origin" "-184 524 24"
+}
+// entity 17
+{
+"classname" "crate"
+"origin" "-200 524 72"
 }

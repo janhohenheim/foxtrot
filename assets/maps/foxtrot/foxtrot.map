@@ -352,36 +352,6 @@
 }
 // entity 3
 {
-"classname" "book"
-"origin" "-40 216 88"
-}
-// entity 4
-{
-"classname" "mug"
-"origin" "-8 296 24"
-}
-// entity 5
-{
-"classname" "book"
-"origin" "-56 232 24"
-}
-// entity 6
-{
-"classname" "plate"
-"origin" "-24 200 24"
-}
-// entity 7
-{
-"classname" "mug"
-"origin" "8 248 24"
-}
-// entity 8
-{
-"classname" "plate"
-"origin" "40 200 24"
-}
-// entity 9
-{
 "classname" "point_light"
 "origin" "-56 392 312"
 "range" "50"
@@ -389,7 +359,7 @@
 "shadow_normal_bias" "0.6"
 "shadows_enabled" "true"
 }
-// entity 10
+// entity 4
 {
 "classname" "point_light"
 "origin" "-104 712 120"
@@ -397,36 +367,51 @@
 "color" "1 0.2 0.2"
 "intensity" "1e+04"
 }
-// entity 11
+// entity 5
 {
 "classname" "burning_logs"
 "origin" "-52 532 16"
 }
-// entity 12
+// entity 6
 {
 "classname" "grate"
 "origin" "-52 520 16"
 }
-// entity 13
+// entity 7
 {
 "classname" "table"
 "origin" "84 408 16"
 }
-// entity 14
+// entity 8
 {
 "classname" "chair"
 "origin" "130 420 18"
 "angles" "0 -75 0"
 }
-// entity 15
+// entity 9
 {
 "classname" "chair"
 "origin" "92 360 18"
 "angles" "0 -165 0"
 }
-// entity 16
+// entity 10
 {
 "classname" "chair"
 "origin" "72 452 18"
 "angles" "0 15 0"
+}
+// entity 11
+{
+"classname" "bookshelf"
+"origin" "-278 346 16"
+}
+// entity 12
+{
+"classname" "lamp_sitting"
+"origin" "104 420 64"
+}
+// entity 13
+{
+"classname" "crate"
+"origin" "-152 380 24"
 }

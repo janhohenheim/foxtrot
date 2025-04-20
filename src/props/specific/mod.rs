@@ -11,7 +11,7 @@ use crate::{
 };
 pub(crate) use burning_logs::*;
 
-use super::Chair;
+use super::{Chair, LampSitting, effects::insert_not_shadow_caster};
 
 mod burning_logs;
 
@@ -35,4 +35,28 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
                 // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
                 .with_default_density(10_000.0),
         );
+}
+
+pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+    if world.is_scene_world() {
+        return;
+    }
+    let bundle =
+        dynamic_bundle::<LampSitting>(&world, ColliderConstructor::ConvexDecompositionFromMesh);
+    world
+        .commands()
+        .entity(entity)
+        .queue(fix_gltf_rotation)
+        .insert(bundle)
+        .with_child((
+            Transform::from_xyz(0.0, 0.2, 0.0),
+            PointLight {
+                color: Color::srgb(1.0, 0.7, 0.4),
+                intensity: 40_000.0,
+                radius: 0.2,
+                shadows_enabled: true,
+                ..default()
+            },
+        ))
+        .observe(insert_not_shadow_caster);
 }

@@ -76,7 +76,7 @@ fn spawn_view_model(
                     distance_to_allow_holding: 2.0,
                     linear_velocity_easing: 0.8,
                     preferred_distance: 0.65,
-                    min_distance: 0.4,
+                    min_distance: 0.1,
                     ..default()
                 },
                 ..default()
@@ -93,7 +93,7 @@ fn spawn_view_model(
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
-                    fov: 90.0_f32.to_radians(),
+                    fov: 74.0_f32.to_radians(),
                     ..default()
                 }),
                 RenderLayers::from(

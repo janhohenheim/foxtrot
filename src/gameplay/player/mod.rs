@@ -66,7 +66,7 @@ const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
 /// using a spring. It's important to make sure that this floating height is greater (even if by little) than the half height.
 ///
 /// In this case, we use 30 cm of padding to make the player float nicely up stairs.
-const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.3;
+const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.1;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {

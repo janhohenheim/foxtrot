@@ -12,6 +12,7 @@ use crate::{
     props::generic::dynamic_bundle,
     third_party::{
         avian3d::CollisionLayer,
+        bevy_landmass::NavMeshAffectorParent,
         bevy_trenchbroom::{LoadTrenchbroomModel as _, fix_gltf_rotation},
     },
 };
@@ -44,6 +45,7 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
             RigidBody::Dynamic,
             // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
             SceneRoot(model),
+            NavMeshAffectorParent,
         ));
 }
 
@@ -69,6 +71,7 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
             // Holding a big crate right in your face looks bad, so
             // let's move the pickup distance a bit further away.
             PreferredPickupDistanceOverride(1.0),
+            NavMeshAffectorParent,
         ));
 }
 

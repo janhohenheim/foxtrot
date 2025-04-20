@@ -18,6 +18,7 @@ pub(super) fn plugin(app: &mut App) {
         LandmassOxidizedNavigationPlugin::default(),
         OxidizedNavigationPlugin::<AvianCollider>::new(NavMeshSettings {
             step_height: 3,
+            max_contour_simplification_error: 0.7,
             ..NavMeshSettings::from_agent_and_bounds(
                 NPC_RADIUS * 0.9,
                 NPC_HEIGHT * 0.9,

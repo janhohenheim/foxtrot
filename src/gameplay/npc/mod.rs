@@ -36,7 +36,10 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Npc;
 
 const NPC_RADIUS: f32 = 0.8;
-const NPC_FLOAT_HEIGHT: f32 = 1.0;
+const NPC_CAPSULE_LENGTH: f32 = 0.1;
+const NPC_HEIGHT: f32 = NPC_CAPSULE_LENGTH + 2.0 * NPC_RADIUS;
+const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
+const NPC_FLOAT_HEIGHT: f32 = NPC_HALF_HEIGHT + 0.01;
 
 impl Npc {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -51,10 +54,10 @@ impl Npc {
             .insert((
                 Npc,
                 TransformInterpolation,
-                Collider::capsule(NPC_RADIUS, 0.1),
+                Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
-                ColliderDensity(200.0),
+                ColliderDensity(50.0),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),

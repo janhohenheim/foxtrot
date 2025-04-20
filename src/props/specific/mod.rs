@@ -6,7 +6,6 @@ use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
 };
-use bevy_landmass::{Character, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
 use crate::{

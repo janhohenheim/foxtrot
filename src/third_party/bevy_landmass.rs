@@ -6,7 +6,7 @@ use crate::gameplay::npc::{NPC_HEIGHT, NPC_RADIUS, ai::NPC_MAX_SLOPE};
 use super::bevy_trenchbroom::Worldspawn;
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy_landmass::{PointSampleDistance3d, prelude::*};
+use bevy_landmass::{Character, PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
 use oxidized_navigation::{
     NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin, colliders::avian::AvianCollider,
@@ -20,12 +20,7 @@ pub(super) fn plugin(app: &mut App) {
             step_height: 3,
             max_contour_simplification_error: 0.7,
             max_traversable_slope_radians: NPC_MAX_SLOPE,
-            ..NavMeshSettings::from_agent_and_bounds(
-                NPC_RADIUS * 0.9,
-                NPC_HEIGHT * 0.9,
-                100.0,
-                -20.0,
-            )
+            ..NavMeshSettings::from_agent_and_bounds(NPC_RADIUS, NPC_HEIGHT, 100.0, -20.0)
         }),
     ));
     app.add_systems(Startup, setup_archipelago);

@@ -1,3 +1,5 @@
+//! Assets for the player.
+
 use bevy::prelude::*;
 use bevy_shuffle_bag::ShuffleBag;
 

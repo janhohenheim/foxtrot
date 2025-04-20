@@ -1,3 +1,5 @@
+//! Player pickup sound effects.
+
 use avian_pickup::output::PropThrown;
 use bevy::{audio::Volume, prelude::*};
 

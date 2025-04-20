@@ -1,4 +1,5 @@
-//! Plugin handling the player character in particular.
+//! Plugin handling the player movement in particular.
+//!
 //! Note that this is separate from the `movement` module as that could be used
 //! for other characters as well.
 
@@ -98,7 +99,7 @@ impl Player {
                 },
                 ColliderDensity(100.0),
                 TransformInterpolation,
-                CollisionLayers::new(CollisionLayer::Player, LayerMask::ALL),
+                CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
                 TnuaAnimatingState::<PlayerAnimationState>::default(),
             ))
             .observe(setup_player_animations);

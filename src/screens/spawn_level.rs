@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    gameplay::{level::spawn_level as spawn_level_command, player::camera::PlayerCameraParent},
+    gameplay::{level::spawn_level as spawn_level_command, player::camera::PlayerCamera},
     screens::Screen,
     theme::{palette::SCREEN_BACKGROUND, prelude::*},
 };
@@ -37,7 +37,7 @@ fn spawn_level(mut commands: Commands) {
 }
 
 fn advance_to_gameplay_screen(
-    player_camera: Query<&PlayerCameraParent>,
+    player_camera: Query<&PlayerCamera>,
     mut next_screen: ResMut<NextState<Screen>>,
 ) {
     if !player_camera.is_empty() {

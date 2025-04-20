@@ -16,7 +16,7 @@ mod ui;
 
 use super::{
     Player,
-    camera::PlayerCameraParent,
+    camera::PlayerCamera,
     default_input::{DefaultInputContext, Interact},
     pickup::is_holding_prop,
 };
@@ -62,7 +62,8 @@ pub(super) enum DialogueSet {
 }
 
 fn check_for_dialogue_opportunity(
-    player: Single<&GlobalTransform, With<PlayerCameraParent>>,
+    player: Single<&GlobalTransform, With<PlayerCamera>>,
+    player_collider: Single<Entity, With<Player>>,
     mut interaction_prompt: Single<&mut InteractionPrompt>,
     q_yarn_node: Query<&YarnNode>,
     spatial_query: SpatialQuery,
@@ -74,7 +75,8 @@ fn check_for_dialogue_opportunity(
         camera_transform.forward(),
         MAX_INTERACTION_DISTANCE,
         true,
-        &SpatialQueryFilter::from_mask(CollisionLayer::Default),
+        &SpatialQueryFilter::from_mask(CollisionLayer::Character)
+            .with_excluded_entities([*player_collider]),
     );
     let node = hit
         .and_then(|hit| q_yarn_node.get(hit.entity).ok())

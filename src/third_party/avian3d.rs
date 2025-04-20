@@ -11,6 +11,6 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) enum CollisionLayer {
     #[default]
     Default,
-    Player,
     Prop,
+    Character,
 }

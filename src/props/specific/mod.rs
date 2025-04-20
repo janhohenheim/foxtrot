@@ -1,3 +1,5 @@
+//! Setup methods for specific props that require additional logic or need to be initialized with fine-tuned constants.
+
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -53,7 +55,6 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
             TransformInterpolation,
             ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
                 .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-                // About the density of oak wood (600-800 kg/m^3)
                 .with_default_density(1600.0),
             RigidBody::Dynamic,
             SceneRoot(model),

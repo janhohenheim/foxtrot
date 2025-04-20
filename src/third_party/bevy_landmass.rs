@@ -19,8 +19,8 @@ pub(super) fn plugin(app: &mut App) {
         OxidizedNavigationPlugin::<AvianCollider>::new(NavMeshSettings {
             step_height: 3,
             ..NavMeshSettings::from_agent_and_bounds(
-                NPC_RADIUS * 0.8,
-                NPC_HEIGHT * 0.8,
+                NPC_RADIUS * 0.9,
+                NPC_HEIGHT * 0.9,
                 100.0,
                 -20.0,
             )

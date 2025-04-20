@@ -1,6 +1,6 @@
 //! Setup methods for specific props that require additional logic or need to be initialized with fine-tuned constants.
 
-use avian_pickup::prop::PreferredPickupRotation;
+use avian_pickup::prop::{PreferredPickupDistanceOverride, PreferredPickupRotation};
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -64,6 +64,11 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
             // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
             RigidBody::Dynamic,
             SceneRoot(model),
+            // The prop should be held upright.
+            PreferredPickupRotation(Quat::IDENTITY),
+            // Holding a big crate right in your face looks bad, so
+            // let's move the pickup distance a bit further away.
+            PreferredPickupDistanceOverride(1.0),
         ));
 }
 
@@ -77,7 +82,7 @@ pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: 
         .commands()
         .entity(entity)
         .queue(fix_gltf_rotation)
-        // The lamp should be held upright.
+        // The prop should be held upright.
         .insert((bundle, PreferredPickupRotation(Quat::IDENTITY)))
         // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.
         .with_child((

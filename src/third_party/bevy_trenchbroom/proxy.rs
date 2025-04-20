@@ -1,3 +1,5 @@
+//! `struct`s that mirror Bevy's builtin components so that they can be used in the level editor.
+
 use bevy::prelude::{PointLight as BevyPointLight, *};
 use bevy_trenchbroom::{config::TrenchBroomConfig, prelude::PointClass};
 

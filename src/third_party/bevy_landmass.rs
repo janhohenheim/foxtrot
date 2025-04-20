@@ -1,3 +1,6 @@
+//! [Landmass](https://github.com/andriyDev/landmass) powers out agent navigation.
+//! The underlying navmesh is generated using [Oxidized Navigation](https://github.com/TheGrimsey/oxidized_navigation).
+
 use super::bevy_trenchbroom::Worldspawn;
 use bevy::prelude::*;
 use bevy_landmass::{PointSampleDistance3d, prelude::*};

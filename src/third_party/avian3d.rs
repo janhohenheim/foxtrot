@@ -1,3 +1,5 @@
+//! [Avian](https://github.com/Jondolf/avian) is our physics engine.
+
 use avian3d::prelude::*;
 use bevy::prelude::*;
 

@@ -1,11 +1,11 @@
-//! The title screen that appears when the game starts.
+//! The loading screen that appears when the game is starting, but still spawning the level.
 
 use bevy::prelude::*;
 
 use crate::{
-    gameplay::{level::spawn_level as spawn_level_command, player::camera::PlayerCameraParent},
+    gameplay::{level::spawn_level as spawn_level_command, player::camera::PlayerCamera},
     screens::Screen,
-    theme::prelude::*,
+    theme::{palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -23,7 +23,10 @@ pub(super) fn plugin(app: &mut App) {
 fn spawn_spawn_level_screen(mut commands: Commands) {
     commands
         .ui_root()
-        .insert(StateScoped(Screen::SpawnLevel))
+        .insert((
+            StateScoped(Screen::SpawnLevel),
+            BackgroundColor(SCREEN_BACKGROUND),
+        ))
         .with_children(|children| {
             children.label("Spawning Level...");
         });
@@ -34,7 +37,7 @@ fn spawn_level(mut commands: Commands) {
 }
 
 fn advance_to_gameplay_screen(
-    player_camera: Query<&PlayerCameraParent>,
+    player_camera: Query<&PlayerCamera>,
     mut next_screen: ResMut<NextState<Screen>>,
 ) {
     if !player_camera.is_empty() {

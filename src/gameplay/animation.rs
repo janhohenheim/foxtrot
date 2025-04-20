@@ -8,13 +8,18 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(link_animation_player);
 }
 
+/// Entities with this component will receive an [`AnimationPlayerLink`] component so that they can easily find the animation player of their model.
 #[derive(Component)]
 pub(crate) struct AnimationPlayerAncestor;
 
+/// Simple link to the animation player of a model that is buried deep in the hierarchy.
 #[derive(Component, Reflect, Clone, Copy)]
 #[reflect(Component)]
 pub(crate) struct AnimationPlayerLink(pub(crate) Entity);
 
+/// Bevy likes to hide the [`AnimationPlayer`] component deep in the hierarchy of a model.
+/// This system ensures that we can find the animation player easily by inserting an [`AnimationPlayerLink`] component
+/// into the same entity that contains the [`AnimationPlayerAncestor`] component.
 fn link_animation_player(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,

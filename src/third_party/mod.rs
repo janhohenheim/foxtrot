@@ -1,3 +1,9 @@
+//! Third-party plugins.
+//!
+//! We use one file per plugin to encapsulate setup or boilerplate necessary for that plugin.
+//! Many plugins don't require any setup, but it's still nice to have them in an own file so
+//! that we are ready to add convenience methods or similar when needed.
+
 use bevy::prelude::*;
 
 pub(crate) mod avian3d;
@@ -5,7 +11,7 @@ mod avian_pickup;
 mod bevy_enhanced_input;
 #[cfg(feature = "native")]
 mod bevy_hanabi;
-mod bevy_landmass;
+pub(crate) mod bevy_landmass;
 mod bevy_tnua;
 pub(crate) mod bevy_trenchbroom;
 pub(crate) mod bevy_yarnspinner;

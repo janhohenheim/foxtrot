@@ -1,3 +1,5 @@
+//! Input for the dev tools.
+
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 

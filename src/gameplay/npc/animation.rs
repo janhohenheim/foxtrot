@@ -1,3 +1,5 @@
+//! NPC animation handling.
+
 use std::time::Duration;
 
 use bevy::prelude::*;

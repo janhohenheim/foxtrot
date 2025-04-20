@@ -102,7 +102,7 @@ fn toogle_aalo_inspector(
     };
 }
 
-#[derive(Debug, Resource, Default, Eq, PartialEq)]
+#[derive(Resource, Debug, Default, Eq, PartialEq)]
 enum DebugState {
     #[default]
     None,

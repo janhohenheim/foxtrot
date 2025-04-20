@@ -22,7 +22,7 @@ pub struct AppPlugin;
 
 impl Plugin for AppPlugin {
     fn build(&self, app: &mut App) {
-        // Order new `AppStep` variants by adding them here:
+        // Order new `AppSet` variants by adding them here:
         app.configure_sets(
             Update,
             (
@@ -62,20 +62,20 @@ impl Plugin for AppPlugin {
                 }),
         );
 
+        // Add third-party plugins.
+        app.add_plugins(third_party::plugin);
+
         // Add other plugins.
         app.add_plugins((
-            third_party::plugin,
-            ui_camera::plugin,
             asset_tracking::plugin,
+            #[cfg(feature = "dev")]
+            dev_tools::plugin,
             gameplay::plugin,
+            props::plugin,
             screens::plugin,
             theme::plugin,
-            props::plugin,
+            ui_camera::plugin,
         ));
-
-        // Enable dev tools for dev builds.
-        #[cfg(feature = "dev")]
-        app.add_plugins(dev_tools::plugin);
     }
 }
 
@@ -99,7 +99,7 @@ enum AppSet {
 enum CameraOrder {
     World,
     ViewModel,
-    UI,
+    Ui,
 }
 
 impl From<CameraOrder> for isize {

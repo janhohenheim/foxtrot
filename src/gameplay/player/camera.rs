@@ -41,16 +41,16 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<CameraSensitivity>();
 }
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 #[require(Transform, Visibility)]
 pub(crate) struct PlayerCameraParent;
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 struct WorldModelCamera;
 
-#[derive(Debug, Component, Reflect, Deref, DerefMut)]
+#[derive(Component, Debug, Reflect, Deref, DerefMut)]
 #[reflect(Component)]
 pub(crate) struct CameraSensitivity(Vec2);
 

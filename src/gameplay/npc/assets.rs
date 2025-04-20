@@ -30,7 +30,7 @@ pub(crate) struct NpcAssets {
 impl FromWorld for NpcAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
-        let mut rng = rand::thread_rng();
+        let rng = &mut rand::thread_rng();
         Self {
             model: assets.load(Npc::scene_path()),
             run_animation: assets.load(Npc::animation_path(0)),
@@ -49,7 +49,7 @@ impl FromWorld for NpcAssets {
                     assets.load("audio/sound_effects/run/Footsteps_Rock_Run_09.ogg"),
                     assets.load("audio/sound_effects/run/Footsteps_Rock_Run_10.ogg"),
                 ],
-                &mut rng,
+                rng,
             )
             .unwrap(),
         }

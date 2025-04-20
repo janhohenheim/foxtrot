@@ -12,5 +12,5 @@ pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
     app.add_systems(Update, log_transitions::<Screen>);
 
-    app.add_plugins((input::plugin, debug_ui::plugin, validate_preloading::plugin));
+    app.add_plugins((debug_ui::plugin, input::plugin, validate_preloading::plugin));
 }

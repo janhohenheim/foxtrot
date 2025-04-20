@@ -27,7 +27,7 @@ pub(crate) fn spawn_level(world: &mut World) {
         .observe(advance_to_gameplay_screen);
 }
 
-#[derive(Debug, Component, Reflect)]
+#[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
 pub(crate) struct Level;
 

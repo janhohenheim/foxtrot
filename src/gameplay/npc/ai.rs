@@ -38,7 +38,7 @@ fn setup_npc_agent(
             .spawn((
                 Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
                 Agent3dBundle {
-                    agent: Default::default(),
+                    agent: default(),
                     settings: AgentSettings {
                         radius: NPC_RADIUS,
                         desired_speed: 7.0,
@@ -63,7 +63,7 @@ fn set_controller_velocity(
     mut agent_query: Query<(&mut TnuaController, &NpcAgent)>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
 ) {
-    for (mut controller, npc_agent) in agent_query.iter_mut() {
+    for (mut controller, npc_agent) in &mut agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(npc_agent.0) else {
             continue;
         };
@@ -80,7 +80,7 @@ fn set_controller_velocity(
 }
 
 fn sync_agent_velocity(mut agent_query: Query<(&LinearVelocity, &mut LandmassVelocity)>) {
-    for (avian_velocity, mut landmass_velocity) in agent_query.iter_mut() {
+    for (avian_velocity, mut landmass_velocity) in &mut agent_query {
         landmass_velocity.velocity = avian_velocity.0;
     }
 }

@@ -1,3 +1,9 @@
+//! Third-party plugins.
+//!
+//! We use one file per plugin to encapsulate setup or boilerplate necessary for that plugin.
+//! Many plugins don't require any setup, but it's still nice to have them in an own file so
+//! that we are ready to add convenience methods or similar when needed.
+
 use bevy::prelude::*;
 
 pub(crate) mod avian3d;

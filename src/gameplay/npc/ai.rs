@@ -1,3 +1,5 @@
+use std::f32::consts::TAU;
+
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_landmass::{
@@ -73,7 +75,7 @@ fn set_controller_velocity(
             desired_velocity: velocity,
             desired_forward: forward,
             float_height: NPC_FLOAT_HEIGHT,
-            spring_strength: 1000.0,
+            max_slope: TAU / 8.0,
             ..default()
         });
     }

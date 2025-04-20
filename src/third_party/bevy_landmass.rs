@@ -18,7 +18,12 @@ pub(super) fn plugin(app: &mut App) {
         LandmassOxidizedNavigationPlugin::default(),
         OxidizedNavigationPlugin::<AvianCollider>::new(NavMeshSettings {
             step_height: 5,
-            ..NavMeshSettings::from_agent_and_bounds(NPC_RADIUS, NPC_HEIGHT, 100.0, -20.0)
+            ..NavMeshSettings::from_agent_and_bounds(
+                NPC_RADIUS * 0.8,
+                NPC_HEIGHT * 0.8,
+                100.0,
+                -20.0,
+            )
         }),
     ));
     app.add_systems(Startup, setup_archipelago);
@@ -34,12 +39,12 @@ fn setup_archipelago(mut commands: Commands) {
         Name::new("Main Level Archipelago"),
         Archipelago3d::new(AgentOptions {
             point_sample_distance: PointSampleDistance3d {
-                horizontal_distance: 0.25,
+                horizontal_distance: 0.6,
                 distance_above: 1.0,
-                distance_below: 2.0,
+                distance_below: 1.0,
                 vertical_preference_ratio: 2.0,
             },
-            ..AgentOptions::from_agent_radius(0.6)
+            ..AgentOptions::from_agent_radius(NPC_RADIUS)
         }),
         OxidizedArchipelago,
     ));

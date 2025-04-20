@@ -1,3 +1,5 @@
+//! Validates that all assets are preloaded before the game starts.
+
 use bevy::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {

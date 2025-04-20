@@ -1,15 +1,14 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::config::TrenchBroomConfig;
-use generic::{
-    setup_dynamic_prop_with_convex_hull, setup_static_prop_with_convex_decomposition,
-    setup_static_prop_with_convex_hull,
-};
+use generic::*;
+use specific::*;
 
+mod effects;
 mod generic;
 mod specific;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins((generic::plugin, specific::plugin));
+    app.add_plugins((generic::plugin, specific::plugin, effects::plugin));
 }
 
 // We can define a new prop here to make it show up in TrenchBroom.
@@ -21,59 +20,61 @@ pub(crate) trait RegisterProps {
 
 impl RegisterProps for TrenchBroomConfig {
     fn register_props(self) -> TrenchBroomConfig {
-        self.register_class::<Book>()
-            .register_class::<Plate>()
-            .register_class::<Mug>()
-            .register_class::<BurningLogs>()
+        self.register_class::<BurningLogs>()
             .register_class::<Grate>()
             .register_class::<Table>()
             .register_class::<Chair>()
+            .register_class::<Bookshelf>()
+            .register_class::<LampSitting>()
+            .register_class::<Crate>()
     }
 }
 
 // generic dynamic props
 
 create_prop!(
-    Book,
-    "models/book/book.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Book>
-);
-create_prop!(
-    Plate,
-    "models/plate/plate.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Plate>
-);
-create_prop!(
-    Mug,
-    "models/mug/mug.gltf",
-    on_add = setup_dynamic_prop_with_convex_hull::<Mug>
+    Crate,
+    "models/darkmod/containers/crate01.gltf",
+    on_add = setup_dynamic_prop_with_convex_hull::<Crate>
 );
 
 // generic static props
 
 create_prop!(
     Grate,
-    "models/grate/grate.gltf",
+    "models/darkmod/fireplace/grate.gltf",
     on_add = setup_static_prop_with_convex_hull::<Grate>
 );
 
 create_prop!(
     Table,
-    "models/table/table.gltf",
+    "models/darkmod/furniture/tables/rtable1.gltf",
     on_add = setup_static_prop_with_convex_decomposition::<Table>
+);
+
+create_prop!(
+    Bookshelf,
+    "models/darkmod/furniture/shelves/bookshelf02.gltf",
+    on_add = setup_static_prop_with_convex_hull::<Bookshelf>
 );
 
 // props with a specific setup function
 
 create_prop!(
+    LampSitting,
+    "models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf",
+    on_add = setup_lamp_sitting
+);
+
+create_prop!(
     Chair,
-    "models/chair/chair.gltf",
+    "models/darkmod/furniture/seating/wchair1.gltf",
     on_add = specific::setup_chair
 );
 
 create_prop!(
     BurningLogs,
-    "models/burning_logs/burning_logs.gltf",
+    "models/darkmod/fireplace/burntwood.gltf",
     on_add = specific::setup_burning_logs
 );
 

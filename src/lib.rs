@@ -120,6 +120,8 @@ bitflags! {
         /// Since we use multiple cameras, we need to be explicit about
         /// which one is allowed to render particles.
         const PARTICLES = 0b00000100;
+        /// Skip interaction with lights
+        const TRANSLUCENT = 0b00001000;
     }
 }
 

@@ -117,7 +117,9 @@ fn spawn_view_model(
                     fov: 90.0_f32.to_radians(),
                     ..default()
                 }),
-                RenderLayers::from(RenderLayer::DEFAULT | RenderLayer::PARTICLES),
+                RenderLayers::from(
+                    RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::TRANSLUCENT,
+                ),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
             ));

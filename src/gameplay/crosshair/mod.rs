@@ -17,7 +17,7 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::ChangeUi),
     );
-    app.add_systems(OnEnter(Screen::SpawnLevel), spawn_crosshair);
+    app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
 
     app.add_plugins((assets::plugin, cursor::plugin));
 }

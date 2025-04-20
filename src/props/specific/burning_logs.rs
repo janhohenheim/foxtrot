@@ -4,10 +4,8 @@ use avian3d::prelude::*;
 use bevy::{
     audio::{SpatialScale, Volume},
     ecs::{component::ComponentId, world::DeferredWorld},
-    pbr::{NotShadowCaster, NotShadowReceiver},
     prelude::*,
     render::view::RenderLayers,
-    scene::SceneInstanceReady,
 };
 #[cfg(feature = "native")]
 use bevy_hanabi::prelude::*;
@@ -15,7 +13,7 @@ use bevy_trenchbroom::util::IsSceneWorld as _;
 
 use crate::{
     AppSet, RenderLayer,
-    props::{BurningLogs, generic::static_bundle},
+    props::{BurningLogs, effects::insert_not_shadow_caster, generic::static_bundle},
     screens::Screen,
     third_party::bevy_trenchbroom::{GetTrenchbroomModelPath as _, fix_gltf_rotation},
 };
@@ -95,22 +93,6 @@ fn flicker_light(time: Res<Time>, mut query: Query<&mut PointLight, With<Flicker
         let flicker_percentage = 0.1;
         let flicker = (time.elapsed_secs() * flickers_per_second).sin();
         light.intensity = BASE_INTENSITY + flicker * BASE_INTENSITY * flicker_percentage;
-    }
-}
-
-fn insert_not_shadow_caster(
-    trigger: Trigger<SceneInstanceReady>,
-    is_mesh: Query<&Mesh3d>,
-    children: Query<&Children>,
-    mut commands: Commands,
-) {
-    for child in children
-        .iter_descendants(trigger.entity())
-        .filter(|e| is_mesh.get(*e).is_ok())
-    {
-        commands
-            .entity(child)
-            .insert((NotShadowCaster, NotShadowReceiver));
     }
 }
 

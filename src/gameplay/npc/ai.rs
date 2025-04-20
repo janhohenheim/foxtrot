@@ -75,6 +75,7 @@ fn set_controller_velocity(
             desired_velocity: velocity,
             desired_forward: forward,
             float_height: NPC_FLOAT_HEIGHT,
+            spring_strength: 1500.0,
             max_slope: TAU / 8.0,
             ..default()
         });

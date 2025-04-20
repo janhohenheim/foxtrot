@@ -44,9 +44,7 @@ fn apply_movement(
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
         float_height: PLAYER_FLOAT_HEIGHT,
-        // Increase the spring strength from the default so that the player can walk up stairs nicer.
-        spring_strength: 2_000.0,
-        // Restrict the max slope so that the player cannot walk up slightly angled stairs.
+        // Restrict the max slope so that the player cannot walk up slightly angled chairs.
         max_slope: TAU / 8.0,
         ..default()
     });

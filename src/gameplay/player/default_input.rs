@@ -44,7 +44,7 @@ fn default_binding(
     trigger: Trigger<Binding<DefaultInputContext>>,
     mut players: Query<&mut Actions<DefaultInputContext>>,
 ) {
-    const DEFAULT_SPEED: f32 = 10.0;
+    const DEFAULT_SPEED: f32 = 8.0;
     let mut actions = players.get_mut(trigger.entity()).unwrap();
 
     // Mappings like WASD or sticks are very common,

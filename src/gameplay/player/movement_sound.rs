@@ -60,7 +60,7 @@ fn play_step_sound(
     mut timer: Local<Option<Timer>>,
 ) {
     let timer =
-        timer.get_or_insert_with(|| Timer::new(Duration::from_millis(200), TimerMode::Repeating));
+        timer.get_or_insert_with(|| Timer::new(Duration::from_millis(300), TimerMode::Repeating));
     timer.tick(time.delta());
     if !timer.finished() {
         return;

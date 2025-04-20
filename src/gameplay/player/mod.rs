@@ -1,4 +1,5 @@
-//! Plugin handling the player character in particular.
+//! Plugin handling the player movement in particular.
+//!
 //! Note that this is separate from the `movement` module as that could be used
 //! for other characters as well.
 
@@ -50,8 +51,23 @@ pub(super) fn plugin(app: &mut App) {
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Player;
 
+/// The radius of the player character's capsule.
 pub(crate) const PLAYER_RADIUS: f32 = 0.5;
-const PLAYER_FLOAT_HEIGHT: f32 = 1.3;
+/// The length of the player character's capsule. Note that
+const PLAYER_CAPSULE_LENGTH: f32 = 1.0;
+
+/// The total height of the player character's capsule. A capsule's height is `length + 2 * radius`.
+const PLAYER_HEIGHT: f32 = PLAYER_CAPSULE_LENGTH + 2.0 * PLAYER_RADIUS;
+/// The half height of the player character's capsule is the distance between the character's center and the lowest point of its collider.
+const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
+
+/// The height used for the player's floating character controller.
+///
+/// Such a controller works by keeping the character itself at a more-or-less constant height above the ground by
+/// using a spring. It's important to make sure that this floating height is greater (even if by little) than the half height.
+///
+/// In this case, we use 30 cm of padding to make the player float nicely up stairs.
+const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.01;
 
 impl Player {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -67,7 +83,7 @@ impl Player {
                 Actions::<DefaultInputContext>::default(),
                 // The player character needs to be configured as a dynamic rigid body of the physics
                 // engine.
-                Collider::capsule(PLAYER_RADIUS, 1.0),
+                Collider::capsule(PLAYER_RADIUS, PLAYER_CAPSULE_LENGTH),
                 // This is Tnua's interface component.
                 TnuaController::default(),
                 // A sensor shape is not strictly necessary, but without it we'll get weird results.
@@ -81,9 +97,9 @@ impl Player {
                     static_coefficient: 0.0,
                     combine_rule: CoefficientCombine::Multiply,
                 },
-                ColliderDensity(200.0),
+                ColliderDensity(100.0),
                 TransformInterpolation,
-                CollisionLayers::new(CollisionLayer::Player, LayerMask::ALL),
+                CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
                 TnuaAnimatingState::<PlayerAnimationState>::default(),
             ))
             .observe(setup_player_animations);

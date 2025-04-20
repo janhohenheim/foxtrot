@@ -1,3 +1,5 @@
+//! [Avian](https://github.com/Jondolf/avian) is our physics engine.
+
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
@@ -9,6 +11,6 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) enum CollisionLayer {
     #[default]
     Default,
-    Player,
     Prop,
+    Character,
 }

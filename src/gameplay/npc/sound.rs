@@ -1,3 +1,5 @@
+//! NPC sound handling. The only sound is a step sound that plays when the NPC is walking.
+
 use std::time::Duration;
 
 use avian3d::prelude::LinearVelocity;

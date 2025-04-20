@@ -1,3 +1,5 @@
+use std::f32::consts::TAU;
+
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 use bevy_tnua::prelude::*;
@@ -5,7 +7,7 @@ use bevy_tnua::prelude::*;
 use super::default_input::{Jump, Move};
 
 use super::PLAYER_FLOAT_HEIGHT;
-use super::{Player, camera::PlayerCameraParent};
+use super::{Player, camera::PlayerCamera};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, reset_movement);
@@ -25,7 +27,7 @@ fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
     mut controllers: Query<&mut TnuaController, With<Player>>,
-    transform: Single<&Transform, With<PlayerCameraParent>>,
+    transform: Single<&Transform, With<PlayerCamera>>,
 ) {
     let Ok(mut controller) = controllers.get_mut(trigger.entity()) else {
         error!("Triggered movement for entity with missing components");
@@ -42,9 +44,8 @@ fn apply_movement(
         // The `float_height` must be greater (even if by little) from the distance between the
         // character's center and the lowest point of its collider.
         float_height: PLAYER_FLOAT_HEIGHT,
-        // `TnuaBuiltinWalk` has many other fields for customizing the movement - but they have
-        // sensible defaults. Refer to the `TnuaBuiltinWalk`'s documentation to learn what they do.
-        spring_strength: 1_600.0,
+        // Restrict the max slope so that the player cannot walk up slightly angled chairs.
+        max_slope: TAU / 8.0,
         ..default()
     });
 }

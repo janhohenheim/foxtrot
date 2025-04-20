@@ -1,3 +1,5 @@
+//! Forward the player's input to the pickup plugin.
+
 use bevy::prelude::*;
 
 use avian_pickup::prelude::*;

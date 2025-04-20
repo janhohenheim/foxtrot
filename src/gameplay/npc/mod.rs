@@ -1,3 +1,5 @@
+//! NPC handling. In the demo, the NPC is a fox that moves towards the player. We can interact with the NPC to trigger dialogue.
+
 use std::f32::consts::PI;
 
 use animation::{NpcAnimationState, setup_npc_animations};
@@ -11,10 +13,12 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::{bevy_trenchbroom::fix_gltf_rotation, bevy_yarnspinner::YarnNode};
+use crate::third_party::{
+    avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation, bevy_yarnspinner::YarnNode,
+};
 
 use super::animation::AnimationPlayerAncestor;
-mod ai;
+pub(crate) mod ai;
 mod animation;
 mod assets;
 mod sound;
@@ -33,8 +37,11 @@ pub(super) fn plugin(app: &mut App) {
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Npc;
 
-const NPC_RADIUS: f32 = 0.8;
-const NPC_FLOAT_HEIGHT: f32 = 1.0;
+pub(crate) const NPC_RADIUS: f32 = 0.6;
+const NPC_CAPSULE_LENGTH: f32 = 0.1;
+pub(crate) const NPC_HEIGHT: f32 = NPC_CAPSULE_LENGTH + 2.0 * NPC_RADIUS;
+const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
+const NPC_FLOAT_HEIGHT: f32 = NPC_HALF_HEIGHT + 0.01;
 
 impl Npc {
     fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -49,14 +56,16 @@ impl Npc {
             .insert((
                 Npc,
                 TransformInterpolation,
-                Collider::capsule(NPC_RADIUS, 0.1),
+                Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
-                ColliderDensity(200.0),
+                ColliderDensity(500.0),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),
                 AnimationPlayerAncestor,
+                CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
+                // The Yarn Node is what we use to trigger dialogue.
                 YarnNode::new("Npc"),
             ))
             .with_child((

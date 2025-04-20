@@ -1,3 +1,7 @@
+//! The UI part of the dialogue handling. We change the crosshair when we are able to interact with a dialogue. When the dialogue is running, we disable the player's input and disable the cursor.
+//! When the dialogue is complete, we restore everything.
+//! When a dialogue is able to be started, we signal this to other systems by inserting a `InteractionPrompt`.
+
 use std::any::Any;
 
 use bevy::prelude::*;

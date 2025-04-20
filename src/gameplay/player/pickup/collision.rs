@@ -1,3 +1,8 @@
+//! Player pickup collision handling.
+//!
+//! Disable collision with actors when the player is holding a prop.
+//! Re-enable collision when the player is no longer holding a prop.
+
 use bevy::prelude::*;
 use std::iter;
 
@@ -21,7 +26,7 @@ fn disable_collision_with_held_prop(
         let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
             continue;
         };
-        collision_layers.filters.remove(CollisionLayer::Player);
+        collision_layers.filters.remove(CollisionLayer::Character);
     }
 }
 
@@ -35,6 +40,6 @@ fn enable_collision_with_no_longer_held_prop(
         let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
             continue;
         };
-        collision_layers.filters.add(CollisionLayer::Player);
+        collision_layers.filters.add(CollisionLayer::Character);
     }
 }

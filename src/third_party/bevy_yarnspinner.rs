@@ -1,3 +1,5 @@
+//! [Yarnspinner](https://github.com/YarnSpinnerTool/YarnSpinner-Rust) handles dialogue.
+
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::BaseClass;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};

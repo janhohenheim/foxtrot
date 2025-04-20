@@ -1,3 +1,6 @@
+//! Player pickup UI interactions.
+//! In particular, change the crosshair when the player is looking at a prop and hide it when the player is holding a prop.
+
 use std::any::Any as _;
 
 use avian_pickup::{actor::AvianPickupActor, prop::HeldProp};
@@ -6,7 +9,7 @@ use bevy::prelude::*;
 
 use crate::{
     AppSet,
-    gameplay::{crosshair::CrosshairState, player::camera::PlayerCameraParent},
+    gameplay::{crosshair::CrosshairState, player::camera::PlayerCamera},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
 };
@@ -24,7 +27,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn check_for_pickup_opportunity(
-    player: Single<(&GlobalTransform, &AvianPickupActor), With<PlayerCameraParent>>,
+    player: Single<(&GlobalTransform, &AvianPickupActor), With<PlayerCamera>>,
     spatial_query: SpatialQuery,
     mut crosshair: Single<&mut CrosshairState>,
 ) {

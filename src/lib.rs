@@ -96,6 +96,9 @@ enum AppSet {
     Update,
 }
 
+/// This enum is converted to an `isize` to be used as a camera's order.
+/// Since we have three camera, we use three enum variants.
+/// This ordering here mean UI > ViewModel > World.
 enum CameraOrder {
     World,
     ViewModel,

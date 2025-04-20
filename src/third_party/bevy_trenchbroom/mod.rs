@@ -1,12 +1,17 @@
+//! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
+//! We use TrenchBroom to edit our levels.
+
 use bevy::prelude::*;
-use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prelude::*};
+use bevy_trenchbroom::prelude::*;
 use proxy::RegisterProxies as _;
 
 use crate::{
     gameplay::{npc::Npc, player::Player},
     props::RegisterProps as _,
 };
+pub(crate) use extensions::*;
 
+mod extensions;
 mod proxy;
 
 pub(super) fn plugin(app: &mut App) {
@@ -31,47 +36,24 @@ pub(super) fn plugin(app: &mut App) {
         config
     }));
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_plugins(proxy::plugin);
+    app.add_plugins((proxy::plugin, extensions::plugin));
 }
 
+/// Set up TrenchBroom so that it can create maps for our game.
+/// This is intentionally not gated to dev builds so that players can edit the levels themselves if they want.
 fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
     #[cfg(target_arch = "wasm32")]
     let _ = server;
     #[cfg(not(target_arch = "wasm32"))]
     {
         info!("Writing TrenchBroom config");
+        // Errors at this point usually mean that the player has not installed TrenchBroom.
+        // The error messages give more details about the exact issue.
         if let Err(err) = server.config.write_game_config_to_default_directory() {
-            error!("Could not write TrenchBroom game config: {err}");
+            warn!("Could not write TrenchBroom game config: {err}");
         }
         if let Err(err) = server.config.add_game_to_preferences_in_default_directory() {
-            error!("Could not add game to TrenchBroom preferences: {err}");
+            warn!("Could not add game to TrenchBroom preferences: {err}");
         }
     }
 }
-
-#[derive(SolidClass, Component, Reflect, Default)]
-#[reflect(Component)]
-#[require(BspWorldspawn)]
-#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
-pub(crate) struct Worldspawn;
-
-pub(crate) fn fix_gltf_rotation(mut world: EntityWorldMut) {
-    trenchbroom_gltf_rotation_fix(&mut world);
-}
-
-pub(crate) trait GetTrenchbroomModelPath: QuakeClass {
-    fn scene_path() -> String {
-        format!(
-            "{file_path}#Scene0",
-            file_path = Self::CLASS_INFO.model_path().unwrap()
-        )
-    }
-    fn animation_path(index: u32) -> String {
-        format!(
-            "{file_path}#Animation{index}",
-            file_path = Self::CLASS_INFO.model_path().unwrap()
-        )
-    }
-}
-
-impl<T: QuakeClass> GetTrenchbroomModelPath for T {}

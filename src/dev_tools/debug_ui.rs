@@ -1,4 +1,4 @@
-//! Development tools for the game. This plugin is only enabled in dev builds.
+//! Toggles for the different debug UIs that our plugins provide.
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
 use aalo::prelude::*;

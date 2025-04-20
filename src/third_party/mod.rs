@@ -11,7 +11,7 @@ mod avian_pickup;
 mod bevy_enhanced_input;
 #[cfg(feature = "native")]
 mod bevy_hanabi;
-mod bevy_landmass;
+pub(crate) mod bevy_landmass;
 mod bevy_tnua;
 pub(crate) mod bevy_trenchbroom;
 pub(crate) mod bevy_yarnspinner;

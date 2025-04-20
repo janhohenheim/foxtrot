@@ -1,7 +1,10 @@
 //! [Landmass](https://github.com/andriyDev/landmass) powers out agent navigation.
 //! The underlying navmesh is generated using [Oxidized Navigation](https://github.com/TheGrimsey/oxidized_navigation).
 
+use crate::gameplay::npc::{NPC_HEIGHT, NPC_RADIUS};
+
 use super::bevy_trenchbroom::Worldspawn;
+use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
@@ -14,12 +17,13 @@ pub(super) fn plugin(app: &mut App) {
         Landmass3dPlugin::default(),
         LandmassOxidizedNavigationPlugin::default(),
         OxidizedNavigationPlugin::<AvianCollider>::new(NavMeshSettings {
-            step_height: 5,
-            ..NavMeshSettings::from_agent_and_bounds(0.5, 2.0, 100.0, -20.0)
+            step_height: 2,
+            ..NavMeshSettings::from_agent_and_bounds(NPC_RADIUS / 2.0, NPC_HEIGHT, 100.0, -20.0)
         }),
     ));
     app.add_systems(Startup, setup_archipelago);
     app.add_observer(add_nav_mesh_affector_to_trenchbroom_worldspawn);
+    app.add_observer(add_nav_mesh_affector_to_colliders_under_nav_mesh_affector_parent);
 }
 
 fn setup_archipelago(mut commands: Commands) {
@@ -41,9 +45,25 @@ fn setup_archipelago(mut commands: Commands) {
     ));
 }
 
+#[derive(Component)]
+pub(crate) struct NavMeshAffectorParent;
+
 fn add_nav_mesh_affector_to_trenchbroom_worldspawn(
     trigger: Trigger<OnAdd, Worldspawn>,
     mut commands: Commands,
 ) {
     commands.entity(trigger.entity()).insert(NavMeshAffector);
+}
+
+fn add_nav_mesh_affector_to_colliders_under_nav_mesh_affector_parent(
+    trigger: Trigger<OnAdd, ColliderParent>,
+    collider_parent: Query<&ColliderParent>,
+    nav_mesh_affector_parent: Query<(), With<NavMeshAffectorParent>>,
+    mut commands: Commands,
+) {
+    let collider = trigger.entity();
+    let rigid_body = collider_parent.get(collider).unwrap().get();
+    if nav_mesh_affector_parent.contains(rigid_body) {
+        commands.entity(collider).insert(NavMeshAffector);
+    }
 }

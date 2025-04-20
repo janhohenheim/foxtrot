@@ -6,12 +6,14 @@ use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
 };
+use bevy_landmass::{Character, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
     props::generic::dynamic_bundle,
     third_party::{
         avian3d::CollisionLayer,
+        bevy_landmass::insert_landmass_character,
         bevy_trenchbroom::{LoadTrenchbroomModel as _, fix_gltf_rotation},
     },
 };
@@ -29,6 +31,10 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
     if world.is_scene_world() {
         return;
     }
+    world
+        .commands()
+        .run_system_cached_with(insert_landmass_character, entity);
+
     let model = world.load_trenchbroom_model::<Chair>();
     world
         .commands()
@@ -51,6 +57,9 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
     if world.is_scene_world() {
         return;
     }
+    world
+        .commands()
+        .run_system_cached_with(insert_landmass_character, entity);
     let model = world.load_trenchbroom_model::<Crate>();
     world
         .commands()

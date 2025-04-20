@@ -52,6 +52,18 @@ fn setup_archipelago(mut commands: Commands) {
     ));
 }
 
+pub(crate) fn insert_landmass_character(
+    In(entity): In<Entity>,
+    mut commands: Commands,
+    archipelago: Single<Entity, With<Archipelago3d>>,
+) {
+    commands.entity(entity).insert(Character3dBundle {
+        character: Character::default(),
+        settings: CharacterSettings { radius: 0.7 },
+        archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+    });
+}
+
 #[derive(Component)]
 pub(crate) struct NavMeshAffectorParent;
 

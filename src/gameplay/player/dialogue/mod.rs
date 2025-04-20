@@ -1,3 +1,5 @@
+//! Player dialogue handling. This module starts the Yarn Spinner dialogue when the player starts interacting with an NPC.
+
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::{events::Started, prelude::Actions};

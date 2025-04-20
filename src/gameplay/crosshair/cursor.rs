@@ -1,3 +1,5 @@
+//! Handle cursor capture and release. This is a bit hacky because winit does not have a nice way to keep the cursor locked in a browser.
+
 use std::any::Any;
 
 use bevy::{prelude::*, window::CursorGrabMode};
@@ -51,6 +53,8 @@ pub(crate) fn is_cursor_forced_freed(val: Res<IsCursorForcedFreed>) -> bool {
     val.0
 }
 
+/// A resource that indicates whether the cursor cannot be captured.
+/// This is useful for e.g. debug menus.
 #[derive(Resource, Debug, Default, Reflect)]
 #[reflect(Resource)]
 pub(crate) struct IsCursorForcedFreed(pub(crate) bool);

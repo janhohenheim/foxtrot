@@ -1,3 +1,5 @@
+//! NPC handling. In the demo, the NPC is a fox that moves towards the player. We can interact with the NPC to trigger dialogue.
+
 use std::f32::consts::PI;
 
 use animation::{NpcAnimationState, setup_npc_animations};
@@ -63,6 +65,7 @@ impl Npc {
                 TnuaAnimatingState::<NpcAnimationState>::default(),
                 AnimationPlayerAncestor,
                 CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
+                // The Yarn Node is what we use to trigger dialogue.
                 YarnNode::new("Npc"),
             ))
             .with_child((

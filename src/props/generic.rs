@@ -1,3 +1,7 @@
+//! Utility functions for creating regular props that don't have any special properties.
+//! A *dynamic* prop in the context of this file is a prop that is influenced by physics,
+//! while a *static* prop is unmovable terrain.
+
 use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel as _;
 use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation};
 use avian3d::prelude::*;

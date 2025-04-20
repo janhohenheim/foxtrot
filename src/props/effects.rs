@@ -1,3 +1,5 @@
+//! Utility functions for adding special effects to props.
+
 use bevy::{
     pbr::{NotShadowCaster, NotShadowReceiver},
     prelude::*,

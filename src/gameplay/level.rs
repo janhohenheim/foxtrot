@@ -29,6 +29,9 @@ pub(crate) fn spawn_level(world: &mut World) {
 #[reflect(Component)]
 pub(crate) struct Level;
 
+/// A [`Resource`] that contains all the assets needed to spawn the level.
+/// We use this to preload assets before the level is spawned.
+/// If we have multiple levels, we can have a dedicated resource for each one.
 #[derive(Resource, Asset, Clone, TypePath)]
 struct LevelAssets {
     #[dependency]

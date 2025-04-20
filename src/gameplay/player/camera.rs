@@ -93,7 +93,7 @@ fn spawn_view_model(
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
-                    fov: 74.0_f32.to_radians(),
+                    fov: 75.0_f32.to_radians(),
                     ..default()
                 }),
                 RenderLayers::from(

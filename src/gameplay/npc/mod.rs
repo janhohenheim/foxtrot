@@ -35,7 +35,7 @@ pub(super) fn plugin(app: &mut App) {
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Npc;
 
-pub(crate) const NPC_RADIUS: f32 = 0.8;
+pub(crate) const NPC_RADIUS: f32 = 0.6;
 const NPC_CAPSULE_LENGTH: f32 = 0.1;
 pub(crate) const NPC_HEIGHT: f32 = NPC_CAPSULE_LENGTH + 2.0 * NPC_RADIUS;
 const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
@@ -57,7 +57,7 @@ impl Npc {
                 Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
-                ColliderDensity(50.0),
+                ColliderDensity(500.0),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),

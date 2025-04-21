@@ -23,15 +23,10 @@ fn play_jump_grunt(
     mut player_assets: ResMut<PlayerAssets>,
     mut is_jumping: Local<bool>,
 ) {
-    let Some((_jump, jump_state)) = player.concrete_action::<TnuaBuiltinJump>() else {
-        return;
-    };
-    let started_jumping = matches!(
-        jump_state,
-        TnuaBuiltinJumpState::StartingJump { .. }
-            | TnuaBuiltinJumpState::SlowDownTooFastSlopeJump { .. }
-    );
-    if !started_jumping {
+    if player
+        .concrete_action::<TnuaBuiltinJump>()
+        .is_none_or(|x| matches!(x, (_, TnuaBuiltinJumpState::FallSection)))
+    {
         *is_jumping = false;
         return;
     }

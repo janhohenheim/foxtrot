@@ -23,20 +23,21 @@ fn spawn_credits_screen(mut commands: Commands) {
         .ui_root()
         .insert(StateScoped(Screen::Credits))
         .with_children(|parent| {
+            let font = TextFont::from_font_size(12.0);
             parent.header("Made by");
-            parent.label("Joe Shmoe - Implemented aligator wrestling AI");
-            parent.label("Jane Doe - Made the music for the alien invasion");
+            parent.label("Joe Shmoe - Implemented aligator wrestling AI").insert(font.clone());
+            parent.label("Jane Doe - Made the music for the alien invasion").insert(font.clone());
 
             parent.header("Assets");
-            parent.label("Bevy logo - All rights reserved by the Bevy Foundation. Permission granted for splash screen use when unmodified.");
-            parent.label("Button SFX - CC0 by Jaszunio15");
-            parent.label("Music - CC BY 3.0 by Kevin MacLeod");
-            parent.label("Ambient music and Footstep SFX - CC0 by NOX SOUND");
-            parent.label("Throw SFX - FilmCow Royalty Free SFX Library License Agreement by Jason Steele");
-            parent.label("Fox model - CC0 1.0 Universal by PixelMannen (model), CC BY 4.0 International by tomkranis (Rigging & Animation), CC BY 4.0 International by AsoboStudio and scurest (Conversion to glTF)");
-            parent.label("Player model - \"You can use it commercially without the need to credit me\" by Drillimpact");
-            parent.label("Vocals - CC BY 4.0 by Dillon Becker");
-            parent.label("Rest of the assets - CC BY-NC-SA 3.0 by The Dark Mod Team. Converted to Bevy-friendly assets by Jan Hohenheim.");
+            parent.label("Bevy logo - All rights reserved by the Bevy Foundation. Permission granted for splash screen use when unmodified.").insert(font.clone());
+            parent.label("Button SFX - CC0 by Jaszunio15").insert(font.clone());
+            parent.label("Music - CC BY 3.0 by Kevin MacLeod").insert(font.clone());
+            parent.label("Ambient music and Footstep SFX - CC0 by NOX SOUND").insert(font.clone());
+            parent.label("Throw SFX - FilmCow Royalty Free SFX Library License Agreement by Jason Steele").insert(font.clone());
+            parent.label("Fox model - CC0 1.0 Universal by PixelMannen (model), CC BY 4.0 International by tomkranis (Rigging & Animation), CC BY 4.0 International by AsoboStudio and scurest (Conversion to glTF)").insert(font.clone());
+            parent.label("Player model - \"You can use it commercially without the need to credit me\" by Drillimpact").insert(font.clone());
+            parent.label("Vocals - CC BY 4.0 by Dillon Becker").insert(font.clone());
+            parent.label("Rest of the assets - CC BY-NC-SA 3.0 by The Dark Mod Team. Converted to Bevy-friendly assets by Jan Hohenheim.").insert(font.clone());
 
             parent.button("Back").observe(enter_title_screen);
         });

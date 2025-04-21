@@ -53,13 +53,13 @@ fn setup_archipelago(mut commands: Commands) {
 }
 
 pub(crate) fn insert_landmass_character(
-    In(entity): In<Entity>,
+    In((entity, radius)): In<(Entity, f32)>,
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
     commands.entity(entity).insert(Character3dBundle {
         character: Character::default(),
-        settings: CharacterSettings { radius: 0.7 },
+        settings: CharacterSettings { radius },
         archipelago_ref: ArchipelagoRef3d::new(*archipelago),
     });
 }

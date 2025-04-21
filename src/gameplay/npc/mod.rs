@@ -59,7 +59,7 @@ impl Npc {
                 Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
                 TnuaController::default(),
                 TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
-                ColliderDensity(500.0),
+                ColliderDensity(2_000.0),
                 RigidBody::Dynamic,
                 LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
                 TnuaAnimatingState::<NpcAnimationState>::default(),

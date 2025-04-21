@@ -503,9 +503,9 @@ dependencies = [
 
 [[package]]
 name = "avian_pickup"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c47e6f0b7dee77417c59f8e5e732ba75d5b2a288fae8ffba7bd0d52cb58b322"
+checksum = "71544a77ad01bd9548057a4166b3a52f335d5e6116702f5c3181f2bf02c1d7d7"
 dependencies = [
  "avian3d",
  "bevy",
@@ -566,7 +566,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua"
 version = "0.22.0"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=main#6631deb9b8830fc38be9aa657f6c1a3a493c2c15"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -576,7 +576,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.3.1"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=main#6631deb9b8830fc38be9aa657f6c1a3a493c2c15"
 dependencies = [
  "avian3d",
  "bevy",
@@ -586,7 +586,7 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.6.0"
-source = "git+https://github.com/idanarye/bevy-tnua?branch=feature%2Fopt-out-of-being-ground#ab46c9f1ca12e2bcfedf48ee09cdeb6f97f0b266"
+source = "git+https://github.com/idanarye/bevy-tnua?branch=main#6631deb9b8830fc38be9aa657f6c1a3a493c2c15"
 dependencies = [
  "bevy",
 ]
@@ -4894,7 +4894,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
-source = "git+https://github.com/TheGrimsey/oxidized_navigation#20ae63257d08bdfacd9ede312c16d9a479471700"
+source = "git+https://github.com/TheGrimsey/oxidized_navigation?branch=master#20ae63257d08bdfacd9ede312c16d9a479471700"
 dependencies = [
  "avian3d",
  "bevy",

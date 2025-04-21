@@ -32,7 +32,7 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
     }
     world
         .commands()
-        .run_system_cached_with(insert_landmass_character, entity);
+        .run_system_cached_with(insert_landmass_character, (entity, 0.4));
 
     let model = world.load_trenchbroom_model::<Chair>();
     world
@@ -58,7 +58,7 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
     }
     world
         .commands()
-        .run_system_cached_with(insert_landmass_character, entity);
+        .run_system_cached_with(insert_landmass_character, (entity, 0.5));
     let model = world.load_trenchbroom_model::<Crate>();
     world
         .commands()

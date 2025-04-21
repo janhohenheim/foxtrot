@@ -10,11 +10,11 @@ bevy_enhanced_input = "0.9"
 
 # physics
 avian3d = "0.2.1"
-avian_pickup = "0.1.5"
+avian_pickup = "0.1.6"
 
 # character controller
-bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
-bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "feature/opt-out-of-being-ground" }
+bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "main" }
+bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "main" }
 
 # navigation
 bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
@@ -113,7 +113,7 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation" }
+oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation", branch = "master" }
 
 # This profile will be used for `bevy run web` automatically
 [profile.web-release]

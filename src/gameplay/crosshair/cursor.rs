@@ -44,7 +44,7 @@ fn capture_cursor(
     crosshair.wants_invisible.remove(&release_cursor.type_id());
 }
 
-pub fn release_cursor(mut window: Single<&mut Window>) {
+pub(crate) fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.visible = true;
     window.cursor_options.grab_mode = CursorGrabMode::None;
 }

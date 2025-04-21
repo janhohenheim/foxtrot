@@ -60,7 +60,7 @@ impl<T: Spawn> Widgets for T {
                 align_items: AlignItems::Center,
                 ..default()
             },
-            BackgroundColor(NODE_BACKGROUND),
+            BackgroundColor(HEADER_BACKGROUND),
         ));
         entity.with_children(|children| {
             ChildBuild::spawn(

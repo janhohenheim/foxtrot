@@ -24,7 +24,7 @@ pub(crate) mod camera;
 pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
-pub mod movement_sound;
+pub(crate) mod movement_sound;
 pub(crate) mod pickup;
 
 pub(super) fn plugin(app: &mut App) {

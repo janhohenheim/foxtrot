@@ -1,59 +1,74 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env bash
 
-help_text="Usage: $0 [options]
+set -euo pipefail
+shopt -s globstar nullglob
+
+readonly ASSETS_PATH='assets'
+
+usage() {
+    printf "Usage: %s [options]
+
 Options:
   -q, --qbsp <path>    Path to qbsp executable
   -l, --light <path>   Path to light executable
-  -h, --help         Show this help message"
+  -h, --help           Show this help message
+" "$0"
+}
 
+error() {
+    echo "$0: $*" >&2
+}
 
-# set default values
-qbsp_path="qbsp"
-light_path="light"
+main() {
+    # Parse arguments.
+    local qbsp_path='qbsp'
+    local light_path='light'
+    while [[ "$#" -ge 1 ]]; do
+        case "$1" in
+            -q|--qbsp)
+                qbsp_path="$2"
+                shift
+                ;;
+            -l|--light)
+                light_path="$2"
+                shift
+                ;;
+            -h|--help)
+                usage
+                return 0
+                ;;
+            -*)
+                error "Unknown option: $1"
+                return 1
+                ;;
+            *)
+                error "Unexpected positional argument: $1"
+                return 1
+                ;;
+        esac
 
-# source for how to parse arguments: https://stackoverflow.com/a/14203146
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    -q|--qbsp)
-      qbsp_path="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    -l|--light)
-      light_path="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    -h|--help)
-      echo "$help_text"
-      exit 0
-      shift # past argument
-      ;;
-    -*|--*)
-      echo "Unknown option $1"
-      exit 1
-      ;;
-    *)
-      echo "No positional arguments allowed"
-      exit 1
-      ;;
-  esac
-done
+        shift
+    done
+    readonly qbsp_path
+    readonly light_path
 
-# check if qbsp and light exist
-if ! type "$qbsp_path" > /dev/null 2>&1; then
-    echo "qbsp executable not found at '$qbsp_path'"
-    exit 1
-fi
-if ! type "$light_path" > /dev/null 2>&1; then
-    echo "light executable not found at '$light_path'"
-    exit 1
-fi
+    # Verify that the qbsp and light executables exist.
+    if ! type "${qbsp_path}" >/dev/null 2>&1; then
+        error "qbsp executable not found at path: ${qbsp_path}"
+        return 1
+    fi
+    if ! type "${light_path}" >/dev/null 2>&1; then
+        error "light executable not found at path: ${light_path}"
+        return 1
+    fi
 
+    # Compile maps.
+    for map in "${ASSETS_PATH}"/maps/**/*.map; do
+        echo "Compiling ${map}"
+        "${qbsp_path}" -bsp2 -wrbrushesonly -nosubdivide -nosoftware -path "${ASSETS_PATH}" -notex "${map}" "${map%.map}.bsp"
+        "${light_path}" -extra4 -novanilla -lightgrid -path "${ASSETS_PATH}" "${map%.map}.bsp"
+    done
+}
 
-for map in assets/maps/**/*.map; do
-    echo "Compiling $map"
-    $qbsp_path -bsp2 -wrbrushesonly -nosubdivide -nosoftware -path assets -notex $map ${map%.map}.bsp
-    $light_path -extra4 -novanilla -lightgrid -path assets ${map%.map}.bsp
-done
+main "$@"
+exit "$?"

@@ -1,5 +1,5 @@
 mod asset_tracking;
-pub(crate) mod audio;
+mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
@@ -112,7 +112,7 @@ impl From<CameraOrder> for isize {
 }
 
 bitflags! {
-    pub struct RenderLayer: u32 {
+    struct RenderLayer: u32 {
         /// Used implicitly by all entities without a `RenderLayers` component.
         /// Our world model camera and all objects other than the player are on this layer.
         /// The light source belongs to both layers.

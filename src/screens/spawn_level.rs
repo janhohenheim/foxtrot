@@ -13,7 +13,6 @@ pub(super) fn plugin(app: &mut App) {
         OnEnter(Screen::SpawnLevel),
         (spawn_level, spawn_spawn_level_screen),
     );
-    app.add_systems(OnEnter(Screen::SpawnLevel), spawn_spawn_level_screen);
     app.add_systems(
         Update,
         advance_to_gameplay_screen.run_if(in_state(Screen::SpawnLevel)),

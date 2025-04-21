@@ -29,9 +29,14 @@ fn spawn_credits_screen(mut commands: Commands) {
 
             parent.header("Assets");
             parent.label("Bevy logo - All rights reserved by the Bevy Foundation. Permission granted for splash screen use when unmodified.");
-            parent.label("Ducky sprite - CC0 by Caz Creates Games");
             parent.label("Button SFX - CC0 by Jaszunio15");
             parent.label("Music - CC BY 3.0 by Kevin MacLeod");
+            parent.label("Ambient and Footstep SFX - CC0 by NOX SOUND");
+            parent.label("Throw SFX - FilmCow Royalty Free SFX Library License Agreement by Jason Steele");
+            parent.label("Fox model - CC0 1.0 Universal by PixelMannen (model), CC BY 4.0 International by tomkranis (Rigging & Animation), CC BY 4.0 International by AsoboStudio and scurest (Conversion to glTF)");
+            parent.label("Player model - \"You can use it commercially without the need to credit me\" by Drillimpact");
+            parent.label("Vocals - CC BY 4.0 by Dillon Becker");
+            parent.label("Rest of the models and textures - CC BY-NC-SA 3.0 by The Dark Mod Team. Converted to Bevy-friendly assets by Jan Hohenheim.");
 
             parent.button("Back").observe(enter_title_screen);
         });

@@ -64,8 +64,13 @@ main() {
 
     # Compile maps.
     for map in "${ASSETS_PATH}"/maps/**/*.map; do
+        # ignore the `autosave` directory.
+        if [[ "${map}" == *"autosave"* ]]; then
+            continue
+        fi
         echo "Compiling ${map}"
         "${qbsp_path}" -bsp2 -wrbrushesonly -nosubdivide -nosoftware -path "${ASSETS_PATH}" -notex "${map}" "${map%.map}.bsp"
+        echo "Lighting ${map}"
         "${light_path}" -extra4 -novanilla -lightgrid -path "${ASSETS_PATH}" "${map%.map}.bsp"
     done
 }

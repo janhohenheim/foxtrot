@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
         },
     });
 
-    app.add_plugins(AaloPlugin::new().world().unnest_children());
+    app.add_plugins(AaloPlugin::new().world().flatten_descendants());
 
     app.add_plugins((
         DebugUiPlugin,

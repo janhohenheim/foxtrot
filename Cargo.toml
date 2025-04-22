@@ -13,8 +13,8 @@ avian3d = "0.2.1"
 avian_pickup = "0.1.6"
 
 # character controller
-bevy-tnua = { version = "0.22.0", git = "https://github.com/idanarye/bevy-tnua", branch = "main" }
-bevy-tnua-avian3d = { version = "0.3.1", git = "https://github.com/idanarye/bevy-tnua", branch = "main" }
+bevy-tnua = "0.23"
+bevy-tnua-avian3d = "0.4"
 
 # navigation
 bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
@@ -25,7 +25,7 @@ landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.co
 bevy_yarnspinner = "0.4.0"
 bevy_yarnspinner_example_dialogue_view = "0.4.0"
 
-aalo = { version = "0.0.4", optional = true }
+aalo = { version = "0.0.5", optional = true }
 bevy_hanabi = { version = "0.15.0", optional = true }
 bevy_shuffle_bag = "0.1.0"
 
@@ -59,7 +59,7 @@ dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
-    "aalo",
+    "dep:aalo",
     # uncomment in 0.16
     # "bevy/bevy_ui_debug",
 ]

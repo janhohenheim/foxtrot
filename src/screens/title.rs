@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use crate::{
     screens::Screen,
-    theme::{interaction::OnPress, prelude::*},
+    theme::{interaction::OnPress, palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -14,7 +14,10 @@ pub(super) fn plugin(app: &mut App) {
 fn spawn_title_screen(mut commands: Commands) {
     commands
         .ui_root()
-        .insert(StateScoped(Screen::Title))
+        .insert((
+            StateScoped(Screen::Title),
+            BackgroundColor(SCREEN_BACKGROUND),
+        ))
         .with_children(|children| {
             children.button("Play").observe(enter_spawn_level_screen);
             children.button("Credits").observe(enter_credits_screen);

@@ -6,7 +6,7 @@ use crate::{
     asset_tracking::LoadResource,
     audio::Music,
     screens::Screen,
-    theme::{interaction::OnPress, prelude::*},
+    theme::{interaction::OnPress, palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -21,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
 fn spawn_credits_screen(mut commands: Commands) {
     commands
         .ui_root()
-        .insert(StateScoped(Screen::Credits))
+        .insert((StateScoped(Screen::Credits), BackgroundColor(SCREEN_BACKGROUND)))
         .with_children(|parent| {
             let font = TextFont::from_font_size(12.0);
             parent.header("Made by");

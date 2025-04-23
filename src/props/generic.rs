@@ -2,9 +2,9 @@
 //! A *dynamic* prop in the context of this file is a prop that is influenced by physics,
 //! while a *static* prop is unmovable terrain.
 
+use crate::third_party::avian3d::CollisionLayer;
 use crate::third_party::bevy_landmass::NavMeshAffectorParent;
 use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel as _;
-use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation};
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -25,11 +25,7 @@ pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
     }
 
     let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexHullFromMesh);
-    world
-        .commands()
-        .entity(entity)
-        .queue(fix_gltf_rotation)
-        .insert(bundle);
+    world.commands().entity(entity).insert(bundle);
 }
 
 pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
@@ -42,11 +38,7 @@ pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
     }
 
     let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexDecompositionFromMesh);
-    world
-        .commands()
-        .entity(entity)
-        .queue(fix_gltf_rotation)
-        .insert(bundle);
+    world.commands().entity(entity).insert(bundle);
 }
 
 pub(crate) fn dynamic_bundle<T: QuakeClass>(

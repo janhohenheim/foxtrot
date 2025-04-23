@@ -16,7 +16,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
 
-use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::fix_gltf_rotation};
+use crate::third_party::avian3d::CollisionLayer;
 
 mod animation;
 pub(crate) mod assets;
@@ -77,7 +77,6 @@ impl Player {
         world
             .commands()
             .entity(entity)
-            .queue(fix_gltf_rotation)
             .insert((
                 RigidBody::Dynamic,
                 Actions::<DefaultInputContext>::default(),

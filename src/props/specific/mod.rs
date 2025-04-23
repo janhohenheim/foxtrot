@@ -11,9 +11,8 @@ use bevy_trenchbroom::prelude::*;
 use crate::{
     props::generic::dynamic_bundle,
     third_party::{
-        avian3d::CollisionLayer,
-        bevy_landmass::insert_landmass_character,
-        bevy_trenchbroom::{LoadTrenchbroomModel as _, fix_gltf_rotation},
+        avian3d::CollisionLayer, bevy_landmass::insert_landmass_character,
+        bevy_trenchbroom::LoadTrenchbroomModel as _,
     },
 };
 pub(crate) use burning_logs::*;
@@ -35,21 +34,17 @@ pub(crate) fn setup_chair(mut world: DeferredWorld, entity: Entity, _id: Compone
         .run_system_cached_with(insert_landmass_character, (entity, 0.4));
 
     let model = world.load_trenchbroom_model::<Chair>();
-    world
-        .commands()
-        .entity(entity)
-        .queue(fix_gltf_rotation)
-        .insert((
-            // The chair has a fairly complex shape, so let's use a convex decomposition.
-            ColliderConstructorHierarchy::new(ColliderConstructor::ConvexDecompositionFromMesh)
-                .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-                // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
-                .with_default_density(10_000.0),
-            TransformInterpolation,
-            RigidBody::Dynamic,
-            // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
-            SceneRoot(model),
-        ));
+    world.commands().entity(entity).insert((
+        // The chair has a fairly complex shape, so let's use a convex decomposition.
+        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexDecompositionFromMesh)
+            .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+            // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
+            .with_default_density(10_000.0),
+        TransformInterpolation,
+        RigidBody::Dynamic,
+        // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
+        SceneRoot(model),
+    ));
 }
 
 pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -60,24 +55,20 @@ pub(crate) fn setup_crate(mut world: DeferredWorld, entity: Entity, _id: Compone
         .commands()
         .run_system_cached_with(insert_landmass_character, (entity, 0.5));
     let model = world.load_trenchbroom_model::<Crate>();
-    world
-        .commands()
-        .entity(entity)
-        .queue(fix_gltf_rotation)
-        .insert((
-            TransformInterpolation,
-            ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
-                .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
-                .with_default_density(1_000.0),
-            // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
-            RigidBody::Dynamic,
-            SceneRoot(model),
-            // The prop should be held upright.
-            PreferredPickupRotation(Quat::IDENTITY),
-            // Holding a big crate right in your face looks bad, so
-            // let's move the pickup distance a bit further away.
-            PreferredPickupDistanceOverride(1.0),
-        ));
+    world.commands().entity(entity).insert((
+        TransformInterpolation,
+        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
+            .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
+            .with_default_density(1_000.0),
+        // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
+        RigidBody::Dynamic,
+        SceneRoot(model),
+        // The prop should be held upright.
+        PreferredPickupRotation(Quat::IDENTITY),
+        // Holding a big crate right in your face looks bad, so
+        // let's move the pickup distance a bit further away.
+        PreferredPickupDistanceOverride(1.0),
+    ));
 }
 
 pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
@@ -89,7 +80,6 @@ pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: 
     world
         .commands()
         .entity(entity)
-        .queue(fix_gltf_rotation)
         // The prop should be held upright.
         .insert((bundle, PreferredPickupRotation(Quat::IDENTITY)))
         // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.

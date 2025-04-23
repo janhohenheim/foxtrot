@@ -9,10 +9,10 @@ use crate::{
     gameplay::{npc::Npc, player::Player},
     props::RegisterProps as _,
 };
-pub(crate) use extensions::*;
+pub(crate) use util::*;
 
-mod extensions;
 mod proxy;
+mod util;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
@@ -24,6 +24,10 @@ pub(super) fn plugin(app: &mut App) {
                     .map(String::from)
                     .collect::<Vec<_>>(),
             )
+            .icon(Some(
+                // Make sure the icon is 32px x 32px
+                include_bytes!("../../../assets/images/icon.png").to_vec(),
+            ))
             // In Wasm, TrenchBroom classes are not automatically registered.
             // So, we need to manually register the classes here
             .register_props()
@@ -36,7 +40,7 @@ pub(super) fn plugin(app: &mut App) {
         config
     }));
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_plugins((proxy::plugin, extensions::plugin));
+    app.add_plugins((proxy::plugin, util::plugin));
 }
 
 /// Set up TrenchBroom so that it can create maps for our game.

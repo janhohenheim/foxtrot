@@ -15,7 +15,7 @@ use crate::{
     AppSet, RenderLayer,
     props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
-    third_party::bevy_trenchbroom::{GetTrenchbroomModelPath as _, fix_gltf_rotation},
+    third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -58,7 +58,6 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
     world
         .commands()
         .entity(entity)
-        .queue(fix_gltf_rotation)
         .insert((
             static_bundle,
             #[cfg(feature = "native")]

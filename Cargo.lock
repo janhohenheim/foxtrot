@@ -503,9 +503,9 @@ dependencies = [
 
 [[package]]
 name = "avian_pickup"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71544a77ad01bd9548057a4166b3a52f335d5e6116702f5c3181f2bf02c1d7d7"
+checksum = "79e495deecb379177f6dc456ed6b73824d493dab28b8a20737976020d125d116"
 dependencies = [
  "avian3d",
  "bevy",

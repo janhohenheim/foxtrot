@@ -9,10 +9,10 @@ use crate::{
     gameplay::{npc::Npc, player::Player},
     props::RegisterProps as _,
 };
-pub(crate) use extensions::*;
+pub(crate) use util::*;
 
-mod extensions;
 mod proxy;
+mod util;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
@@ -36,7 +36,7 @@ pub(super) fn plugin(app: &mut App) {
         config
     }));
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_plugins((proxy::plugin, extensions::plugin));
+    app.add_plugins((proxy::plugin, util::plugin));
 }
 
 /// Set up TrenchBroom so that it can create maps for our game.

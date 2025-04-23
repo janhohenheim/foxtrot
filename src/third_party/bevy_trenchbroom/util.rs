@@ -1,9 +1,14 @@
-//! Extension methods to make using TrenchBroom easier.
+//! Extension methods and utilities to make using TrenchBroom easier.
+
+use std::f32::consts::TAU;
 
 use bevy::{ecs::world::DeferredWorld, prelude::*};
 use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prelude::*};
 
-pub(super) fn plugin(_app: &mut App) {}
+pub(super) fn plugin(app: &mut App) {
+    app.add_observer(fix_gltf_rotation);
+    app.register_type::<FixTrenchbroomGltfRotation>();
+}
 
 #[derive(SolidClass, Component, Reflect, Default)]
 #[reflect(Component)]
@@ -11,8 +16,27 @@ pub(super) fn plugin(_app: &mut App) {}
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
 pub(crate) struct Worldspawn;
 
-pub(crate) fn fix_gltf_rotation(mut world: EntityWorldMut) {
-    trenchbroom_gltf_rotation_fix(&mut world);
+/// TrenchBroom [displays glTFs with a 90 degree rotation](https://github.com/TrenchBroom/TrenchBroom/issues/4447),
+/// so we need to replicate that on the scene in order to get the same orientation in our game as in TrenchBroom.
+#[derive(Component, Reflect, Default)]
+#[reflect(Component)]
+pub(crate) struct FixTrenchbroomGltfRotation;
+
+fn fix_gltf_rotation(
+    trigger: Trigger<OnAdd, SceneRoot>,
+    parents: Query<&Parent>,
+    fix_marker: Query<(), With<FixTrenchbroomGltfRotation>>,
+    mut transform: Query<&mut Transform>,
+) {
+    let scene: Entity = trigger.entity();
+    for entity in parents.iter_ancestors(scene) {
+        if fix_marker.contains(entity) {
+            if let Ok(mut transform) = transform.get_mut(scene) {
+                transform.rotate_local_y(TAU / 4.0);
+                break;
+            }
+        }
+    }
 }
 
 pub(crate) trait GetTrenchbroomModelPath: QuakeClass {

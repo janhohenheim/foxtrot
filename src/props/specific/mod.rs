@@ -18,7 +18,7 @@ use crate::{
 };
 pub(crate) use burning_logs::*;
 
-use super::{Chair, Crate, LampSitting, effects::insert_not_shadow_caster};
+use super::{Chair, Crate, LampSitting, effects::prepare_light_mesh};
 
 mod burning_logs;
 
@@ -103,5 +103,5 @@ pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: 
                 ..default()
             },
         ))
-        .observe(insert_not_shadow_caster);
+        .observe(prepare_light_mesh);
 }

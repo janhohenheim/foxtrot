@@ -4,6 +4,7 @@ mod audio;
 mod dev_tools;
 mod gameplay;
 mod props;
+mod rendering;
 mod screens;
 mod theme;
 mod third_party;
@@ -14,6 +15,7 @@ use bitflags::bitflags;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin,
     prelude::*,
     render::view::RenderLayers,
 };
@@ -61,6 +63,7 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
+        app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.
         app.add_plugins(third_party::plugin);
@@ -75,6 +78,7 @@ impl Plugin for AppPlugin {
             screens::plugin,
             theme::plugin,
             ui_camera::plugin,
+            rendering::plugin,
         ));
     }
 }

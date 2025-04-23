@@ -10,6 +10,7 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::{
     props::generic::dynamic_bundle,
+    rendering::ContainsLight,
     third_party::{
         avian3d::CollisionLayer,
         bevy_landmass::insert_landmass_character,
@@ -91,7 +92,11 @@ pub(crate) fn setup_lamp_sitting(mut world: DeferredWorld, entity: Entity, _id: 
         .entity(entity)
         .queue(fix_gltf_rotation)
         // The prop should be held upright.
-        .insert((bundle, PreferredPickupRotation(Quat::IDENTITY)))
+        .insert((
+            bundle,
+            PreferredPickupRotation(Quat::IDENTITY),
+            ContainsLight,
+        ))
         // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.
         .with_child((
             Transform::from_xyz(0.0, 0.2, 0.0),

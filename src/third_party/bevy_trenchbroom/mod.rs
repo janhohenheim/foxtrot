@@ -24,6 +24,10 @@ pub(super) fn plugin(app: &mut App) {
                     .map(String::from)
                     .collect::<Vec<_>>(),
             )
+            .icon(Some(
+                // Make sure the icon is 32px x 32px
+                include_bytes!("../../../assets/images/icon.png").to_vec(),
+            ))
             // In Wasm, TrenchBroom classes are not automatically registered.
             // So, we need to manually register the classes here
             .register_props()

@@ -12,6 +12,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(make_hdr_compatible);
 }
 
+#[cfg(not(target_family = "wasm"))]
 fn make_hdr_compatible(
     trigger: Trigger<OnAdd, Camera>,
     mut cameras: Query<&mut Camera>,

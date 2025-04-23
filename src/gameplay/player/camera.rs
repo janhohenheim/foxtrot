@@ -8,7 +8,11 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    core_pipeline::{bloom::Bloom, tonemapping::Tonemapping},
+    core_pipeline::{
+        bloom::Bloom,
+        experimental::taa::{TemporalAntiAliasPlugin, TemporalAntiAliasing},
+        tonemapping::Tonemapping,
+    },
     pbr::NotShadowCaster,
     prelude::*,
     render::{
@@ -29,6 +33,7 @@ use crate::{
 use super::{PLAYER_FLOAT_HEIGHT, Player, assets::PlayerAssets, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
+    app.add_plugins(TemporalAntiAliasPlugin);
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(rotate_camera_yaw_and_pitch.param_warn_once());
@@ -103,6 +108,8 @@ fn spawn_view_model(
                 Tonemapping::AcesFitted,
                 #[cfg(not(target_family = "wasm"))]
                 Bloom::NATURAL,
+                TemporalAntiAliasing::default(),
+                Msaa::Off,
             ));
 
             // Spawn view model camera.
@@ -127,6 +134,8 @@ fn spawn_view_model(
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
+                TemporalAntiAliasing::default(),
+                Msaa::Off,
             ));
 
             // Spawn the player's right arm.

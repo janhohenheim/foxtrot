@@ -8,7 +8,7 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    core_pipeline::tonemapping::Tonemapping,
+    core_pipeline::{bloom::Bloom, tonemapping::Tonemapping},
     pbr::NotShadowCaster,
     prelude::*,
     render::{
@@ -88,6 +88,8 @@ fn spawn_view_model(
                 Camera3d::default(),
                 Camera {
                     order: CameraOrder::World.into(),
+                    // HDR is not supported on WebGL2
+                    hdr: cfg!(not(target_family = "wasm")),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
@@ -99,6 +101,8 @@ fn spawn_view_model(
                 ),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
+                #[cfg(not(target_family = "wasm"))]
+                Bloom::NATURAL,
             ));
 
             // Spawn view model camera.
@@ -108,6 +112,8 @@ fn spawn_view_model(
                 Camera {
                     // Bump the order to render on top of the world model.
                     order: CameraOrder::ViewModel.into(),
+                    // HDR is not supported on WebGL2
+                    hdr: cfg!(not(target_family = "wasm")),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {

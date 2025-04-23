@@ -4,6 +4,7 @@ mod audio;
 mod dev_tools;
 mod gameplay;
 mod props;
+mod rendering;
 mod screens;
 mod theme;
 mod third_party;
@@ -75,6 +76,7 @@ impl Plugin for AppPlugin {
             screens::plugin,
             theme::plugin,
             ui_camera::plugin,
+            rendering::plugin,
         ));
     }
 }

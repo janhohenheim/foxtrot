@@ -104,9 +104,7 @@ fn spawn_view_model(
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
                 #[cfg(not(target_family = "wasm"))]
-                Bloom::NATURAL,
-                TemporalAntiAliasing::default(),
-                Msaa::Off,
+                (Bloom::NATURAL, TemporalAntiAliasing::default(), Msaa::Off),
             ));
 
             // Spawn view model camera.
@@ -131,8 +129,8 @@ fn spawn_view_model(
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
-                TemporalAntiAliasing::default(),
-                Msaa::Off,
+                #[cfg(not(target_family = "wasm"))]
+                (TemporalAntiAliasing::default(), Msaa::Off),
             ));
 
             // Spawn the player's right arm.

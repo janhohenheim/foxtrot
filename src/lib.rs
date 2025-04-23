@@ -15,6 +15,7 @@ use bitflags::bitflags;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin,
     prelude::*,
     render::view::RenderLayers,
 };
@@ -62,6 +63,7 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
+        app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.
         app.add_plugins(third_party::plugin);

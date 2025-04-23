@@ -12,9 +12,7 @@ pub(super) fn plugin(_app: &mut App) {}
 
 pub(crate) fn prepare_light_mesh(
     trigger: Trigger<SceneInstanceReady>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
     children: Query<&Children>,
-    handles: Query<&MeshMaterial3d<StandardMaterial>>,
     is_mesh: Query<&Mesh3d>,
     mut commands: Commands,
 ) {
@@ -24,13 +22,6 @@ pub(crate) fn prepare_light_mesh(
             commands
                 .entity(child)
                 .insert((NotShadowCaster, NotShadowReceiver));
-        }
-        if let Ok(material) = handles.get(child) {
-            let Some(material) = materials.get_mut(material.id()) else {
-                error!("Failed to mutate a material at runtime. Did you forget to preload it?");
-                continue;
-            };
-            material.unlit = true;
         }
     }
 }

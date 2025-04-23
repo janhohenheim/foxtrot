@@ -130,6 +130,7 @@ fn spawn_view_model(
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
                 #[cfg(not(target_family = "wasm"))]
+                // We don't use bloom on the view model, as it may lead to artifacts.
                 (TemporalAntiAliasing::default(), Msaa::Off),
             ));
 

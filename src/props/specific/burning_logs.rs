@@ -13,8 +13,7 @@ use bevy_trenchbroom::util::IsSceneWorld as _;
 
 use crate::{
     AppSet, RenderLayer,
-    props::{BurningLogs, effects::insert_not_shadow_caster, generic::static_bundle},
-    rendering::ContainsLight,
+    props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
     third_party::bevy_trenchbroom::{GetTrenchbroomModelPath as _, fix_gltf_rotation},
 };
@@ -65,13 +64,12 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
             #[cfg(feature = "native")]
             particle_bundle,
             AudioPlayer(sound_effect),
-            ContainsLight,
             PlaybackSettings::LOOP
                 .with_spatial(true)
                 .with_volume(Volume::new(0.25))
                 .with_spatial_scale(SpatialScale::new(0.3)),
         ))
-        .observe(insert_not_shadow_caster)
+        .observe(prepare_light_mesh)
         .with_child((
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),

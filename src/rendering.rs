@@ -20,13 +20,13 @@ fn make_hdr_compatible(
 ) {
     let mut camera = cameras.get_mut(trigger.entity()).unwrap();
     if camera.order == isize::from(CameraOrder::World) {
+        // Use the world model camera to determine tonemapping.
         return;
     }
-    if camera.hdr {
-        // Needed because of https://github.com/bevyengine/bevy/issues/18902
-        commands.entity(trigger.entity()).insert(Tonemapping::None);
-    }
+    // Needed because of https://github.com/bevyengine/bevy/issues/18902
+    commands.entity(trigger.entity()).insert(Tonemapping::None);
     // Needed because of https://github.com/bevyengine/bevy/issues/18901
+    // and https://github.com/bevyengine/bevy/issues/18903
     camera.clear_color = ClearColorConfig::Custom(Color::NONE);
     camera.output_mode = CameraOutputMode::Write {
         blend_state: Some(BlendState::ALPHA_BLENDING),

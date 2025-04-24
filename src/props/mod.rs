@@ -97,6 +97,7 @@ macro_rules! create_prop {
         #[base(Transform, Visibility)]
         #[model($model)]
         #[component(on_add = $on_add)]
+        #[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
         pub(crate) struct $name;
     };
 }

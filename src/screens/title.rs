@@ -19,7 +19,7 @@ fn spawn_title_screen(mut commands: Commands) {
             BackgroundColor(SCREEN_BACKGROUND),
         ))
         .with_children(|children| {
-            children.button("Play").observe(enter_spawn_level_screen);
+            children.button("Play").observe(enter_loading_screen);
             children.button("Credits").observe(enter_credits_screen);
 
             #[cfg(not(target_family = "wasm"))]
@@ -27,11 +27,8 @@ fn spawn_title_screen(mut commands: Commands) {
         });
 }
 
-fn enter_spawn_level_screen(
-    _trigger: Trigger<OnPress>,
-    mut next_screen: ResMut<NextState<Screen>>,
-) {
-    next_screen.set(Screen::SpawnLevel);
+fn enter_loading_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {
+    next_screen.set(Screen::Loading);
 }
 
 fn enter_credits_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {

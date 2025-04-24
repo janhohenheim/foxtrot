@@ -25,7 +25,7 @@ use crate::{
     AppSet, CameraOrder, RenderLayer,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
     screens::Screen,
-    third_party::avian3d::CollisionLayer,
+    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath},
 };
 
 use super::{PLAYER_FLOAT_HEIGHT, Player, assets::PlayerAssets, default_input::Rotate};
@@ -53,7 +53,7 @@ pub(crate) struct PlayerCamera;
 fn spawn_view_model(
     _trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
-    assets: Res<PlayerAssets>,
+    assets: Res<AssetServer>,
 ) {
     commands.insert_resource(AmbientLight {
         color: Color::srgb(1.0, 0.7, 0.4),
@@ -136,7 +136,10 @@ fn spawn_view_model(
 
             // Spawn the player's right arm.
             parent
-                .spawn((Name::new("PlayerArm"), SceneRoot(assets.model.clone())))
+                .spawn((
+                    Name::new("PlayerArm"),
+                    SceneRoot(assets.load(Player::scene_path())),
+                ))
                 .observe(configure_player_view_model);
         })
         .observe(add_anim_player_link_to_player);

@@ -4,7 +4,7 @@
 
 use std::any::TypeId;
 
-use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH, CursorAssets};
+use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
 use bevy::{prelude::*, utils::HashSet};
 
 use crate::{AppSet, screens::Screen};

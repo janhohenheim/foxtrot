@@ -46,6 +46,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
+#[spawn_hook(preload_model::<Self>)]
 #[component(on_add = Self::on_add)]
 // In Wasm, TrenchBroom classes are not automatically registered.
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.

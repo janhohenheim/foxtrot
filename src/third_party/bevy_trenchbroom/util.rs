@@ -1,6 +1,6 @@
 //! Extension methods and utilities to make using TrenchBroom easier.
 
-use std::f32::consts::TAU;
+use std::f32::consts::FRAC_PI_2;
 
 use bevy::{ecs::world::DeferredWorld, prelude::*};
 use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prelude::*};
@@ -32,7 +32,7 @@ fn fix_gltf_rotation(
     for entity in parents.iter_ancestors(scene) {
         if fix_marker.contains(entity) {
             if let Ok(mut transform) = transform.get_mut(scene) {
-                transform.rotate_local_y(TAU / 4.0);
+                transform.rotate_local_y(-FRAC_PI_2);
                 break;
             }
         }

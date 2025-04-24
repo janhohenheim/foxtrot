@@ -28,7 +28,7 @@ use crate::{
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath},
 };
 
-use super::{PLAYER_FLOAT_HEIGHT, Player, assets::PlayerAssets, default_input::Rotate};
+use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);

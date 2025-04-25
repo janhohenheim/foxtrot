@@ -4,7 +4,7 @@
 
 use std::any::TypeId;
 
-use assets::CursorAssets;
+use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
 use bevy::{prelude::*, utils::HashSet};
 
 use crate::{AppSet, screens::Screen};
@@ -27,7 +27,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 /// Show a crosshair for better aiming
-fn spawn_crosshair(mut commands: Commands, assets: Res<CursorAssets>) {
+fn spawn_crosshair(mut commands: Commands, assets: Res<AssetServer>) {
     commands
         .spawn((
             Name::new("Crosshair"),
@@ -44,7 +44,7 @@ fn spawn_crosshair(mut commands: Commands, assets: Res<CursorAssets>) {
             parent.spawn((
                 Name::new("Crosshair Image"),
                 CrosshairState::default(),
-                ImageNode::new(assets.crosshair_dot.clone()),
+                ImageNode::new(assets.load(CROSSHAIR_DOT_PATH)),
             ));
         });
 }
@@ -60,16 +60,16 @@ fn update_crosshair(
     crosshair: Option<
         Single<(&CrosshairState, &mut ImageNode, &mut Visibility), Changed<CrosshairState>>,
     >,
-    assets: Res<CursorAssets>,
+    assets: Res<AssetServer>,
 ) {
     let Some((crosshair_state, mut image_node, mut visibility)) = crosshair.map(|c| c.into_inner())
     else {
         return;
     };
     if crosshair_state.wants_square.is_empty() {
-        image_node.image = assets.crosshair_dot.clone();
+        image_node.image = assets.load(CROSSHAIR_DOT_PATH);
     } else {
-        image_node.image = assets.crosshair_square.clone();
+        image_node.image = assets.load(CROSSHAIR_SQUARE_PATH);
     }
 
     if crosshair_state.wants_invisible.is_empty() {

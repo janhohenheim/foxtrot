@@ -3,7 +3,6 @@
 use std::f32::consts::PI;
 
 use animation::{NpcAnimationState, setup_npc_animations};
-use assets::NpcAssets;
 use avian3d::prelude::*;
 use bevy::{
     ecs::{component::ComponentId, world::DeferredWorld},
@@ -13,7 +12,10 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::{avian3d::CollisionLayer, bevy_yarnspinner::YarnNode};
+use crate::third_party::{
+    avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath as _,
+    bevy_yarnspinner::YarnNode,
+};
 
 use super::animation::AnimationPlayerAncestor;
 pub(crate) mod ai;
@@ -30,6 +32,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/fox/Fox.gltf")]
+#[spawn_hook(preload_model::<Self>)]
 #[component(on_add = Self::on_add)]
 // In Wasm, TrenchBroom classes are not automatically registered.
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
@@ -46,7 +49,7 @@ impl Npc {
         if world.is_scene_world() {
             return;
         }
-        let model = world.resource::<NpcAssets>().model.clone();
+        let model = world.resource::<AssetServer>().load(Npc::scene_path());
         world
             .commands()
             .entity(entity)

@@ -30,7 +30,7 @@ fn spawn_loading_screen(mut commands: Commands) {
 }
 
 fn continue_to_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
-    next_screen.set(Screen::Title);
+    next_screen.set(Screen::SpawnLevel);
 }
 
 fn all_assets_loaded(

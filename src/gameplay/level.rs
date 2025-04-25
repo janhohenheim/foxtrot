@@ -3,10 +3,8 @@
 use bevy::prelude::*;
 
 use crate::{
-    asset_tracking::LoadResource,
-    props::*,
-    screens::Screen,
-    third_party::bevy_trenchbroom::{FixTrenchbroomGltfRotation, GetTrenchbroomModelPath as _},
+    asset_tracking::LoadResource, screens::Screen,
+    third_party::bevy_trenchbroom::FixTrenchbroomGltfRotation,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -34,13 +32,10 @@ pub(crate) struct Level;
 
 /// A [`Resource`] that contains all the assets needed to spawn the level.
 /// We use this to preload assets before the level is spawned.
-/// If we have multiple levels, we can have a dedicated resource for each one.
 #[derive(Resource, Asset, Clone, TypePath)]
 struct LevelAssets {
     #[dependency]
-    pub(crate) level: Handle<Scene>,
-    #[dependency]
-    pub(crate) props: Vec<UntypedHandle>,
+    level: Handle<Scene>,
 }
 
 impl FromWorld for LevelAssets {
@@ -49,19 +44,6 @@ impl FromWorld for LevelAssets {
         Self {
             //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
-            // We preload all props used in the level here. The template is setup such that we get a helpful warning if we miss one.
-            props: [
-                Chair::scene_path(),
-                Table::scene_path(),
-                Grate::scene_path(),
-                Bookshelf::scene_path(),
-                LampSitting::scene_path(),
-                Crate::scene_path(),
-            ]
-            .into_iter()
-            .map(|path| assets.load::<Scene>(path).untyped())
-            .chain(BurningLogs::preload(assets))
-            .collect(),
         }
     }
 }

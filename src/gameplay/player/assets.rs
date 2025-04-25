@@ -18,8 +18,6 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Resource)]
 pub(crate) struct PlayerAssets {
     #[dependency]
-    pub(crate) model: Handle<Scene>,
-    #[dependency]
     pub(crate) throw_sound: Handle<AudioSource>,
     #[dependency]
     pub(crate) steps: ShuffleBag<Handle<AudioSource>>,
@@ -40,7 +38,6 @@ impl FromWorld for PlayerAssets {
         let assets = world.resource::<AssetServer>();
         let rng = &mut rand::thread_rng();
         Self {
-            model: assets.load(Player::scene_path()),
             throw_sound: assets.load("audio/sound_effects/throw.ogg"),
             steps: ShuffleBag::try_new(
                 [

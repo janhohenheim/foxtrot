@@ -13,12 +13,13 @@ use bevy_trenchbroom::util::IsSceneWorld as _;
 
 use crate::{
     AppSet, RenderLayer,
+    asset_tracking::LoadResource,
     props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
-    third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
+    app.load_resource::<BurningLogsAssets>();
     app.register_type::<Flicker>();
     app.add_systems(
         Update,
@@ -28,15 +29,21 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-impl BurningLogs {
-    pub(crate) fn preload(asset_server: &AssetServer) -> Vec<UntypedHandle> {
-        vec![
-            asset_server
-                .load::<Scene>(BurningLogs::scene_path())
-                .untyped(),
-            asset_server.load::<Image>(TEXTURE_PATH).untyped(),
-            asset_server.load::<AudioSource>(SOUND_PATH).untyped(),
-        ]
+#[derive(Resource, Asset, Clone, TypePath)]
+struct BurningLogsAssets {
+    #[dependency]
+    texture: Handle<Image>,
+    #[dependency]
+    sound: Handle<AudioSource>,
+}
+
+impl FromWorld for BurningLogsAssets {
+    fn from_world(world: &mut World) -> Self {
+        let assets = world.resource::<AssetServer>();
+        Self {
+            texture: assets.load(TEXTURE_PATH),
+            sound: assets.load(SOUND_PATH),
+        }
     }
 }
 

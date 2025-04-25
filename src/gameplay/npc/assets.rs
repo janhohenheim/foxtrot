@@ -18,8 +18,6 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Resource)]
 pub(crate) struct NpcAssets {
     #[dependency]
-    pub(crate) model: Handle<Scene>,
-    #[dependency]
     pub(crate) idle_animation: Handle<AnimationClip>,
     #[dependency]
     pub(crate) walk_animation: Handle<AnimationClip>,
@@ -34,7 +32,6 @@ impl FromWorld for NpcAssets {
         let assets = world.resource::<AssetServer>();
         let rng = &mut rand::thread_rng();
         Self {
-            model: assets.load(Npc::scene_path()),
             run_animation: assets.load(Npc::animation_path(0)),
             idle_animation: assets.load(Npc::animation_path(1)),
             walk_animation: assets.load(Npc::animation_path(2)),

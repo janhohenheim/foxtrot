@@ -352,6 +352,7 @@
 {
 "classname" "player"
 "origin" "8 120 72"
+"angles" "0 90 0"
 }
 // entity 2
 {
@@ -380,11 +381,13 @@
 {
 "classname" "burning_logs"
 "origin" "-52 532 16"
+"angles" "0 -90 0"
 }
 // entity 6
 {
 "classname" "grate"
 "origin" "-52 520 16"
+"angles" "0 -90 0"
 }
 // entity 7
 {
@@ -394,20 +397,20 @@
 // entity 8
 {
 "classname" "chair"
-"origin" "-126 388 18"
-"angles" "0 -75 0"
+"origin" "-94 404 18"
+"angles" "0 -165 0"
 }
 // entity 9
 {
 "classname" "chair"
-"origin" "-164 328 18"
-"angles" "0 -165 0"
+"origin" "-180 280 18"
+"angles" "0 90 0"
 }
 // entity 10
 {
 "classname" "chair"
-"origin" "-184 420 18"
-"angles" "0 15 0"
+"origin" "-168 468 18"
+"angles" "0 -105 0"
 }
 // entity 11
 {

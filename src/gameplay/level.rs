@@ -2,10 +2,7 @@
 
 use bevy::prelude::*;
 
-use crate::{
-    asset_tracking::LoadResource, screens::Screen,
-    third_party::bevy_trenchbroom::FixTrenchbroomGltfRotation,
-};
+use crate::{asset_tracking::LoadResource, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
@@ -22,7 +19,6 @@ pub(crate) fn spawn_level(world: &mut World) {
         SceneRoot(assets.level.clone()),
         StateScoped(Screen::Gameplay),
         Level,
-        FixTrenchbroomGltfRotation,
     ));
 }
 

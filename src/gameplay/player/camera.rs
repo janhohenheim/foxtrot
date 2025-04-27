@@ -3,7 +3,10 @@
 //! The code is adapted from <https://bevyengine.org/examples/camera/first-person-view-model/>.
 //! See that example for more information.
 
-use std::{f32::consts::FRAC_PI_2, iter};
+use std::{
+    f32::consts::{FRAC_PI_2, TAU},
+    iter,
+};
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
@@ -61,7 +64,7 @@ fn spawn_view_model(
     });
     commands
         .spawn((
-            Name::new("PlayerCameraParent"),
+            Name::new("Player Camera Parent"),
             PlayerCamera,
             StateScoped(Screen::Gameplay),
             AvianPickupActor {
@@ -86,7 +89,7 @@ fn spawn_view_model(
         ))
         .with_children(|parent| {
             parent.spawn((
-                Name::new("WorldModelCamera"),
+                Name::new("World Model Camera"),
                 Camera3d::default(),
                 Camera {
                     order: CameraOrder::World.into(),
@@ -109,7 +112,7 @@ fn spawn_view_model(
 
             // Spawn view model camera.
             parent.spawn((
-                Name::new("ViewModelCamera"),
+                Name::new("View Model Camera"),
                 Camera3d::default(),
                 Camera {
                     // Bump the order to render on top of the world model.
@@ -134,10 +137,11 @@ fn spawn_view_model(
                 (TemporalAntiAliasing::default(), Msaa::Off),
             ));
 
-            // Spawn the player's right arm.
+            // Spawn the player's view model
             parent
                 .spawn((
-                    Name::new("PlayerArm"),
+                    Transform::from_rotation(Quat::from_rotation_y(TAU / 2.0)),
+                    Name::new("View Model"),
                     SceneRoot(assets.load(Player::scene_path())),
                 ))
                 .observe(configure_player_view_model);

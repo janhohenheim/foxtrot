@@ -5,29 +5,36 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.15.3", features = ["wayland", "jpeg"] }
-bevy_enhanced_input = "0.9"
+bevy = { version = "0.16", features = ["wayland", "jpeg"] }
+bevy_enhanced_input = "0.11"
 
 # physics
-avian3d = "0.2.1"
-avian_pickup = "0.1.7"
+avian3d = "0.2"
+avian_pickup = { version = "0.2.0-dev" }
 
 # character controller
-bevy-tnua = "0.23"
-bevy-tnua-avian3d = "0.4"
+bevy-tnua = "0.22"
+bevy-tnua-avian3d = "0.3"
 
 # navigation
-bevy_landmass = { version = "0.9.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
+bevy_landmass = { version = "0.9.0" }
 oxidized_navigation = { version = "0.12.0", features = ["avian"] }
-landmass_oxidized_navigation = { version = "0.3.0-dev", git = "https://github.com/andriyDev/landmass", branch = "main" }
+landmass_oxidized_navigation = { version = "0.3.0-dev" }
+
+# Level editor
+bevy_trenchbroom = { version = "0.8.0-dev", features = [
+    "avian",
+    "client",
+], default-features = false }
 
 # dialogue
-bevy_yarnspinner = "0.4.0"
-bevy_yarnspinner_example_dialogue_view = "0.4.0"
+bevy_yarnspinner = "0.5"
+bevy_yarnspinner_example_dialogue_view = "0.5"
 
-aalo = { version = "0.0.5", optional = true }
-bevy_hanabi = { version = "0.15.1", optional = true }
-bevy_shuffle_bag = "0.1.0"
+# TODO
+# aalo = { version = "0.0.5", optional = true }
+bevy_hanabi = { version = "0.16.0-dev", optional = true }
+bevy_shuffle_bag = "0.2"
 
 # Keep this in sync with Bevy
 rand = "0.8.5"
@@ -44,12 +51,6 @@ tracing = { version = "0.1", features = [
 ] }
 bitflags = "2.9.0"
 
-[dependencies.bevy_trenchbroom]
-git = "https://github.com/noxmore/bevy_trenchbroom"
-branch = "main"
-features = ["avian", "client"]
-default-features = false
-
 [features]
 default = [
     # Default to a native dev build.
@@ -60,7 +61,8 @@ dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
-    "dep:aalo",
+    # TODO
+    #"dep:aalo",
     # uncomment in 0.16
     # "bevy/bevy_ui_debug",
 ]
@@ -114,7 +116,14 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-oxidized_navigation = { git = "https://github.com/TheGrimsey/oxidized_navigation", branch = "master" }
+bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
+oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
+landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }
+avian3d = { git = "https://github.com/Jondolf/avian", branch = "main" }
+bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main" }
+bevy-tnua = { git = "https://github.com/guyguy2001/bevy-tnua", branch = "0.16" }
+bevy-tnua-avian3d = { git = "https://github.com/guyguy2001/bevy-tnua", branch = "0.16" }
 
 # This profile will be used for `bevy run web` automatically
 [profile.web-release]

@@ -3,6 +3,7 @@
 use bevy::prelude::*;
 
 use crate::{
+    asset_tracking::ResourceHandles,
     screens::Screen,
     theme::{interaction::OnPress, palette::SCREEN_BACKGROUND, prelude::*},
 };
@@ -19,7 +20,9 @@ fn spawn_title_screen(mut commands: Commands) {
             BackgroundColor(SCREEN_BACKGROUND),
         ))
         .with_children(|children| {
-            children.button("Play").observe(enter_loading_screen);
+            children
+                .button("Play")
+                .observe(enter_loading_or_spawn_screen);
             children.button("Credits").observe(enter_credits_screen);
 
             #[cfg(not(target_family = "wasm"))]
@@ -27,8 +30,16 @@ fn spawn_title_screen(mut commands: Commands) {
         });
 }
 
-fn enter_loading_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {
-    next_screen.set(Screen::Loading);
+fn enter_loading_or_spawn_screen(
+    _: Trigger<Pointer<Click>>,
+    resource_handles: Res<ResourceHandles>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
+    if resource_handles.is_all_done() {
+        next_screen.set(Screen::SpawnLevel);
+    } else {
+        next_screen.set(Screen::Loading);
+    }
 }
 
 fn enter_credits_screen(_trigger: Trigger<OnPress>, mut next_screen: ResMut<NextState<Screen>>) {

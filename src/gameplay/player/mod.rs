@@ -5,10 +5,7 @@
 
 use animation::{PlayerAnimationState, setup_player_animations};
 use avian3d::prelude::*;
-use bevy::{
-    ecs::{component::HookContext, world::DeferredWorld},
-    prelude::*,
-};
+use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 use bevy_landmass::{Character, prelude::*};
 use bevy_tnua::{TnuaAnimatingState, prelude::*};
@@ -39,7 +36,7 @@ pub(super) fn plugin(app: &mut App) {
         movement_sound::plugin,
         pickup::plugin,
     ));
-    app.add_observer(setup_player_character);
+    app.add_observer(setup_player);
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -47,7 +44,6 @@ pub(super) fn plugin(app: &mut App) {
 #[base(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
 #[spawn_hook(preload_model::<Self>)]
-#[component(on_add = Self::on_add)]
 // In Wasm, TrenchBroom classes are not automatically registered.
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Player;
@@ -70,48 +66,11 @@ const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
 /// In this case, we use 30 cm of padding to make the player float nicely up stairs.
 const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.01;
 
-impl Player {
-    fn on_add(mut world: DeferredWorld, ctx: HookContext) {
-        if world.is_scene_world() {
-            return;
-        }
-        world
-            .commands()
-            .entity(ctx.entity)
-            .insert((
-                RigidBody::Dynamic,
-                Actions::<DefaultInputContext>::default(),
-                // The player character needs to be configured as a dynamic rigid body of the physics
-                // engine.
-                Collider::capsule(PLAYER_RADIUS, PLAYER_CAPSULE_LENGTH),
-                // This is Tnua's interface component.
-                TnuaController::default(),
-                // A sensor shape is not strictly necessary, but without it we'll get weird results.
-                TnuaAvian3dSensorShape(Collider::cylinder(PLAYER_RADIUS - 0.01, 0.0)),
-                // Tnua can fix the rotation, but the character will still get rotated before it can do so.
-                // By locking the rotation we can prevent this.
-                LockedAxes::ROTATION_LOCKED,
-                // Movement feels nicer without friction.
-                Friction {
-                    dynamic_coefficient: 0.0,
-                    static_coefficient: 0.0,
-                    combine_rule: CoefficientCombine::Multiply,
-                },
-                ColliderDensity(100.0),
-                TransformInterpolation,
-                CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
-                TnuaAnimatingState::<PlayerAnimationState>::default(),
-            ))
-            .observe(setup_player_animations);
-    }
-}
-
-fn setup_player_character(
+fn setup_player(
     trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let player = trigger.target();
     let player_character = commands
         .spawn((
             Name::new("Player Landmass Character"),
@@ -123,13 +82,38 @@ fn setup_player_character(
                 },
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
-            ChildOf(player),
+            ChildOf(trigger.target()),
         ))
         .id();
 
     commands
-        .entity(player)
-        .insert(PlayerLandmassCharacter(player_character));
+        .entity(trigger.target())
+        .insert((
+            RigidBody::Dynamic,
+            Actions::<DefaultInputContext>::default(),
+            // The player character needs to be configured as a dynamic rigid body of the physics
+            // engine.
+            Collider::capsule(PLAYER_RADIUS, PLAYER_CAPSULE_LENGTH),
+            // This is Tnua's interface component.
+            TnuaController::default(),
+            // A sensor shape is not strictly necessary, but without it we'll get weird results.
+            TnuaAvian3dSensorShape(Collider::cylinder(PLAYER_RADIUS - 0.01, 0.0)),
+            // Tnua can fix the rotation, but the character will still get rotated before it can do so.
+            // By locking the rotation we can prevent this.
+            LockedAxes::ROTATION_LOCKED,
+            // Movement feels nicer without friction.
+            Friction {
+                dynamic_coefficient: 0.0,
+                static_coefficient: 0.0,
+                combine_rule: CoefficientCombine::Multiply,
+            },
+            ColliderDensity(100.0),
+            TransformInterpolation,
+            CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
+            TnuaAnimatingState::<PlayerAnimationState>::default(),
+            PlayerLandmassCharacter(player_character),
+        ))
+        .observe(setup_player_animations);
 }
 
 #[derive(Component)]

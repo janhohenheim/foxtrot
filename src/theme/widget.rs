@@ -40,10 +40,19 @@ pub(crate) fn header(text: impl Into<String>) -> impl Bundle {
 
 /// A simple text label.
 pub(crate) fn label(text: impl Into<String>) -> impl Bundle {
+    label_base(text, 24.0)
+}
+
+pub(crate) fn label_small(text: impl Into<String>) -> impl Bundle {
+    label_base(text, 12.0)
+}
+
+/// A simple text label.
+fn label_base(text: impl Into<String>, font_size: f32) -> impl Bundle {
     (
         Name::new("Label"),
         Text(text.into()),
-        TextFont::from_font_size(24.0),
+        TextFont::from_font_size(font_size),
         TextColor(LABEL_TEXT),
     )
 }

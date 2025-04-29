@@ -76,7 +76,7 @@ fn grid(content: Vec<[&'static str; 2]>) -> impl Bundle {
         Children::spawn(SpawnIter(content.into_iter().flatten().enumerate().map(
             |(i, text)| {
                 (
-                    widget::label(text),
+                    widget::label_small(text),
                     Node {
                         justify_self: if i % 2 == 0 {
                             JustifySelf::End

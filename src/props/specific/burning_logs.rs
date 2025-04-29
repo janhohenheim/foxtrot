@@ -2,7 +2,7 @@
 use std::f32::consts::TAU;
 
 #[cfg(feature = "native")]
-use crate::RenderLayer;
+use crate::{RenderLayer, asset_tracking::LoadResource as _};
 use avian3d::prelude::*;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::render::view::RenderLayers;
@@ -15,12 +15,13 @@ use bevy_hanabi::prelude::*;
 
 use crate::{
     AppSet,
-    asset_tracking::LoadResource,
     props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
 };
 
 pub(super) fn plugin(app: &mut App) {
+    #[cfg(not(target_arch = "wasm32"))]
+    // This causes https://github.com/bevyengine/bevy/issues/18980
     app.load_resource::<BurningLogsAssets>();
     app.register_type::<Flicker>();
     app.add_systems(

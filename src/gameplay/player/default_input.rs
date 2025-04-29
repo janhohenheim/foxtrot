@@ -45,7 +45,7 @@ fn default_binding(
     mut players: Query<&mut Actions<DefaultInputContext>>,
 ) {
     const DEFAULT_SPEED: f32 = 8.0;
-    let mut actions = players.get_mut(trigger.entity()).unwrap();
+    let mut actions = players.get_mut(trigger.target()).unwrap();
 
     // Mappings like WASD or sticks are very common,
     // so we provide built-ins to assign all keys/axes at once.

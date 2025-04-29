@@ -41,7 +41,7 @@ fn start_gameplay_music(mut commands: Commands, mut music: ResMut<GameplayMusic>
         commands
             .spawn((
                 AudioPlayer(music.music.clone()),
-                PlaybackSettings::LOOP.with_volume(Volume::new(1.5)),
+                PlaybackSettings::LOOP.with_volume(Volume::Linear(1.5)),
                 Music,
             ))
             .id(),

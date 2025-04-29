@@ -1,13 +1,10 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
-use aalo::prelude::*;
+//use aalo::prelude::*;
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
-    dev_tools::{
-        fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin},
-        ui_debug_overlay::{DebugUiPlugin, UiDebugOptions},
-    },
+    dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin},
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
@@ -25,10 +22,10 @@ pub(super) fn plugin(app: &mut App) {
         },
     });
 
-    app.add_plugins(AaloPlugin::new().world().flatten_descendants());
+    // TODO
+    //app.add_plugins(AaloPlugin::new().world().flatten_descendants());
 
     app.add_plugins((
-        DebugUiPlugin,
         PhysicsDebugPlugin::default(),
         Landmass3dDebugPlugin {
             draw_on_start: false,
@@ -43,8 +40,8 @@ pub(super) fn plugin(app: &mut App) {
         },
     );
     app.add_observer(advance_debug_state);
-    app.add_observer(toogle_aalo_inspector);
-    app.add_observer(disable_aalo_inspector_on_spawn);
+    // app.add_observer(toogle_aalo_inspector);
+    // app.add_observer(disable_aalo_inspector_on_spawn);
     app.add_systems(
         Update,
         (
@@ -82,13 +79,16 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
     config.enabled = !config.enabled;
 }
 
+/*
 fn disable_aalo_inspector_on_spawn(
     _trigger: Trigger<OnAdd, InspectorMarker>,
     mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,
 ) {
     **aalo_inspector = Visibility::Hidden;
 }
+*/
 
+/*
 fn toogle_aalo_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
@@ -101,6 +101,7 @@ fn toogle_aalo_inspector(
         Visibility::Visible => Visibility::Inherited,
     };
 }
+*/
 
 #[derive(Resource, Debug, Default, Eq, PartialEq)]
 enum DebugState {

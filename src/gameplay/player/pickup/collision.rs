@@ -21,7 +21,7 @@ fn disable_collision_with_held_prop(
     q_children: Query<&Children>,
     mut q_collision_layers: Query<&mut CollisionLayers>,
 ) {
-    let rigid_body = trigger.entity();
+    let rigid_body = trigger.target();
     for child in iter::once(rigid_body).chain(q_children.iter_descendants(rigid_body)) {
         let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
             continue;
@@ -35,7 +35,7 @@ fn enable_collision_with_no_longer_held_prop(
     q_children: Query<&Children>,
     mut q_collision_layers: Query<&mut CollisionLayers>,
 ) {
-    let rigid_body = trigger.entity();
+    let rigid_body = trigger.target();
     for child in iter::once(rigid_body).chain(q_children.iter_descendants(rigid_body)) {
         let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
             continue;

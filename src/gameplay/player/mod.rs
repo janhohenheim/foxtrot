@@ -111,7 +111,7 @@ fn setup_player_character(
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let player = trigger.entity();
+    let player = trigger.target();
     let player_character = commands
         .spawn((
             Name::new("Player Landmass Character"),

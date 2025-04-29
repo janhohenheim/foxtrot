@@ -49,34 +49,36 @@ const SPLASH_DURATION_SECS: f32 = 1.8;
 const SPLASH_FADE_DURATION_SECS: f32 = 0.6;
 
 fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn((
-        widget::ui_root("Splash Screen"),
-        BackgroundColor(SPLASH_BACKGROUND_COLOR),
-        StateScoped(Screen::Splash),
-        children![(
-            Name::new("Splash image"),
-            Node {
-                margin: UiRect::all(Val::Auto),
-                width: Val::Percent(70.0),
-                ..default()
-            },
-            ImageNode::new(asset_server.load_with_settings(
-                // This should be an embedded asset for instant loading, but that is
-                // currently [broken on Windows Wasm builds](https://github.com/bevyengine/bevy/issues/14246).
-                "images/splash.png",
-                |settings: &mut ImageLoaderSettings| {
-                    // Make an exception for the splash image in case
-                    // `ImagePlugin::default_nearest()` is used for pixel art.
-                    settings.sampler = ImageSampler::linear();
+    commands
+        .spawn((
+            widget::ui_root("Splash Screen"),
+            StateScoped(Screen::Splash),
+            children![(
+                Name::new("Splash image"),
+                Node {
+                    margin: UiRect::all(Val::Auto),
+                    width: Val::Percent(70.0),
+                    ..default()
                 },
-            )),
-            ImageNodeFadeInOut {
-                total_duration: SPLASH_DURATION_SECS,
-                fade_duration: SPLASH_FADE_DURATION_SECS,
-                t: 0.0,
-            },
-        )],
-    ));
+                ImageNode::new(asset_server.load_with_settings(
+                    // This should be an embedded asset for instant loading, but that is
+                    // currently [broken on Windows Wasm builds](https://github.com/bevyengine/bevy/issues/14246).
+                    "images/splash.png",
+                    |settings: &mut ImageLoaderSettings| {
+                        // Make an exception for the splash image in case
+                        // `ImagePlugin::default_nearest()` is used for pixel art.
+                        settings.sampler = ImageSampler::linear();
+                    },
+                )),
+                ImageNodeFadeInOut {
+                    total_duration: SPLASH_DURATION_SECS,
+                    fade_duration: SPLASH_FADE_DURATION_SECS,
+                    t: 0.0,
+                },
+            )],
+        ))
+        // Override the default background color provided by `ui_root`
+        .insert(BackgroundColor(SPLASH_BACKGROUND_COLOR));
 }
 
 #[derive(Component, Reflect)]

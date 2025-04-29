@@ -3,6 +3,7 @@
 mod credits;
 mod gameplay;
 mod loading;
+mod settings;
 mod spawn_level;
 mod splash;
 mod title;
@@ -18,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         gameplay::plugin,
         spawn_level::plugin,
         loading::plugin,
+        settings::plugin,
         splash::plugin,
         title::plugin,
     ));

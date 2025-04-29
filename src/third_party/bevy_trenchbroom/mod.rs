@@ -1,8 +1,6 @@
 //! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
 //! We use TrenchBroom to edit our levels.
 
-use std::borrow::Cow;
-
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 use proxy::RegisterProxies as _;

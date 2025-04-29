@@ -59,7 +59,7 @@ fn play_step_sound(
         PlaybackSettings::DESPAWN
             .with_spatial(true)
             .with_speed(1.5)
-            .with_volume(Volume::new(1.6))
+            .with_volume(Volume::Linear(1.6))
             .with_spatial_scale(SpatialScale::new(0.02)),
         SoundEffect,
     ));

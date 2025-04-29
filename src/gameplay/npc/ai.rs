@@ -56,8 +56,8 @@ fn setup_npc_agent(
                 },
                 AgentTarget3d::Entity(player.0),
                 TargetReachedCondition::Distance(Some(2.0)),
+                ChildOf(entity),
             ))
-            .set_parent(entity)
             .id();
         commands.entity(entity).insert(NpcAgent(agent));
     }

@@ -5,7 +5,7 @@ use std::f32::consts::PI;
 use animation::{NpcAnimationState, setup_npc_animations};
 use avian3d::prelude::*;
 use bevy::{
-    ecs::{component::ComponentId, world::DeferredWorld},
+    ecs::{component::HookContext, world::DeferredWorld},
     prelude::*,
 };
 use bevy_tnua::{TnuaAnimatingState, prelude::*};
@@ -45,14 +45,14 @@ const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
 const NPC_FLOAT_HEIGHT: f32 = NPC_HALF_HEIGHT + 0.01;
 
 impl Npc {
-    fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+    fn on_add(mut world: DeferredWorld, ctx: HookContext) {
         if world.is_scene_world() {
             return;
         }
         let model = world.resource::<AssetServer>().load(Npc::scene_path());
         world
             .commands()
-            .entity(entity)
+            .entity(ctx.entity)
             .insert((
                 Npc,
                 TransformInterpolation,

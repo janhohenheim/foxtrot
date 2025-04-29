@@ -4,7 +4,6 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::config::TrenchBroomConfig;
 use generic::*;
-use specific::*;
 
 mod effects;
 mod generic;
@@ -12,6 +11,9 @@ mod specific;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((generic::plugin, specific::plugin, effects::plugin));
+    app.add_observer(setup_static_prop_with_convex_hull::<Grate>)
+        .add_observer(setup_static_prop_with_convex_decomposition::<Table>)
+        .add_observer(setup_static_prop_with_convex_hull::<Bookshelf>);
 }
 
 pub(crate) trait RegisterProps {
@@ -35,71 +37,53 @@ impl RegisterProps for TrenchBroomConfig {
 
 // generic static props
 
-create_prop!(
-    Grate,
-    "models/darkmod/fireplace/grate.gltf",
-    on_add = setup_static_prop_with_convex_hull::<Grate>
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/fireplace/grate.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct Grate;
 
-create_prop!(
-    Table,
-    "models/darkmod/furniture/tables/rtable1.gltf",
-    on_add = setup_static_prop_with_convex_decomposition::<Table>
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/furniture/tables/rtable1.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct Table;
 
-create_prop!(
-    Bookshelf,
-    "models/darkmod/furniture/shelves/bookshelf02.gltf",
-    on_add = setup_static_prop_with_convex_hull::<Bookshelf>
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/furniture/shelves/bookshelf02.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct Bookshelf;
 
 // props with a specific setup function
 
-create_prop!(
-    LampSitting,
-    "models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf",
-    on_add = setup_lamp_sitting
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct LampSitting;
 
-create_prop!(
-    Chair,
-    "models/darkmod/furniture/seating/wchair1.gltf",
-    on_add = specific::setup_chair
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/furniture/seating/wchair1.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct Chair;
 
-create_prop!(
-    BurningLogs,
-    "models/darkmod/fireplace/burntwood.gltf",
-    on_add = specific::setup_burning_logs
-);
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/fireplace/burntwood.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct BurningLogs;
 
-create_prop!(
-    Crate,
-    "models/darkmod/containers/crate01.gltf",
-    on_add = setup_crate
-);
-
-// This macro does nothing fancy, it's just here to save us some boilerplate when defining new prop classes :)
-macro_rules! create_prop {
-    ($name:ident, $model:expr, on_add = $on_add:ty) => {
-        #[derive(
-            bevy_trenchbroom::prelude::PointClass,
-            Component,
-            Debug,
-            Clone,
-            Copy,
-            PartialEq,
-            Eq,
-            Default,
-            Reflect,
-        )]
-        #[reflect(Component)]
-        #[base(Transform, Visibility)]
-        #[model($model)]
-        #[component(on_add = $on_add)]
-        #[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
-        pub(crate) struct $name;
-    };
-}
-// This `use` allows us to use the macro before its definition.
-use create_prop;
+#[derive(bevy_trenchbroom::prelude::PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/crate01.gltf")]
+#[spawn_hook(bevy_trenchbroom::prelude::preload_model::<Self>)]
+pub(crate) struct Crate;

@@ -53,7 +53,7 @@ fn default_binding(
     // be triggered with any non-zero value.
     actions
         .bind::<Move>()
-        .to((Cardinal::wasd_keys(), GamepadStick::Left))
+        .to((Cardinal::wasd_keys(), Axial::left_stick()))
         .with_modifiers((
             DeadZone::default(), // Apply non-uniform normalization to ensure consistent speed, otherwise diagonal movement will be faster.
             SmoothNudge::default(), // Make movement smooth and independent of the framerate. To only make it framerate-independent, use `DeltaScale`.
@@ -75,7 +75,7 @@ fn default_binding(
     const DEFAULT_SENSITIVITY: f32 = 0.002;
     actions
         .bind::<Rotate>()
-        .to((Input::mouse_motion(), GamepadStick::Right))
+        .to((Input::mouse_motion(), Axial::right_stick()))
         .with_modifiers((Negate::all(), Scale::splat(DEFAULT_SENSITIVITY)));
 
     actions

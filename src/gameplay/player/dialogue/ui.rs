@@ -16,7 +16,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         update_interaction_prompt_ui
-
             .in_set(DialogueSet::UpdateUi)
             .run_if(in_state(Screen::Gameplay)),
     );

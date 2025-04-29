@@ -3,8 +3,9 @@ mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
+#[cfg(feature = "native")]
+mod hdr;
 mod props;
-mod rendering;
 mod screens;
 mod theme;
 mod third_party;
@@ -15,7 +16,7 @@ use bitflags::bitflags;
 
 use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
 
 pub struct AppPlugin;
@@ -61,7 +62,7 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
-        #[cfg(not(target_family = "wasm"))]
+        #[cfg(feature = "native")]
         app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.
@@ -77,7 +78,9 @@ impl Plugin for AppPlugin {
             screens::plugin,
             theme::plugin,
             ui_camera::plugin,
-            rendering::plugin,
+            #[cfg(feature = "native")]
+            // HDR is not supported on WebGL2
+            hdr::plugin,
         ));
     }
 }

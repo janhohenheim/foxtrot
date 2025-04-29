@@ -3,7 +3,6 @@ use bevy::prelude::*;
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
-    prelude::*,
     render::{camera::CameraOutputMode, render_resource::BlendState},
 };
 

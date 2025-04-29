@@ -24,4 +24,8 @@ pub(crate) fn sound_effect(handle: Handle<AudioSource>) -> impl Bundle {
     (AudioPlayer(handle), PlaybackSettings::DESPAWN, SoundEffect)
 }
 
-pub const DEFAULT_VOLUME: Volume = Volume::Linear(0.3);
+pub(crate) const DEFAULT_VOLUME: Volume = Volume::Linear(0.3);
+
+pub(crate) fn max_volume() -> Volume {
+    DEFAULT_VOLUME + Volume::Decibels(5.0)
+}

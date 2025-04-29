@@ -63,6 +63,7 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
+        #[cfg(not(target_family = "wasm"))]
         app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.

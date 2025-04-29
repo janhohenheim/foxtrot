@@ -6,54 +6,38 @@ use crate::third_party::avian3d::CollisionLayer;
 use crate::third_party::bevy_landmass::NavMeshAffectorParent;
 use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel as _;
 use avian3d::prelude::*;
-use bevy::{
-    ecs::{
-        component::{ComponentHook, ComponentId},
-        world::DeferredWorld,
-    },
-    prelude::*,
-};
+use bevy::prelude::*;
 use bevy_tnua::TnuaNotPlatform;
-use bevy_trenchbroom::{class::QuakeClass, prelude::*};
+use bevy_trenchbroom::class::QuakeClass;
 
 pub(super) fn plugin(_app: &mut App) {}
 
-pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>() -> Option<ComponentHook> {
-    Some(|mut world, ctx| {
-        if world.is_scene_world() {
-            return;
-        }
-
-        let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexHullFromMesh);
-        world.commands().entity(ctx.entity).insert(bundle);
-    })
-}
-
-pub(crate) fn setup_static_prop_with_convex_hull_<T: QuakeClass>(
-    mut world: DeferredWorld,
-    entity: Entity,
-    _id: ComponentId,
+pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
+    trigger: Trigger<OnAdd, T>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
 ) {
+    let bundle = static_bundle::<T>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
+    commands.entity(trigger.target()).insert(bundle);
 }
 
 pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
-    mut world: DeferredWorld,
-    entity: Entity,
-    _id: ComponentId,
+    trigger: Trigger<OnAdd, T>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
 ) {
-    if world.is_scene_world() {
-        return;
-    }
-
-    let bundle = static_bundle::<T>(&world, ColliderConstructor::ConvexDecompositionFromMesh);
-    world.commands().entity(entity).insert(bundle);
+    let bundle = static_bundle::<T>(
+        &asset_server,
+        ColliderConstructor::ConvexDecompositionFromMesh,
+    );
+    commands.entity(trigger.target()).insert(bundle);
 }
 
 pub(crate) fn dynamic_bundle<T: QuakeClass>(
-    world: &DeferredWorld,
+    asset_server: &AssetServer,
     constructor: ColliderConstructor,
 ) -> impl Bundle {
-    let model = world.load_trenchbroom_model::<T>();
+    let model = asset_server.load_trenchbroom_model::<T>();
     (
         TransformInterpolation,
         ColliderConstructorHierarchy::new(constructor)
@@ -69,10 +53,10 @@ pub(crate) fn dynamic_bundle<T: QuakeClass>(
 }
 
 pub(crate) fn static_bundle<T: QuakeClass>(
-    world: &DeferredWorld,
+    asset_server: &AssetServer,
     constructor: ColliderConstructor,
 ) -> impl Bundle {
-    let model = world.load_trenchbroom_model::<T>();
+    let model = asset_server.load_trenchbroom_model::<T>();
     (
         ColliderConstructorHierarchy::new(constructor).with_default_layers(CollisionLayers::new(
             CollisionLayer::Default,

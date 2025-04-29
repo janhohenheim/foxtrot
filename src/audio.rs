@@ -5,10 +5,10 @@ use bevy::prelude::*;
 ///
 /// This can then be used to query for and operate on sounds in that category.
 #[derive(Component, Default)]
-pub struct Music;
+pub(crate) struct Music;
 
 /// A music audio instance.
-pub fn music(handle: Handle<AudioSource>) -> impl Bundle {
+pub(crate) fn music(handle: Handle<AudioSource>) -> impl Bundle {
     (AudioPlayer(handle), PlaybackSettings::LOOP, Music)
 }
 
@@ -17,9 +17,9 @@ pub fn music(handle: Handle<AudioSource>) -> impl Bundle {
 ///
 /// This can then be used to query for and operate on sounds in that category.
 #[derive(Component, Default)]
-pub struct SoundEffect;
+pub(crate) struct SoundEffect;
 
 /// A sound effect audio instance.
-pub fn sound_effect(handle: Handle<AudioSource>) -> impl Bundle {
+pub(crate) fn sound_effect(handle: Handle<AudioSource>) -> impl Bundle {
     (AudioPlayer(handle), PlaybackSettings::DESPAWN, SoundEffect)
 }

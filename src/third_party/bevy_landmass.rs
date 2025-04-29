@@ -6,7 +6,7 @@ use crate::gameplay::npc::{NPC_HEIGHT, NPC_RADIUS, ai::NPC_MAX_SLOPE};
 use avian3d::prelude::*;
 use bevy::ecs::relationship::Relationship as _;
 use bevy::prelude::*;
-use bevy_landmass::{Character, PointSampleDistance3d, prelude::*};
+use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
 use oxidized_navigation::{
     NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin, colliders::avian::AvianCollider,
@@ -50,18 +50,6 @@ fn setup_archipelago(mut commands: Commands) {
         }),
         OxidizedArchipelago,
     ));
-}
-
-pub(crate) fn insert_landmass_character(
-    In((entity, radius)): In<(Entity, f32)>,
-    mut commands: Commands,
-    archipelago: Single<Entity, With<Archipelago3d>>,
-) {
-    commands.entity(entity).insert(Character3dBundle {
-        character: Character::default(),
-        settings: CharacterSettings { radius },
-        archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-    });
 }
 
 #[derive(Component)]

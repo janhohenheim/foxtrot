@@ -36,7 +36,7 @@ fn abort_all_dialogues_when_leaving_gameplay(
     mut dialogue_complete_events: EventWriter<DialogueCompleteEvent>,
 ) {
     for dialogue_runner in q_dialogue_runner.iter() {
-        dialogue_complete_events.send(DialogueCompleteEvent {
+        dialogue_complete_events.write(DialogueCompleteEvent {
             source: dialogue_runner,
         });
     }

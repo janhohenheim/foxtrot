@@ -23,7 +23,7 @@ pub(crate) struct AnimationPlayerLink(pub(crate) Entity);
 fn link_animation_player(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,
-    q_parent: Query<&Parent>,
+    q_parent: Query<&ChildOf>,
     q_children: Query<&Children>,
     q_animation_player: Query<Entity, With<AnimationPlayer>>,
     q_ancestor: Query<Entity, With<AnimationPlayerAncestor>>,

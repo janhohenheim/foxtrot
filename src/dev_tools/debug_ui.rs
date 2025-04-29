@@ -1,6 +1,6 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
-use super::input::{ForceFreeCursor, ToggleDebugUi};
+use super::input::ToggleDebugUi;
 //use aalo::prelude::*;
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
@@ -10,7 +10,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
 
-use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed};
+use crate::AppSet;
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();

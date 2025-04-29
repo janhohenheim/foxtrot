@@ -6,7 +6,7 @@
 use animation::{PlayerAnimationState, setup_player_animations};
 use avian3d::prelude::*;
 use bevy::{
-    ecs::{component::ComponentId, world::DeferredWorld},
+    ecs::{component::HookContext, world::DeferredWorld},
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
@@ -71,13 +71,13 @@ const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
 const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.01;
 
 impl Player {
-    fn on_add(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
+    fn on_add(mut world: DeferredWorld, ctx: HookContext) {
         if world.is_scene_world() {
             return;
         }
         world
             .commands()
-            .entity(entity)
+            .entity(ctx.entity)
             .insert((
                 RigidBody::Dynamic,
                 Actions::<DefaultInputContext>::default(),
@@ -123,8 +123,8 @@ fn setup_player_character(
                 },
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
+            ChildOf(player),
         ))
-        .set_parent(player)
         .id();
 
     commands

@@ -26,7 +26,7 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::{
     AppSet, CameraOrder, RenderLayer,
-    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerLink},
+    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayers},
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath},
 };
@@ -146,17 +146,22 @@ fn spawn_view_model(
                 ))
                 .observe(configure_player_view_model);
         })
-        .observe(add_anim_player_link_to_player);
+        .observe(move_anim_players_relationship_to_player);
 }
 
-fn add_anim_player_link_to_player(
-    trigger: Trigger<OnAdd, AnimationPlayerLink>,
-    q_anim_player: Query<&AnimationPlayerLink>,
+/// It makes more sense for the animation players to be related to the [`Player`] entity
+/// than to the [`PlayerCamera`] entity, so let's move the relationship there.
+fn move_anim_players_relationship_to_player(
+    trigger: Trigger<OnAdd, AnimationPlayers>,
+    q_anim_player: Query<&AnimationPlayers>,
     player: Single<Entity, With<Player>>,
     mut commands: Commands,
 ) {
-    let anim_player_link = q_anim_player.get(trigger.target()).unwrap();
-    commands.entity(*player).insert(*anim_player_link);
+    let anim_players = q_anim_player.get(trigger.target()).unwrap();
+    commands
+        .entity(trigger.target())
+        .remove::<AnimationPlayers>();
+    commands.entity(*player).insert(anim_players.clone());
 }
 
 fn configure_player_view_model(

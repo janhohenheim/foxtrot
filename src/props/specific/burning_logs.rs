@@ -54,7 +54,7 @@ const BASE_INTENSITY: f32 = 150_000.0;
 pub(crate) fn setup_burning_logs(
     trigger: Trigger<OnAdd, BurningLogs>,
     asset_server: Res<AssetServer>,
-    mut effects: ResMut<Assets<EffectAsset>>,
+    #[cfg(feature = "native")] mut effects: ResMut<Assets<EffectAsset>>,
     mut commands: Commands,
 ) {
     let static_bundle =

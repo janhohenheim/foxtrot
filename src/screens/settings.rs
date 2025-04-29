@@ -2,7 +2,7 @@
 //! We can add all manner of settings and accessibility options here.
 //! For 3D, we'd also place the camera sensitivity and FOV here.
 
-use bevy::{audio::Volume, prelude::*, ui::Val::*};
+use bevy::{prelude::*, ui::Val::*};
 
 use crate::{audio::DEFAULT_VOLUME, screens::Screen, theme::prelude::*};
 

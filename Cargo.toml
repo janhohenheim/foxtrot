@@ -49,6 +49,10 @@ tracing = { version = "0.1", features = [
     "max_level_debug",
     "release_max_level_warn",
 ] }
+getrandom = { version = "0.3", default-features = false, features = [
+    "wasm_js",
+] }
+
 bitflags = "2.9.0"
 
 [features]
@@ -115,12 +119,12 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "hotfix" }
+bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "hotfix", default-features = false }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }
 avian3d = { git = "https://github.com/Jondolf/avian", branch = "main" }
-bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main" }
+bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", optional = true }
 bevy-tnua = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
 bevy-tnua-avian3d = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
 

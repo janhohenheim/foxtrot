@@ -3,7 +3,7 @@
 use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
-use bevy::{ecs::relationship::Relationship as _, prelude::*};
+use bevy::prelude::*;
 use bevy_landmass::{
     TargetReachedCondition,
     prelude::{
@@ -19,6 +19,8 @@ use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 8.0;
 
 pub(super) fn plugin(app: &mut App) {
+    app.register_type::<Agent>();
+    app.register_type::<AgentOf>();
     app.add_systems(
         RunFixedMainLoop,
         (sync_agent_velocity, set_controller_velocity)
@@ -57,11 +59,13 @@ fn setup_npc_agent(
     ));
 }
 
-#[derive(Component, Deref, Debug)]
+#[derive(Component, Deref, Debug, Reflect)]
+#[reflect(Component)]
 #[relationship(relationship_target = Agent)]
 struct AgentOf(Entity);
 
-#[derive(Component, Deref, Debug)]
+#[derive(Component, Deref, Debug, Reflect)]
+#[reflect(Component)]
 #[relationship_target(relationship = AgentOf)]
 struct Agent(Entity);
 

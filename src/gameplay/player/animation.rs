@@ -7,7 +7,7 @@ use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{
     AppSet,
-    gameplay::{animation::AnimationPlayerLink, crosshair::CrosshairState},
+    gameplay::{animation::AnimationPlayers, crosshair::CrosshairState},
     screens::Screen,
 };
 
@@ -31,33 +31,34 @@ pub(crate) struct PlayerAnimations {
 }
 
 pub(crate) fn setup_player_animations(
-    trigger: Trigger<OnAdd, AnimationPlayerLink>,
-    q_anim_player_link: Query<&AnimationPlayerLink>,
+    trigger: Trigger<OnAdd, AnimationPlayers>,
+    q_anim_players: Query<&AnimationPlayers>,
     mut commands: Commands,
     assets: Res<PlayerAssets>,
     mut graphs: ResMut<Assets<AnimationGraph>>,
 ) {
-    let anim_player = q_anim_player_link.get(trigger.target()).unwrap().0;
+    let anim_players = q_anim_players.get(trigger.target()).unwrap();
+    for anim_player in anim_players.iter() {
+        let (graph, indices) = AnimationGraph::from_clips([
+            assets.idle_animation.clone(),
+            assets.a_pose_animation.clone(),
+        ]);
+        let [idle_index, a_pose_index] = indices.as_slice() else {
+            unreachable!()
+        };
+        let graph_handle = graphs.add(graph);
 
-    let (graph, indices) = AnimationGraph::from_clips([
-        assets.idle_animation.clone(),
-        assets.a_pose_animation.clone(),
-    ]);
-    let [idle_index, a_pose_index] = indices.as_slice() else {
-        unreachable!()
-    };
-    let graph_handle = graphs.add(graph);
-
-    let animations = PlayerAnimations {
-        idle: *idle_index,
-        a_pose: *a_pose_index,
-    };
-    let transitions = AnimationTransitions::new();
-    commands.entity(anim_player).insert((
-        animations,
-        AnimationGraphHandle(graph_handle),
-        transitions,
-    ));
+        let animations = PlayerAnimations {
+            idle: *idle_index,
+            a_pose: *a_pose_index,
+        };
+        let transitions = AnimationTransitions::new();
+        commands.entity(anim_player).insert((
+            animations,
+            AnimationGraphHandle(graph_handle),
+            transitions,
+        ));
+    }
 }
 
 /// Managed by [`play_animations`]
@@ -70,7 +71,7 @@ pub(crate) enum PlayerAnimationState {
 fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<PlayerAnimationState>,
-        &AnimationPlayerLink,
+        &AnimationPlayers,
     )>,
     mut q_animation: Query<(
         &PlayerAnimations,
@@ -79,45 +80,42 @@ fn play_animations(
     )>,
     crosshair_state: Single<&CrosshairState>,
 ) {
-    for (mut animating_state, link) in &mut query {
-        let animation_player_entity = link.0;
-        let Ok((animations, mut anim_player, mut transitions)) =
-            q_animation.get_mut(animation_player_entity)
-        else {
-            continue;
-        };
-        match animating_state.update_by_discriminant(
-            // we show the player's hands exactly if and only if the crosshair is visible
-            if crosshair_state.wants_invisible.is_empty() {
-                PlayerAnimationState::Idle
-            } else {
-                PlayerAnimationState::None
-            },
-        ) {
-            TnuaAnimatingStateDirective::Maintain { .. } => {}
-            TnuaAnimatingStateDirective::Alter {
-                // We don't need the old state here, but it's available for transition
-                // animations.
-                old_state: _,
-                state,
-            } => match state {
-                PlayerAnimationState::None => {
-                    transitions.play(
-                        &mut anim_player,
-                        animations.a_pose,
-                        Duration::from_millis(400),
-                    );
-                }
-                PlayerAnimationState::Idle => {
-                    transitions
-                        .play(
+    for (mut animating_state, anim_players) in &mut query {
+        let mut iter = q_animation.iter_many_mut(anim_players.iter());
+        while let Some((animations, mut anim_player, mut transitions)) = iter.fetch_next() {
+            match animating_state.update_by_discriminant(
+                // we show the player's hands exactly if and only if the crosshair is visible
+                if crosshair_state.wants_invisible.is_empty() {
+                    PlayerAnimationState::Idle
+                } else {
+                    PlayerAnimationState::None
+                },
+            ) {
+                TnuaAnimatingStateDirective::Maintain { .. } => {}
+                TnuaAnimatingStateDirective::Alter {
+                    // We don't need the old state here, but it's available for transition
+                    // animations.
+                    old_state: _,
+                    state,
+                } => match state {
+                    PlayerAnimationState::None => {
+                        transitions.play(
                             &mut anim_player,
-                            animations.idle,
-                            Duration::from_millis(150),
-                        )
-                        .repeat();
-                }
-            },
+                            animations.a_pose,
+                            Duration::from_millis(400),
+                        );
+                    }
+                    PlayerAnimationState::Idle => {
+                        transitions
+                            .play(
+                                &mut anim_player,
+                                animations.idle,
+                                Duration::from_millis(150),
+                            )
+                            .repeat();
+                    }
+                },
+            }
         }
     }
 }

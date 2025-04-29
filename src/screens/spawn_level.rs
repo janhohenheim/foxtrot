@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::{
     gameplay::{level::spawn_level, player::camera::PlayerCamera},
     screens::Screen,
-    theme::{palette::SCREEN_BACKGROUND, prelude::*},
+    theme::prelude::*,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -23,7 +23,6 @@ fn spawn_spawn_level_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Loading Screen"),
         StateScoped(Screen::SpawnLevel),
-        BackgroundColor(SCREEN_BACKGROUND),
         children![widget::label("Spawning Level...")],
     ));
 }

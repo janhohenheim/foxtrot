@@ -1,22 +1,19 @@
+//! There are a couple of Bevy issues when using HDR with a multi-camera setup,
+//! so this module contains some workarounds.
+
 use bevy::prelude::*;
 
-#[cfg(feature = "native")]
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
     render::{camera::CameraOutputMode, render_resource::BlendState},
 };
 
-#[cfg(feature = "native")]
 use crate::CameraOrder;
 
 pub(super) fn plugin(app: &mut App) {
-    // HDR is not supported on WebGL2
-    #[cfg(feature = "native")]
     app.add_observer(make_hdr_compatible);
-    let _ = app;
 }
 
-#[cfg(feature = "native")]
 fn make_hdr_compatible(
     trigger: Trigger<OnAdd, Camera>,
     mut cameras: Query<&mut Camera>,

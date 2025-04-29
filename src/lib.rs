@@ -3,8 +3,9 @@ mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
+#[cfg(feature = "native")]
+mod hdr;
 mod props;
-mod rendering;
 mod screens;
 mod theme;
 mod third_party;
@@ -77,7 +78,9 @@ impl Plugin for AppPlugin {
             screens::plugin,
             theme::plugin,
             ui_camera::plugin,
-            rendering::plugin,
+            #[cfg(feature = "native")]
+            // HDR is not supported on WebGL2
+            hdr::plugin,
         ));
     }
 }

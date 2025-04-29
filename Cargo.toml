@@ -85,13 +85,13 @@ dev_native = [
 default_features = false
 features = ["native"]
 
-[package.metadata.bevy_cli.web.dev]
+[package.metadata.bevy_cli.web]
 # Disable native-only debug functionality in web builds
 default_features = false
-features = ["dev"]
+rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]
 
-[package.metadata.bevy_cli.web.release]
-default_features = false
+[package.metadata.bevy_cli.web.dev]
+features = ["dev"]
 
 [lints.clippy]
 # Bevy supplies arguments to systems via dependency injection, so it's natural for systems to

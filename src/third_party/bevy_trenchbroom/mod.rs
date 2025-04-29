@@ -42,6 +42,7 @@ pub(super) fn plugin(app: &mut App) {
 
 /// Set up TrenchBroom so that it can create maps for our game.
 /// This is intentionally not gated to dev builds so that players can edit the levels themselves if they want.
+#[cfg(feature = "native")]
 fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
     info!("Writing TrenchBroom config");
     // Errors at this point usually mean that the player has not installed TrenchBroom.

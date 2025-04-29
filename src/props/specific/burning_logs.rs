@@ -1,16 +1,20 @@
+#[cfg(not(target_arch = "wasm32"))]
 use std::f32::consts::TAU;
 
+#[cfg(feature = "native")]
+use crate::RenderLayer;
 use avian3d::prelude::*;
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::render::view::RenderLayers;
 use bevy::{
     audio::{SpatialScale, Volume},
     prelude::*,
-    render::view::RenderLayers,
 };
 #[cfg(feature = "native")]
 use bevy_hanabi::prelude::*;
 
 use crate::{
-    AppSet, RenderLayer,
+    AppSet,
     asset_tracking::LoadResource,
     props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
@@ -30,6 +34,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Resource, Asset, Clone, TypePath)]
 struct BurningLogsAssets {
+    #[cfg(not(target_arch = "wasm32"))]
     #[dependency]
     texture: Handle<Image>,
     #[dependency]
@@ -40,12 +45,14 @@ impl FromWorld for BurningLogsAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
+            #[cfg(not(target_arch = "wasm32"))]
             texture: assets.load(TEXTURE_PATH),
             sound: assets.load(SOUND_PATH),
         }
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 const TEXTURE_PATH: &str = "images/Flame.png";
 const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 

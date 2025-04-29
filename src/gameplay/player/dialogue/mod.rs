@@ -36,7 +36,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         check_for_dialogue_opportunity
-
             .in_set(DialogueSet::UpdateOpportunity)
             .run_if(
                 in_state(Screen::Gameplay)
@@ -47,7 +46,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         restore_input_context
-
             .run_if(in_state(Screen::Gameplay).and(on_event::<DialogueCompleteEvent>))
             .in_set(AppSet::Update),
     );

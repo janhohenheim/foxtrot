@@ -36,11 +36,10 @@ use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
-    app.add_observer(rotate_camera_yaw_and_pitch.param_warn_once());
+    app.add_observer(rotate_camera_yaw_and_pitch);
     app.add_systems(
         Update,
         sync_camera_translation_with_player
-            .param_warn_once()
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::Update),
     );
@@ -155,7 +154,7 @@ fn add_anim_player_link_to_player(
     player: Single<Entity, With<Player>>,
     mut commands: Commands,
 ) {
-    let anim_player_link = q_anim_player.get(trigger.entity()).unwrap();
+    let anim_player_link = q_anim_player.get(trigger.target()).unwrap();
     commands.entity(*player).insert(*anim_player_link);
 }
 
@@ -165,7 +164,7 @@ fn configure_player_view_model(
     q_children: Query<&Children>,
     q_mesh: Query<(), With<Mesh3d>>,
 ) {
-    let view_model = trigger.entity();
+    let view_model = trigger.target();
 
     for child in iter::once(view_model)
         .chain(q_children.iter_descendants(view_model))
@@ -226,7 +225,7 @@ fn sync_camera_translation_with_player(
 }
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {
-    let entity = trigger.entity();
+    let entity = trigger.target();
     commands.entity(entity).insert(RenderLayers::from(
         RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
     ));

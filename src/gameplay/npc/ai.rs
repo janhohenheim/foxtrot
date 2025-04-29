@@ -22,7 +22,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
         (
-            setup_npc_agent.param_warn_once(),
+            setup_npc_agent,
             sync_agent_velocity,
             set_controller_velocity,
         )

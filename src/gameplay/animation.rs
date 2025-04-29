@@ -28,7 +28,7 @@ fn link_animation_player(
     q_animation_player: Query<Entity, With<AnimationPlayer>>,
     q_ancestor: Query<Entity, With<AnimationPlayerAncestor>>,
 ) {
-    let scene_root = trigger.entity();
+    let scene_root = trigger.target();
     let animation_player = q_children
         .iter_descendants(scene_root)
         .find(|child| q_animation_player.get(*child).is_ok());

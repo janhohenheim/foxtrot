@@ -1,6 +1,8 @@
 //! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
 //! We use TrenchBroom to edit our levels.
 
+use std::borrow::Cow;
+
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 use proxy::RegisterProxies as _;
@@ -24,10 +26,6 @@ pub(super) fn plugin(app: &mut App) {
                     .map(String::from)
                     .collect::<Vec<_>>(),
             )
-            .icon(Some(
-                // Make sure the icon is 32px x 32px
-                include_bytes!("../../../assets/images/icon.png").to_vec(),
-            ))
             // In Wasm, TrenchBroom classes are not automatically registered.
             // So, we need to manually register the classes here
             .register_props()

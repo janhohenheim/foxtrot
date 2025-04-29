@@ -20,15 +20,12 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn spawn_spawn_level_screen(mut commands: Commands) {
-    commands
-        .ui_root()
-        .insert((
-            StateScoped(Screen::SpawnLevel),
-            BackgroundColor(SCREEN_BACKGROUND),
-        ))
-        .with_children(|children| {
-            children.label("Spawning Level...");
-        });
+    commands.spawn((
+        widget::ui_root("Loading Screen"),
+        StateScoped(Screen::SpawnLevel),
+        BackgroundColor(SCREEN_BACKGROUND),
+        children![widget::label("Spawning Level...")],
+    ));
 }
 
 fn spawn_level(mut commands: Commands) {

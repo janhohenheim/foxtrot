@@ -16,7 +16,7 @@ pub(crate) fn prepare_light_mesh(
     is_mesh: Query<&Mesh3d>,
     mut commands: Commands,
 ) {
-    let container = trigger.entity();
+    let container = trigger.target();
     for child in iter::once(container).chain(children.iter_descendants(container)) {
         if is_mesh.get(child).is_ok() {
             commands

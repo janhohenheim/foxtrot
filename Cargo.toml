@@ -13,8 +13,8 @@ avian3d = "0.2"
 avian_pickup = { version = "0.2.0-dev" }
 
 # character controller
-bevy-tnua = "0.22"
-bevy-tnua-avian3d = "0.3"
+bevy-tnua = "0.23"
+bevy-tnua-avian3d = "0.5"
 
 # navigation
 bevy_landmass = { version = "0.9.0" }
@@ -63,8 +63,7 @@ dev = [
     "bevy/bevy_dev_tools",
     # TODO
     #"dep:aalo",
-    # uncomment in 0.16
-    # "bevy/bevy_ui_debug",
+    "bevy/bevy_ui_debug",
 ]
 dev_native = [
     "dev",
@@ -116,14 +115,14 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "hotfix" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }
 avian3d = { git = "https://github.com/Jondolf/avian", branch = "main" }
 bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main" }
-bevy-tnua = { git = "https://github.com/guyguy2001/bevy-tnua", branch = "0.16" }
-bevy-tnua-avian3d = { git = "https://github.com/guyguy2001/bevy-tnua", branch = "0.16" }
+bevy-tnua = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
+bevy-tnua-avian3d = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
 
 # This profile will be used for `bevy run web` automatically
 [profile.web-release]

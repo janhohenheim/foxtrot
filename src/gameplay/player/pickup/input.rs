@@ -8,9 +8,9 @@ use bevy_enhanced_input::prelude::*;
 use crate::gameplay::player::default_input::{DropProp, PickupProp};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_observer(pull_prop.param_warn_once());
-    app.add_observer(throw_prop.param_warn_once());
-    app.add_observer(drop_prop.param_warn_once());
+    app.add_observer(pull_prop);
+    app.add_observer(throw_prop);
+    app.add_observer(drop_prop);
 }
 
 fn pull_prop(

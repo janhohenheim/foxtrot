@@ -11,7 +11,7 @@ use super::{Player, camera::PlayerCamera};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(PreUpdate, reset_movement);
-    app.add_observer(apply_movement.param_warn_once());
+    app.add_observer(apply_movement);
     app.add_observer(jump);
 }
 
@@ -29,7 +29,7 @@ fn apply_movement(
     mut controllers: Query<&mut TnuaController, With<Player>>,
     transform: Single<&Transform, With<PlayerCamera>>,
 ) {
-    let Ok(mut controller) = controllers.get_mut(trigger.entity()) else {
+    let Ok(mut controller) = controllers.get_mut(trigger.target()) else {
         error!("Triggered movement for entity with missing components");
         return;
     };
@@ -51,7 +51,7 @@ fn apply_movement(
 }
 
 fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaController>) {
-    let mut controller = controllers.get_mut(trigger.entity()).unwrap();
+    let mut controller = controllers.get_mut(trigger.target()).unwrap();
     controller.action(TnuaBuiltinJump {
         // The height is the only mandatory field of the jump button.
         height: 1.5,

@@ -23,10 +23,11 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>) {
+    let dialogue_runner = yarn_project.create_dialogue_runner(&mut commands);
     commands.spawn((
         StateScoped(Screen::Gameplay),
         Name::new("Dialogue Runner"),
-        yarn_project.create_dialogue_runner(),
+        dialogue_runner,
     ));
 }
 

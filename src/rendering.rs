@@ -18,7 +18,7 @@ fn make_hdr_compatible(
     mut cameras: Query<&mut Camera>,
     mut commands: Commands,
 ) {
-    let entity = trigger.entity();
+    let entity = trigger.target();
     let mut camera = cameras.get_mut(entity).unwrap();
     if camera.order == isize::from(CameraOrder::World) {
         // Use the world model camera to determine tonemapping.

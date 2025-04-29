@@ -1,15 +1,25 @@
 use bevy::prelude::*;
 
-/// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it is in the
-/// general "music" category (ex: global background music, soundtrack, etc).
+/// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it's in the
+/// general "music" category (e.g. global background music, soundtrack).
 ///
 /// This can then be used to query for and operate on sounds in that category.
 #[derive(Component, Default)]
-pub(crate) struct Music;
+pub struct Music;
 
-/// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it is in the
-/// general "sound effect" category (ex: footsteps, the sound of a magic spell, a door opening).
+/// A music audio instance.
+pub fn music(handle: Handle<AudioSource>) -> impl Bundle {
+    (AudioPlayer(handle), PlaybackSettings::LOOP, Music)
+}
+
+/// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it's in the
+/// general "sound effect" category (e.g. footsteps, the sound of a magic spell, a door opening).
 ///
 /// This can then be used to query for and operate on sounds in that category.
 #[derive(Component, Default)]
-pub(crate) struct SoundEffect;
+pub struct SoundEffect;
+
+/// A sound effect audio instance.
+pub fn sound_effect(handle: Handle<AudioSource>) -> impl Bundle {
+    (AudioPlayer(handle), PlaybackSettings::DESPAWN, SoundEffect)
+}

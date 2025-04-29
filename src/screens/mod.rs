@@ -30,6 +30,7 @@ pub(crate) enum Screen {
     Splash,
     Title,
     Credits,
+    Settings,
     Loading,
     SpawnLevel,
     Gameplay,

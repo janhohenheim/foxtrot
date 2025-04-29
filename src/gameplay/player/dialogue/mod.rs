@@ -36,7 +36,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         check_for_dialogue_opportunity
-            .param_warn_once()
+
             .in_set(DialogueSet::UpdateOpportunity)
             .run_if(
                 in_state(Screen::Gameplay)
@@ -47,12 +47,12 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         restore_input_context
-            .param_warn_once()
+
             .run_if(in_state(Screen::Gameplay).and(on_event::<DialogueCompleteEvent>))
             .in_set(AppSet::Update),
     );
 
-    app.add_observer(interact_with_dialogue.param_warn_once());
+    app.add_observer(interact_with_dialogue);
 
     app.add_plugins(ui::plugin);
 }

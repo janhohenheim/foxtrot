@@ -15,7 +15,7 @@ use bitflags::bitflags;
 
 use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
 
 pub struct AppPlugin;
@@ -61,7 +61,7 @@ impl Plugin for AppPlugin {
                     ..default()
                 }),
         );
-        #[cfg(not(target_family = "wasm"))]
+        #[cfg(feature = "native")]
         app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.

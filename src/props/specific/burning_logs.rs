@@ -1,10 +1,10 @@
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use std::f32::consts::TAU;
 
 #[cfg(feature = "native")]
 use crate::{RenderLayer, asset_tracking::LoadResource as _};
 use avian3d::prelude::*;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use bevy::render::view::RenderLayers;
 use bevy::{
     audio::{SpatialScale, Volume},
@@ -20,7 +20,7 @@ use crate::{
 };
 
 pub(super) fn plugin(app: &mut App) {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(feature = "native")]
     // This causes https://github.com/bevyengine/bevy/issues/18980
     app.load_resource::<BurningLogsAssets>();
     app.register_type::<Flicker>();
@@ -35,7 +35,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Resource, Asset, Clone, TypePath)]
 struct BurningLogsAssets {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(feature = "native")]
     #[dependency]
     texture: Handle<Image>,
     #[dependency]
@@ -46,14 +46,14 @@ impl FromWorld for BurningLogsAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(feature = "native")]
             texture: assets.load(TEXTURE_PATH),
             sound: assets.load(SOUND_PATH),
         }
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 const TEXTURE_PATH: &str = "images/Flame.png";
 const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 

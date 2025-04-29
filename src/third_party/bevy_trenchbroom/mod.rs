@@ -44,7 +44,7 @@ pub(super) fn plugin(app: &mut App) {
 fn write_trenchbroom_config(server: Res<TrenchBroomServer>) {
     #[cfg(target_arch = "wasm32")]
     let _ = server;
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(feature = "native")]
     {
         info!("Writing TrenchBroom config");
         // Errors at this point usually mean that the player has not installed TrenchBroom.

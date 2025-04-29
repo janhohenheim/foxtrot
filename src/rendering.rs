@@ -1,22 +1,22 @@
 use bevy::prelude::*;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
     render::{camera::CameraOutputMode, render_resource::BlendState},
 };
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use crate::CameraOrder;
 
 pub(super) fn plugin(app: &mut App) {
     // HDR is not supported on WebGL2
-    #[cfg(not(target_family = "wasm"))]
+    #[cfg(feature = "native")]
     app.add_observer(make_hdr_compatible);
     let _ = app;
 }
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(feature = "native")]
 fn make_hdr_compatible(
     trigger: Trigger<OnAdd, Camera>,
     mut cameras: Query<&mut Camera>,

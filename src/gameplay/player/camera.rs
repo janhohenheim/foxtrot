@@ -10,7 +10,7 @@ use std::{
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(feature = "native")]
 use bevy::core_pipeline::{bloom::Bloom, experimental::taa::TemporalAntiAliasing};
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
@@ -106,7 +106,7 @@ fn spawn_view_model(
                 ),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
-                #[cfg(not(target_family = "wasm"))]
+                #[cfg(feature = "native")]
                 (Bloom::NATURAL, TemporalAntiAliasing::default(), Msaa::Off),
             ));
 
@@ -132,7 +132,7 @@ fn spawn_view_model(
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
-                #[cfg(not(target_family = "wasm"))]
+                #[cfg(feature = "native")]
                 // We don't use bloom on the view model, as it may lead to artifacts.
                 (TemporalAntiAliasing::default(), Msaa::Off),
             ));

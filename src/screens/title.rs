@@ -12,7 +12,7 @@ fn spawn_title_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Title Screen"),
         StateScoped(Screen::Title),
-        #[cfg(not(target_family = "wasm"))]
+        #[cfg(feature = "native")]
         children![
             widget::button("Play", enter_loading_or_spawn_screen),
             widget::button("Settings", enter_settings_screen),
@@ -47,7 +47,7 @@ fn enter_settings_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<Nex
 fn enter_credits_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Credits);
 }
-#[cfg(not(target_family = "wasm"))]
+#[cfg(feature = "native")]
 fn exit_app(_: Trigger<Pointer<Click>>, mut app_exit: EventWriter<AppExit>) {
     app_exit.write(AppExit::Success);
 }

@@ -9,14 +9,14 @@ use bevy::{audio::Volume, prelude::*, ui::Val::*};
 use crate::{audio::DEFAULT_VOLUME, screens::Screen, theme::prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
-    app.init_resource::<VolumeStep>();
+    app.init_resource::<VolumeSliderSettings>();
     app.add_systems(OnEnter(Screen::Settings), spawn_settings_screen);
 
     app.register_type::<GlobalVolumeLabel>();
     app.add_systems(
         Update,
         (
-            update_global_volume.run_if(resource_exists_and_changed::<VolumeStep>),
+            update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
             update_volume_label,
         )
             .run_if(in_state(Screen::Settings)),
@@ -76,11 +76,11 @@ fn volume_widget() -> impl Bundle {
 }
 
 #[derive(Resource, Reflect, Debug)]
-struct VolumeStep(usize);
+struct VolumeSliderSettings(usize);
 
-impl VolumeStep {
+impl VolumeSliderSettings {
     fn increment(&mut self) {
-        self.0 = Self::STEP_COUNT.min(self.0 + 1);
+        self.0 = Self::MAX_TICK_COUNT.min(self.0 + 1);
     }
 
     fn decrement(&mut self) {
@@ -91,19 +91,17 @@ impl VolumeStep {
         let max_gain = Self::max_volume().to_linear();
         let mid_gain = DEFAULT_VOLUME.to_linear();
 
-        let t = self.fraction();
+        let t = self.0 as f32 / Self::MAX_TICK_COUNT as f32;
         let gain = Self::curved_interpolation(t, mid_gain, max_gain);
         Volume::Linear(gain)
-    }
-
-    fn fraction(&self) -> f32 {
-        self.0 as f32 / Self::STEP_COUNT as f32
     }
 
     fn max_volume() -> Volume {
         DEFAULT_VOLUME + Volume::Decibels(5.0)
     }
 
+    /// Interpolates between 0, a, and b nonlinearly,
+    /// such that t = 0 -> 0, t = 0.5 -> a, t = 1 -> b
     fn curved_interpolation(t: f32, a: f32, b: f32) -> f32 {
         if t <= 0.5 {
             let t2 = t / 0.5;
@@ -115,24 +113,28 @@ impl VolumeStep {
         }
     }
 
-    const STEP_COUNT: usize = 20;
+    /// How many ticks the volume slider supports
+    const MAX_TICK_COUNT: usize = 20;
 }
 
-impl Default for VolumeStep {
+impl Default for VolumeSliderSettings {
     fn default() -> Self {
-        Self(Self::STEP_COUNT / 2)
+        Self(Self::MAX_TICK_COUNT / 2)
     }
 }
 
-fn update_global_volume(mut global_volume: ResMut<GlobalVolume>, volume_step: Res<VolumeStep>) {
+fn update_global_volume(
+    mut global_volume: ResMut<GlobalVolume>,
+    volume_step: Res<VolumeSliderSettings>,
+) {
     global_volume.volume = volume_step.volume();
 }
 
-fn lower_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeStep>) {
+fn lower_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.decrement();
 }
 
-fn raise_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeStep>) {
+fn raise_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.increment();
 }
 
@@ -142,11 +144,11 @@ struct GlobalVolumeLabel;
 
 fn update_volume_label(
     mut label: Single<&mut Text, With<GlobalVolumeLabel>>,
-    volume_step: Res<VolumeStep>,
+    slider: Res<VolumeSliderSettings>,
 ) {
-    let ticks = volume_step.0;
+    let ticks = slider.0;
     let filled = "█".repeat(ticks);
-    let empty = " ".repeat(VolumeStep::STEP_COUNT - ticks);
+    let empty = " ".repeat(VolumeSliderSettings::MAX_TICK_COUNT - ticks);
     let text = filled + &empty + "|";
     label.0 = text;
 }

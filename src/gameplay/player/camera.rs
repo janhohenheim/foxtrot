@@ -10,10 +10,10 @@ use std::{
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::core_pipeline::{bloom::Bloom, experimental::taa::TemporalAntiAliasing};
 use bevy::{
-    core_pipeline::{
-        bloom::Bloom, experimental::taa::TemporalAntiAliasing, tonemapping::Tonemapping,
-    },
+    core_pipeline::tonemapping::Tonemapping,
     pbr::NotShadowCaster,
     prelude::*,
     render::{

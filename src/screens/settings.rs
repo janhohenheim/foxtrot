@@ -2,9 +2,13 @@
 //! We can add all manner of settings and accessibility options here.
 //! For 3D, we'd also place the camera sensitivity and FOV here.
 
-use bevy::{prelude::*, ui::Val::*};
+use bevy::{audio::Volume, prelude::*, ui::Val::*};
 
-use crate::{audio::DEFAULT_VOLUME, screens::Screen, theme::prelude::*};
+use crate::{
+    audio::{DEFAULT_VOLUME, max_volume},
+    screens::Screen,
+    theme::prelude::*,
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<VolumeSliderSettings>();
@@ -86,16 +90,12 @@ impl VolumeSliderSettings {
     }
 
     fn volume(&self) -> Volume {
-        let max_gain = Self::max_volume().to_linear();
+        let max_gain = max_volume().to_linear();
         let mid_gain = DEFAULT_VOLUME.to_linear();
 
         let t = self.0 as f32 / Self::MAX_TICK_COUNT as f32;
         let gain = Self::curved_interpolation(t, mid_gain, max_gain);
         Volume::Linear(gain)
-    }
-
-    fn max_volume() -> Volume {
-        DEFAULT_VOLUME + Volume::Decibels(5.0)
     }
 
     /// Interpolates between 0, a, and b nonlinearly,

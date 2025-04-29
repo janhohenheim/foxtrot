@@ -13,12 +13,7 @@ mod ui_camera;
 use audio::DEFAULT_VOLUME;
 use bitflags::bitflags;
 
-use bevy::{
-    asset::AssetMetaCheck,
-    audio::{AudioPlugin, Volume},
-    prelude::*,
-    render::view::RenderLayers,
-};
+use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
 
 #[cfg(not(target_arch = "wasm32"))]
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;

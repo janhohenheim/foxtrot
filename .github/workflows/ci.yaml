@@ -28,9 +28,9 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
       - name: Populate target directory from cache
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Run tests
         run: |
@@ -57,9 +57,9 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
       - name: Populate target directory from cache
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install Bevy CLI
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
@@ -86,9 +86,9 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
       - name: Populate target directory from cache
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Run clippy lints
         run: cargo clippy --locked --workspace --all-targets --all-features -- --deny warnings
@@ -126,9 +126,9 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
       - name: Populate target directory from cache
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Check documentation
         run: cargo doc --locked --workspace --all-features --document-private-items --no-deps

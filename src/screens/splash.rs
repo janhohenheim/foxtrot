@@ -39,9 +39,8 @@ pub(super) fn plugin(app: &mut App) {
     // Exit the splash screen early if the player hits escape.
     app.add_systems(
         Update,
-        continue_to_title_screen
-            .run_if(input_just_pressed(KeyCode::Escape).and(in_state(Screen::Splash)))
-            .in_set(AppSet::Update),
+        enter_title_screen
+            .run_if(input_just_pressed(KeyCode::Escape).and(in_state(Screen::Splash))),
     );
 }
 
@@ -51,14 +50,10 @@ const SPLASH_FADE_DURATION_SECS: f32 = 0.6;
 
 fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
-        .ui_root()
-        .insert((
-            Name::new("Splash screen"),
-            BackgroundColor(SPLASH_BACKGROUND_COLOR),
+        .spawn((
+            widget::ui_root("Splash Screen"),
             StateScoped(Screen::Splash),
-        ))
-        .with_children(|children| {
-            children.spawn((
+            children![(
                 Name::new("Splash image"),
                 Node {
                     margin: UiRect::all(Val::Auto),
@@ -80,8 +75,10 @@ fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
                     fade_duration: SPLASH_FADE_DURATION_SECS,
                     t: 0.0,
                 },
-            ));
-        });
+            )],
+        ))
+        // Override the default background color provided by `ui_root`
+        .insert(BackgroundColor(SPLASH_BACKGROUND_COLOR));
 }
 
 #[derive(Component, Reflect)]
@@ -146,6 +143,6 @@ fn check_splash_timer(timer: ResMut<SplashTimer>, mut next_screen: ResMut<NextSt
     }
 }
 
-fn continue_to_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Title);
 }

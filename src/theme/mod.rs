@@ -5,15 +5,11 @@
 
 pub(crate) mod interaction;
 pub(crate) mod palette;
-mod widgets;
+pub(crate) mod widget;
 
 #[allow(unused_imports)]
 pub(crate) mod prelude {
-    pub(crate) use super::{
-        interaction::InteractionPalette,
-        palette as ui_palette,
-        widgets::{Containers as _, Widgets as _},
-    };
+    pub(crate) use super::{interaction::InteractionPalette, palette as ui_palette, widget};
 }
 
 use bevy::prelude::*;

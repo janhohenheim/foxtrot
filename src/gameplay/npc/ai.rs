@@ -22,7 +22,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
         (
-            setup_npc_agent.param_warn_once(),
+            setup_npc_agent,
             sync_agent_velocity,
             set_controller_velocity,
         )
@@ -56,8 +56,8 @@ fn setup_npc_agent(
                 },
                 AgentTarget3d::Entity(player.0),
                 TargetReachedCondition::Distance(Some(2.0)),
+                ChildOf(entity),
             ))
-            .set_parent(entity)
             .id();
         commands.entity(entity).insert(NpcAgent(agent));
     }

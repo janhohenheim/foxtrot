@@ -12,11 +12,10 @@ pub(super) fn plugin(app: &mut App) {
 /// A [`Command`] to spawn the level.
 /// Functions that accept only `&mut World` as their parameter implement [`Command`].
 /// We use this style when a command requires no configuration.
-pub(crate) fn spawn_level(world: &mut World) {
-    let assets = world.resource::<LevelAssets>();
-    world.spawn((
+pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>) {
+    commands.spawn((
         Name::new("Level"),
-        SceneRoot(assets.level.clone()),
+        SceneRoot(level_assets.level.clone()),
         StateScoped(Screen::Gameplay),
         Level,
     ));
@@ -29,9 +28,9 @@ pub(crate) struct Level;
 /// A [`Resource`] that contains all the assets needed to spawn the level.
 /// We use this to preload assets before the level is spawned.
 #[derive(Resource, Asset, Clone, TypePath)]
-struct LevelAssets {
+pub(crate) struct LevelAssets {
     #[dependency]
-    level: Handle<Scene>,
+    pub(crate) level: Handle<Scene>,
 }
 
 impl FromWorld for LevelAssets {

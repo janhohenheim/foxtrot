@@ -19,7 +19,7 @@ fn play_throw_sound(mut commands: Commands, player_assets: Res<PlayerAssets>) {
 
     commands.spawn((
         AudioPlayer(sound),
-        PlaybackSettings::DESPAWN.with_volume(Volume::new(3.0)),
+        PlaybackSettings::DESPAWN.with_volume(Volume::Linear(3.0)),
         SoundEffect,
     ));
 }

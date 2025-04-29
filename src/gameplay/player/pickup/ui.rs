@@ -18,12 +18,11 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         check_for_pickup_opportunity
-            .param_warn_once()
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::ChangeUi),
     );
-    app.add_observer(hide_crosshair_when_picking_up.param_warn_once());
-    app.add_observer(show_crosshair_when_not_picking_up.never_param_warn());
+    app.add_observer(hide_crosshair_when_picking_up);
+    app.add_observer(show_crosshair_when_not_picking_up);
 }
 
 fn check_for_pickup_opportunity(

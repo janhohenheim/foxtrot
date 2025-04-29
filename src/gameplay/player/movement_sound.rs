@@ -4,7 +4,7 @@ use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 
-use crate::{AppSet, audio::SoundEffect, screens::Screen};
+use crate::{AppSet, audio::sound_effect, screens::Screen};
 
 use super::{Player, assets::PlayerAssets};
 
@@ -39,12 +39,8 @@ fn play_jump_grunt(
     let grunt = player_assets.jump_grunts.pick(rng).clone();
     let jump_start = player_assets.jump_start_sounds.pick(rng).clone();
 
-    commands.spawn((AudioPlayer(grunt), PlaybackSettings::DESPAWN, SoundEffect));
-    commands.spawn((
-        AudioPlayer(jump_start),
-        PlaybackSettings::DESPAWN,
-        SoundEffect,
-    ));
+    commands.spawn(sound_effect(grunt));
+    commands.spawn(sound_effect(jump_start));
 }
 
 fn play_step_sound(
@@ -69,13 +65,8 @@ fn play_step_sound(
         return;
     }
     let rng = &mut rand::thread_rng();
-    let sound_effect = player_assets.steps.pick(rng).clone();
-
-    commands.spawn((
-        AudioPlayer(sound_effect),
-        PlaybackSettings::DESPAWN,
-        SoundEffect,
-    ));
+    let sound = player_assets.steps.pick(rng).clone();
+    commands.spawn(sound_effect(sound));
 }
 
 fn play_land_sound(
@@ -95,11 +86,6 @@ fn play_land_sound(
     *was_airborne = false;
 
     let rng = &mut rand::thread_rng();
-    let sound_effect = player_assets.land_sounds.pick(rng).clone();
-
-    commands.spawn((
-        AudioPlayer(sound_effect),
-        PlaybackSettings::DESPAWN,
-        SoundEffect,
-    ));
+    let sound = player_assets.land_sounds.pick(rng).clone();
+    commands.spawn(sound_effect(sound));
 }

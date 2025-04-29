@@ -37,7 +37,7 @@ pub(crate) fn setup_player_animations(
     assets: Res<PlayerAssets>,
     mut graphs: ResMut<Assets<AnimationGraph>>,
 ) {
-    let anim_player = q_anim_player_link.get(trigger.entity()).unwrap().0;
+    let anim_player = q_anim_player_link.get(trigger.target()).unwrap().0;
 
     let (graph, indices) = AnimationGraph::from_clips([
         assets.idle_animation.clone(),

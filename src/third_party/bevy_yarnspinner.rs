@@ -23,10 +23,11 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>) {
+    let dialogue_runner = yarn_project.create_dialogue_runner(&mut commands);
     commands.spawn((
         StateScoped(Screen::Gameplay),
         Name::new("Dialogue Runner"),
-        yarn_project.create_dialogue_runner(),
+        dialogue_runner,
     ));
 }
 
@@ -35,7 +36,7 @@ fn abort_all_dialogues_when_leaving_gameplay(
     mut dialogue_complete_events: EventWriter<DialogueCompleteEvent>,
 ) {
     for dialogue_runner in q_dialogue_runner.iter() {
-        dialogue_complete_events.send(DialogueCompleteEvent {
+        dialogue_complete_events.write(DialogueCompleteEvent {
             source: dialogue_runner,
         });
     }

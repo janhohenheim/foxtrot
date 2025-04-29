@@ -3,9 +3,9 @@
 use bevy::prelude::*;
 
 use crate::{
-    gameplay::{level::spawn_level as spawn_level_command, player::camera::PlayerCamera},
+    gameplay::{level::spawn_level, player::camera::PlayerCamera},
     screens::Screen,
-    theme::{palette::SCREEN_BACKGROUND, prelude::*},
+    theme::prelude::*,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -20,19 +20,11 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn spawn_spawn_level_screen(mut commands: Commands) {
-    commands
-        .ui_root()
-        .insert((
-            StateScoped(Screen::SpawnLevel),
-            BackgroundColor(SCREEN_BACKGROUND),
-        ))
-        .with_children(|children| {
-            children.label("Spawning Level...");
-        });
-}
-
-fn spawn_level(mut commands: Commands) {
-    commands.queue(spawn_level_command);
+    commands.spawn((
+        widget::ui_root("Loading Screen"),
+        StateScoped(Screen::SpawnLevel),
+        children![widget::label("Spawning Level...")],
+    ));
 }
 
 fn advance_to_gameplay_screen(

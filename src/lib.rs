@@ -15,10 +15,12 @@ use bitflags::bitflags;
 use bevy::{
     asset::AssetMetaCheck,
     audio::{AudioPlugin, Volume},
-    core_pipeline::experimental::taa::TemporalAntiAliasPlugin,
     prelude::*,
     render::view::RenderLayers,
 };
+
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
 
 pub struct AppPlugin;
 
@@ -58,11 +60,12 @@ impl Plugin for AppPlugin {
                 })
                 .set(AudioPlugin {
                     global_volume: GlobalVolume {
-                        volume: Volume::new(0.3),
+                        volume: Volume::Linear(0.3),
                     },
                     ..default()
                 }),
         );
+        #[cfg(not(target_family = "wasm"))]
         app.add_plugins(TemporalAntiAliasPlugin);
 
         // Add third-party plugins.

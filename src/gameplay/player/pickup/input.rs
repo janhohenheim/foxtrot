@@ -8,9 +8,9 @@ use bevy_enhanced_input::prelude::*;
 use crate::gameplay::player::default_input::{DropProp, PickupProp};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_observer(pull_prop.param_warn_once());
-    app.add_observer(throw_prop.param_warn_once());
-    app.add_observer(drop_prop.param_warn_once());
+    app.add_observer(pull_prop);
+    app.add_observer(throw_prop);
+    app.add_observer(drop_prop);
 }
 
 fn pull_prop(
@@ -18,7 +18,7 @@ fn pull_prop(
     actor: Single<Entity, With<AvianPickupActor>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {
-    avian_pickup_input_writer.send(AvianPickupInput {
+    avian_pickup_input_writer.write(AvianPickupInput {
         action: AvianPickupAction::Pull,
         actor: *actor,
     });
@@ -29,7 +29,7 @@ fn throw_prop(
     actor: Single<Entity, With<AvianPickupActor>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {
-    avian_pickup_input_writer.send(AvianPickupInput {
+    avian_pickup_input_writer.write(AvianPickupInput {
         action: AvianPickupAction::Throw,
         actor: *actor,
     });
@@ -40,7 +40,7 @@ fn drop_prop(
     actor: Single<Entity, With<AvianPickupActor>>,
     mut avian_pickup_input_writer: EventWriter<AvianPickupInput>,
 ) {
-    avian_pickup_input_writer.send(AvianPickupInput {
+    avian_pickup_input_writer.write(AvianPickupInput {
         action: AvianPickupAction::Drop,
         actor: *actor,
     });

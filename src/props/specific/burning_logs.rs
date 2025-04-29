@@ -1,24 +1,27 @@
+#[cfg(not(target_arch = "wasm32"))]
 use std::f32::consts::TAU;
 
+#[cfg(feature = "native")]
+use crate::{RenderLayer, asset_tracking::LoadResource as _};
 use avian3d::prelude::*;
+#[cfg(not(target_arch = "wasm32"))]
+use bevy::render::view::RenderLayers;
 use bevy::{
     audio::{SpatialScale, Volume},
-    ecs::{component::ComponentId, world::DeferredWorld},
     prelude::*,
-    render::view::RenderLayers,
 };
 #[cfg(feature = "native")]
 use bevy_hanabi::prelude::*;
-use bevy_trenchbroom::util::IsSceneWorld as _;
 
 use crate::{
-    AppSet, RenderLayer,
-    asset_tracking::LoadResource,
+    AppSet,
     props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
     screens::Screen,
 };
 
 pub(super) fn plugin(app: &mut App) {
+    #[cfg(not(target_arch = "wasm32"))]
+    // This causes https://github.com/bevyengine/bevy/issues/18980
     app.load_resource::<BurningLogsAssets>();
     app.register_type::<Flicker>();
     app.add_systems(
@@ -27,10 +30,12 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::Update),
     );
+    app.add_observer(setup_burning_logs);
 }
 
 #[derive(Resource, Asset, Clone, TypePath)]
 struct BurningLogsAssets {
+    #[cfg(not(target_arch = "wasm32"))]
     #[dependency]
     texture: Handle<Image>,
     #[dependency]
@@ -41,30 +46,33 @@ impl FromWorld for BurningLogsAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
         Self {
+            #[cfg(not(target_arch = "wasm32"))]
             texture: assets.load(TEXTURE_PATH),
             sound: assets.load(SOUND_PATH),
         }
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 const TEXTURE_PATH: &str = "images/Flame.png";
 const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 
 const BASE_INTENSITY: f32 = 150_000.0;
 
-pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: ComponentId) {
-    if world.is_scene_world() {
-        return;
-    }
+pub(crate) fn setup_burning_logs(
+    trigger: Trigger<OnAdd, BurningLogs>,
+    asset_server: Res<AssetServer>,
+    #[cfg(feature = "native")] mut effects: ResMut<Assets<EffectAsset>>,
+    mut commands: Commands,
+) {
     let static_bundle =
-        static_bundle::<BurningLogs>(&world, ColliderConstructor::ConvexHullFromMesh);
+        static_bundle::<BurningLogs>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
     #[cfg(feature = "native")]
-    let particle_bundle = particle_bundle(&mut world);
-    let sound_effect: Handle<AudioSource> = world.resource_mut::<AssetServer>().load(SOUND_PATH);
+    let particle_bundle = particle_bundle(&asset_server, &mut effects);
+    let sound_effect: Handle<AudioSource> = asset_server.load(SOUND_PATH);
 
-    world
-        .commands()
-        .entity(entity)
+    commands
+        .entity(trigger.target())
         .insert((
             static_bundle,
             #[cfg(feature = "native")]
@@ -72,7 +80,7 @@ pub(crate) fn setup_burning_logs(mut world: DeferredWorld, entity: Entity, _id: 
             AudioPlayer(sound_effect),
             PlaybackSettings::LOOP
                 .with_spatial(true)
-                .with_volume(Volume::new(0.25))
+                .with_volume(Volume::Linear(0.25))
                 .with_spatial_scale(SpatialScale::new(0.3)),
         ))
         .observe(prepare_light_mesh)
@@ -103,9 +111,9 @@ fn flicker_light(time: Res<Time>, mut query: Query<&mut PointLight, With<Flicker
 }
 
 #[cfg(feature = "native")]
-fn particle_bundle(world: &mut DeferredWorld) -> impl Bundle {
-    let effect_handle = setup_particles(&mut world.resource_mut::<Assets<EffectAsset>>());
-    let texture: Handle<Image> = world.resource_mut::<AssetServer>().load(TEXTURE_PATH);
+fn particle_bundle(asset_server: &AssetServer, effects: &mut Assets<EffectAsset>) -> impl Bundle {
+    let effect_handle = setup_particles(effects);
+    let texture: Handle<Image> = asset_server.load(TEXTURE_PATH);
     (
         ParticleEffect::new(effect_handle),
         RenderLayers::from(RenderLayer::PARTICLES),

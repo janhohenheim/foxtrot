@@ -14,18 +14,14 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            capture_cursor
-                .param_warn_once()
-                .run_if(not(is_dialogue_running).and(not(is_cursor_forced_freed))),
-            release_cursor
-                .param_warn_once()
-                .run_if(on_event::<DialogueStartEvent>.or(is_cursor_forced_freed)),
+            capture_cursor.run_if(not(is_dialogue_running).and(not(is_cursor_forced_freed))),
+            release_cursor.run_if(on_event::<DialogueStartEvent>.or(is_cursor_forced_freed)),
         )
             .chain()
             .run_if(in_state(Screen::Gameplay))
             .in_set(AppSet::ChangeUi),
     );
-    app.add_systems(OnExit(Screen::Gameplay), release_cursor.param_warn_once());
+    app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }
 
 fn capture_cursor(

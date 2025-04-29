@@ -4,15 +4,24 @@
 
 use bevy::{audio::Volume, prelude::*, ui::Val::*};
 
-use crate::{screens::Screen, theme::prelude::*};
+use crate::{
+    audio::{DEFAULT_VOLUME, max_volume},
+    screens::Screen,
+    theme::prelude::*,
+};
 
 pub(super) fn plugin(app: &mut App) {
+    app.init_resource::<VolumeSliderSettings>();
     app.add_systems(OnEnter(Screen::Settings), spawn_settings_screen);
 
     app.register_type::<GlobalVolumeLabel>();
     app.add_systems(
         Update,
-        update_volume_label.run_if(in_state(Screen::Settings)),
+        (
+            update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
+            update_volume_label,
+        )
+            .run_if(in_state(Screen::Settings)),
     );
 }
 
@@ -55,6 +64,7 @@ fn volume_widget() -> impl Bundle {
         },
         children![
             widget::button_small("-", lower_volume),
+            widget::button_small("+", raise_volume),
             (
                 Node {
                     padding: UiRect::horizontal(Px(10.0)),
@@ -63,22 +73,67 @@ fn volume_widget() -> impl Bundle {
                 },
                 children![(widget::label(""), GlobalVolumeLabel)],
             ),
-            widget::button_small("+", raise_volume),
         ],
     )
 }
 
-const MIN_VOLUME: f32 = 0.0;
-const MAX_VOLUME: f32 = 3.0;
+#[derive(Resource, Reflect, Debug)]
+struct VolumeSliderSettings(usize);
 
-fn lower_volume(_: Trigger<Pointer<Click>>, mut global_volume: ResMut<GlobalVolume>) {
-    let new_factor = global_volume.volume.to_linear() - 0.1;
-    global_volume.volume = Volume::Linear(new_factor.max(MIN_VOLUME));
+impl VolumeSliderSettings {
+    fn increment(&mut self) {
+        self.0 = Self::MAX_TICK_COUNT.min(self.0 + 1);
+    }
+
+    fn decrement(&mut self) {
+        self.0 = self.0.saturating_sub(1);
+    }
+
+    fn volume(&self) -> Volume {
+        let max_gain = max_volume().to_linear();
+        let mid_gain = DEFAULT_VOLUME.to_linear();
+
+        let t = self.0 as f32 / Self::MAX_TICK_COUNT as f32;
+        let gain = Self::curved_interpolation(t, mid_gain, max_gain);
+        Volume::Linear(gain)
+    }
+
+    /// Interpolates between 0, a, and b nonlinearly,
+    /// such that t = 0 -> 0, t = 0.5 -> a, t = 1 -> b
+    fn curved_interpolation(t: f32, a: f32, b: f32) -> f32 {
+        if t <= 0.5 {
+            let t2 = t / 0.5;
+            a * (3.0 * t2.powi(2) - 2.0 * t2.powi(3))
+        } else {
+            let t2 = (t - 0.5) / 0.5;
+            let smooth = 3.0 * t2.powi(2) - 2.0 * t2.powi(3);
+            a + (b - a) * smooth
+        }
+    }
+
+    /// How many ticks the volume slider supports
+    const MAX_TICK_COUNT: usize = 20;
 }
 
-fn raise_volume(_: Trigger<Pointer<Click>>, mut global_volume: ResMut<GlobalVolume>) {
-    let new_factor = global_volume.volume.to_linear() + 0.1;
-    global_volume.volume = Volume::Linear(new_factor.min(MAX_VOLUME));
+impl Default for VolumeSliderSettings {
+    fn default() -> Self {
+        Self(Self::MAX_TICK_COUNT / 2)
+    }
+}
+
+fn update_global_volume(
+    mut global_volume: ResMut<GlobalVolume>,
+    volume_step: Res<VolumeSliderSettings>,
+) {
+    global_volume.volume = volume_step.volume();
+}
+
+fn lower_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
+    volume_step.decrement();
+}
+
+fn raise_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
+    volume_step.increment();
 }
 
 #[derive(Component, Reflect)]
@@ -87,11 +142,12 @@ struct GlobalVolumeLabel;
 
 fn update_volume_label(
     mut label: Single<&mut Text, With<GlobalVolumeLabel>>,
-    global_volume: Res<GlobalVolume>,
+    slider: Res<VolumeSliderSettings>,
 ) {
-    let factor = global_volume.volume.to_linear();
-    let percent = (factor * 100.0).round();
-    let text = format!("{}%", percent);
+    let ticks = slider.0;
+    let filled = "█".repeat(ticks);
+    let empty = " ".repeat(VolumeSliderSettings::MAX_TICK_COUNT - ticks);
+    let text = filled + &empty + "|";
     label.0 = text;
 }
 

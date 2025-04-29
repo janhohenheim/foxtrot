@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{audio::Volume, prelude::*};
 
 /// An organizational marker component that should be added to a spawned [`AudioPlayer`] if it's in the
 /// general "music" category (e.g. global background music, soundtrack).
@@ -22,4 +22,10 @@ pub(crate) struct SoundEffect;
 /// A sound effect audio instance.
 pub(crate) fn sound_effect(handle: Handle<AudioSource>) -> impl Bundle {
     (AudioPlayer(handle), PlaybackSettings::DESPAWN, SoundEffect)
+}
+
+pub(crate) const DEFAULT_VOLUME: Volume = Volume::Linear(0.3);
+
+pub(crate) fn max_volume() -> Volume {
+    DEFAULT_VOLUME + Volume::Decibels(5.0)
 }

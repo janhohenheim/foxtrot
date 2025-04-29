@@ -39,7 +39,7 @@ fn setup_npc_agent(
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
     let npc = trigger.target();
-    commands.entity(npc).with_related::<AgentOf>((
+    commands.spawn((
         Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
         Agent3dBundle {
             agent: default(),
@@ -53,6 +53,7 @@ fn setup_npc_agent(
         AgentTarget3d::Entity(player.0),
         TargetReachedCondition::Distance(Some(2.0)),
         ChildOf(npc),
+        AgentOf(npc),
     ));
 }
 

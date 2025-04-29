@@ -3,7 +3,7 @@
 use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
-use bevy::prelude::*;
+use bevy::{ecs::relationship::Relationship as _, prelude::*};
 use bevy_landmass::{
     TargetReachedCondition,
     prelude::{
@@ -21,59 +21,56 @@ pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 8.0;
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         RunFixedMainLoop,
-        (
-            setup_npc_agent,
-            sync_agent_velocity,
-            set_controller_velocity,
-        )
+        (sync_agent_velocity, set_controller_velocity)
             .chain()
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
             .before(LandmassSystemSet::SyncExistence)
             .run_if(in_state(Screen::Gameplay)),
     );
+    app.add_observer(setup_npc_agent);
 }
 
 /// Setup the NPC agent. An "agent" is what `bevy_landmass` can move around.
 /// Since we use a floating character controller, we need to offset the agent's position by the character's float height.
 fn setup_npc_agent(
+    trigger: Trigger<OnAdd, Npc>,
     mut commands: Commands,
-    q_uninitialized: Query<Entity, (With<Npc>, Without<NpcAgent>)>,
     player: Single<&PlayerLandmassCharacter>,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    for entity in q_uninitialized.iter() {
-        let agent = commands
-            .spawn((
-                Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
-                Agent3dBundle {
-                    agent: default(),
-                    settings: AgentSettings {
-                        radius: NPC_RADIUS,
-                        desired_speed: 7.0,
-                        max_speed: 8.0,
-                    },
-                    archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-                },
-                AgentTarget3d::Entity(player.0),
-                TargetReachedCondition::Distance(Some(2.0)),
-                ChildOf(entity),
-            ))
-            .id();
-        commands.entity(entity).insert(NpcAgent(agent));
-    }
+    let npc = trigger.target();
+    commands.entity(npc).with_related::<AgentOf>((
+        Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
+        Agent3dBundle {
+            agent: default(),
+            settings: AgentSettings {
+                radius: NPC_RADIUS,
+                desired_speed: 7.0,
+                max_speed: 8.0,
+            },
+            archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+        },
+        AgentTarget3d::Entity(player.0),
+        TargetReachedCondition::Distance(Some(2.0)),
+        ChildOf(npc),
+    ));
 }
 
-/// A link from the NPC itself to its agent entity.
-#[derive(Component)]
-struct NpcAgent(Entity);
+#[derive(Component, Deref, Debug)]
+#[relationship(relationship_target = Agent)]
+struct AgentOf(Entity);
+
+#[derive(Component, Deref, Debug)]
+#[relationship_target(relationship = AgentOf)]
+struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
-    mut agent_query: Query<(&mut TnuaController, &NpcAgent)>,
+    mut agent_query: Query<(&mut TnuaController, &Agent)>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
 ) {
-    for (mut controller, npc_agent) in &mut agent_query {
-        let Ok(desired_velocity) = desired_velocity_query.get(npc_agent.0) else {
+    for (mut controller, agent) in &mut agent_query {
+        let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();

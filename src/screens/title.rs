@@ -14,29 +14,29 @@ fn spawn_title_screen(mut commands: Commands) {
         StateScoped(Screen::Title),
         #[cfg(not(target_family = "wasm"))]
         children![
-            widget::button("Play", enter_loading_or_gameplay_screen),
+            widget::button("Play", enter_loading_or_spawn_screen),
             widget::button("Settings", enter_settings_screen),
             widget::button("Credits", enter_credits_screen),
             widget::button("Exit", exit_app),
         ],
         #[cfg(target_family = "wasm")]
         children![
-            widget::button("Play", enter_loading_or_gameplay_screen),
+            widget::button("Play", enter_loading_or_spawn_screen),
             widget::button("Settings", enter_settings_screen),
             widget::button("Credits", enter_credits_screen),
         ],
     ));
 }
 
-fn enter_loading_or_gameplay_screen(
+fn enter_loading_or_spawn_screen(
     _: Trigger<Pointer<Click>>,
     resource_handles: Res<ResourceHandles>,
     mut next_screen: ResMut<NextState<Screen>>,
 ) {
     if resource_handles.is_all_done() {
-        next_screen.set(Screen::Gameplay);
+        next_screen.set(Screen::SpawnLevel);
     } else {
-        next_screen.set(Screen::Loading);
+        next_screen.set(Screen::Gameplay);
     }
 }
 

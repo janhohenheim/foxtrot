@@ -17,9 +17,9 @@ mod util;
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
         let config = TrenchBroomConfig::new("foxtrot")
-            .generic_material_extension("material.toml")
+            .generic_material_extension("toml")
             .texture_exclusions(
-                ["*_disp_*", "*_arm_*", "*_nor_*"]
+                ["*_disp_*", "*_arm_*", "*_nor_*", "*_local"]
                     .into_iter()
                     .map(String::from)
                     .collect::<Vec<_>>(),

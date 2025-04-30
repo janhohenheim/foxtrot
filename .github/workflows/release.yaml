@@ -51,12 +51,12 @@ env:
 
   # The name of the `.zip` or `.dmg` file produced by this workflow.
   # Defaults to `app_binary_name` if commented out.
-  #app_package_name: foxtrot
+  app_package_name: foxtrot
 
   # The display name of the app produced by this workflow.
   # Applies to macOS releases.
   # Defaults to `app_package_name` if commented out.
-  #app_display_name: Foxtrot
+  app_display_name: Foxtrot
 
   # The short display name of the app produced by this workflow.
   # Applies to macOS releases.
@@ -71,6 +71,7 @@ env:
   # Enabling this only helps with consecutive releases to the same tag (and takes up cache storage space).
   # See: https://github.com/orgs/community/discussions/27059
   use_github_cache: false
+
 jobs:
   # Forward some environment variables as outputs of this job.
   # This is needed because the `env` context can't be used in the `if:` condition of a job:
@@ -179,9 +180,9 @@ jobs:
 
       - name: Populate cargo cache
         if: ${{ env.is_platform_enabled == 'true' && env.use_github_cache == 'true' }}
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install dependencies (Linux)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
@@ -195,7 +196,7 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
           cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-          bevy build --locked --profile='${{ matrix.profile }}' --no-default-features true --features='${{ matrix.features }}' --yes web --bundle
+          bevy build --locked --profile='${{ matrix.profile }}' --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
@@ -205,7 +206,7 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
           for target in ${{ matrix.targets }}; do
-            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features true --features='${{ matrix.features }}'
+            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features --features='${{ matrix.features }}'
             mv target/"${target}"/'${{ matrix.profile }}/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
           done
 

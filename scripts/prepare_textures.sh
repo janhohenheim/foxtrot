@@ -43,6 +43,23 @@ main() {
                 # create the material file
                 echo "inherits = \"/textures/darkmod.toml\"" > "${name_without_suffix}.toml"
             fi
+
+            # Warn if the base color name (without the extension) is longer than 16 characters
+            local stripped_name=$(basename "${file}" ".${extension}")
+            local non_base_suffixes=('_local' '_disp' '_arm' '_nor')
+            local has_suffix=false
+            for suffix in "${non_base_suffixes[@]}"; do
+                if [[ "$stripped_name" == *"$suffix"* ]]; then
+                    has_suffix=true
+                    break
+                fi
+            done
+            if [[ "$has_suffix" == false ]]; then
+                if [[ "${stripped_name}" =~ ^.{17,}$ ]]; then
+                    # emit a warning
+                    echo "Warning: The file name ${stripped_name} is longer than 16 characters"
+                fi
+            fi
         done
     done
 }

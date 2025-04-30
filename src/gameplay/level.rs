@@ -38,7 +38,7 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
         Self {
             //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
-            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
+            level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
         }
     }
 }

@@ -1,0 +1,4 @@
+inherits = "darkmod.toml"
+
+[material]
+perceptual_roughness = 0.9

@@ -856,7 +856,7 @@ dependencies = [
 [[package]]
 name = "bevy_hanabi"
 version = "0.16.0-dev"
-source = "git+https://github.com/djeedai/bevy_hanabi?branch=main#cba3390656beb05a8e17a5b7dc5cfa5b8850c9e2"
+source = "git+https://github.com/djeedai/bevy_hanabi?branch=main#db48d6d595f0f6cc82bc80b97d87fee3b4069c86"
 dependencies = [
  "anyhow",
  "bevy",
@@ -1480,7 +1480,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#017e52cfd30e2655f737646cdde627d5d7820a1d"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1510,7 +1510,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#017e52cfd30e2655f737646cdde627d5d7820a1d"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -4628,9 +4628,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95e32743274c37419037ab6b3293461583cafb4b0c4c82f76c9c6e0211e4b91a"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "bevy_reflect",
  "derive_more 2.0.1",
@@ -4646,9 +4645,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp_macros"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d0b2163a90c0ed9192d85cc41d6cb520f8ba138d729a2f7dbd2e4e70f3cbecc"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5087,9 +5085,9 @@ dependencies = [
 
 [[package]]
 name = "sha2"
-version = "0.10.8"
+version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "793db75ad2bcafc3ffa7c68b215fee268f537982cd901d132f89c6343f3a3dc8"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
 dependencies = [
  "cfg-if",
  "cpufeatures",
@@ -6468,9 +6466,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winit"
-version = "0.30.9"
+version = "0.30.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a809eacf18c8eca8b6635091543f02a5a06ddf3dad846398795460e6e0ae3cc0"
+checksum = "b0d05bd8908e14618c9609471db04007e644fd9cce6529756046cfc577f9155e"
 dependencies = [
  "android-activity",
  "atomic-waker",

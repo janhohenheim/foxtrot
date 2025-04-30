@@ -51,12 +51,12 @@ env:
 
   # The name of the `.zip` or `.dmg` file produced by this workflow.
   # Defaults to `app_binary_name` if commented out.
-  #app_package_name: foxtrot
+  app_package_name: foxtrot
 
   # The display name of the app produced by this workflow.
   # Applies to macOS releases.
   # Defaults to `app_package_name` if commented out.
-  #app_display_name: Foxtrot
+  app_display_name: Foxtrot
 
   # The short display name of the app produced by this workflow.
   # Applies to macOS releases.
@@ -71,6 +71,7 @@ env:
   # Enabling this only helps with consecutive releases to the same tag (and takes up cache storage space).
   # See: https://github.com/orgs/community/discussions/27059
   use_github_cache: false
+
 jobs:
   # Forward some environment variables as outputs of this job.
   # This is needed because the `env` context can't be used in the `if:` condition of a job:
@@ -105,7 +106,7 @@ jobs:
         include:
           - platform: web
             targets: wasm32-unknown-unknown
-            profile: web-release
+            profile: release
             binary_ext: .wasm
             package_ext: .zip
             runner: ubuntu-latest
@@ -113,13 +114,14 @@ jobs:
           - platform: linux
             targets: x86_64-unknown-linux-gnu
             profile: release
-            features: bevy/wayland
+            features: bevy/wayland,native
             package_ext: .zip
             runner: ubuntu-latest
 
           - platform: windows
             targets: x86_64-pc-windows-msvc
             profile: release
+            features: native
             binary_ext: .exe
             package_ext: .zip
             runner: windows-latest
@@ -127,6 +129,7 @@ jobs:
           - platform: macos
             targets: x86_64-apple-darwin aarch64-apple-darwin
             profile: release
+            features: native
             app_suffix: .app/Contents/MacOS
             package_ext: .dmg
             runner: macos-latest
@@ -179,9 +182,9 @@ jobs:
 
       - name: Populate cargo cache
         if: ${{ env.is_platform_enabled == 'true' && env.use_github_cache == 'true' }}
-        uses: Leafwing-Studios/cargo-cache@v2
+        uses: Swatinem/rust-cache@v2
         with:
-          sweep-cache: true
+          save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install dependencies (Linux)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
@@ -195,7 +198,7 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
           cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-          bevy build --locked --profile='${{ matrix.profile }}' --no-default-features --features='${{ matrix.features }}' --yes web --bundle
+          bevy build --locked --profile='${{ matrix.profile }}' --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}

@@ -81,19 +81,27 @@ dev_native = [
     "oxidized_navigation/debug_draw",
 ]
 
-
-[package.metadata.bevy_cli.release]
-# Disable debug functionality in release builds
+[package.metadata.bevy_cli]
 default_features = false
+
+[package.metadata.bevy_cli.native]
 features = ["native"]
 
+[package.metadata.bevy_cli.native.dev]
+features = ["dev"]
+
 [package.metadata.bevy_cli.web]
-# Disable native-only debug functionality in web builds
-default_features = false
 rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]
 
 [package.metadata.bevy_cli.web.dev]
 features = ["dev"]
+
+[package.metadata.bevy_cli.web.release]
+# Optimize with size in mind (also try "z", sometimes it is better).
+# Slightly slows compile times, great improvements to file size and runtime performance.
+opt-level = "s"
+# Strip all debugging information from the binary to slightly reduce file size.
+strip = "debuginfo"
 
 [lints.clippy]
 # Bevy supplies arguments to systems via dependency injection, so it's natural for systems to
@@ -129,13 +137,3 @@ avian3d = { git = "https://github.com/Jondolf/avian", branch = "main" }
 bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", optional = true }
 bevy-tnua = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
 bevy-tnua-avian3d = { git = "https://github.com/janhohenheim/bevy-tnua", branch = "bevy-0.16" }
-
-# This profile will be used for `bevy run web` automatically
-[profile.web-release]
-# Default to release profile values.
-inherits = "release"
-# Optimize with size in mind (also try "z", sometimes it is better).
-# Slightly slows compile times, great improvements to file size and runtime performance.
-opt-level = "s"
-# Strip all debugging information from the binary to slightly reduce file size.
-strip = "debuginfo"

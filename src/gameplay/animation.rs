@@ -22,7 +22,7 @@ pub(crate) struct AnimationPlayers(Vec<Entity>);
 #[derive(Component, Reflect, Deref)]
 #[reflect(Component)]
 #[relationship(relationship_target = AnimationPlayers)]
-pub(crate) struct AnimationPlayerOf(Entity);
+pub(crate) struct AnimationPlayerOf(pub(crate) Entity);
 
 /// Bevy likes to hide the [`AnimationPlayer`] component deep in the hierarchy of a model.
 /// This system ensures that we can find the animation player easily by inserting an [`AnimationPlayers`] relationship

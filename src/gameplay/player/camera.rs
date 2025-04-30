@@ -94,7 +94,7 @@ fn spawn_view_model(
                 Camera {
                     order: CameraOrder::World.into(),
                     // HDR is not supported on WebGL2
-                    hdr: cfg!(not(target_family = "wasm")),
+                    hdr: cfg!(feature = "native"),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
@@ -118,7 +118,7 @@ fn spawn_view_model(
                     // Bump the order to render on top of the world model.
                     order: CameraOrder::ViewModel.into(),
                     // HDR is not supported on WebGL2
-                    hdr: cfg!(not(target_family = "wasm")),
+                    hdr: cfg!(feature = "native"),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {

@@ -1,5 +1,5 @@
 type = "StandardMaterial"
 
 [material]
-base_color_texture = "${name}_ed.jpg"
-normal_map_texture = "${name}_local.tga"
+base_color_texture = "${name}.png"
+normal_map_texture = "${name}_local.png"

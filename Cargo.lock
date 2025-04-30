@@ -856,7 +856,7 @@ dependencies = [
 [[package]]
 name = "bevy_hanabi"
 version = "0.16.0-dev"
-source = "git+https://github.com/djeedai/bevy_hanabi?branch=main#cba3390656beb05a8e17a5b7dc5cfa5b8850c9e2"
+source = "git+https://github.com/djeedai/bevy_hanabi?branch=main#db48d6d595f0f6cc82bc80b97d87fee3b4069c86"
 dependencies = [
  "anyhow",
  "bevy",
@@ -5087,9 +5087,9 @@ dependencies = [
 
 [[package]]
 name = "sha2"
-version = "0.10.8"
+version = "0.10.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "793db75ad2bcafc3ffa7c68b215fee268f537982cd901d132f89c6343f3a3dc8"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
 dependencies = [
  "cfg-if",
  "cpufeatures",
@@ -6468,9 +6468,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winit"
-version = "0.30.9"
+version = "0.30.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a809eacf18c8eca8b6635091543f02a5a06ddf3dad846398795460e6e0ae3cc0"
+checksum = "b0d05bd8908e14618c9609471db04007e644fd9cce6529756046cfc577f9155e"
 dependencies = [
  "android-activity",
  "atomic-waker",

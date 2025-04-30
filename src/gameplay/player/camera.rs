@@ -26,7 +26,7 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::{
     AppSet, CameraOrder, RenderLayer,
-    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayers},
+    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath},
 };
@@ -94,7 +94,7 @@ fn spawn_view_model(
                 Camera {
                     order: CameraOrder::World.into(),
                     // HDR is not supported on WebGL2
-                    hdr: cfg!(not(target_family = "wasm")),
+                    hdr: cfg!(feature = "native"),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
@@ -118,7 +118,7 @@ fn spawn_view_model(
                     // Bump the order to render on top of the world model.
                     order: CameraOrder::ViewModel.into(),
                     // HDR is not supported on WebGL2
-                    hdr: cfg!(not(target_family = "wasm")),
+                    hdr: cfg!(feature = "native"),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {
@@ -158,10 +158,11 @@ fn move_anim_players_relationship_to_player(
     mut commands: Commands,
 ) {
     let anim_players = q_anim_player.get(trigger.target()).unwrap();
-    commands
-        .entity(trigger.target())
-        .remove::<AnimationPlayers>();
-    commands.entity(*player).insert(anim_players.clone());
+    for anim_player in anim_players.iter() {
+        commands
+            .entity(anim_player)
+            .insert(AnimationPlayerOf(*player));
+    }
 }
 
 fn configure_player_view_model(

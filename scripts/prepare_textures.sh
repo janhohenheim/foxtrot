@@ -55,7 +55,8 @@ main() {
                 fi
             done
             if [[ "$has_suffix" == false ]]; then
-                if [[ "${stripped_name}" =~ ^.{17,}$ ]]; then
+                # The quake 1 map format only supports 16 character file names
+                if [[ "${stripped_name}" =~ ^.{16,}$ ]]; then
                     # emit a warning
                     echo "Warning: The file name ${stripped_name} is longer than 16 characters"
                 fi

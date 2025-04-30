@@ -36,8 +36,12 @@ pub(crate) struct LevelAssets {
 impl FromWorld for LevelAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
+
         Self {
-            //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
+            //  Run ./scripts/compile_maps.sh when we're done prototyping and want some extra performance
+            #[cfg(feature = "dev")]
+            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
+            #[cfg(not(feature = "dev"))]
             level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
         }
     }

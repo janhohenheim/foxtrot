@@ -81,15 +81,16 @@ dev_native = [
     "oxidized_navigation/debug_draw",
 ]
 
-
-[package.metadata.bevy_cli.release]
-# Disable debug functionality in release builds
+[package.metadata.bevy_cli]
 default_features = false
+
+[package.metadata.bevy_cli.native]
 features = ["native"]
 
+[package.metadata.bevy_cli.native.dev]
+features = ["dev"]
+
 [package.metadata.bevy_cli.web]
-# Disable native-only debug functionality in web builds
-default_features = false
 rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]
 
 [package.metadata.bevy_cli.web.dev]

@@ -114,17 +114,14 @@ jobs:
           - platform: linux
             targets: x86_64-unknown-linux-gnu
             profile: release
-            features:
-              - bevy/wayland
-              - native
+            features: bevy/wayland,native
             package_ext: .zip
             runner: ubuntu-latest
 
           - platform: windows
             targets: x86_64-pc-windows-msvc
             profile: release
-            features:
-              - native
+            features: native
             binary_ext: .exe
             package_ext: .zip
             runner: windows-latest
@@ -132,8 +129,7 @@ jobs:
           - platform: macos
             targets: x86_64-apple-darwin aarch64-apple-darwin
             profile: release
-            features:
-              - native
+            features: native
             app_suffix: .app/Contents/MacOS
             package_ext: .dmg
             runner: macos-latest

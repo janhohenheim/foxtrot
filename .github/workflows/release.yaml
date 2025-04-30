@@ -195,7 +195,7 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
           cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-          bevy build --locked --profile='${{ matrix.profile }}' --no-default-features --features='${{ matrix.features }}' --yes web --bundle
+          bevy build --locked --profile='${{ matrix.profile }}' --no-default-features true --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
@@ -205,7 +205,7 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
           for target in ${{ matrix.targets }}; do
-            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features --features='${{ matrix.features }}'
+            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features true --features='${{ matrix.features }}'
             mv target/"${target}"/'${{ matrix.profile }}/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
           done
 

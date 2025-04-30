@@ -129,7 +129,7 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "hotfix" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }

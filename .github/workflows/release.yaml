@@ -106,7 +106,7 @@ jobs:
         include:
           - platform: web
             targets: wasm32-unknown-unknown
-            profile: web-release
+            profile: release
             binary_ext: .wasm
             package_ext: .zip
             runner: ubuntu-latest

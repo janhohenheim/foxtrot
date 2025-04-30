@@ -88,7 +88,7 @@ default_features = false
 features = ["native"]
 
 [package.metadata.bevy_cli.native.dev]
-features = ["dev"]
+features = ["dev_native"]
 
 [package.metadata.bevy_cli.web]
 rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]

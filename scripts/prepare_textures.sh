@@ -13,11 +13,22 @@ readonly DARKMOD_SUFFIX='_ed.png'
 main() {
     for extension in "${FILE_EXTENSIONS[@]}"; do
         for file in "${TEXTURES_PATH}"/**/*.${extension}; do
-            # convert to PNG with rgb8
-            magick "${file}" -depth 8 "${file%.${extension}}.png"
-            # remove the original file if it was converted
             if [[ "${file%.${extension}}.png" != "${file}" ]]; then
+                # convert to PNG with rgb8
+                magick "${file}" -depth 8 "${file%.${extension}}.png"
+                # remove the unconverted file
                 rm "${file}"
+            else
+                # These are already PNGs, so let's see if we need to adjust the depth
+                local colorspace=$(identify -format "%[colorspace]" "${file}")
+                local depth=$(identify -format "%[depth]" "${file}")
+                # We allow only 2, 4, 8 as depths and only sRGB and Gray as colorspaces
+                # I believe this is what Bevy supports? If we see crashes when loading the textures, we can try other depths
+                local allowed_depths=('2' '4' '8')
+                local allowed_colorspaces=('sRGB' 'Gray')
+                if [[ ! " ${allowed_depths[@]} " =~ " ${depth} " ]] || [[ ! " ${allowed_colorspaces[@]} " =~ " ${colorspace} " ]]; then
+                    magick "${file}" -depth 8 "${file}"
+                fi
             fi
             # Create a material file if the texture is a darkmod texture that ends with _ed
             if [[ "${file}" == *"${DARKMOD_SUFFIX}" ]]; then

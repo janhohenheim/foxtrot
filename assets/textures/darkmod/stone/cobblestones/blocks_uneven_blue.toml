@@ -1,0 +1,4 @@
+inherits = "/textures/base.material.toml"
+
+[material]
+perceptual_roughness = 0.9

@@ -1,7 +1,9 @@
 //! `struct`s that mirror Bevy's builtin components so that they can be used in the level editor.
 
 use bevy::prelude::{PointLight as BevyPointLight, *};
-use bevy_trenchbroom::{config::TrenchBroomConfig, prelude::PointClass};
+use bevy_trenchbroom::{
+    bsp::base_classes::BspLight, config::TrenchBroomConfig, prelude::PointClass,
+};
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -33,7 +35,7 @@ impl RegisterProxies for TrenchBroomConfig {
 ///
 /// Source: [Wikipedia](https://en.wikipedia.org/wiki/Lumen_(unit)#Lighting)
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
-#[base(BevyPointLight)]
+#[base(BspLight, BevyPointLight)]
 // This is the default size, this is just to make sure it produces a valid fgd.
 #[size(-8 -8 -8, 8 8 8)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]

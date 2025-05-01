@@ -27,7 +27,10 @@ pub(super) fn plugin(app: &mut App) {
             .register_proxies()
             .register_class::<Worldspawn>()
             .register_class::<Npc>()
-            .register_class::<Player>()
+            .register_class::<Player>();
+        #[cfg(not(feature = "native"))]
+        let config = config.no_bsp_lighting(true);
+        config
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);

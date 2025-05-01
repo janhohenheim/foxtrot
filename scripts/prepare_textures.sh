@@ -30,22 +30,15 @@ main() {
                     magick "${file}" -depth 8 "${file}"
                 fi
             fi
-            # Create a material file if the texture is a darkmod texture that ends with _ed
-            if [[ "${file}" == *"${DARKMOD_SUFFIX}" ]]; then
-                # Remove the _ed suffix from the file name
-                # We do this for the following reasons:
-                # - The material file needs to have the same name as the base texture
-                # - The normal texture is named after the name of the base texture plus the suffix _local
-                # Since the normal texture does not have the _ed suffix, we need to remove it from the base texture name
-                local name_without_suffix="${file%${DARKMOD_SUFFIX}}"
-                mv "${file}" "${name_without_suffix}.png"
+            # file now has to have a .png extension
+            file="${file%.${extension}}.png"
 
-                # create the material file
-                echo "inherits = \"/textures/darkmod.toml\"" > "${name_without_suffix}.toml"
+            # if the file ends in _local.png, rename it to _normal.png
+            if [[ "${file}" == *"_local.png" ]]; then
+                mv "${file}" "${file%_local.png}_normal.png"
             fi
 
-            # Warn if the base color name (without the extension) is longer than 16 characters
-            local stripped_name=$(basename "${file}" ".${extension}")
+            local stripped_name=$(basename "${file}" ".png")
             local non_base_suffixes=('_local' '_disp' '_arm' '_nor')
             local has_suffix=false
             for suffix in "${non_base_suffixes[@]}"; do
@@ -60,6 +53,14 @@ main() {
                     # emit a warning
                     echo "Warning: The file name ${stripped_name} is longer than 16 characters"
                 fi
+
+                # if there is no .toml file, create one
+                if [[ ! -f "${TEXTURES_PATH}/${stripped_name}.material.toml" ]]; then
+                    echo "inherits = \"base.material.toml\"" > "${TEXTURES_PATH}/${stripped_name}.material.toml"
+                fi
+
+                # ensure there is a directory with the same name as the texture
+                mkdir -p "${TEXTURES_PATH}/${stripped_name}"
             fi
         done
     done

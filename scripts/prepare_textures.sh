@@ -6,7 +6,7 @@ shopt -s globstar nullglob
 # Convert only files in this directory
 readonly TEXTURES_PATH='assets/textures'
 # Convert only these file extensions
-readonly FILE_EXTENSIONS=('jpg' 'jpeg' 'png' 'tga')
+readonly FILE_EXTENSIONS=('jpg' 'jpeg' 'png' 'tga' 'dds')
 # Darkmod textures end with this suffix
 readonly DARKMOD_SUFFIX='_ed.png'
 
@@ -48,19 +48,14 @@ main() {
                 fi
             done
             if [[ "$has_suffix" == false ]]; then
-                # The quake 1 map format only supports 16 character file names
-                if [[ "${stripped_name}" =~ ^.{16,}$ ]]; then
-                    # emit a warning
-                    echo "Warning: The file name ${stripped_name} is longer than 16 characters"
-                fi
-
-                # if there is no .toml file, create one
-                if [[ ! -f "${TEXTURES_PATH}/${stripped_name}.material.toml" ]]; then
-                    echo "inherits = \"base.material.toml\"" > "${TEXTURES_PATH}/${stripped_name}.material.toml"
+                 # if there is no .toml file, create one
+                local material_file="${file%.png}.toml"
+                if [[ ! -f "${material_file}" ]]; then
+                    echo "inherits = \"/textures/base.toml\"" > "${material_file}"
                 fi
 
                 # ensure there is a directory with the same name as the texture
-                mkdir -p "${TEXTURES_PATH}/${stripped_name}"
+                mkdir -p "${file%.png}"
             fi
         done
     done

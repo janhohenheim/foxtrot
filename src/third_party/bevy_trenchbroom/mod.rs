@@ -20,7 +20,7 @@ pub(super) fn plugin(app: &mut App) {
             .generic_material_extensions(to_string_vec(&["material.toml"]))
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg", "ktx2"]))
             .texture_exclusions(to_string_vec(&[
-                "*_disp_*", "*_arm_*", "*_nor_*", "*_local",
+                "*_disp_*", "*_arm_*", "*_nor_*", "*_local", "*_normal",
             ]))
             // In Wasm, TrenchBroom classes are not automatically registered.
             // So, we need to manually register the classes here

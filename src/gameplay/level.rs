@@ -40,7 +40,7 @@ impl FromWorld for LevelAssets {
         Self {
             // Use .map for dev and non-native builds
             #[cfg(any(feature = "dev", not(feature = "native")))]
-            level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
+            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
             // We use .bsp for native release builds
             // We can generate .bsp files from .map files with ./scripts/compile_maps.sh
             // when we're done prototyping and want some extra performance

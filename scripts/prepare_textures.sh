@@ -30,34 +30,53 @@ main() {
                     magick "${file}" -depth 8 "${file}"
                 fi
             fi
-            # file now has to have a .png extension
-            file="${file%.${extension}}.png"
+        done
+    done
 
-            # if the file ends in _local.png, rename it to _normal.png
-            if [[ "${file}" == *"_local.png" ]]; then
-                mv "${file}" "${file%_local.png}_normal.png"
-            fi
+    for file in "${TEXTURES_PATH}"/**/*.png; do
+        # if the file ends in _local.png, rename it to _normal.png
+        if [[ "${file}" == *"_local.png" ]]; then
+            mv "${file}" "${file%_local.png}_normal.png"
+        fi
+    done
 
-            local stripped_name=$(basename "${file}" ".png")
-            local non_base_suffixes=('_local' '_disp' '_arm' '_nor')
-            local has_suffix=false
-            for suffix in "${non_base_suffixes[@]}"; do
-                if [[ "$stripped_name" == *"$suffix"* ]]; then
-                    has_suffix=true
-                    break
-                fi
-            done
-            if [[ "$has_suffix" == false ]]; then
-                 # if there is no .toml file, create one
-                local material_file="${file%.png}.toml"
-                if [[ ! -f "${material_file}" ]]; then
-                    echo "inherits = \"/textures/base.toml\"" > "${material_file}"
-                fi
-
-                # ensure there is a directory with the same name as the texture
-                mkdir -p "${file%.png}"
+    for file in "${TEXTURES_PATH}"/**/*.png; do
+        local stripped_name=$(basename "${file}" ".png")
+        local non_base_suffixes=('_local' '_disp' '_arm' '_nor')
+        local has_suffix=false
+        for suffix in "${non_base_suffixes[@]}"; do
+            if [[ "$stripped_name" == *"$suffix"* ]]; then
+                has_suffix=true
+                break
             fi
         done
+
+
+        # ensure there is a directory with the same name as the texture
+        if [[ "$has_suffix" == false ]]; then
+            mkdir -p "${file%.png}"
+        fi
+
+
+        if [[ "$has_suffix" == true ]]; then
+            if [[ ! -f "${file%.png}.ktx2" ]]; then
+                kram encode -input "${file}" -output "${file%.png}.ktx2" -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
+                rm "${file}"
+            fi
+        else
+            if [[ ! -f "${file%.png}/${stripped_name}.ktx2" ]]; then
+                kram encode -input "${file}" -output "${file%.png}/${stripped_name}.ktx2" -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
+            fi
+        fi 
+
+        if [[ "$has_suffix" == false ]]; then
+                # if there is no .toml file, create one
+            local material_file="${file%.png}.toml"
+            if [[ ! -f "${material_file}" ]]; then
+                echo "inherits = \"/textures/base.toml\"" > "${material_file}"
+            fi
+
+        fi
     done
 }
 

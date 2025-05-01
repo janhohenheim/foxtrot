@@ -1,1 +1,1 @@
-inherits = "base.material.toml"
+inherits = "/textures/base.toml"

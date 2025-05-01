@@ -5,7 +5,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16", features = ["jpeg", "tga"] }
+bevy = { version = "0.16", features = [
+    "jpeg",
+    "tga",
+    "ktx2",
+    "png",
+    "basis-universal",
+] }
 bevy_enhanced_input = "0.11"
 
 # physics

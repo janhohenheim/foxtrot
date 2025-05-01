@@ -38,10 +38,12 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
 
         Self {
-            //  Run ./scripts/compile_maps.sh when we're done prototyping and want some extra performance
-            #[cfg(feature = "dev")]
+            // Use .map for dev and non-native builds
+            #[cfg(any(feature = "dev", not(feature = "native")))]
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
-            #[cfg(not(feature = "dev"))]
+            // Use .bsp for native release builds
+            //  Run ./scripts/compile_maps.sh when we're done prototyping and want some extra performance
+            #[cfg(all(feature = "native", not(feature = "dev")))]
             level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
         }
     }

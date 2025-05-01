@@ -1480,7 +1480,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#cc3221733b46987e517898b46c0749d4a49f79b9"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1510,7 +1510,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#cc3221733b46987e517898b46c0749d4a49f79b9"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -4628,9 +4628,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95e32743274c37419037ab6b3293461583cafb4b0c4c82f76c9c6e0211e4b91a"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "bevy_reflect",
  "derive_more 2.0.1",
@@ -4646,9 +4645,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp_macros"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d0b2163a90c0ed9192d85cc41d6cb520f8ba138d729a2f7dbd2e4e70f3cbecc"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "proc-macro2",
  "quote",

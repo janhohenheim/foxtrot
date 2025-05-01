@@ -17,13 +17,11 @@ mod util;
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
         let config = TrenchBroomConfig::new("foxtrot")
-            .generic_material_extension("toml")
-            .texture_exclusions(
-                ["*_disp_*", "*_arm_*", "*_nor_*", "*_local"]
-                    .into_iter()
-                    .map(String::from)
-                    .collect::<Vec<_>>(),
-            )
+            .generic_material_extensions(to_string_vec(&["material.toml"]))
+            .texture_extensions(to_string_vec(&["png", "jpg", "jpeg", "ktx2"]))
+            .texture_exclusions(to_string_vec(&[
+                "*_disp_*", "*_arm_*", "*_nor_*", "*_local",
+            ]))
             // In Wasm, TrenchBroom classes are not automatically registered.
             // So, we need to manually register the classes here
             .register_props()
@@ -38,6 +36,10 @@ pub(super) fn plugin(app: &mut App) {
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
     app.add_plugins((proxy::plugin, util::plugin));
+}
+
+fn to_string_vec(slice: &[&str]) -> Vec<String> {
+    slice.iter().map(|s| s.to_string()).collect()
 }
 
 /// Set up TrenchBroom so that it can create maps for our game.

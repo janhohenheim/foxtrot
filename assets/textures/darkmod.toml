@@ -1,5 +1,0 @@
-type = "StandardMaterial"
-
-[material]
-base_color_texture = "${name}.png"
-normal_map_texture = "${name}/${name}_local.png"

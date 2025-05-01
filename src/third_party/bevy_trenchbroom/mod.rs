@@ -16,7 +16,7 @@ mod util;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
-        TrenchBroomConfig::new("foxtrot")
+        let config = TrenchBroomConfig::new("foxtrot")
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
             .texture_exclusions(to_string_vec(&[
                 "*_disp_*", "*_arm_*", "*_nor_*", "*_local", "*_normal",

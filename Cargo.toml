@@ -5,13 +5,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16", features = [
-    "jpeg",
-    "tga",
-    "ktx2",
-    "png",
-    "basis-universal",
-] }
+bevy = { version = "0.16", features = ["jpeg", "tga", "ktx2", "png"] }
 bevy_enhanced_input = "0.11"
 
 # physics
@@ -60,6 +54,7 @@ getrandom = { version = "0.3", default-features = false, features = [
 ] }
 
 bitflags = "2.9.0"
+anyhow = "1.0.98"
 
 [features]
 default = [

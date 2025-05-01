@@ -1,7 +1,10 @@
 //! Extension methods and utilities to make using TrenchBroom easier.
 
 use bevy::{ecs::world::DeferredWorld, prelude::*};
-use bevy_trenchbroom::{class::QuakeClass, prelude::*};
+use bevy_trenchbroom::{
+    class::{QuakeClass, QuakeClassSpawnView},
+    prelude::*,
+};
 
 pub(super) fn plugin(_app: &mut App) {}
 
@@ -11,18 +14,34 @@ pub(super) fn plugin(_app: &mut App) {}
 pub(crate) struct Worldspawn;
 
 pub(crate) trait GetTrenchbroomModelPath: QuakeClass {
+    fn ktx_model_path() -> String {
+        Self::CLASS_INFO
+            .model_path()
+            .unwrap()
+            .replace(".gltf", "_ktx2.gltf")
+    }
     fn scene_path() -> String {
-        format!(
-            "{file_path}#Scene0",
-            file_path = Self::CLASS_INFO.model_path().unwrap()
-        )
+        format!("{file_path}#Scene0", file_path = Self::ktx_model_path())
     }
     fn animation_path(index: u32) -> String {
         format!(
             "{file_path}#Animation{index}",
-            file_path = Self::CLASS_INFO.model_path().unwrap()
+            file_path = Self::ktx_model_path()
         )
     }
+}
+
+#[track_caller]
+pub(crate) fn preload_ktx_model<T: QuakeClass>(
+    view: &mut QuakeClassSpawnView,
+) -> anyhow::Result<()> {
+    let handle = view
+        .load_context
+        .loader()
+        .with_unknown_type()
+        .load(T::ktx_model_path());
+    view.preload_asset(handle.untyped());
+    Ok(())
 }
 
 impl<T: QuakeClass> GetTrenchbroomModelPath for T {}

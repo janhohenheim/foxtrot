@@ -10,6 +10,9 @@ readonly FILE_EXTENSIONS=('jpg' 'jpeg' 'png' 'tga' 'dds')
 # Darkmod textures end with this suffix
 readonly DARKMOD_SUFFIX='_ed.png'
 
+# Optimize glTFs in this directory
+readonly GLTF_PATH='assets/models'
+
 main() {
     for extension in "${FILE_EXTENSIONS[@]}"; do
         for file in "${TEXTURES_PATH}"/**/*.${extension}; do
@@ -67,7 +70,7 @@ main() {
             if [[ ! -f "${file%.png}/${stripped_name}.ktx2" ]]; then
                 kram encode -input "${file}" -output "${file%.png}/${stripped_name}.ktx2" -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
             fi
-        fi 
+        fi
 
         if [[ "$has_suffix" == false ]]; then
                 # if there is no .toml file, create one
@@ -77,6 +80,28 @@ main() {
             fi
 
         fi
+    done
+
+    # go through all gltfs
+    for file in "${GLTF_PATH}"/**/*.gltf; do
+        # if the file ends in _ktx2.gltf, skip it
+        if [[ "${file}" == *"_ktx2.gltf" ]]; then
+            continue
+        fi
+
+        # replace all instances of "jpg" with "png"
+        sed -i 's/jpg/png/g' "${file}"
+
+        # convert all jpgs in this directory to png
+        local directory=${file%/*}
+        for jpg in "${directory}"/*.jpg; do
+            magick "${jpg}"  -depth 8 "${jpg%.jpg}.png"
+            rm "${jpg}"
+        done
+
+        klafsa -b kram --codec bc7 --container ktx2 gltf "${file}"
+        # rename the _bc7_ktx2.gltf suffix to _ktx2.gltf
+        mv "${file%.gltf}_bc7_ktx2.gltf" "${file%.gltf}_ktx2.gltf"
     done
 }
 

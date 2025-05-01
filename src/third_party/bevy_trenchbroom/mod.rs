@@ -16,7 +16,7 @@ mod util;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
-        let config = TrenchBroomConfig::new("foxtrot")
+        TrenchBroomConfig::new("foxtrot")
             .generic_material_extensions(to_string_vec(&["material.toml"]))
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg", "ktx2"]))
             .texture_exclusions(to_string_vec(&[
@@ -28,8 +28,7 @@ pub(super) fn plugin(app: &mut App) {
             .register_proxies()
             .register_class::<Worldspawn>()
             .register_class::<Npc>()
-            .register_class::<Player>();
-        config
+            .register_class::<Player>()
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);

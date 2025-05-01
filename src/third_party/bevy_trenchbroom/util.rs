@@ -2,6 +2,7 @@
 
 use bevy::{ecs::world::DeferredWorld, prelude::*};
 use bevy_trenchbroom::{
+    bsp::base_classes::BspWorldspawn,
     class::{QuakeClass, QuakeClassSpawnView},
     prelude::*,
 };
@@ -10,6 +11,7 @@ pub(super) fn plugin(_app: &mut App) {}
 
 #[derive(SolidClass, Component, Reflect, Default)]
 #[reflect(Component)]
+#[require(BspWorldspawn)]
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
 pub(crate) struct Worldspawn;
 

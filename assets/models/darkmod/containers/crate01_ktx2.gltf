@@ -1,0 +1,171 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "count": 46,
+      "componentType": 5126,
+      "type": "VEC3",
+      "min": [
+        -13.949999809265137,
+        0.029317855834960938,
+        -13.949999809265137
+      ],
+      "max": [
+        13.949999809265137,
+        27.92931747436523,
+        13.949999809265137
+      ]
+    },
+    {
+      "bufferView": 1,
+      "count": 46,
+      "componentType": 5126,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "count": 46,
+      "componentType": 5126,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "count": 180,
+      "componentType": 5123,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v4.4.55",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "byteLength": 1832,
+      "uri": "crate01.bin"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 552,
+      "byteOffset": 0,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 552,
+      "byteOffset": 552,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 368,
+      "byteOffset": 1104,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 360,
+      "byteOffset": 1472,
+      "target": 34963
+    }
+  ],
+  "scene": 0,
+  "images": [
+    {
+      "mimeType": "image/ktx2",
+      "name": "crate01_local",
+      "uri": "bc7_ktx2/crate01_local_bc7.ktx2"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "name": "crate01_d_ed",
+      "uri": "bc7_ktx2/crate01_d_ed_bc7.ktx2"
+    }
+  ],
+  "materials": [
+    {
+      "alphaMode": "OPAQUE",
+      "doubleSided": false,
+      "name": "crate01",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "baseColorTexture": {
+          "index": 1,
+          "texCoord": 0
+        },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 1.0
+      },
+      "normalTexture": {
+        "index": 0,
+        "scale": 1.0,
+        "texCoord": 0
+      },
+      "emissiveFactor": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Mesh_0.067",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "crate01",
+      "scale": [
+        0.03712721,
+        0.03712721,
+        0.03712721
+      ]
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scenes": [
+    {
+      "name": "Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    }
+  ]
+}

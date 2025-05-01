@@ -117,7 +117,7 @@
 		{
 			"mimeType":"image/jpeg",
 			"name":"singlebed1_d_ed",
-			"uri":"singlebed1_d_ed.jpg"
+			"uri":"singlebed1_d_ed.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -127,7 +127,7 @@
 		{
 			"mimeType":"image/jpeg",
 			"name":"cloth_coarse_cream_dirty_ed",
-			"uri":"cloth_coarse_cream_dirty_ed.jpg"
+			"uri":"cloth_coarse_cream_dirty_ed.png"
 		}
 	],
 	"accessors":[

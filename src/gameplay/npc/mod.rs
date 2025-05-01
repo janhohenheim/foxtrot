@@ -10,7 +10,8 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
 use crate::third_party::{
-    avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath as _,
+    avian3d::CollisionLayer,
+    bevy_trenchbroom::{GetTrenchbroomModelPath as _, preload_ktx_model},
     bevy_yarnspinner::YarnNode,
 };
 
@@ -30,7 +31,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/fox/Fox.gltf")]
-#[spawn_hook(preload_model::<Self>)]
+#[spawn_hook(preload_ktx_model::<Self>)]
 // In Wasm, TrenchBroom classes are not automatically registered.
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Npc;

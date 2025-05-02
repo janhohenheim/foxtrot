@@ -16,7 +16,7 @@ mod util;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(TrenchBroomPlugin({
-        let config = TrenchBroomConfig::new("foxtrot")
+        TrenchBroomConfig::new("foxtrot")
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
             .texture_exclusions(to_string_vec(&[
                 "*_disp_*", "*_arm_*", "*_nor_*", "*_local", "*_normal",
@@ -27,10 +27,9 @@ pub(super) fn plugin(app: &mut App) {
             .register_proxies()
             .register_class::<Worldspawn>()
             .register_class::<Npc>()
-            .register_class::<Player>();
-        #[cfg(not(feature = "native"))]
-        let config = config.no_bsp_lighting(true);
-        config
+            // We only use BSPs for light maps.
+            .register_class::<Player>()
+            .no_bsp_lighting(true)
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);

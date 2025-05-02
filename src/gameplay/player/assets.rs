@@ -1,6 +1,6 @@
 //! Assets for the player.
 
-use bevy::prelude::*;
+use bevy::{asset::RenderAssetUsages, gltf::GltfLoaderSettings, prelude::*};
 use bevy_shuffle_bag::ShuffleBag;
 
 use crate::{
@@ -17,6 +17,8 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
 pub(crate) struct PlayerAssets {
+    #[dependency]
+    pub(crate) _model: Handle<Scene>,
     #[dependency]
     pub(crate) throw_sound: Handle<AudioSource>,
     #[dependency]
@@ -38,6 +40,13 @@ impl FromWorld for PlayerAssets {
         let assets = world.resource::<AssetServer>();
         let rng = &mut rand::thread_rng();
         Self {
+            _model: assets.load_with_settings(
+                Player::scene_path(),
+                |settings: &mut GltfLoaderSettings| {
+                    settings.load_meshes = RenderAssetUsages::RENDER_WORLD;
+                    settings.load_materials = RenderAssetUsages::RENDER_WORLD;
+                },
+            ),
             throw_sound: assets.load("audio/sound_effects/throw.ogg"),
             steps: ShuffleBag::try_new(
                 [

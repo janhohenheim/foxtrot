@@ -55,6 +55,7 @@ getrandom = { version = "0.3", default-features = false, features = [
 
 bitflags = "2.9.0"
 anyhow = "1.0.98"
+bevy-inspector-egui = "0.31.0"
 
 [features]
 default = [
@@ -130,7 +131,7 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "correct-coordinate-conversion" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }

@@ -1,16 +1,16 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
-use super::input::ToggleDebugUi;
-//use aalo::prelude::*;
+use super::input::{ForceFreeCursor, ToggleDebugUi};
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::{
     dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin},
     prelude::*,
 };
 use bevy_enhanced_input::prelude::*;
+use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
 
-use crate::AppSet;
+use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
@@ -21,9 +21,10 @@ pub(super) fn plugin(app: &mut App) {
             ..default()
         },
     });
-
-    // TODO
-    //app.add_plugins(AaloPlugin::new().world().flatten_descendants());
+    app.add_plugins(EguiPlugin {
+        enable_multipass_for_primary_context: true,
+    });
+    app.add_plugins(WorldInspectorPlugin::new());
 
     app.add_plugins((
         PhysicsDebugPlugin::default(),
@@ -40,8 +41,7 @@ pub(super) fn plugin(app: &mut App) {
         },
     );
     app.add_observer(advance_debug_state);
-    // app.add_observer(toogle_aalo_inspector);
-    // app.add_observer(disable_aalo_inspector_on_spawn);
+    app.add_observer(toogle_egui_inspector);
     app.add_systems(
         Update,
         (
@@ -79,29 +79,12 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
     config.enabled = !config.enabled;
 }
 
-/*
-fn disable_aalo_inspector_on_spawn(
-    _trigger: Trigger<OnAdd, InspectorMarker>,
-    mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,
-) {
-    **aalo_inspector = Visibility::Hidden;
-}
-*/
-
-/*
-fn toogle_aalo_inspector(
+fn toogle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
-    mut aalo_inspector: Single<&mut Visibility, With<InspectorMarker>>,
 ) {
     is_cursor_forced_free.0 = !is_cursor_forced_free.0;
-    **aalo_inspector = match **aalo_inspector {
-        Visibility::Inherited => Visibility::Hidden,
-        Visibility::Hidden => Visibility::Inherited,
-        Visibility::Visible => Visibility::Inherited,
-    };
 }
-*/
 
 #[derive(Resource, Debug, Default, Eq, PartialEq)]
 enum DebugState {

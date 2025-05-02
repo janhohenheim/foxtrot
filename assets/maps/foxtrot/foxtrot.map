@@ -1264,3 +1264,9 @@
 "classname" "npc"
 "origin" "456 136 8"
 }
+// entity 4
+{
+"classname" "chair"
+"origin" "376 72 8"
+"angles" "0 150 0"
+}

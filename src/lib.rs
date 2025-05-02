@@ -1,3 +1,4 @@
+mod asset_processing;
 mod asset_tracking;
 mod audio;
 #[cfg(feature = "dev")]
@@ -70,6 +71,7 @@ impl Plugin for AppPlugin {
 
         // Add other plugins.
         app.add_plugins((
+            asset_processing::plugin,
             asset_tracking::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,

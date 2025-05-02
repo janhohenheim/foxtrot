@@ -55,13 +55,15 @@ main() {
         done
 
         # truncate the stripped_name to 16 characters
-        truncated_name=${stripped_name:0:16}
-        local directory=${file%/*}
-        if [[ ! -f "${directory}/${truncated_name}.png" ]]; then
-            mv "${file}" "${directory}/${truncated_name}.png"
-            file="${directory}/${truncated_name}.png"
+        if [[ "$has_suffix" == false ]]; then
+            truncated_name=${stripped_name:0:16}
+            local directory=${file%/*}
+            if [[ ! -f "${directory}/${truncated_name}.png" ]]; then
+                mv "${file}" "${directory}/${truncated_name}.png"
+                file="${directory}/${truncated_name}.png"
+            fi
         fi
-
+    
         # ensure there is a directory with the same name as the texture
         if [[ "$has_suffix" == false ]]; then
             mkdir -p "${file%.png}"

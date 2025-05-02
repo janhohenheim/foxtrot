@@ -1480,7 +1480,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9321805da8691f5c199f2230a7cc36e606938456"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3a60bd52982105e162e12f8b4f289a38bd866e81"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1510,7 +1510,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9321805da8691f5c199f2230a7cc36e606938456"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3a60bd52982105e162e12f8b4f289a38bd866e81"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -1823,9 +1823,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.20"
+version = "1.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04da6a0d40b948dfc4fa8f5bbf402b0fc1a64a28dbf7d12ffd683550f2c1b63a"
+checksum = "8691782945451c1c383942c4874dbe63814f61cb57ef773cda2972682b7bb3c0"
 dependencies = [
  "jobserver",
  "libc",
@@ -2372,9 +2372,9 @@ checksum = "ea8a8b81cacc08888170eef4d13b775126db426d0b348bee9d18c2c1eaf123cf"
 
 [[package]]
 name = "dpi"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f25c0e292a7ca6d6498557ff1df68f32c99850012b6ea401cf8daf771f22ff53"
+checksum = "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76"
 
 [[package]]
 name = "earcutr"
@@ -6511,9 +6511,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.7.8"
+version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e27d6ad3dac991091e4d35de9ba2d2d00647c5d0fc26c5496dee55984ae111b"
+checksum = "d9fb597c990f03753e08d3c29efbfcf2019a003b4bf4ba19225c158e1549f0f3"
 dependencies = [
  "memchr",
 ]

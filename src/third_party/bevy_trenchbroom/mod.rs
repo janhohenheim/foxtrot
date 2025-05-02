@@ -27,8 +27,8 @@ pub(super) fn plugin(app: &mut App) {
             .register_proxies()
             .register_class::<Worldspawn>()
             .register_class::<Npc>()
-            // We only use BSPs for light maps.
             .register_class::<Player>()
+            // We only use BSPs for light maps.
             .no_bsp_lighting(true)
     }));
     #[cfg(feature = "native")]

@@ -19,7 +19,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0bf66a7bf0b7ea4fd7742d50b64782a88f99217cf246b3f93b4162528dde520"
 dependencies = [
  "accesskit",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "immutable-chunkmap",
 ]
 
@@ -31,7 +31,7 @@ checksum = "09e230718177753b4e4ad9e1d9f6cfc2f4921212d4c1c480b253f526babb258d"
 dependencies = [
  "accesskit",
  "accesskit_consumer",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",
@@ -45,7 +45,7 @@ checksum = "65178f3df98a51e4238e584fcb255cb1a4f9111820848eeddd37663be40a625f"
 dependencies = [
  "accesskit",
  "accesskit_consumer",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "paste",
  "static_assertions",
  "windows 0.58.0",
@@ -1176,7 +1176,7 @@ dependencies = [
  "critical-section",
  "foldhash",
  "getrandom 0.2.16",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "portable-atomic",
  "portable-atomic-util",
  "serde",
@@ -1480,7 +1480,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9321805da8691f5c199f2230a7cc36e606938456"
 dependencies = [
  "anyhow",
  "avian3d",
@@ -1510,7 +1510,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hotfix#ecfa6f0675c539751d87a21b96dd39d9f18cfd39"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9321805da8691f5c199f2230a7cc36e606938456"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -2671,6 +2671,7 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
 name = "foxtrot"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "avian3d",
  "avian_pickup",
  "bevy",
@@ -2981,7 +2982,7 @@ checksum = "dcf29e94d6d243368b7a56caa16bc213e4f9f8ed38c4d9557069527b5d5281ca"
 dependencies = [
  "bitflags 2.9.0",
  "gpu-descriptor-types",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
 ]
 
 [[package]]
@@ -3040,9 +3041,9 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
-version = "0.15.2"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf151400ff0baff5465007dd2f3e717f3fe502074ca563069ce3a6629d07b289"
+checksum = "84b26c544d002229e640969970a2e74021aadf6e2f96372b9c58eff97de08eb3"
 dependencies = [
  "allocator-api2",
  "equivalent",
@@ -3252,7 +3253,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cea70ddb795996207ad57735b50c5982d8844f38ba9ee5f1aedcfb708a2aa11e"
 dependencies = [
  "equivalent",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "serde",
 ]
 
@@ -4628,9 +4629,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95e32743274c37419037ab6b3293461583cafb4b0c4c82f76c9c6e0211e4b91a"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "bevy_reflect",
  "derive_more 2.0.1",
@@ -4646,9 +4646,8 @@ dependencies = [
 
 [[package]]
 name = "qbsp_macros"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d0b2163a90c0ed9192d85cc41d6cb520f8ba138d729a2f7dbd2e4e70f3cbecc"
+version = "0.5.0"
+source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5193,7 +5192,7 @@ version = "2.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ece03ff43cd2a9b57ebf776ea5e78bd30b3b4185a619f041079f4109f385034"
 dependencies = [
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "num-traits",
  "robust",
  "smallvec",
@@ -5315,9 +5314,9 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.1"
+version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
+checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6512,9 +6511,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.7.7"
+version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6cb8234a863ea0e8cd7284fcdd4f145233eb00fee02bbdd9861aec44e6477bc5"
+checksum = "9e27d6ad3dac991091e4d35de9ba2d2d00647c5d0fc26c5496dee55984ae111b"
 dependencies = [
  "memchr",
 ]
@@ -6628,7 +6627,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16d44cad33c28c816dd33cbbb1293601c64b08b8c3faa32e28488c126a9dff82"
 dependencies = [
  "bevy",
- "hashbrown 0.15.2",
+ "hashbrown 0.15.3",
  "prost",
  "serde",
  "variadics_please",

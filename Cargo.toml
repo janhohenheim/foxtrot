@@ -5,7 +5,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16", features = ["jpeg"] }
+bevy = { version = "0.16", features = ["jpeg", "tga", "ktx2", "png"] }
 bevy_enhanced_input = "0.11"
 
 # physics
@@ -54,6 +54,7 @@ getrandom = { version = "0.3", default-features = false, features = [
 ] }
 
 bitflags = "2.9.0"
+anyhow = "1.0.98"
 
 [features]
 default = [
@@ -88,7 +89,7 @@ default_features = false
 features = ["native"]
 
 [package.metadata.bevy_cli.native.dev]
-features = ["dev"]
+features = ["dev_native"]
 
 [package.metadata.bevy_cli.web]
 rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]
@@ -129,7 +130,7 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "hotfix" }
+bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup", branch = "avian-main" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }

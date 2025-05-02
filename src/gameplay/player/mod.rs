@@ -13,7 +13,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
 
-use crate::third_party::avian3d::CollisionLayer;
+use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::preload_ktx_model};
 
 mod animation;
 pub(crate) mod assets;
@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/view_model/view_model.gltf")]
-#[spawn_hook(preload_model::<Self>)]
+#[spawn_hook(preload_ktx_model::<Self>)]
 // In Wasm, TrenchBroom classes are not automatically registered.
 // So, we need to manually register the class in `src/third_party/bevy_trenchbroom/mod.rs`.
 pub(crate) struct Player;

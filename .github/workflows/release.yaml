@@ -106,21 +106,18 @@ jobs:
         include:
           - platform: web
             targets: wasm32-unknown-unknown
-            profile: release
             binary_ext: .wasm
             package_ext: .zip
             runner: ubuntu-latest
 
           - platform: linux
             targets: x86_64-unknown-linux-gnu
-            profile: release
             features: bevy/wayland,native
             package_ext: .zip
             runner: ubuntu-latest
 
           - platform: windows
             targets: x86_64-pc-windows-msvc
-            profile: release
             features: native
             binary_ext: .exe
             package_ext: .zip
@@ -128,7 +125,6 @@ jobs:
 
           - platform: macos
             targets: x86_64-apple-darwin aarch64-apple-darwin
-            profile: release
             features: native
             app_suffix: .app/Contents/MacOS
             package_ext: .dmg
@@ -198,18 +194,18 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
           cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-          bevy build --locked --profile='${{ matrix.profile }}' --features='${{ matrix.features }}' --yes web --bundle
+          bevy build --locked --release --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
-        run: mv 'target/bevy_web/${{ matrix.profile }}/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
+        run: mv 'target/bevy_web/release/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
 
       - name: Build binaries (non-Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
           for target in ${{ matrix.targets }}; do
-            cargo build --locked --profile='${{ matrix.profile }}' --target="${target}" --no-default-features --features='${{ matrix.features }}'
-            mv target/"${target}"/'${{ matrix.profile }}/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
+            cargo build --locked --release --target="${target}" --no-default-features --features='${{ matrix.features }}'
+            mv target/"${target}"/'release/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
           done
 
       - name: Add binaries to app (non-Web)

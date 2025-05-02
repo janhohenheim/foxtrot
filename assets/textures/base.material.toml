@@ -1,8 +1,0 @@
-type = "StandardMaterial"
-
-[material]
-base_color_texture = "${name}.png"
-occlusion_texture = "${name}/${name}_arm_1k.png"
-metallic_roughness_texture = "${name}/${name}_arm_1k.png"
-normal_map_texture = "${name}/${name}_nor_dx_1k.png"
-depth_map = "${name}/${name}_disp_1k.png"

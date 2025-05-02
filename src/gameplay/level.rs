@@ -36,9 +36,16 @@ pub(crate) struct LevelAssets {
 impl FromWorld for LevelAssets {
     fn from_world(world: &mut World) -> Self {
         let assets = world.resource::<AssetServer>();
+
         Self {
-            //  Run ./scripts/compile_maps.sh and change .map to .bsp when we're done prototyping and want some extra performance
+            // Use .map for dev and non-native builds
+            #[cfg(any(feature = "dev", not(feature = "native")))]
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
+            // We use .bsp for native release builds
+            // We can generate .bsp files from .map files with ./scripts/compile_maps.sh
+            // when we're done prototyping and want some extra performance
+            #[cfg(all(feature = "native", not(feature = "dev")))]
+            level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
         }
     }
 }

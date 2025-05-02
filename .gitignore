@@ -8,7 +8,6 @@
 
 # TrenchBroom
 assets/**/autosave/
-assets/**/*.bsp
 assets/**/*.log
 assets/**/*.pts
 assets/**/*.texinfo.json

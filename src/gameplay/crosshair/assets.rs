@@ -13,7 +13,7 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
-pub struct CursorAssets {
+pub(crate) struct CursorAssets {
     #[dependency]
     crosshair_dot: Handle<Image>,
     #[dependency]

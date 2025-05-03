@@ -15,11 +15,26 @@ pub(super) fn plugin(app: &mut App) {
 fn configure_textures(
     mut events: EventReader<AssetEvent<Image>>,
     mut images: ResMut<Assets<Image>>,
+    assets: Res<AssetServer>,
 ) {
     for event in events.read() {
         let AssetEvent::LoadedWithDependencies { id } = event else {
             continue;
         };
+
+        let Some(path) = assets.get_path(id.untyped()) else {
+            continue;
+        };
+
+        let path = path.to_string();
+
+        const PATHS_WITH_MESH_TEXTURES: &[&str] = &["textures/", "models/"];
+        if !PATHS_WITH_MESH_TEXTURES.iter().any(|p| path.starts_with(p)) {
+            // Textures outside these paths are e.g. part of the UI, which would stop rendering
+            // if we set it to `RENDER_WORLD`. It also wouldn't make sense to change the sampler
+            // for those, as we look at them with a pixel-perfect camera from a single angle.
+            continue;
+        }
 
         let image = images.get_mut(*id).unwrap();
         image.asset_usage = RenderAssetUsages::RENDER_WORLD;

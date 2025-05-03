@@ -26,7 +26,7 @@ def main():
     compile_maps()
 
     print("Converting all textures to ktx2")
-    convert_all_textures_to_ktx2()
+    convert_textures_to_ktx2()
     print("Telling glTF files to use ktx2 textures")
     convert_gltf_textures_to_ktx2()
 
@@ -87,7 +87,7 @@ def copy_non_texture_files_to_bake_directory():
             shutil.copytree(entry.path, os.path.join(BAKED_ASSETS_DIR, entry.name))
 
 
-def convert_all_textures_to_ktx2():
+def convert_textures_to_ktx2():
     for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
         for file in files:
             texture_name, ext_name = os.path.splitext(file)
@@ -143,7 +143,6 @@ def compile_maps():
                 with open(file_path, "r") as f:
                     content = f.read()
                 for old_path, new_path in _texture_renames.items():
-                    print(f"\tPointing {old_path} to {new_path}")
                     content = content.replace(old_path, new_path)
                 with open(file_path, "w") as f:
                     f.write(content)
@@ -181,12 +180,12 @@ def compile_maps():
                     ],
                     check=True,
                 )
-                # remove all .log, .prt, .pts, .json files in the root directory
                 for file in os.scandir(root):
                     if file.is_file() and file.name.endswith(
                         (".log", ".prt", ".pts", ".json")
                     ):
                         os.remove(file.path)
+                os.remove(file_path)
 
 
 def _bake_texture_recursively(texture_path: str):

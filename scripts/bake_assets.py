@@ -14,7 +14,7 @@ def main():
     verify_that_all_tools_are_installed()
     create_empty_bake_directory()
 
-    bake_textures()
+    copy_truncated_textures_to_texture_root()
 
 def verify_that_all_tools_are_installed():
     tools = [["kram"], ["qbsp", "--help"], ["light", "--help"]]
@@ -39,7 +39,7 @@ def create_empty_bake_directory():
 _ORIGINAL_TEXTURES_DIR = os.path.join(ORIGINAL_ASSETS_DIR, "textures")
 _BAKED_TEXTURES_DIR = os.path.join(BAKED_ASSETS_DIR, "textures")
 
-def bake_textures():
+def copy_truncated_textures_to_texture_root():
     os.makedirs(_BAKED_TEXTURES_DIR, exist_ok=True)
     # we go through all the files in the textures directory
     # if we encounter the following constellation:
@@ -51,11 +51,12 @@ def bake_textures():
     # This directory structure needs to be moved directly into the BAKED_ASSETS_DIR/textures directory
     # and `file` needs to be truncated to 15 characters
     # and the PBR textures need to be renamed to match the base color texture name
-    bake_texture_recursively(_ORIGINAL_TEXTURES_DIR)
+    _bake_texture_recursively(_ORIGINAL_TEXTURES_DIR)
+
 
 _MAX_TEXTURE_NAME_LENGTH = 15
 
-def bake_texture_recursively(texture_path: str):
+def _bake_texture_recursively(texture_path: str):
     with os.scandir(texture_path) as it:
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
@@ -67,7 +68,7 @@ def bake_texture_recursively(texture_path: str):
                 shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, truncated_material_name))
                 continue
             if file.is_dir():
-                bake_texture_recursively(os.path.join(texture_path, file_name))
+                _bake_texture_recursively(os.path.join(texture_path, file_name))
                 continue
             has_directory = texture_name in [file_name for file_name, file in files.items() if file.is_dir()]
             has_material_file = material_name in [file_name for file_name, _file in files.items()]
@@ -87,8 +88,7 @@ def bake_texture_recursively(texture_path: str):
                         pbr_file_name = pbr_file.name
                         pbr_start_index = len(texture_name)
                         if len(pbr_file_name) <= pbr_start_index:
-                            print(f"Failed to find PBR texture for {file.path}")
-                            continue
+                            raise Exception(f"Failed to find PBR texture for {file.path}")
                         pbr_suffix = pbr_file_name[pbr_start_index:]
                         [pbr_suffix, pbr_extension] = os.path.splitext(pbr_suffix)
                         shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, truncated_texture_name, f"{truncated_texture_name}{pbr_suffix}.{pbr_extension}"))

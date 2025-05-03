@@ -95,10 +95,68 @@ jobs:
       # Use the input from workflow dispatch, or fall back to the git tag.
       version: ${{ inputs.version || steps.tag.outputs.tag }}
 
+  bake-assets:
+    name: Bake Assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create tools directory
+        run: mkdir baking_tools
+
+      - name: Install kram
+        run: |
+          mkdir -p baking_tools/kram
+          cd baking_tools/kram
+          wget https://github.com/alecazam/kram/releases/download/v1.7.30/kram-linux.zip
+          unzip kram-linux.zip
+          chmod +x kram
+          cd ..
+          mv kram kram-linux
+          ln -s kram-linux/kram kram
+
+      - name: Install klafsa
+        run: |
+          git clone https://github.com/superdump/klafsa
+          cd klafsa
+          cargo install --path .
+
+
+      - name: Install ericw-tools
+        run: |
+          mkdir -p baking_tools/ericw-tools
+          cd baking_tools/ericw-tools
+          wget https://github.com/ericwa/ericw-tools/releases/download/2.0.0-alpha9/ericw-tools-2.0.0-alpha9-Linux.zip
+          unzip ericw-tools-2.0.0-alpha9-Linux.zip
+          chmod +x qbsp
+          chmod +x light
+          cd ..
+          ln -s ericw-tools/qbsp qbsp
+          ln -s ericw-tools/light light
+
+      - name: Bake assets
+        run: |
+          PATH="$PATH:$PWD/baking_tools"
+          python3 scripts/bake_assets.py
+          rm -rf assets
+          mv assets_baked assets
+
+      - name: Upload assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: assets
+          path: assets
+          retention-days: 1
+
   # Build and package a release for each platform.
   build:
     needs:
       - get-version
+      - bake-assets
     env:
       version: ${{ needs.get-version.outputs.version }}
     strategy:
@@ -138,6 +196,22 @@ jobs:
         shell: bash
 
     steps:
+      - name: Remove unbaked assets
+        run: rm -rf assets
+
+      - name: Download assets
+        uses: actions/download-artifact@v4
+        with:
+          name: assets
+          path: assets
+
+      - name: Validate assets
+        run: |
+          if [ ! -s assets ]; then
+            echo "Assets directory is empty"
+            exit 1
+          fi
+
       - name: Set up environment
         run: |
           # Default values:

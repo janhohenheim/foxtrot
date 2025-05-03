@@ -43,7 +43,6 @@ fn on_add(trigger: Trigger<OnAdd, Npc>, mut commands: Commands, assets: Res<Asse
         .entity(trigger.target())
         .insert((
             Npc,
-            TransformInterpolation,
             Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
             TnuaController::default(),
             TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),

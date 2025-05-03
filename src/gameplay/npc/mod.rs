@@ -1,7 +1,5 @@
 //! NPC handling. In the demo, the NPC is a fox that moves towards the player. We can interact with the NPC to trigger dialogue.
 
-use std::f32::consts::PI;
-
 use animation::{NpcAnimationState, setup_npc_animations};
 use avian3d::prelude::*;
 use bevy::prelude::*;

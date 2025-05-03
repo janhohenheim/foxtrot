@@ -3,10 +3,7 @@
 //! The code is adapted from <https://bevyengine.org/examples/camera/first-person-view-model/>.
 //! See that example for more information.
 
-use std::{
-    f32::consts::{FRAC_PI_2, TAU},
-    iter,
-};
+use std::{f32::consts::FRAC_PI_2, iter};
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;

@@ -39,7 +39,6 @@ pub(crate) fn setup_chair(
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
             // Make the chair way more dense than the default, as it feels janky to be able to push it around easily.
             .with_default_density(10_000.0),
-        TransformInterpolation,
         RigidBody::Dynamic,
         // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
         SceneRoot(model),
@@ -64,7 +63,6 @@ pub(crate) fn setup_crate(
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
             .with_default_density(1_000.0),
         // Not inserting `TnuaNotPlatform`, otherwise the player will not be able to jump on it.
-        RigidBody::Dynamic,
         SceneRoot(model),
         // The prop should be held upright.
         PreferredPickupRotation(Quat::IDENTITY),

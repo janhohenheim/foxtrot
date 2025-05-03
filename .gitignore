@@ -12,3 +12,6 @@ assets/**/*.log
 assets/**/*.pts
 assets/**/*.texinfo.json
 assets/**/*.prt
+
+# Baked assets
+/assets_baked

@@ -1,9 +1,11 @@
 //! Props are generic objects that can be placed in the level. This corresponds to what TrenchBroom calls an "Entity", not to be confused with Bevy's `Entity`.
 //! We use this file to define new props and register them with TrenchBroom so that they show up in the level editor.
 //! Afterwards, we still need to add new props to the `LevelAssets` struct to preload them for a given level.
-use crate::third_party::bevy_trenchbroom::preload_ktx_model;
 use bevy::prelude::*;
-use bevy_trenchbroom::{config::TrenchBroomConfig, prelude::PointClass};
+use bevy_trenchbroom::{
+    config::TrenchBroomConfig,
+    prelude::{PointClass, preload_model},
+};
 use generic::*;
 
 mod effects;
@@ -42,21 +44,21 @@ impl RegisterProps for TrenchBroomConfig {
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/fireplace/grate.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Grate;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/furniture/tables/rtable1.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Table;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/furniture/shelves/bookshelf02.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Bookshelf;
 
 // props with a specific setup function
@@ -65,26 +67,26 @@ pub(crate) struct Bookshelf;
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct LampSitting;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/furniture/seating/wchair1.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Chair;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/fireplace/burntwood.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct BurningLogs;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/containers/crate01.gltf")]
-#[spawn_hook(preload_ktx_model::<Self>)]
+#[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Crate;

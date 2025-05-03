@@ -35,11 +35,12 @@ def create_empty_bake_directory():
     shutil.rmtree(BAKED_ASSETS_DIR, ignore_errors=True)
     os.makedirs(BAKED_ASSETS_DIR)
 
-_TEXTURES_DIR = os.path.join(ORIGINAL_ASSETS_DIR, "textures")
+# This cannot be configured, it's what TrenchBroom expects
+_ORIGINAL_TEXTURES_DIR = os.path.join(ORIGINAL_ASSETS_DIR, "textures")
+_BAKED_TEXTURES_DIR = os.path.join(BAKED_ASSETS_DIR, "textures")
 
 def bake_textures():
-    # This cannot be configured, it's what TrenchBroom expects
-    os.makedirs(TEXTURES_DIR, exist_ok=True)
+    os.makedirs(_BAKED_TEXTURES_DIR, exist_ok=True)
     # we go through all the files in the textures directory
     # if we encounter the following constellation:
     # - file.png
@@ -50,19 +51,33 @@ def bake_textures():
     # This directory structure needs to be moved directly into the BAKED_ASSETS_DIR/textures directory
     # and `file` needs to be truncated to 15 characters
     # and the PBR textures need to be renamed to match the base color texture name
-    bake_texture_recursively(TEXTURES_DIR)
+    bake_texture_recursively(_ORIGINAL_TEXTURES_DIR)
 
 def bake_texture_recursively(texture_path: str):
     with os.scandir(texture_path) as it:
-        files = [entry for entry in it]
-        for file in files:
-            name = file.name
-            texture_name = os.path.splitext(name)[0]
-            has_directory = texture_name in [file.name for file in files if file.is_dir()]
-            has_material_file = texture_name in [file.name for file in files if get_extension(file) == ".toml"]
+        files = {entry.name: entry for entry in it}
+        for file_name, file in files.items():
+            [texture_name, ext_name] = os.path.splitext(file_name)
+            if ext_name == ".toml":
+                continue
+            if file.is_dir():
+                bake_texture_recursively(os.path.join(texture_path, file_name))
+                continue
+            material_name = f"{texture_name}.toml"
+            has_directory = texture_name in [file_name for file_name, file in files.items() if file.is_dir()]
+            has_material_file = material_name in [file_name for file_name, _file in files.items()]
             if has_directory and has_material_file:
                 # we have a base color texture
                 # and we need to move the directory recursively
+
+                # copy the base color texture
+                shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, file_name))
+
+                # copy the directory recursively
+                shutil.copytree(os.path.join(texture_path, texture_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name))
+
+                # copy the material file
+                shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name, material_name))
 
 
 

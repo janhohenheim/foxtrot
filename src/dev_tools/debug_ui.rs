@@ -14,17 +14,19 @@ use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
-
+    app.init_resource::<InspectorActive>();
     app.add_plugins(FpsOverlayPlugin {
         config: FpsOverlayConfig {
             enabled: false,
             ..default()
         },
     });
-    app.add_plugins(EguiPlugin {
-        enable_multipass_for_primary_context: true,
-    });
-    app.add_plugins(WorldInspectorPlugin::new());
+    app.add_plugins((
+        EguiPlugin {
+            enable_multipass_for_primary_context: true,
+        },
+        WorldInspectorPlugin::new().run_if(is_inspector_active),
+    ));
 
     app.add_plugins((
         PhysicsDebugPlugin::default(),
@@ -82,8 +84,17 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
 fn toogle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
+    mut inspector_active: ResMut<InspectorActive>,
 ) {
     is_cursor_forced_free.0 = !is_cursor_forced_free.0;
+    inspector_active.0 = !inspector_active.0;
+}
+
+#[derive(Resource, Debug, Default, Eq, PartialEq)]
+struct InspectorActive(bool);
+
+fn is_inspector_active(inspector_active: Res<InspectorActive>) -> bool {
+    inspector_active.0
 }
 
 #[derive(Resource, Debug, Default, Eq, PartialEq)]
@@ -94,6 +105,7 @@ enum DebugState {
     Physics,
     Landmass,
 }
+
 impl DebugState {
     fn next(&self) -> Self {
         match self {

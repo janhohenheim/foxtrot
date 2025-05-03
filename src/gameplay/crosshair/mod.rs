@@ -9,7 +9,7 @@ use bevy::{platform::collections::HashSet, prelude::*};
 
 use crate::{AppSet, screens::Screen};
 
-mod assets;
+pub(crate) mod assets;
 pub(crate) mod cursor;
 
 pub(super) fn plugin(app: &mut App) {

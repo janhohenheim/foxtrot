@@ -9,7 +9,8 @@ use bevy::prelude::*;
 use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
 use oxidized_navigation::{
-    NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin, colliders::avian::AvianCollider,
+    DetailMeshSettings, NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin,
+    colliders::avian::AvianCollider,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -20,8 +21,12 @@ pub(super) fn plugin(app: &mut App) {
             step_height: 3,
             max_contour_simplification_error: 0.7,
             max_traversable_slope_radians: NPC_MAX_SLOPE,
+            experimental_detail_mesh_generation: Some(DetailMeshSettings {
+                max_height_error: 4.try_into().unwrap(),
+                sample_step: 2.try_into().unwrap(),
+            }),
             ..NavMeshSettings::from_agent_and_bounds(
-                NPC_RADIUS * 0.95,
+                NPC_RADIUS * 0.6,
                 NPC_HEIGHT * 0.95,
                 100.0,
                 -20.0,

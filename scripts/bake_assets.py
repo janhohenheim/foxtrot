@@ -16,7 +16,9 @@ def main():
     create_empty_bake_directory()
 
     copy_truncated_textures_to_texture_root()
+    copy_non_texture_files_to_bake_directory()
     convert_textures_to_ktx2()
+    convert_gltf_textures_to_ktx2()
 
 def verify_that_all_tools_are_installed():
     tools = [["kram"], ["qbsp", "--help"], ["light", "--help"]]
@@ -65,9 +67,16 @@ def copy_truncated_textures_to_texture_root():
 
 _MAX_TEXTURE_NAME_LENGTH = 15
 
+def copy_non_texture_files_to_bake_directory():
+    for entry in os.scandir(ORIGINAL_ASSETS_DIR):
+        if entry.is_file():
+            shutil.copy2(entry.path, os.path.join(BAKED_ASSETS_DIR, entry.name))
+        elif entry.is_dir() and entry.name != "textures":
+            shutil.copytree(entry.path, os.path.join(BAKED_ASSETS_DIR, entry.name))
+
 
 def convert_textures_to_ktx2():
-    for root, _dirs, files in os.walk(_BAKED_TEXTURES_DIR):
+    for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
         for file in files:
             texture_name, ext_name = os.path.splitext(file)
             if ext_name == ".toml":
@@ -78,7 +87,7 @@ def convert_textures_to_ktx2():
                     content = content.replace(ext, ".ktx2")
                 with open(os.path.join(root, file), "w") as f:
                     f.write(content)
-            else:
+            elif ext_name in TEXTURE_EXTENSIONS:
                 # convert the texture to ktx2
                 subprocess.run(
                     [
@@ -100,6 +109,20 @@ def convert_textures_to_ktx2():
                     check=True,
                 )
                 os.remove(os.path.join(root, file))
+
+def convert_gltf_textures_to_ktx2():
+    GLTF_EXTENSIONS = [".glb", ".gltf"]
+    for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
+        for file in files:
+            if os.path.splitext(file)[1] in GLTF_EXTENSIONS:
+                # search for all instances of TEXTURE_EXTENSIONS in the file
+                with open(os.path.join(root, file), "r") as f:
+                    content = f.read()
+                for ext in TEXTURE_EXTENSIONS:
+                    content = content.replace(ext, ".ktx2")
+                with open(os.path.join(root, file), "w") as f:
+                    f.write(content)
+
 
 def _bake_texture_recursively(texture_path: str):
     with os.scandir(texture_path) as it:

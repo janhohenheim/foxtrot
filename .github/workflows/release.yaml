@@ -229,18 +229,25 @@ jobs:
           lfs: ${{ env.git_lfs }}
 
       - name: Remove unbaked assets
+        if: ${{ env.is_platform_enabled == 'true' }}
         run: rm -rf assets
 
       - name: Download assets
+        if: ${{ env.is_platform_enabled == 'true' }}
         uses: actions/download-artifact@v4
         with:
           name: assets
           path: assets
 
-      - name: Unzip assets
+      - name: Print assets (Linux)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
         run: |
-          unzip assets.zip
-          rm assets.zip
+          ls -la assets
+
+      - name: Print assets (Windows)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'windows' }}
+        run: |
+          dir assets
 
       - name: Install Rust toolchain
         if: ${{ env.is_platform_enabled == 'true' }}

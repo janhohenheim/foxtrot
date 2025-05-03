@@ -31,6 +31,10 @@ main() {
                 local allowed_colorspaces=('sRGB' 'Gray')
                 if [[ ! " ${allowed_depths[@]} " =~ " ${depth} " ]] || [[ ! " ${allowed_colorspaces[@]} " =~ " ${colorspace} " ]]; then
                     magick "${file}" -depth 8 "${file}"
+                    # handle normal maps
+                    if [[ "${file}" == *"_nor.png" ]]; then
+                        magick "${file}" -flop "${file}"
+                    fi
                 fi
             fi
         done

@@ -1,6 +1,6 @@
 type = "StandardMaterial"
 
 [material]
-base_color_texture = "${name}.png"
-normal_map_texture = "${name}/${name}_normal.png"
+base_color_texture = "${name}.ktx2"
+normal_map_texture = "${name}/${name}_normal.ktx2"
 perceptual_roughness = 0.7

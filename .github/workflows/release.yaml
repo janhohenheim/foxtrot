@@ -267,7 +267,7 @@ jobs:
 
       - name: Add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
-        run: mv 'target/bevy_web/release/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
+        run: mv 'target/bevy_web/web-release/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
 
       - name: Build binaries (non-Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}

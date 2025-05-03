@@ -58,15 +58,16 @@ def bake_texture_recursively(texture_path: str):
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
             [texture_name, ext_name] = os.path.splitext(file_name)
+            material_name = f"{texture_name}.toml"
             if ext_name == ".toml":
+                shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, material_name))
                 continue
             if file.is_dir():
                 bake_texture_recursively(os.path.join(texture_path, file_name))
                 continue
-            material_name = f"{texture_name}.toml"
             has_directory = texture_name in [file_name for file_name, file in files.items() if file.is_dir()]
             has_material_file = material_name in [file_name for file_name, _file in files.items()]
-            if has_directory and has_material_file:
+            if  has_material_file:
                 # we have a base color texture
                 # and we need to move the directory recursively
 
@@ -74,10 +75,8 @@ def bake_texture_recursively(texture_path: str):
                 shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, file_name))
 
                 # copy the directory recursively
-                shutil.copytree(os.path.join(texture_path, texture_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name))
-
-                # copy the material file
-                shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name, material_name))
+                if has_directory:
+                    shutil.copytree(os.path.join(texture_path, texture_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name))
 
 
 

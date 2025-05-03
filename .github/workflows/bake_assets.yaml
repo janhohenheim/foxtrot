@@ -16,9 +16,12 @@ on:
 
 jobs:
   bake-assets:
+    name: Bake Assets
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 

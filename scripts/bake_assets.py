@@ -19,13 +19,18 @@ def main():
     copy_truncated_textures_to_texture_root()
     print("Copying non-texture files to bake directory")
     copy_non_texture_files_to_bake_directory()
+
+    print("Compiling maps")
+    # note that this needs to be done before converting the textures to ktx2
+    # because the quake tools cannot read that format
+    compile_maps()
+
     print("Converting all textures to ktx2")
     convert_all_textures_to_ktx2()
     print("Telling glTF files to use ktx2 textures")
     convert_gltf_textures_to_ktx2()
 
-    print("Compiling maps")
-    compile_maps()
+
 def verify_that_all_tools_are_installed():
     tools = [["kram"], ["qbsp", "--help"], ["light", "--help"]]
     for tool in tools:
@@ -56,6 +61,9 @@ _ORIGINAL_TEXTURES_DIR = os.path.join(ORIGINAL_ASSETS_DIR, "textures")
 _BAKED_TEXTURES_DIR = os.path.join(BAKED_ASSETS_DIR, "textures")
 
 
+_texture_renames = {}
+
+
 def copy_truncated_textures_to_texture_root():
     os.makedirs(_BAKED_TEXTURES_DIR, exist_ok=True)
     # we go through all the files in the textures directory
@@ -70,8 +78,6 @@ def copy_truncated_textures_to_texture_root():
     # and the PBR textures need to be renamed to match the base color texture name
     _bake_texture_recursively(_ORIGINAL_TEXTURES_DIR)
 
-
-_MAX_TEXTURE_NAME_LENGTH = 15
 
 def copy_non_texture_files_to_bake_directory():
     for entry in os.scandir(ORIGINAL_ASSETS_DIR):
@@ -109,6 +115,7 @@ def convert_all_textures_to_ktx2():
                 )
                 os.remove(os.path.join(root, file))
 
+
 def convert_gltf_textures_to_ktx2():
     GLTF_EXTENSIONS = [".glb", ".gltf"]
     for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
@@ -122,11 +129,69 @@ def convert_gltf_textures_to_ktx2():
                 with open(os.path.join(root, file), "w") as f:
                     f.write(content)
 
+
 def compile_maps():
-    subprocess.run(["qbsp", "-file", "maps/map01.bsp", "-game", "darkmod"], check=True)
+    for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
+        if root.endswith("/autosave"):
+            # remove the autosave directory
+            shutil.rmtree(root)
+            continue
+        for file in files:
+            map_name, ext_name = os.path.splitext(file)
+            if ext_name == ".map":
+                file_path = os.path.join(root, file)
+                with open(file_path, "r") as f:
+                    content = f.read()
+                for old_path, new_path in _texture_renames.items():
+                    print(f"\tPointing {old_path} to {new_path}")
+                    content = content.replace(old_path, new_path)
+                with open(file_path, "w") as f:
+                    f.write(content)
+
+                bsp_path = os.path.join(root, f"{map_name}.bsp")
+
+                print(f"\tCompiling {file_path} to {bsp_path}")
+                #  qbsp -bsp2 -wrbrushesonly -nosubdivide -nosoftware -path assets_baked -notex
+                subprocess.run(
+                    [
+                        "qbsp",
+                        "-bsp2",
+                        "-wrbrushesonly",
+                        "-nosubdivide",
+                        "-nosoftware",
+                        "-path",
+                        BAKED_ASSETS_DIR,
+                        "-notex",
+                        file_path,
+                        bsp_path,
+                    ],
+                    check=True,
+                )
+                print(f"\tLighting {bsp_path}")
+
+                subprocess.run(
+                    [
+                        "light",
+                        "-extra4",
+                        "-novanilla",
+                        "-lightgrid",
+                        "-path",
+                        BAKED_ASSETS_DIR,
+                        bsp_path,
+                    ],
+                    check=True,
+                )
+                # remove all .log, .prt, .pts, .json files in the root directory
+                for file in os.scandir(root):
+                    if file.is_file() and file.name.endswith(
+                        (".log", ".prt", ".pts", ".json")
+                    ):
+                        os.remove(file.path)
 
 
 def _bake_texture_recursively(texture_path: str):
+    # dictated by the Quake 1 BSP format
+    _MAX_TEXTURE_NAME_LENGTH = 15
     with os.scandir(texture_path) as it:
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
@@ -135,17 +200,20 @@ def _bake_texture_recursively(texture_path: str):
             material_name = f"{texture_name}.toml"
             if ext_name == ".toml":
                 truncated_material_name = f"{truncated_texture_name}.toml"
+                baked_material_path = os.path.join(
+                    _BAKED_TEXTURES_DIR, truncated_material_name
+                )
                 shutil.copy2(
                     os.path.join(texture_path, material_name),
-                    os.path.join(_BAKED_TEXTURES_DIR, truncated_material_name),
+                    baked_material_path,
                 )
 
                 # change all instances of TEXTURE_EXTENSIONS in the file to ".ktx2"
-                with open(file, "r") as f:
+                with open(baked_material_path, "r") as f:
                     content = f.read()
                 for ext in TEXTURE_EXTENSIONS:
                     content = content.replace(ext, ".ktx2")
-                with open(file, "w") as f:
+                with open(baked_material_path, "w") as f:
                     f.write(content)
                 continue
             if file.is_dir():
@@ -162,13 +230,18 @@ def _bake_texture_recursively(texture_path: str):
                 # and we need to move the directory recursively
 
                 # copy the base color texture
+                baked_texture_path = os.path.join(
+                    _BAKED_TEXTURES_DIR, f"{truncated_texture_name}{ext_name}"
+                )
                 shutil.copy2(
                     file.path,
-                    os.path.join(
-                        _BAKED_TEXTURES_DIR, f"{truncated_texture_name}.{ext_name}"
-                    ),
+                    baked_texture_path,
                 )
 
+                bsp_texture_path = file.path.removeprefix(
+                    f"{_ORIGINAL_TEXTURES_DIR}/"
+                ).removesuffix(ext_name)
+                _texture_renames[bsp_texture_path] = truncated_texture_name
                 # copy the directory recursively
                 if has_directory:
                     os.makedirs(
@@ -193,7 +266,7 @@ def _bake_texture_recursively(texture_path: str):
                             os.path.join(
                                 _BAKED_TEXTURES_DIR,
                                 truncated_texture_name,
-                                f"{truncated_texture_name}{pbr_suffix}.{pbr_extension}",
+                                f"{truncated_texture_name}{pbr_suffix}{pbr_extension}",
                             ),
                         )
 

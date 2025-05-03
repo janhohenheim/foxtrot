@@ -39,7 +39,6 @@ pub(crate) fn dynamic_bundle<T: QuakeClass>(
 ) -> impl Bundle {
     let model = asset_server.load_trenchbroom_model::<T>();
     (
-        TransformInterpolation,
         ColliderConstructorHierarchy::new(constructor)
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
             // About the density of oak wood (600-800 kg/m^3)

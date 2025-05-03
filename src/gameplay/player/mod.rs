@@ -107,7 +107,6 @@ fn setup_player(
                 combine_rule: CoefficientCombine::Multiply,
             },
             ColliderDensity(100.0),
-            TransformInterpolation,
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
             TnuaAnimatingState::<PlayerAnimationState>::default(),
             PlayerLandmassCharacter(player_character),

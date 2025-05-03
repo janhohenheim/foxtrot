@@ -205,12 +205,10 @@ jobs:
           name: assets
           path: assets
 
-      - name: Validate assets
+      - name: Unzip assets
         run: |
-          if [ ! -s assets ]; then
-            echo "Assets directory is empty"
-            exit 1
-          fi
+          unzip assets.zip
+          rm assets.zip
 
       - name: Set up environment
         run: |

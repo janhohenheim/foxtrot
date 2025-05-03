@@ -36,7 +36,8 @@ jobs:
           unzip kram-linux.zip
           chmod +x kram
           cd ..
-          ln -s kram/kram kram
+          mv kram kram-linux
+          ln -s kram-linux/kram kram
 
       - name: Install klafsa
         run: |

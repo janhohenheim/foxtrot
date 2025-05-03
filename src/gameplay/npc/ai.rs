@@ -16,7 +16,7 @@ use crate::{gameplay::player::PlayerLandmassCharacter, screens::Screen};
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
-pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 8.0;
+pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 6.0;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Agent>();

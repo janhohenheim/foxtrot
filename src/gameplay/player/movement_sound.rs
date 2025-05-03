@@ -22,7 +22,13 @@ fn play_jump_grunt(
     player: Single<&TnuaController, With<Player>>,
     mut player_assets: ResMut<PlayerAssets>,
     mut is_jumping: Local<bool>,
+    mut sound_cooldown: Local<Option<Timer>>,
+    time: Res<Time>,
 ) {
+    let sound_cooldown = sound_cooldown
+        .get_or_insert_with(|| Timer::new(Duration::from_millis(1000), TimerMode::Once));
+    sound_cooldown.tick(time.delta());
+
     if player
         .concrete_action::<TnuaBuiltinJump>()
         .is_none_or(|x| matches!(x, (_, TnuaBuiltinJumpState::FallSection)))
@@ -35,12 +41,15 @@ fn play_jump_grunt(
     }
     *is_jumping = true;
 
-    let rng = &mut rand::thread_rng();
-    let grunt = player_assets.jump_grunts.pick(rng).clone();
-    let jump_start = player_assets.jump_start_sounds.pick(rng).clone();
+    if sound_cooldown.finished() {
+        let rng = &mut rand::thread_rng();
+        let grunt = player_assets.jump_grunts.pick(rng).clone();
+        let jump_start = player_assets.jump_start_sounds.pick(rng).clone();
 
-    commands.spawn(sound_effect(grunt));
-    commands.spawn(sound_effect(jump_start));
+        commands.spawn(sound_effect(grunt));
+        commands.spawn(sound_effect(jump_start));
+        sound_cooldown.reset();
+    }
 }
 
 fn play_step_sound(

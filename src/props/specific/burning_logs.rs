@@ -46,7 +46,16 @@ impl FromWorld for BurningLogsAssets {
     }
 }
 
-const TEXTURE_PATH: &str = "images/Flame.png";
+pub(crate) const TEXTURE_PATH: &str = {
+    #[cfg(feature = "dev")]
+    {
+        "images/Flame.png"
+    }
+    #[cfg(not(feature = "dev"))]
+    {
+        "images/Flame.ktx2"
+    }
+};
 const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 
 const BASE_INTENSITY: f32 = 150_000.0;

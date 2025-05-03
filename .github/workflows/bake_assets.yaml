@@ -1,0 +1,68 @@
+name: Bake Assets
+
+on:
+  # Trigger this workflow when a tag is pushed in the format `v1.2.3`.
+  push:
+    tags:
+      # Pattern syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+  # Trigger this workflow manually via workflow dispatch.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number in the format `v1.2.3`"
+        required: true
+        type: string
+
+jobs:
+  bake-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create tools directory
+        run: mkdir baking_tools
+
+      - name: Install kram
+        run: |
+          mkdir -p baking_tools/kram
+          cd baking_tools/kram
+          wget https://github.com/alecazam/kram/releases/download/v1.7.30/kram-linux.zip
+          unzip kram-linux.zip
+          chmod +x kram
+          cd ..
+          ln -s kram/kram kram
+
+      - name: Install klafsa
+        run: |
+          git clone https://github.com/superdump/klafsa
+          cd klafsa
+          cargo install --path .
+
+
+      - name: Install ericw-tools
+        run: |
+          mkdir -p baking_tools/ericw-tools
+          cd baking_tools/ericw-tools
+          wget https://github.com/ericwa/ericw-tools/releases/download/2.0.0-alpha9/ericw-tools-2.0.0-alpha9-Linux.zip
+          unzip ericw-tools-2.0.0-alpha9-Linux.zip
+          chmod +x qbsp
+          chmod +x light
+          cd ..
+          ln -s ericw-tools/qbsp qbsp
+          ln -s ericw-tools/light light
+
+      - name: Bake assets
+        run: |
+          PATH="$PATH:$PWD/baking_tools"
+          python3 scripts/bake_assets.py
+          rm -rf assets
+          mv assets_baked assets
+
+      - name: Upload assets
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: assets

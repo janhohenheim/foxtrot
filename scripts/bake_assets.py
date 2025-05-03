@@ -9,6 +9,10 @@ ORIGINAL_ASSETS_DIR = "assets"
 BAKED_ASSETS_DIR = "assets_baked"
 TEXTURE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 
+MODELS_SUB_DIR = "models"
+NORMAL_MAP_SUFFIX = ["_normal", "_local"]
+LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
+
 
 def main():
     verify_that_the_assets_are_in_the_working_directory()
@@ -32,7 +36,7 @@ def main():
 
 
 def verify_that_all_tools_are_installed():
-    tools = [["kram"], ["qbsp", "--help"], ["light", "--help"]]
+    tools = [["kram"], ["qbsp", "--help"], ["light", "--help"], ["klafsa", "--help"]]
     for tool in tools:
         try:
             subprocess.run(
@@ -62,6 +66,8 @@ _BAKED_TEXTURES_DIR = os.path.join(BAKED_ASSETS_DIR, "textures")
 
 
 _texture_renames = {}
+_linear_textures = set()
+_normal_maps = set()
 
 
 def copy_truncated_textures_to_texture_root():
@@ -89,28 +95,38 @@ def copy_non_texture_files_to_bake_directory():
 
 def convert_textures_to_ktx2():
     for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
+        if root.startswith(f"{BAKED_ASSETS_DIR}/{MODELS_SUB_DIR}"):
+            continue
         for file in files:
             texture_name, ext_name = os.path.splitext(file)
             if ext_name in TEXTURE_EXTENSIONS:
-                print(f"\tConverting {os.path.join(root, file)} to ktx2")
+                file_path = os.path.join(root, file)
+                print(f"\tConverting {file_path} to ktx2")
+
+                command = [
+                    "kram",
+                    "encode",
+                    "-input",
+                    file_path,
+                    "-output",
+                    os.path.join(root, f"{texture_name}.ktx2"),
+                    "-mipmin",
+                    "1",
+                    "-zstd",
+                    "0",
+                    "-format",
+                    "bc7",
+                    "-encoder",
+                    "bcenc",
+                ]
+                if file_path in _normal_maps:
+                    command.append("-normal")
+                elif file_path not in _linear_textures:
+                    command.append("-srgb")
+
                 # convert the texture to ktx2
                 subprocess.run(
-                    [
-                        "kram",
-                        "encode",
-                        "-input",
-                        os.path.join(root, file),
-                        "-output",
-                        os.path.join(root, f"{texture_name}.ktx2"),
-                        "-mipmin",
-                        "1",
-                        "-zstd",
-                        "0",
-                        "-format",
-                        "bc7",
-                        "-encoder",
-                        "bcenc",
-                    ],
+                    command,
                     check=True,
                 )
                 os.remove(os.path.join(root, file))
@@ -118,16 +134,39 @@ def convert_textures_to_ktx2():
 
 def convert_gltf_textures_to_ktx2():
     GLTF_EXTENSIONS = [".glb", ".gltf"]
-    for root, _dirs, files in os.walk(BAKED_ASSETS_DIR):
+    for root, _dirs, files in os.walk(os.path.join(BAKED_ASSETS_DIR, MODELS_SUB_DIR)):
         for file in files:
             if os.path.splitext(file)[1] in GLTF_EXTENSIONS:
-                # search for all instances of TEXTURE_EXTENSIONS in the file
-                with open(os.path.join(root, file), "r") as f:
-                    content = f.read()
-                for ext in TEXTURE_EXTENSIONS:
-                    content = content.replace(ext, ".ktx2")
-                with open(os.path.join(root, file), "w") as f:
-                    f.write(content)
+                print(f"\tConverting {os.path.join(root, file)} to use ktx2")
+                # klafsa -b kram --codec bc7 --container ktx2 gltf assets/models/darkmod/furniture/tables/rtable1.gltf
+                subprocess.run(
+                    [
+                        "klafsa",
+                        "-b",
+                        "kram",
+                        "--codec",
+                        "bc7",
+                        "--container",
+                        "ktx2",
+                        "gltf",
+                        os.path.join(root, file),
+                    ],
+                    check=True,
+                )
+                # remove the original file
+                os.remove(os.path.join(root, file))
+                # rename the ktx2 file to the original file name
+                file_name = os.path.splitext(file)[0]
+                os.rename(
+                    os.path.join(root, f"{file_name}_bc7_ktx2.gltf"),
+                    os.path.join(root, file),
+                )
+
+    for root, _dirs, files in os.walk(os.path.join(BAKED_ASSETS_DIR, MODELS_SUB_DIR)):
+        for file in files:
+            if os.path.splitext(file)[1] in TEXTURE_EXTENSIONS:
+                # remove the original file
+                os.remove(os.path.join(root, file))
 
 
 def compile_maps():
@@ -260,14 +299,19 @@ def _bake_texture_recursively(texture_path: str):
                             )
                         pbr_suffix = pbr_file_name[pbr_start_index:]
                         pbr_suffix, pbr_extension = os.path.splitext(pbr_suffix)
+                        truncated_pbr_texture_path = os.path.join(
+                            _BAKED_TEXTURES_DIR,
+                            truncated_texture_name,
+                            f"{truncated_texture_name}{pbr_suffix}{pbr_extension}",
+                        )
                         shutil.copy2(
                             file.path,
-                            os.path.join(
-                                _BAKED_TEXTURES_DIR,
-                                truncated_texture_name,
-                                f"{truncated_texture_name}{pbr_suffix}{pbr_extension}",
-                            ),
+                            truncated_pbr_texture_path,
                         )
+                        if pbr_suffix in NORMAL_MAP_SUFFIX:
+                            _normal_maps.add(truncated_pbr_texture_path)
+                        elif pbr_suffix in LINEAR_TEXTURE_SUFFIX:
+                            _linear_textures.add(truncated_pbr_texture_path)
 
 
 if __name__ == "__main__":

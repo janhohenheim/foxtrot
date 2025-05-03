@@ -61,8 +61,7 @@ fn on_add(trigger: Trigger<OnAdd, Npc>, mut commands: Commands, assets: Res<Asse
         .with_child((
             Name::new("Npc Model"),
             SceneRoot(assets.load(Npc::scene_path())),
-            Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0)
-                .with_rotation(Quat::from_rotation_y(PI)),
+            Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0),
         ))
         .observe(setup_npc_animations);
 }

@@ -15,7 +15,7 @@ LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
 def main():
     verify_that_the_assets_are_in_the_working_directory()
     verify_that_all_tools_are_installed()
-
+    process_textures()
 
 def verify_that_all_tools_are_installed():
     tools = [["magick", "--version"]]

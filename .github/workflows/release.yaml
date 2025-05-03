@@ -239,16 +239,6 @@ jobs:
           name: assets
           path: assets
 
-      - name: Print assets (Linux)
-        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
-        run: |
-          ls -la assets
-
-      - name: Print assets (Windows)
-        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'windows' }}
-        run: |
-          dir assets
-
       - name: Install Rust toolchain
         if: ${{ env.is_platform_enabled == 'true' }}
         uses: dtolnay/rust-toolchain@stable

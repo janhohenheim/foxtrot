@@ -65,7 +65,7 @@ jobs:
           mv assets_baked assets
 
       - name: Upload assets
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: assets

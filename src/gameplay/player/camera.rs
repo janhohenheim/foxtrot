@@ -8,7 +8,9 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 #[cfg(feature = "native")]
-use bevy::core_pipeline::{bloom::Bloom, experimental::taa::TemporalAntiAliasing};
+use bevy::core_pipeline::{
+    bloom::Bloom, experimental::taa::TemporalAntiAliasing, prepass::DepthPrepass,
+};
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
     pbr::NotShadowCaster,
@@ -104,7 +106,12 @@ fn spawn_view_model(
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
                 #[cfg(feature = "native")]
-                (Bloom::NATURAL, TemporalAntiAliasing::default(), Msaa::Off),
+                (
+                    Bloom::NATURAL,
+                    TemporalAntiAliasing::default(),
+                    DepthPrepass,
+                    Msaa::Off,
+                ),
             ));
 
             // Spawn view model camera.
@@ -131,7 +138,7 @@ fn spawn_view_model(
                 Tonemapping::AcesFitted,
                 #[cfg(feature = "native")]
                 // We don't use bloom on the view model, as it may lead to artifacts.
-                (TemporalAntiAliasing::default(), Msaa::Off),
+                (TemporalAntiAliasing::default(), DepthPrepass, Msaa::Off),
             ));
 
             // Spawn the player's view model

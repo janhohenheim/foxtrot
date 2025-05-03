@@ -22,10 +22,13 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Create tools directory
+        run: mkdir baking_tools
+
       - name: Install kram
         run: |
-          mkdir -p kram
-          cd kram
+          mkdir -p baking_tools/kram
+          cd baking_tools/kram
           wget https://github.com/alecazam/kram/releases/download/v1.7.30/kram-linux.zip
           unzip kram-linux.zip
           chmod +x kram
@@ -41,8 +44,8 @@ jobs:
 
       - name: Install ericw-tools
         run: |
-          mkdir -p ericw-tools
-          cd ericw-tools
+          mkdir -p baking_tools/ericw-tools
+          cd baking_tools/ericw-tools
           wget https://github.com/ericwa/ericw-tools/releases/download/2.0.0-alpha9/ericw-tools-2.0.0-alpha9-Linux.zip
           unzip ericw-tools-2.0.0-alpha9-Linux.zip
           chmod +x qbsp
@@ -53,7 +56,8 @@ jobs:
 
       - name: Bake assets
         run: |
-          python scripts/bake_assets.py
+          PATH="$PATH:$PWD/baking_tools"
+          python3 scripts/bake_assets.py
           rm -rf assets
           mv assets_baked assets
 

@@ -140,7 +140,6 @@ fn spawn_view_model(
             // Spawn the player's view model
             parent
                 .spawn((
-                    Transform::from_rotation(Quat::from_rotation_y(TAU / 2.0)),
                     Name::new("View Model"),
                     SceneRoot(assets.load(Player::scene_path())),
                 ))

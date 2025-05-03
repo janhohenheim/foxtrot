@@ -928,6 +928,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_fix_gltf_coordinate_system"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3d322f8addff6f04423ea6bbd4ab37a5fb08c9c14aec426bf1aae01bee128e1"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "bevy_gilrs"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2984,6 +2993,7 @@ dependencies = [
  "bevy-tnua",
  "bevy-tnua-avian3d",
  "bevy_enhanced_input",
+ "bevy_fix_gltf_coordinate_system",
  "bevy_hanabi",
  "bevy_landmass",
  "bevy_shuffle_bag",

@@ -53,35 +53,47 @@ def bake_textures():
     # and the PBR textures need to be renamed to match the base color texture name
     bake_texture_recursively(_ORIGINAL_TEXTURES_DIR)
 
+_MAX_TEXTURE_NAME_LENGTH = 15
+
 def bake_texture_recursively(texture_path: str):
     with os.scandir(texture_path) as it:
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
             [texture_name, ext_name] = os.path.splitext(file_name)
+            truncated_texture_name = texture_name[:_MAX_TEXTURE_NAME_LENGTH]
             material_name = f"{texture_name}.toml"
             if ext_name == ".toml":
-                shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, material_name))
+                truncated_material_name = f"{truncated_texture_name}.toml"
+                shutil.copy2(os.path.join(texture_path, material_name), os.path.join(_BAKED_TEXTURES_DIR, truncated_material_name))
                 continue
             if file.is_dir():
                 bake_texture_recursively(os.path.join(texture_path, file_name))
                 continue
             has_directory = texture_name in [file_name for file_name, file in files.items() if file.is_dir()]
             has_material_file = material_name in [file_name for file_name, _file in files.items()]
-            if  has_material_file:
+            if has_material_file:
                 # we have a base color texture
                 # and we need to move the directory recursively
 
                 # copy the base color texture
-                shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, file_name))
+                shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, f"{truncated_texture_name}.{ext_name}"))
 
                 # copy the directory recursively
                 if has_directory:
-                    shutil.copytree(os.path.join(texture_path, texture_name), os.path.join(_BAKED_TEXTURES_DIR, texture_name))
+                    os.makedirs(os.path.join(_BAKED_TEXTURES_DIR, truncated_texture_name), exist_ok=True)
+                    for pbr_file in os.scandir(os.path.join(texture_path, texture_name)):
+                        # the suffix after the file_name is the extension of the PBR texture
+                        # e.g. foo_normal.png -> _normal
+                        pbr_file_name = pbr_file.name
+                        pbr_start_index = len(texture_name)
+                        if len(pbr_file_name) <= pbr_start_index:
+                            print(f"Failed to find PBR texture for {file.path}")
+                            continue
+                        pbr_suffix = pbr_file_name[pbr_start_index:]
+                        [pbr_suffix, pbr_extension] = os.path.splitext(pbr_suffix)
+                        shutil.copy2(file.path, os.path.join(_BAKED_TEXTURES_DIR, truncated_texture_name, f"{truncated_texture_name}{pbr_suffix}.{pbr_extension}"))
 
 
-
-def get_extension(file: os.DirEntry) -> str:
-    return os.path.splitext(file.name)[1]
 
 
 if __name__ == "__main__":

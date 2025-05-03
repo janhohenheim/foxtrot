@@ -1652,9 +1652,10 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=correct-coordinate-conversion#b59679246dba49acf76f6222302f0f68ed7003b4"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#f1131a159e770f10853375e2646a4b5cc5fa1a4a"
 dependencies = [
  "anyhow",
+ "atomicow",
  "avian3d",
  "bevy",
  "bevy_materialize",
@@ -1682,7 +1683,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=correct-coordinate-conversion#b59679246dba49acf76f6222302f0f68ed7003b4"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#f1131a159e770f10853375e2646a4b5cc5fa1a4a"
 dependencies = [
  "heck",
  "proc-macro2",

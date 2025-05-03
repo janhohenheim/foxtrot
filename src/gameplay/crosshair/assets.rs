@@ -4,8 +4,27 @@ use bevy::prelude::*;
 
 use crate::asset_tracking::LoadResource;
 
-pub(crate) const CROSSHAIR_DOT_PATH: &str = "ui/crosshair_dot.png";
-pub(crate) const CROSSHAIR_SQUARE_PATH: &str = "ui/crosshair_square.png";
+pub(crate) const CROSSHAIR_DOT_PATH: &str = {
+    #[cfg(feature = "dev")]
+    {
+        "ui/crosshair_dot.png"
+    }
+    #[cfg(not(feature = "dev"))]
+    {
+        "ui/crosshair_dot.ktx2"
+    }
+};
+
+pub(crate) const CROSSHAIR_SQUARE_PATH: &str = {
+    #[cfg(feature = "dev")]
+    {
+        "ui/crosshair_square.png"
+    }
+    #[cfg(not(feature = "dev"))]
+    {
+        "ui/crosshair_square.ktx2"
+    }
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<CursorAssets>();

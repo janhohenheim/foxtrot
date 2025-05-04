@@ -32,6 +32,7 @@ impl RegisterProps for TrenchBroomConfig {
             .register_class::<Chair>()
             .register_class::<Bookshelf>()
             .register_class::<LampSitting>()
+            .register_class::<LampWallElectric>()
             .register_class::<Crate>()
     }
 }
@@ -66,9 +67,21 @@ pub(crate) struct Bookshelf;
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]
 #[base(Transform, Visibility)]
-#[model("models/darkmod/lights/non-extinguishable/round_lantern_sitting.gltf")]
+#[model(
+    "models/darkmod/lights/non-extinguishable/round_lantern_sitting/round_lantern_sitting.gltf"
+)]
 #[spawn_hook(preload_model::<Self>)]
 pub(crate) struct LampSitting;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(Component)]
+#[base(Transform, Visibility)]
+#[model(
+    "models/darkmod/lights/non-extinguishable/lamp_wall_electric_01/lamp_wall_electric_01.gltf"
+)]
+#[spawn_hook(preload_model::<Self>)]
+#[classname("light_lamp_wall_electric")]
+pub(crate) struct LampWallElectric;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(Component)]

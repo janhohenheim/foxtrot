@@ -57,8 +57,8 @@ fn spawn_view_model(
     assets: Res<AssetServer>,
 ) {
     commands.insert_resource(AmbientLight {
-        color: Color::srgb(1.0, 0.7, 0.4),
-        brightness: 120.0,
+        color: Color::srgb(68.0 / 255.0, 71.0 / 255.0, 98.0 / 255.0),
+        brightness: 200.0,
         ..default()
     });
     commands
@@ -104,7 +104,7 @@ fn spawn_view_model(
                     RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::TRANSLUCENT,
                 ),
                 Exposure::INDOOR,
-                Tonemapping::AcesFitted,
+                Tonemapping::TonyMcMapface,
                 #[cfg(feature = "native")]
                 (
                     Bloom::NATURAL,
@@ -137,7 +137,7 @@ fn spawn_view_model(
                 // Only render objects belonging to the view model.
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
-                Tonemapping::AcesFitted,
+                Tonemapping::TonyMcMapface,
             ));
 
             // Spawn the player's view model

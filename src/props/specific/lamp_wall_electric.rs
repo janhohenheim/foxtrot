@@ -20,9 +20,10 @@ pub(crate) fn setup_lamp_wall_electric(
         .with_child((
             Transform::from_xyz(0.0, -0.08, -0.35),
             PointLight {
-                color: Color::srgb(1.0, 0.7, 0.4),
-                intensity: 40_000.0,
-                radius: 0.12,
+                color: Color::srgb(232.0 / 255.0, 199.0 / 255.0, 176.0 / 255.0),
+                intensity: 20_000.0,
+                radius: 0.05,
+                range: 60.0,
                 shadows_enabled: true,
                 #[cfg(feature = "native")]
                 soft_shadows_enabled: true,

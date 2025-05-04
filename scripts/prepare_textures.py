@@ -49,8 +49,9 @@ def process_textures():
                 if any(suffix in file_name for suffix in NORMAL_MAP_SUFFIX):
                     if f"/{TEXTURES_SUBDIR}/" in file_path:
                         name_without_suffix = "_".join(file_name.split("_")[:-1])
+                        os.makedirs(os.path.join(root, name_without_suffix), exist_ok=True)
                         normal_map_path = os.path.join(
-                            root, f"{name_without_suffix}_normal.png"
+                            root, name_without_suffix, f"{name_without_suffix}_normal.png"
                         )
                     else:
                         normal_map_path = new_file_path

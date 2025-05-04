@@ -1,1 +1,4 @@
 inherits = "/textures/base.toml"
+
+[material]
+metallic = 0.8

@@ -18,11 +18,11 @@ pub(crate) fn setup_lamp_wall_electric(
         .entity(trigger.target())
         .insert(bundle)
         .with_child((
-            Transform::from_xyz(0.0, -0.08, -0.1),
+            Transform::from_xyz(0.0, -0.08, -0.35),
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),
                 intensity: 40_000.0,
-                radius: 0.2,
+                radius: 0.12,
                 shadows_enabled: true,
                 #[cfg(feature = "native")]
                 soft_shadows_enabled: true,

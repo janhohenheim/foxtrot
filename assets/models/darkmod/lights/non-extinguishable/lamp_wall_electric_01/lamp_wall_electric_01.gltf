@@ -33,7 +33,7 @@
 			],
 			"translation":[
 				-6.5539206843823195e-06,
-				-0.07028467953205109,
+				-0.07028468698263168,
 				-0.06742824614048004
 			]
 		},
@@ -53,7 +53,7 @@
 			],
 			"translation":[
 				-6.5539206843823195e-06,
-				-0.07028467953205109,
+				-0.07028468698263168,
 				-0.06742824614048004
 			]
 		},
@@ -65,14 +65,14 @@
 			"mesh":2,
 			"name":"lamp",
 			"scale":[
-				2.601189613342285,
-				2.601189613342285,
-				2.601189613342285
+				4.85132360458374,
+				4.85132360458374,
+				4.85132360458374
 			],
 			"translation":[
 				1.704799069557339e-05,
 				0.02200128138065338,
-				-0.03448260948061943
+				0.1228577047586441
 			]
 		}
 	],
@@ -84,7 +84,7 @@
 					"specularFactor":0
 				}
 			},
-			"name":"Material #45\"",
+			"name":"Material #45\".001",
 			"normalTexture":{
 				"index":0
 			},
@@ -110,7 +110,7 @@
 					"specularFactor":0
 				}
 			},
-			"name":"Material #105\"",
+			"name":"Material #105\".001",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":2
@@ -125,7 +125,7 @@
 					"specularFactor":0
 				}
 			},
-			"name":"Material #47\"",
+			"name":"Material #47\".001",
 			"normalTexture":{
 				"index":3
 			},
@@ -139,7 +139,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh.001",
+			"name":"Mesh.004",
 			"primitives":[
 				{
 					"attributes":{
@@ -153,7 +153,7 @@
 			]
 		},
 		{
-			"name":"Mesh",
+			"name":"Mesh.005",
 			"primitives":[
 				{
 					"attributes":{
@@ -167,7 +167,7 @@
 			]
 		},
 		{
-			"name":"Mesh.002",
+			"name":"Mesh.003",
 			"primitives":[
 				{
 					"attributes":{
@@ -302,7 +302,7 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":1062,
+			"count":1119,
 			"max":[
 				0.04042625427246094,
 				0.07373197376728058,
@@ -318,13 +318,13 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":1062,
+			"count":1119,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":1062,
+			"count":1119,
 			"type":"VEC2"
 		},
 		{
@@ -385,26 +385,26 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":12744,
+			"byteLength":13428,
 			"byteOffset":6304,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":12744,
-			"byteOffset":19048,
+			"byteLength":13428,
+			"byteOffset":19732,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":8496,
-			"byteOffset":31792,
+			"byteLength":8952,
+			"byteOffset":33160,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4260,
-			"byteOffset":40288,
+			"byteOffset":42112,
 			"target":34963
 		}
 	],
@@ -416,7 +416,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":44548,
+			"byteLength":46372,
 			"uri":"lamp_wall_electric_01.bin"
 		}
 	]

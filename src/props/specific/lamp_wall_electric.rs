@@ -16,11 +16,9 @@ pub(crate) fn setup_lamp_wall_electric(
         static_bundle::<LampWallElectric>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
     commands
         .entity(trigger.target())
-        // The prop should be held upright.
         .insert(bundle)
-        // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.
         .with_child((
-            Transform::from_xyz(0.0, 0.2, 0.0),
+            Transform::from_xyz(0.0, -0.08, -0.1),
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),
                 intensity: 40_000.0,

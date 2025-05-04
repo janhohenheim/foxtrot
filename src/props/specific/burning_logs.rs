@@ -86,6 +86,8 @@ pub(crate) fn setup_burning_logs(
                 intensity: BASE_INTENSITY,
                 radius: 0.5,
                 shadows_enabled: true,
+                #[cfg(feature = "native")]
+                soft_shadows_enabled: true,
                 ..default()
             },
             Transform::from_xyz(0.0, 0.2, 0.0),

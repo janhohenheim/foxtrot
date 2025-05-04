@@ -13,7 +13,7 @@ use bevy::core_pipeline::{
 };
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
-    pbr::NotShadowCaster,
+    pbr::{NotShadowCaster, ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
     prelude::*,
     render::{
         camera::Exposure,
@@ -111,6 +111,8 @@ fn spawn_view_model(
                     TemporalAntiAliasing::default(),
                     DepthPrepass,
                     Msaa::Off,
+                    ScreenSpaceAmbientOcclusion::default(),
+                    ShadowFilteringMethod::Temporal,
                 ),
             ));
 
@@ -136,9 +138,6 @@ fn spawn_view_model(
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
                 Tonemapping::AcesFitted,
-                #[cfg(feature = "native")]
-                // We don't use bloom on the view model, as it may lead to artifacts.
-                (TemporalAntiAliasing::default(), DepthPrepass, Msaa::Off),
             ));
 
             // Spawn the player's view model

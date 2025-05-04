@@ -11,7 +11,6 @@ pub(crate) fn setup_lamp_wall_electric(
     trigger: Trigger<OnAdd, LampWallElectric>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-    mut config_store: ResMut<GizmoConfigStore>,
 ) {
     let bundle =
         static_bundle::<LampWallElectric>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
@@ -27,11 +26,11 @@ pub(crate) fn setup_lamp_wall_electric(
                 intensity: 40_000.0,
                 radius: 0.2,
                 shadows_enabled: true,
+                #[cfg(feature = "native")]
+                soft_shadows_enabled: true,
+
                 ..default()
             },
         ))
         .observe(prepare_light_mesh);
-    let (_, light_config) = config_store.config_mut::<LightGizmoConfigGroup>();
-    light_config.draw_all = true;
-    light_config.color = LightGizmoColor::MatchLightColor;
 }

@@ -42,6 +42,16 @@ pub(super) fn plugin(app: &mut App) {
             ..default()
         },
     );
+    app.insert_gizmo_config(
+        LightGizmoConfigGroup {
+            draw_all: true,
+            ..default()
+        },
+        GizmoConfig {
+            enabled: true,
+            ..default()
+        },
+    );
     app.add_observer(advance_debug_state);
     app.add_observer(toogle_egui_inspector);
     app.add_systems(

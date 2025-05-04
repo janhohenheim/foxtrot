@@ -63,7 +63,7 @@ default = [
     # Default to a native dev build.
     "dev_native",
 ]
-native = ["dep:bevy_hanabi"]
+native = ["dep:bevy_hanabi", "bevy/experimental_pbr_pcss"]
 dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
     "bevy/dynamic_linking",

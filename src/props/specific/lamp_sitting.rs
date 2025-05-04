@@ -29,6 +29,8 @@ pub(crate) fn setup_lamp_sitting(
                 intensity: 40_000.0,
                 radius: 0.2,
                 shadows_enabled: true,
+                #[cfg(feature = "native")]
+                soft_shadows_enabled: true,
                 ..default()
             },
         ))

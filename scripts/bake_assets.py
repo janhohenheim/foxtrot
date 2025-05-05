@@ -123,7 +123,9 @@ def convert_textures_to_ktx2():
                 ]
                 if file_path in _normal_maps:
                     command.append("-normal")
-                elif file_path not in _linear_textures:
+                elif file_path in _linear_textures:
+                    command.append("-linear")
+                else:
                     command.append("-srgb")
 
                 # convert the texture to ktx2
@@ -140,7 +142,6 @@ def convert_gltf_textures_to_ktx2():
         for file in files:
             if os.path.splitext(file)[1] in GLTF_EXTENSIONS:
                 print(f"\tConverting {os.path.join(root, file)} to use ktx2")
-                # klafsa -b kram --codec bc7 --container ktx2 gltf assets/models/darkmod/furniture/tables/rtable1.gltf
                 subprocess.run(
                     [
                         "klafsa",
@@ -232,7 +233,6 @@ def compile_maps():
 def _bake_texture_recursively(texture_path: str):
     # dictated by the Quake 1 BSP format
     _MAX_TEXTURE_NAME_LENGTH = 15
-    global _texture_name_counter
     with os.scandir(texture_path) as it:
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
@@ -251,18 +251,13 @@ def _bake_texture_recursively(texture_path: str):
             if len(texture_name) <= _MAX_TEXTURE_NAME_LENGTH:
                 skip_renaming = True
 
-            if not skip_renaming:
-                if texture_name not in _texture_name_to_truncated_name:
-                    _texture_name_to_truncated_name[texture_name] = str(
-                        _texture_name_counter
-                    )
-                    _texture_name_counter += 1
-                truncated_texture_name = _texture_name_to_truncated_name[texture_name]
-            else:
-                truncated_texture_name = texture_name
-                
+
             material_name = f"{texture_name}.toml"
             if ext_name == ".toml":
+                if not skip_renaming:
+                    truncated_texture_name = _trunctate_texture_name(texture_name)
+                else:
+                    truncated_texture_name = texture_name
                 truncated_material_name = f"{truncated_texture_name}.toml"
                 baked_material_path = os.path.join(
                     _BAKED_TEXTURES_DIR, truncated_material_name
@@ -290,6 +285,10 @@ def _bake_texture_recursively(texture_path: str):
                 file_name for file_name, _file in files.items()
             ]
             if has_material_file:
+                if not skip_renaming:
+                    truncated_texture_name = _trunctate_texture_name(texture_name)
+                else:
+                    truncated_texture_name = texture_name
                 # we have a base color texture
                 # and we need to move the directory recursively
 
@@ -331,7 +330,7 @@ def _bake_texture_recursively(texture_path: str):
                             f"{truncated_texture_name}{pbr_suffix}{pbr_extension}",
                         )
                         shutil.copy2(
-                            file.path,
+                            pbr_file.path,
                             truncated_pbr_texture_path,
                         )
                         if pbr_suffix in NORMAL_MAP_SUFFIX:
@@ -339,6 +338,14 @@ def _bake_texture_recursively(texture_path: str):
                         elif pbr_suffix in LINEAR_TEXTURE_SUFFIX:
                             _linear_textures.add(truncated_pbr_texture_path)
 
+def _trunctate_texture_name(texture_name: str) -> str:
+    global _texture_name_counter
+    if texture_name not in _texture_name_to_truncated_name:
+        _texture_name_to_truncated_name[texture_name] = str(
+            _texture_name_counter
+        )
+        _texture_name_counter += 1
+    return _texture_name_to_truncated_name[texture_name]
 
 if __name__ == "__main__":
     main()

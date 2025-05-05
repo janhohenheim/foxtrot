@@ -7,21 +7,24 @@ use std::{f32::consts::FRAC_PI_2, iter};
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
-#[cfg(feature = "native")]
-use bevy::core_pipeline::{
-    bloom::Bloom,
-    experimental::taa::TemporalAntiAliasing,
-    prepass::{DepthPrepass, NormalPrepass},
-};
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
-    pbr::{NotShadowCaster, ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
+    pbr::NotShadowCaster,
     prelude::*,
     render::{
         camera::Exposure,
         view::{NoFrustumCulling, RenderLayers},
     },
     scene::SceneInstanceReady,
+};
+#[cfg(feature = "native")]
+use bevy::{
+    core_pipeline::{
+        bloom::Bloom,
+        experimental::taa::TemporalAntiAliasing,
+        prepass::{DepthPrepass, NormalPrepass},
+    },
+    pbr::{ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
 };
 use bevy_enhanced_input::prelude::*;
 

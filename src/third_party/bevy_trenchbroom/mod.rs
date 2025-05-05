@@ -1,7 +1,7 @@
 //! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
 //! We use TrenchBroom to edit our levels.
 
-use bevy::{asset::RenderAssetUsages, image::ImageSampler, prelude::*};
+use bevy::{image::ImageSampler, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
 pub(crate) use util::*;
@@ -23,7 +23,6 @@ pub(super) fn plugin(app: &mut App) {
             .no_bsp_lighting(true)
             .texture_sampler(texture_sampler())
             .linear_filtering()
-            .brush_mesh_asset_usages(RenderAssetUsages::RENDER_WORLD)
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);

@@ -1,15 +1,21 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_landmass::{Character, prelude::*};
+use bevy_trenchbroom::prelude::*;
 
-use crate::{
-    props::Chair,
-    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
-};
+use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_chair);
+    app.register_type::<Chair>();
 }
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/furniture/seating/wchair1.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct Chair;
 
 fn setup_chair(
     trigger: Trigger<OnAdd, Chair>,

@@ -1,8 +1,9 @@
 use avian3d::prelude::*;
+use bevy_trenchbroom::prelude::*;
 
 use crate::{
     AppSet,
-    props::{BurningLogs, effects::prepare_light_mesh, generic::static_bundle},
+    props::{effects::prepare_light_mesh, setup::static_bundle},
     screens::Screen,
 };
 #[cfg(feature = "native")]
@@ -26,7 +27,15 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_burning_logs);
     #[cfg(feature = "native")]
     app.add_observer(particles::add_particle_effects);
+    app.register_type::<BurningLogs>();
 }
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/fireplace/burntwood.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct BurningLogs;
 
 #[derive(Resource, Asset, Clone, TypePath)]
 struct BurningLogsAssets {
@@ -60,7 +69,7 @@ const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 
 const BASE_INTENSITY: f32 = 150_000.0;
 
-pub(crate) fn setup_burning_logs(
+fn setup_burning_logs(
     trigger: Trigger<OnAdd, BurningLogs>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,

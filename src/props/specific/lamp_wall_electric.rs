@@ -1,13 +1,25 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
+use bevy_trenchbroom::prelude::*;
 
-use crate::props::{LampWallElectric, effects::prepare_light_mesh, generic::static_bundle};
+use crate::props::{effects::prepare_light_mesh, setup::static_bundle};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_lamp_wall_electric);
+    app.register_type::<LampWallElectric>();
 }
 
-pub(crate) fn setup_lamp_wall_electric(
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model(
+    "models/darkmod/lights/non-extinguishable/lamp_wall_electric_01/lamp_wall_electric_01.gltf"
+)]
+#[spawn_hook(preload_model::<Self>)]
+#[classname("light_lamp_wall_electric")]
+pub(crate) struct LampWallElectric;
+
+fn setup_lamp_wall_electric(
     trigger: Trigger<OnAdd, LampWallElectric>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,

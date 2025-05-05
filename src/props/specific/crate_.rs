@@ -2,17 +2,23 @@ use avian_pickup::prop::{PreferredPickupDistanceOverride, PreferredPickupRotatio
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_landmass::{Character, prelude::*};
+use bevy_trenchbroom::prelude::*;
 
-use crate::{
-    props::Crate,
-    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
-};
+use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_crate);
+    app.register_type::<Crate>();
 }
 
-pub(crate) fn setup_crate(
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/crate01.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct Crate;
+
+fn setup_crate(
     trigger: Trigger<OnAdd, Crate>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,

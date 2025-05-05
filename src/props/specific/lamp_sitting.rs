@@ -1,14 +1,25 @@
 use avian_pickup::prop::PreferredPickupRotation;
 use avian3d::prelude::*;
 use bevy::prelude::*;
+use bevy_trenchbroom::prelude::*;
 
-use crate::props::{LampSitting, effects::prepare_light_mesh, generic::dynamic_bundle};
+use crate::props::{effects::prepare_light_mesh, setup::dynamic_bundle};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_lamp_sitting);
+    app.register_type::<LampSitting>();
 }
 
-pub(crate) fn setup_lamp_sitting(
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model(
+    "models/darkmod/lights/non-extinguishable/round_lantern_sitting/round_lantern_sitting.gltf"
+)]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct LampSitting;
+
+fn setup_lamp_sitting(
     trigger: Trigger<OnAdd, LampSitting>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,

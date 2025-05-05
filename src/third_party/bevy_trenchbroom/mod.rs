@@ -1,10 +1,12 @@
 //! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
 //! We use TrenchBroom to edit our levels.
 
-use bevy::{asset::RenderAssetUsages, prelude::*};
+use bevy::{asset::RenderAssetUsages, image::ImageSampler, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
 pub(crate) use util::*;
+
+use crate::asset_processing::default_image_sampler_descriptor;
 
 mod hacks;
 mod proxy;
@@ -19,12 +21,20 @@ pub(super) fn plugin(app: &mut App) {
             ]))
             // We only use BSPs for light maps.
             .no_bsp_lighting(true)
+            .texture_sampler(texture_sampler())
+            .linear_filtering()
             .brush_mesh_asset_usages(RenderAssetUsages::RENDER_WORLD)
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
     app.add_plugins((proxy::plugin, util::plugin, hacks::plugin));
     app.register_type::<Worldspawn>();
+}
+
+pub(crate) fn texture_sampler() -> ImageSampler {
+    let mut sampler = ImageSampler::linear();
+    *sampler.get_or_init_descriptor() = default_image_sampler_descriptor();
+    sampler
 }
 
 fn to_string_vec(slice: &[&str]) -> Vec<String> {

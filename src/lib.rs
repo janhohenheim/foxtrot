@@ -12,6 +12,7 @@ mod theme;
 mod third_party;
 mod ui_camera;
 
+use asset_processing::default_image_sampler_descriptor;
 use audio::DEFAULT_VOLUME;
 use bitflags::bitflags;
 
@@ -61,6 +62,9 @@ impl Plugin for AppPlugin {
                         volume: DEFAULT_VOLUME,
                     },
                     ..default()
+                })
+                .set(ImagePlugin {
+                    default_sampler: default_image_sampler_descriptor(),
                 }),
         );
         #[cfg(feature = "native")]

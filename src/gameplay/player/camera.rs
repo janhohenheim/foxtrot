@@ -29,7 +29,7 @@ use crate::{
     AppSet, CameraOrder, RenderLayer,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
     screens::Screen,
-    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath},
+    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
 
 use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
@@ -147,7 +147,7 @@ fn spawn_view_model(
             parent
                 .spawn((
                     Name::new("View Model"),
-                    SceneRoot(assets.load(Player::scene_path())),
+                    SceneRoot(assets.load_trenchbroom_model::<Player>()),
                 ))
                 .observe(configure_player_view_model);
         })

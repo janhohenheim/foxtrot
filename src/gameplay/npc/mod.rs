@@ -8,7 +8,7 @@ use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 
 use crate::third_party::{
-    avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath as _,
+    avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _,
     bevy_yarnspinner::YarnNode,
 };
 
@@ -57,7 +57,7 @@ fn on_add(trigger: Trigger<OnAdd, Npc>, mut commands: Commands, assets: Res<Asse
         ))
         .with_child((
             Name::new("Npc Model"),
-            SceneRoot(assets.load(Npc::scene_path())),
+            SceneRoot(assets.load_trenchbroom_model::<Npc>()),
             Transform::from_xyz(0.0, -NPC_FLOAT_HEIGHT, 0.0),
         ))
         .observe(setup_npc_animations);

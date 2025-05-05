@@ -1,14 +1,24 @@
 use bevy::{
     asset::RenderAssetUsages,
-    image::{ImageFilterMode, ImageSampler, ImageSamplerDescriptor},
+    image::{ImageAddressMode, ImageSamplerDescriptor},
     prelude::*,
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Update, configure_textures);
+    app.add_systems(Update, move_textures_to_render_world);
 }
 
-fn configure_textures(
+pub(crate) fn default_image_sampler_descriptor() -> ImageSamplerDescriptor {
+    ImageSamplerDescriptor {
+        address_mode_u: ImageAddressMode::Repeat,
+        address_mode_v: ImageAddressMode::Repeat,
+        address_mode_w: ImageAddressMode::Repeat,
+        anisotropy_clamp: 16,
+        ..ImageSamplerDescriptor::linear()
+    }
+}
+
+fn move_textures_to_render_world(
     mut events: EventReader<AssetEvent<Image>>,
     mut images: ResMut<Assets<Image>>,
     assets: Res<AssetServer>,
@@ -34,19 +44,5 @@ fn configure_textures(
 
         let image = images.get_mut(*id).unwrap();
         image.asset_usage = RenderAssetUsages::RENDER_WORLD;
-        if matches!(image.sampler, ImageSampler::Default) {
-            image.sampler = ImageSampler::Descriptor(ImageSamplerDescriptor::default());
-        }
-        let ImageSampler::Descriptor(desc) = &mut image.sampler else {
-            unreachable!();
-        };
-
-        // Enable trilinear filtering. This will allow us to use mipmaps.
-        desc.min_filter = ImageFilterMode::Linear;
-        desc.mipmap_filter = ImageFilterMode::Linear;
-        desc.mag_filter = ImageFilterMode::Linear;
-
-        // Enable anisotropic filtering. This will make the texture look better at an angle.
-        desc.anisotropy_clamp = 16;
     }
 }

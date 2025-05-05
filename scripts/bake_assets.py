@@ -185,6 +185,8 @@ def compile_maps():
                 with open(file_path, "r") as f:
                     content = f.read()
                 for old_path, new_path in _texture_renames.items():
+                    old_path = f" {old_path} "
+                    new_path = f" {new_path} "
                     content = content.replace(old_path, new_path)
                 with open(file_path, "w") as f:
                     f.write(content)

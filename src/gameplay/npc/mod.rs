@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
-#[reflect(Component)]
+#[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/fox/Fox.gltf")]
 // In Wasm, TrenchBroom classes are not automatically registered.

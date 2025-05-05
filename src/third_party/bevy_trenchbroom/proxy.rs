@@ -1,20 +1,10 @@
 //! `struct`s that mirror Bevy's builtin components so that they can be used in the level editor.
 
 use bevy::prelude::{PointLight as BevyPointLight, *};
-use bevy_trenchbroom::{
-    bsp::base_classes::BspLight, config::TrenchBroomConfig, prelude::PointClass,
-};
+use bevy_trenchbroom::{bsp::base_classes::BspLight, prelude::*};
 
-pub(super) fn plugin(_app: &mut App) {}
-
-pub(crate) trait RegisterProxies {
-    fn register_proxies(self) -> TrenchBroomConfig;
-}
-
-impl RegisterProxies for TrenchBroomConfig {
-    fn register_proxies(self) -> TrenchBroomConfig {
-        self.register_class::<PointLight>()
-    }
+pub(super) fn plugin(app: &mut App) {
+    app.register_type::<PointLight>();
 }
 
 /// A light that emits light in all directions from a central point.
@@ -39,5 +29,5 @@ impl RegisterProxies for TrenchBroomConfig {
 // This is the default size, this is just to make sure it produces a valid fgd.
 #[size(-8 -8 -8, 8 8 8)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]
-#[reflect(Component, Default, Debug)]
+#[reflect(QuakeClass, Component, Default, Debug)]
 struct PointLight;

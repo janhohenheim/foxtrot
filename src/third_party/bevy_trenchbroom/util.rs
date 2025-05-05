@@ -6,7 +6,7 @@ use bevy_trenchbroom::{bsp::base_classes::BspWorldspawn, class::QuakeClass, prel
 pub(super) fn plugin(_app: &mut App) {}
 
 #[derive(SolidClass, Component, Reflect, Default)]
-#[reflect(Component)]
+#[reflect(Component, QuakeClass)]
 #[require(BspWorldspawn)]
 #[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle().with_lightmaps())]
 pub(crate) struct Worldspawn;

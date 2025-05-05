@@ -1651,7 +1651,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#6b901e5532ba914b9f434b30ea3ff5f0a9fe1663"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3ace33526a163957a37efe16ba1ea743fd4af23d"
 dependencies = [
  "anyhow",
  "atomicow",
@@ -1682,7 +1682,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#6b901e5532ba914b9f434b30ea3ff5f0a9fe1663"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3ace33526a163957a37efe16ba1ea743fd4af23d"
 dependencies = [
  "heck",
  "proc-macro2",

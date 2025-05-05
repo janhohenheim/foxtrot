@@ -3,13 +3,9 @@ use bevy::{
     image::{ImageFilterMode, ImageSampler, ImageSamplerDescriptor},
     prelude::*,
 };
-use bevy_trenchbroom::physics::SceneCollidersReady;
-
-use crate::third_party::bevy_trenchbroom::Worldspawn;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, configure_textures);
-    app.add_observer(configure_level_meshes_after_trenchbroom);
 }
 
 fn configure_textures(
@@ -52,37 +48,5 @@ fn configure_textures(
 
         // Enable anisotropic filtering. This will make the texture look better at an angle.
         desc.anisotropy_clamp = 16;
-    }
-}
-
-fn configure_level_meshes_after_trenchbroom(
-    trigger: Trigger<SceneCollidersReady>,
-    world_spawn: Query<(), With<Worldspawn>>,
-    children: Query<&Children>,
-    mesh_handles: Query<&Mesh3d>,
-    mut meshes: ResMut<Assets<Mesh>>,
-) {
-    let world_spawn = children
-        .iter_descendants(trigger.target())
-        .find(|child| world_spawn.contains(*child));
-    let Some(world_spawn) = world_spawn else {
-        warn!("Level has no world spawn");
-        return;
-    };
-
-    for child in children.iter_descendants(world_spawn) {
-        let Ok(mesh) = mesh_handles.get(child) else {
-            continue;
-        };
-
-        let Some(mesh) = meshes.get_mut(mesh) else {
-            continue;
-        };
-
-        if let Err(e) = mesh.generate_tangents() {
-            warn!("Failed to generate tangents for mesh: {e}");
-        }
-
-        mesh.asset_usage = RenderAssetUsages::RENDER_WORLD;
     }
 }

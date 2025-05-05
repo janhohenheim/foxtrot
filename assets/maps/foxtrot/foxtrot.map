@@ -1277,12 +1277,12 @@
 }
 // brush 141
 {
-( 720 304 0 ) ( 720 304 48 ) ( 512 48 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 2.7755575615628914e-16 1 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 528 48 0 ) ( 512 48 0 ) ( 512 48 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 2.7755575615628914e-16 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 720 288 0 ) ( 720 304 0 ) ( 512 48 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 0 0 0 ] [ 0 -1 0 -16 ] 0 0.2 0.2
-( 512 48 48 ) ( 720 304 48 ) ( 720 288 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 1 0 0 0 ] [ 0 -1 0 -16 ] 0 0.2 0.2
-( 528 48 48 ) ( 720 288 48 ) ( 720 288 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -2.7755575615628914e-16 -1 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 720 288 48 ) ( 720 304 48 ) ( 720 304 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -2.220446049250313e-16 -1 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
+( 720 304 0 ) ( 720 304 48 ) ( 512 48 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 2.7755575615628914e-16 1 0 0 ] [ 0 0 -1 -16 ] 0 0.18 0.2
+( 528 48 0 ) ( 512 48 0 ) ( 512 48 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 2.7755575615628914e-16 0 0 ] [ 0 0 -1 -16 ] 0 0.18 0.2
+( 720 288 0 ) ( 720 304 0 ) ( 512 48 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 0 0 0 ] [ 0 -1 0 -16 ] 0 0.18 0.2
+( 512 48 48 ) ( 720 304 48 ) ( 720 288 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 1 0 0 0 ] [ 0 -1 0 -16 ] 0 0.18 0.2
+( 528 48 48 ) ( 720 288 48 ) ( 720 288 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -2.7755575615628914e-16 -1 0 0 ] [ 0 0 -1 -16 ] 0 0.18 0.2
+( 720 288 48 ) ( 720 304 48 ) ( 720 304 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -2.220446049250313e-16 -1 0 0 ] [ 0 0 -1 -16 ] 0 0.18 0.2
 }
 // brush 142
 {
@@ -1295,12 +1295,12 @@
 }
 // brush 143
 {
-( 928 304 48 ) ( 928 288 48 ) ( 928 288 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 2.220446049250313e-16 1 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 928 288 48 ) ( 1456 -160 48 ) ( 1456 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -0.2520964921146468 0.6684455084609121 0 -398.27832 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 1456 -160 48 ) ( 1472 -160 48 ) ( 1472 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 0 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
-( 1456 -160 0 ) ( 1472 -160 0 ) ( 928 304 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -0.47058823529411764 0 0 0 ] [ -0.4705882352941178 -1 0 -16 ] 182.33362 0.2 0.2
-( 928 304 48 ) ( 1472 -160 48 ) ( 1456 -160 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 1 0 0 0 ] [ 0 -1 0 -16 ] 160.41846 0.2 0.2
-( 928 304 48 ) ( 928 304 0 ) ( 1472 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 0.6816295567952226 0.24742775624267527 0 0 ] [ 0 0 -1 -16 ] 0 0.2 0.2
+( 928 304 48 ) ( 928 288 48 ) ( 928 288 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 2.220446049250313e-16 1 0 0 ] [ 0 0 -1 -16 ] 0 0.08 0.2
+( 928 288 48 ) ( 1456 -160 48 ) ( 1456 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -0.2520964921146468 0.6684455084609121 0 -398.27832 ] [ 0 0 -1 -16 ] 0 0.08 0.2
+( 1456 -160 48 ) ( 1472 -160 48 ) ( 1472 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -1 0 0 0 ] [ 0 0 -1 -16 ] 0 0.08 0.2
+( 1456 -160 0 ) ( 1472 -160 0 ) ( 928 304 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ -0.47058823529411764 0 0 0 ] [ -0.4705882352941178 -1 0 -16 ] 182.33362 0.08 0.2
+( 928 304 48 ) ( 1472 -160 48 ) ( 1456 -160 48 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 1 0 0 0 ] [ 0 -1 0 -16 ] 160.41846 0.08 0.2
+( 928 304 48 ) ( 928 304 0 ) ( 1472 -160 0 ) darkmod/stone/sculpted/tiling1d/trim_lime_interlock [ 0.6816295567952226 0.24742775624267527 0 0 ] [ 0 0 -1 -16 ] 0 0.08 0.2
 }
 // brush 144
 {

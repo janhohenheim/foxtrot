@@ -60,7 +60,7 @@ fn spawn_view_model(
 ) {
     commands.insert_resource(AmbientLight {
         color: Color::srgb(68.0 / 255.0, 71.0 / 255.0, 98.0 / 255.0),
-        brightness: 150.0,
+        brightness: 80.0,
         ..default()
     });
     commands

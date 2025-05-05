@@ -35,11 +35,10 @@ fn setup_lamp_wall_electric(
                 color: Color::srgb(232.0 / 255.0, 199.0 / 255.0, 176.0 / 255.0),
                 intensity: 20_000.0,
                 radius: 0.05,
-                range: 60.0,
+                range: 20.0,
                 shadows_enabled: true,
                 #[cfg(feature = "native")]
                 soft_shadows_enabled: true,
-
                 ..default()
             },
         ))

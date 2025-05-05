@@ -11,7 +11,7 @@ TEXTURE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 
 MODELS_SUB_DIR = "models"
 NORMAL_MAP_SUFFIX = ["_normal", "_local"]
-LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
+LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ambient_occlusion", "_emissive"]
 
 
 def main():
@@ -124,7 +124,7 @@ def convert_textures_to_ktx2():
                 if file_path in _normal_maps:
                     command.append("-normal")
                 elif file_path in _linear_textures:
-                    command.append("-linear")
+                    pass
                 else:
                     command.append("-srgb")
 
@@ -229,7 +229,8 @@ def compile_maps():
                         (".log", ".prt", ".pts", ".json")
                     ):
                         os.remove(file.path)
-                os.remove(file_path)
+                # Need to keep it around for the base color preload hack :/
+                #os.remove(file_path)
 
 
 def _bake_texture_recursively(texture_path: str):
@@ -245,7 +246,7 @@ def _bake_texture_recursively(texture_path: str):
             if ext_name == ".toml":
                 with open(file.path, "r") as f:
                     content = f.read()
-                if "$" in content:
+                if "$" in content and not "inherits" in content:
                     if len(texture_name) > _MAX_TEXTURE_NAME_LENGTH:
                         raise Exception(
                             f"Base material name {texture_name} is too long. Max length is {_MAX_TEXTURE_NAME_LENGTH} characters."

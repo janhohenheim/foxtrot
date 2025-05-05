@@ -121,7 +121,7 @@ def process_textures():
 
                 else:
                     # strip _d from the new file name
-                    new_file_path = new_file_path.replace("_d", "")
+                    new_file_path = new_file_path.replace("_d.", ".")
                     subprocess.run(
                         [
                             "magick",

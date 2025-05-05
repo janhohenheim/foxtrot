@@ -1,4 +1,6 @@
 inherits = "/textures/base.toml"
 
 [material]
-perceptual_roughness = 0.9
+metallic_roughness_texture = "${name}/${name}_roughness.png"
+metallic = 0.0
+perceptual_roughness = 1.0

@@ -1460,3 +1460,8 @@
 "origin" "824 312 152"
 "angles" "0 90 0"
 }
+// entity 5
+{
+"classname" "lamp_sitting"
+"origin" "40 104 8"
+}

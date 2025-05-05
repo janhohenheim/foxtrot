@@ -23,15 +23,15 @@
 				0.7071067094802856
 			],
 			"scale":[
-				1.3616300821304321,
+				1.3616297245025635,
 				1.3616299629211426,
-				1.3616300821304321
+				1.3616297245025635
 			]
 		}
 	],
 	"materials":[
 		{
-			"name":"book_red1",
+			"name":"book_red1.001",
 			"normalTexture":{
 				"index":0
 			},
@@ -43,7 +43,7 @@
 			}
 		},
 		{
-			"name":"book_t1",
+			"name":"book_t1.001",
 			"normalTexture":{
 				"index":2
 			},
@@ -55,7 +55,7 @@
 			}
 		},
 		{
-			"name":"textures/readables/book_row01",
+			"name":"textures/readables/book_row01.001",
 			"normalTexture":{
 				"index":4
 			},
@@ -63,33 +63,31 @@
 				"baseColorTexture":{
 					"index":5
 				},
+				"metallicFactor":0,
 				"metallicRoughnessTexture":{
 					"index":6
 				}
 			}
 		},
 		{
-			"name":"wardrobe1",
+			"name":"wardrobe1.001",
 			"normalTexture":{
 				"index":7
 			},
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.5,
-					0.5,
-					0.5,
-					1
-				],
 				"baseColorTexture":{
 					"index":8
 				},
-				"metallicFactor":0
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":9
+				}
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.065",
+			"name":"Mesh_0.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -141,10 +139,6 @@
 		},
 		{
 			"sampler":0,
-			"source":0
-		},
-		{
-			"sampler":0,
 			"source":2
 		},
 		{
@@ -166,13 +160,21 @@
 		{
 			"sampler":0,
 			"source":7
+		},
+		{
+			"sampler":0,
+			"source":8
+		},
+		{
+			"sampler":0,
+			"source":9
 		}
 	],
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"book_sp1_local",
-			"uri":"book_sp1_local.png"
+			"name":"book_sp1_normal",
+			"uri":"book_sp1_normal.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -181,13 +183,18 @@
 		},
 		{
 			"mimeType":"image/png",
+			"name":"book_t2_normal",
+			"uri":"book_t2_normal.png"
+		},
+		{
+			"mimeType":"image/png",
 			"name":"book_t1",
 			"uri":"book_t1.png"
 		},
 		{
 			"mimeType":"image/png",
-			"name":"book_row01_local",
-			"uri":"book_row01_local.png"
+			"name":"book_row01_normal",
+			"uri":"book_row01_normal.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -196,25 +203,30 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"book_row01_s",
-			"uri":"book_row01_s.png"
+			"name":"book_row01_roughness",
+			"uri":"book_row01_roughness.png"
 		},
 		{
 			"mimeType":"image/png",
-			"name":"wardrobe1_local",
-			"uri":"wardrobe1_local.png"
+			"name":"wardrobe1_normal",
+			"uri":"wardrobe1_normal.png"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"wardrobe1_d_ed",
-			"uri":"wardrobe1_d_ed.png"
+			"mimeType":"image/png",
+			"name":"wardrobe1",
+			"uri":"wardrobe1.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"wardrobe1_roughness",
+			"uri":"wardrobe1_roughness.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":2298,
+			"count":2303,
 			"max":[
 				0.10284007340669632,
 				1.5518128871917725,
@@ -230,13 +242,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":2298,
+			"count":2303,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":2298,
+			"count":2303,
 			"type":"VEC2"
 		},
 		{
@@ -351,98 +363,98 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":27576,
+			"byteLength":27636,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":27576,
-			"byteOffset":27576,
+			"byteLength":27636,
+			"byteOffset":27636,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":18384,
-			"byteOffset":55152,
+			"byteLength":18424,
+			"byteOffset":55272,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":6420,
-			"byteOffset":73536,
+			"byteOffset":73696,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":9240,
-			"byteOffset":79956,
+			"byteOffset":80116,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":9240,
-			"byteOffset":89196,
+			"byteOffset":89356,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":6160,
-			"byteOffset":98436,
+			"byteOffset":98596,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2004,
-			"byteOffset":104596,
+			"byteOffset":104756,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":2424,
-			"byteOffset":106600,
+			"byteOffset":106760,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2424,
-			"byteOffset":109024,
+			"byteOffset":109184,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1616,
-			"byteOffset":111448,
+			"byteOffset":111608,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":828,
-			"byteOffset":113064,
+			"byteOffset":113224,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":4896,
-			"byteOffset":113892,
+			"byteOffset":114052,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4896,
-			"byteOffset":118788,
+			"byteOffset":118948,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":3264,
-			"byteOffset":123684,
+			"byteOffset":123844,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1680,
-			"byteOffset":126948,
+			"byteOffset":127108,
 			"target":34963
 		}
 	],
@@ -454,7 +466,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":128628,
+			"byteLength":128788,
 			"uri":"bookshelf02.bin"
 		}
 	]

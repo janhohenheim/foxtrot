@@ -66,13 +66,13 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"wchair1_local",
-			"uri":"wchair1_local.png"
+			"name":"wchair1_normal",
+			"uri":"wchair1_normal.png"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"wchair1_d_ed",
-			"uri":"wchair1_d_ed.png"
+			"mimeType":"image/png",
+			"name":"wchair1_d",
+			"uri":"wchair1_d.png"
 		}
 	],
 	"accessors":[

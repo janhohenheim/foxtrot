@@ -58,9 +58,9 @@
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
-			"name":"burning_logs_ed",
-			"uri":"burning_logs_ed.png"
+			"mimeType":"image/png",
+			"name":"burning_logs",
+			"uri":"burning_logs.png"
 		}
 	],
 	"accessors":[

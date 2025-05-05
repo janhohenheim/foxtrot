@@ -66,13 +66,13 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"crate01_local",
-			"uri":"crate01_local.png"
+			"name":"crate01_normal",
+			"uri":"crate01_normal.png"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"crate01_d_ed",
-			"uri":"crate01_d_ed.png"
+			"mimeType":"image/png",
+			"name":"crate01_d",
+			"uri":"crate01_d.png"
 		}
 	],
 	"accessors":[

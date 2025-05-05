@@ -25,7 +25,7 @@
 	],
 	"materials":[
 		{
-			"name":"grate",
+			"name":"grate.001",
 			"normalTexture":{
 				"index":0
 			},
@@ -33,13 +33,16 @@
 				"baseColorTexture":{
 					"index":1
 				},
-				"metallicFactor":0
+				"metallicFactor":0,
+				"metallicRoughnessTexture":{
+					"index":2
+				}
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.008",
+			"name":"Mesh_0.005",
 			"primitives":[
 				{
 					"attributes":{
@@ -61,25 +64,34 @@
 		{
 			"sampler":0,
 			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
 		}
 	],
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"grate_local",
-			"uri":"grate_local.png"
+			"name":"grate_normal",
+			"uri":"grate_normal.png"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"grate_ed",
-			"uri":"grate_ed.png"
+			"mimeType":"image/png",
+			"name":"grate",
+			"uri":"grate.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"grate_roughness",
+			"uri":"grate_roughness.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":300,
+			"count":304,
 			"max":[
 				12,
 				20.108505249023438,
@@ -95,13 +107,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":300,
+			"count":304,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":300,
+			"count":304,
 			"type":"VEC2"
 		},
 		{
@@ -114,26 +126,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":3600,
+			"byteLength":3648,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3600,
-			"byteOffset":3600,
+			"byteLength":3648,
+			"byteOffset":3648,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2400,
-			"byteOffset":7200,
+			"byteLength":2432,
+			"byteOffset":7296,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1656,
-			"byteOffset":9600,
+			"byteOffset":9728,
 			"target":34963
 		}
 	],
@@ -145,7 +157,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":11256,
+			"byteLength":11384,
 			"uri":"grate.bin"
 		}
 	]

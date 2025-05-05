@@ -21,15 +21,12 @@
 	"materials":[
 		{
 			"name":"tdm_table_round_01",
+			"normalTexture":{
+				"index":0
+			},
 			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.800000011920929,
-					0.800000011920929,
-					0.800000011920929,
-					1
-				],
 				"baseColorTexture":{
-					"index":0
+					"index":1
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.7470178008079529
@@ -56,20 +53,29 @@
 		{
 			"sampler":0,
 			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
 		}
 	],
 	"images":[
 		{
-			"mimeType":"image/jpeg",
-			"name":"rtable2b_ed",
-			"uri":"rtable2b_ed.png"
+			"mimeType":"image/png",
+			"name":"rtable2b_normal",
+			"uri":"rtable2b_normal.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"rtable2b",
+			"uri":"rtable2b.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":603,
+			"count":624,
 			"max":[
 				1.17689847946167,
 				1.2228811979293823,
@@ -85,13 +91,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":603,
+			"count":624,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":603,
+			"count":624,
 			"type":"VEC2"
 		},
 		{
@@ -104,26 +110,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":7236,
+			"byteLength":7488,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":7236,
-			"byteOffset":7236,
+			"byteLength":7488,
+			"byteOffset":7488,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4824,
-			"byteOffset":14472,
+			"byteLength":4992,
+			"byteOffset":14976,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":5136,
-			"byteOffset":19296,
+			"byteOffset":19968,
 			"target":34963
 		}
 	],
@@ -135,7 +141,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":24432,
+			"byteLength":25104,
 			"uri":"rtable1.bin"
 		}
 	]

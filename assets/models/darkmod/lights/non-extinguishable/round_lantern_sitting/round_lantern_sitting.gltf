@@ -3,9 +3,6 @@
 		"generator":"Khronos glTF Blender I/O v4.4.55",
 		"version":"2.0"
 	},
-	"extensionsUsed":[
-		"KHR_materials_emissive_strength"
-	],
 	"scene":0,
 	"scenes":[
 		{
@@ -36,6 +33,7 @@
 				"baseColorTexture":{
 					"index":1
 				},
+				"metallicFactor":0,
 				"metallicRoughnessTexture":{
 					"index":2
 				}
@@ -44,14 +42,9 @@
 		{
 			"emissiveFactor":[
 				1,
-				0.13896610377750448,
-				0
+				0.20198553800582886,
+				0.054606400430202484
 			],
-			"extensions":{
-				"KHR_materials_emissive_strength":{
-					"emissiveStrength":4.006863236427307
-				}
-			},
 			"name":"textures/darkmod/window/lamp_glass_lit_opaque",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
@@ -108,8 +101,8 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"iron_rough_local",
-			"uri":"iron_rough_local.png"
+			"name":"iron_rough_normal",
+			"uri":"iron_rough_normal.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -118,8 +111,8 @@
 		},
 		{
 			"mimeType":"image/png",
-			"name":"iron_rough_s",
-			"uri":"iron_rough_s.png"
+			"name":"iron_rough_roughness",
+			"uri":"iron_rough_roughness.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -131,7 +124,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":368,
+			"count":446,
 			"max":[
 				9.116904258728027,
 				34.87565231323242,
@@ -147,13 +140,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":368,
+			"count":446,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":368,
+			"count":446,
 			"type":"VEC2"
 		},
 		{
@@ -200,50 +193,50 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":4416,
+			"byteLength":5352,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4416,
-			"byteOffset":4416,
+			"byteLength":5352,
+			"byteOffset":5352,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2944,
-			"byteOffset":8832,
+			"byteLength":3568,
+			"byteOffset":10704,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2292,
-			"byteOffset":11776,
+			"byteOffset":14272,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":384,
-			"byteOffset":14068,
+			"byteOffset":16564,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":384,
-			"byteOffset":14452,
+			"byteOffset":16948,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":256,
-			"byteOffset":14836,
+			"byteOffset":17332,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":96,
-			"byteOffset":15092,
+			"byteOffset":17588,
 			"target":34963
 		}
 	],
@@ -255,7 +248,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":15188,
+			"byteLength":17684,
 			"uri":"round_lantern_sitting.bin"
 		}
 	]

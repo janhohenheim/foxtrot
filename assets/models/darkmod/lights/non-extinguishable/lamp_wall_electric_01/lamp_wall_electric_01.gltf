@@ -302,7 +302,7 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":1119,
+			"count":1121,
 			"max":[
 				0.04042625427246094,
 				0.07373197376728058,
@@ -318,13 +318,13 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":1119,
+			"count":1121,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":1119,
+			"count":1121,
 			"type":"VEC2"
 		},
 		{
@@ -385,26 +385,26 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":13428,
+			"byteLength":13452,
 			"byteOffset":6304,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":13428,
-			"byteOffset":19732,
+			"byteLength":13452,
+			"byteOffset":19756,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":8952,
-			"byteOffset":33160,
+			"byteLength":8968,
+			"byteOffset":33208,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4260,
-			"byteOffset":42112,
+			"byteOffset":42176,
 			"target":34963
 		}
 	],
@@ -416,7 +416,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":46372,
+			"byteLength":46436,
 			"uri":"lamp_wall_electric_01.bin"
 		}
 	]

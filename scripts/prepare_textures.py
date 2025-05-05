@@ -10,12 +10,14 @@ TEXTURES_SUBDIR = "textures"
 TEXTURE_EXTENSIONS = [".jpg", ".jpeg", ".dds", ".tga"]
 NORMAL_MAP_SUFFIX = ["_normal", "_local"]
 LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
+PHONG_SPECULAR_SUFFIX = ["_s"]
 
 
 def main():
     verify_that_the_assets_are_in_the_working_directory()
     verify_that_all_tools_are_installed()
     process_textures()
+
 
 def verify_that_all_tools_are_installed():
     tools = [["magick", "--version"]]
@@ -49,9 +51,13 @@ def process_textures():
                 if any(suffix in file_name for suffix in NORMAL_MAP_SUFFIX):
                     if f"/{TEXTURES_SUBDIR}/" in file_path:
                         name_without_suffix = "_".join(file_name.split("_")[:-1])
-                        os.makedirs(os.path.join(root, name_without_suffix), exist_ok=True)
+                        os.makedirs(
+                            os.path.join(root, name_without_suffix), exist_ok=True
+                        )
                         normal_map_path = os.path.join(
-                            root, name_without_suffix, f"{name_without_suffix}_normal.png"
+                            root,
+                            name_without_suffix,
+                            f"{name_without_suffix}_normal.png",
                         )
                     else:
                         normal_map_path = new_file_path
@@ -66,8 +72,6 @@ def process_textures():
                             "png:color-type=2",
                             "-depth",
                             "8",
-                            "-alpha",
-                            "on",
                             "-channel",
                             "G",
                             "-negate",
@@ -91,7 +95,33 @@ def process_textures():
                             new_file_path,
                         ]
                     )
+                elif any(suffix in file_name for suffix in PHONG_SPECULAR_SUFFIX):
+                    if f"/{TEXTURES_SUBDIR}/" in file_path:
+                        name_without_suffix = "_".join(file_name.split("_")[:-1])
+                        os.makedirs(
+                            os.path.join(root, name_without_suffix), exist_ok=True
+                        )
+                        roughness_path = os.path.join(
+                            root,
+                            name_without_suffix,
+                            f"{name_without_suffix}_roughness.png",
+                        )
+                    else:
+                        roughness_path = new_file_path
+                    subprocess.run(
+                        [
+                            "magick",
+                            file_path,
+                            "-channel",
+                            "RGB",
+                            "-negate",
+                            roughness_path,
+                        ]
+                    )
+
                 else:
+                    # strip _d from the new file name
+                    new_file_path = new_file_path.replace("_d", "")
                     subprocess.run(
                         [
                             "magick",

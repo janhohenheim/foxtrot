@@ -31,7 +31,6 @@ fn setup_crate(
         archipelago_ref: ArchipelagoRef3d::new(*archipelago),
     });
     commands.entity(trigger.target()).insert((
-        TransformInterpolation,
         ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh)
             .with_default_layers(CollisionLayers::new(CollisionLayer::Prop, LayerMask::ALL))
             .with_default_density(1_000.0),
@@ -42,5 +41,6 @@ fn setup_crate(
         // Holding a big crate right in your face looks bad, so
         // let's move the pickup distance a bit further away.
         PreferredPickupDistanceOverride(1.0),
+        RigidBody::Dynamic,
     ));
 }

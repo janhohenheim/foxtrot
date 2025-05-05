@@ -3,6 +3,9 @@
 		"generator":"Khronos glTF Blender I/O v4.4.55",
 		"version":"2.0"
 	},
+	"extensionsUsed":[
+		"KHR_materials_emissive_strength"
+	],
 	"scene":0,
 	"scenes":[
 		{
@@ -40,10 +43,15 @@
 		},
 		{
 			"emissiveFactor":[
-				0.3999999761581421,
-				0.042508286684257435,
-				0.018732789532375893
+				1,
+				0.13896610377750448,
+				0
 			],
+			"extensions":{
+				"KHR_materials_emissive_strength":{
+					"emissiveStrength":4.006863236427307
+				}
+			},
 			"name":"textures/darkmod/window/lamp_glass_lit_opaque",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{

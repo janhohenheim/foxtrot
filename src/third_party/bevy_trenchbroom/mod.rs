@@ -6,6 +6,7 @@ use bevy_trenchbroom::prelude::*;
 
 pub(crate) use util::*;
 
+mod hacks;
 mod proxy;
 mod util;
 
@@ -22,7 +23,7 @@ pub(super) fn plugin(app: &mut App) {
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_plugins((proxy::plugin, util::plugin));
+    app.add_plugins((proxy::plugin, util::plugin, hacks::plugin));
     app.register_type::<Worldspawn>();
 }
 

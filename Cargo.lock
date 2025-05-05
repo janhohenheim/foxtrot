@@ -3007,6 +3007,7 @@ dependencies = [
  "log",
  "oxidized_navigation",
  "rand 0.8.5",
+ "regex",
  "tracing",
 ]
 

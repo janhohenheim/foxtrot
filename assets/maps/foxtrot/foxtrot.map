@@ -1445,56 +1445,18 @@
 }
 // entity 2
 {
-"classname" "lamp_sitting"
-"origin" "56 136 8"
-}
-// entity 3
-{
 "classname" "npc"
 "origin" "456 136 8"
 }
-// entity 4
+// entity 3
 {
 "classname" "light_lamp_wall_electric"
 "origin" "504 -88 120"
 "angles" "0 180 0"
 }
-// entity 5
+// entity 4
 {
 "classname" "light_lamp_wall_electric"
 "origin" "824 312 152"
 "angles" "0 90 0"
-}
-// entity 6
-{
-"classname" "bookshelf"
-"origin" "376 -72 8"
-}
-// entity 7
-{
-"classname" "crate"
-"origin" "360 136 24"
-}
-// entity 8
-{
-"classname" "chair"
-"origin" "376 72 8"
-"angles" "0 150 0"
-}
-// entity 9
-{
-"classname" "grate"
-"origin" "488 56 8"
-"angles" "0 180 0"
-}
-// entity 10
-{
-"classname" "burning_logs"
-"origin" "504 56 8"
-"angles" "0 180 0"
-}
-// entity 11
-{
-"classname" "table"
-"origin" "520 216 8"
 }

@@ -65,9 +65,11 @@ _ORIGINAL_TEXTURES_DIR = os.path.join(ORIGINAL_ASSETS_DIR, "textures")
 _BAKED_TEXTURES_DIR = os.path.join(BAKED_ASSETS_DIR, "textures")
 
 
-_texture_renames = {}
-_linear_textures = set()
-_normal_maps = set()
+_texture_name_counter: int = 0
+_texture_name_to_truncated_name: dict[str, str] = {}
+_texture_renames: dict[str, str] = {}
+_linear_textures: set[str] = set()
+_normal_maps: set[str] = set()
 
 
 def copy_truncated_textures_to_texture_root():
@@ -230,11 +232,35 @@ def compile_maps():
 def _bake_texture_recursively(texture_path: str):
     # dictated by the Quake 1 BSP format
     _MAX_TEXTURE_NAME_LENGTH = 15
+    global _texture_name_counter
     with os.scandir(texture_path) as it:
         files = {entry.name: entry for entry in it}
         for file_name, file in files.items():
             texture_name, ext_name = os.path.splitext(file_name)
-            truncated_texture_name = texture_name[:_MAX_TEXTURE_NAME_LENGTH]
+
+            # if the file is a toml file and there is a $ sign in the content, we need to rename the texture
+            skip_renaming = False
+            if ext_name == ".toml":
+                with open(file.path, "r") as f:
+                    content = f.read()
+                if "$" in content:
+                    if len(texture_name) > _MAX_TEXTURE_NAME_LENGTH:
+                        raise Exception(
+                            f"Base material name {texture_name} is too long. Max length is {_MAX_TEXTURE_NAME_LENGTH} characters."
+                        )
+            if len(texture_name) <= _MAX_TEXTURE_NAME_LENGTH:
+                skip_renaming = True
+
+            if not skip_renaming:
+                if texture_name not in _texture_name_to_truncated_name:
+                    _texture_name_to_truncated_name[texture_name] = str(
+                        _texture_name_counter
+                    )
+                    _texture_name_counter += 1
+                truncated_texture_name = _texture_name_to_truncated_name[texture_name]
+            else:
+                truncated_texture_name = texture_name
+                
             material_name = f"{texture_name}.toml"
             if ext_name == ".toml":
                 truncated_material_name = f"{truncated_texture_name}.toml"

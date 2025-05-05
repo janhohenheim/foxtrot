@@ -9,7 +9,9 @@ use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 #[cfg(feature = "native")]
 use bevy::core_pipeline::{
-    bloom::Bloom, experimental::taa::TemporalAntiAliasing, prepass::DepthPrepass,
+    bloom::Bloom,
+    experimental::taa::TemporalAntiAliasing,
+    prepass::{DepthPrepass, NormalPrepass},
 };
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
@@ -110,6 +112,7 @@ fn spawn_view_model(
                     Bloom::NATURAL,
                     TemporalAntiAliasing::default(),
                     DepthPrepass,
+                    NormalPrepass,
                     Msaa::Off,
                     ScreenSpaceAmbientOcclusion::default(),
                     ShadowFilteringMethod::Temporal,

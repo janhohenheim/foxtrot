@@ -9,7 +9,7 @@ use crate::third_party::bevy_trenchbroom::Worldspawn;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Update, configure_textures);
-    app.add_observer(configure_gltfs_after_trenchbroom);
+    app.add_observer(configure_level_meshes_after_trenchbroom);
 }
 
 fn configure_textures(
@@ -55,7 +55,7 @@ fn configure_textures(
     }
 }
 
-fn configure_gltfs_after_trenchbroom(
+fn configure_level_meshes_after_trenchbroom(
     trigger: Trigger<SceneCollidersReady>,
     world_spawn: Query<(), With<Worldspawn>>,
     children: Query<&Children>,
@@ -78,6 +78,10 @@ fn configure_gltfs_after_trenchbroom(
         let Some(mesh) = meshes.get_mut(mesh) else {
             continue;
         };
+
+        if let Err(e) = mesh.generate_tangents() {
+            warn!("Failed to generate tangents for mesh: {e}");
+        }
 
         mesh.asset_usage = RenderAssetUsages::RENDER_WORLD;
     }

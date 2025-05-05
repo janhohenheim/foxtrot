@@ -1216,8 +1216,7 @@ dependencies = [
 [[package]]
 name = "bevy_materialize"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670eb69a0dbee3c001f24a752accce10e3a3bb425623b83b92727de9b199ccf4"
+source = "git+https://github.com/janhohenheim/bevy_materialize?branch=hack-linear#542ee2b6f2d76f1094e82ed696f4f14225c1f334"
 dependencies = [
  "bevy",
  "serde",

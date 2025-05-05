@@ -68,6 +68,9 @@ def process_textures():
                             "8",
                             "-alpha",
                             "on",
+                            "-channel",
+                            "G",
+                            "-negate",
                             normal_map_path,
                         ]
                     )

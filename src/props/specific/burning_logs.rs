@@ -3,7 +3,7 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::{
     AppSystems,
-    props::{effects::prepare_light_mesh, setup::static_bundle},
+    props::{effects::prepare_light_meshes_on_instace_ready, setup::static_bundle},
     screens::Screen,
 };
 #[cfg(feature = "native")]
@@ -88,7 +88,7 @@ fn setup_burning_logs(
                 .with_volume(Volume::Linear(0.25))
                 .with_spatial_scale(SpatialScale::new(0.3)),
         ))
-        .observe(prepare_light_mesh)
+        .observe(prepare_light_meshes_on_instace_ready)
         .with_child((
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),

@@ -110,6 +110,7 @@ def convert_textures_to_ktx2():
                 file_path = os.path.join(root, file)
                 print(f"\tConverting {file_path} to ktx2")
 
+                # kram encode -input your_image.png -output your_image.ktx2 -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
                 command = [
                     "kram",
                     "encode",

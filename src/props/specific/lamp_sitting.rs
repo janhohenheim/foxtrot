@@ -3,7 +3,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
-use crate::props::{effects::prepare_light_mesh, setup::dynamic_bundle};
+use crate::props::{effects::prepare_light_meshes_on_instace_ready, setup::dynamic_bundle};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_lamp_sitting);
@@ -45,5 +45,5 @@ fn setup_lamp_sitting(
                 ..default()
             },
         ))
-        .observe(prepare_light_mesh);
+        .observe(prepare_light_meshes_on_instace_ready);
 }

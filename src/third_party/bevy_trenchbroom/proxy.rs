@@ -10,6 +10,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<PointLight>();
     app.register_type::<DirectionalLight>();
     app.register_type::<SpotLight>();
+    app.register_type::<FuncGroup>();
 }
 
 /// A light that emits light in all directions from a central point.
@@ -94,3 +95,9 @@ struct DirectionalLight;
 #[reflect(QuakeClass, Component, Default, Debug)]
 #[classname("light_spot")]
 struct SpotLight;
+
+#[derive(SolidClass, Component, Debug, Clone, Copy, Default, Reflect)]
+#[base(Transform, Visibility)]
+#[reflect(QuakeClass, Component, Default, Debug)]
+#[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle().with_lightmaps())]
+struct FuncGroup;

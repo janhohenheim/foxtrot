@@ -10,6 +10,7 @@ env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: --deny warnings
   RUSTDOCFLAGS: --deny warnings
+  LINTER_TOOLCHAIN: nightly-2025-04-03
 
 jobs:
   # Run tests.
@@ -142,8 +143,6 @@ jobs:
     name: Bevy linter
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      LINTER_TOOLCHAIN: nightly-2025-04-03
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -161,6 +160,4 @@ jobs:
         uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0
 
       - name: Run Bevy linter
-        env:
-          RUSTFLAGS: --deny warnings
         run: bevy_lint --locked --workspace --all-targets --all-features

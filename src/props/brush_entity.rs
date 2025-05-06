@@ -38,8 +38,8 @@ fn setup_light_window_brushes(
             .entity(brush_entity)
             .insert(children![(
                 SpotLight {
-                    color: Color::WHITE,
-                    intensity: 20_000.0,
+                    color: Color::srgb_u8(239, 173, 144),
+                    intensity: 200_000.0,
                     radius: 10.0,
                     shadows_enabled: true,
                     #[cfg(feature = "native")]

@@ -41,6 +41,8 @@ use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
+    app.add_observer(add_render_layers_to_spot_light);
+    app.add_observer(add_render_layers_to_directional_light);
     app.add_observer(rotate_camera_yaw_and_pitch);
     app.add_systems(
         Update,
@@ -63,8 +65,8 @@ fn spawn_view_model(
     assets: Res<AssetServer>,
 ) {
     commands.insert_resource(AmbientLight {
-        color: Color::srgb(68.0 / 255.0, 71.0 / 255.0, 98.0 / 255.0),
-        brightness: 80.0,
+        color: Color::srgb_u8(68, 71, 88),
+        brightness: 120.0,
         ..default()
     });
     commands
@@ -244,6 +246,23 @@ fn sync_camera_translation_with_player(
 }
 
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {
+    let entity = trigger.target();
+    commands.entity(entity).insert(RenderLayers::from(
+        RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
+    ));
+}
+
+fn add_render_layers_to_spot_light(trigger: Trigger<OnAdd, SpotLight>, mut commands: Commands) {
+    let entity = trigger.target();
+    commands.entity(entity).insert(RenderLayers::from(
+        RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
+    ));
+}
+
+fn add_render_layers_to_directional_light(
+    trigger: Trigger<OnAdd, DirectionalLight>,
+    mut commands: Commands,
+) {
     let entity = trigger.target();
     commands.entity(entity).insert(RenderLayers::from(
         RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,

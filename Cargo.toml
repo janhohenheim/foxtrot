@@ -86,7 +86,7 @@ dev_native = [
 ]
 
 [package.metadata.bevy_cli]
-default_features = false
+default-features = false
 
 [package.metadata.bevy_cli.native]
 features = ["native"]

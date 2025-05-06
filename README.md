@@ -2,7 +2,9 @@
 
 A 3D reference project for Bevy
 
-https://github.com/user-attachments/assets/9a801b14-4ecc-4483-9f85-de6552bb2c1c
+
+https://github.com/user-attachments/assets/f648a085-4b3f-4fcb-9f54-e7d5249dc735
+
 
 I just reworked this whole thing and didn't get to the readme yet, sorry!
 

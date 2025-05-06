@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
-use super::effects::prepare_meshes;
+use super::effects::prepare_light_meshes;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<LightWindow>();
@@ -28,5 +28,5 @@ fn setup_light_window(trigger: Trigger<OnAdd, LightWindow>, mut commands: Comman
             },
             Transform::IDENTITY.looking_to(Vec3::X, Vec3::Y),
         )])
-        .queue(prepare_meshes);
+        .queue(prepare_light_meshes);
 }

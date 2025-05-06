@@ -14,10 +14,12 @@ pub(crate) fn prepare_light_meshes_on_instace_ready(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,
 ) {
-    commands.entity(trigger.target()).queue(prepare_meshes);
+    commands
+        .entity(trigger.target())
+        .queue(prepare_light_meshes);
 }
 
-pub(crate) fn prepare_meshes(entity_world: EntityWorldMut) {
+pub(crate) fn prepare_light_meshes(entity_world: EntityWorldMut) {
     let entity = entity_world.id();
     entity_world
         .into_world_mut()

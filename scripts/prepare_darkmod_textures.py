@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# This is a little helper script that converts the textures used by The Dark Mod
+# to a more Bevy + TrenchBroom friendly format.
+
 import os
 import subprocess
 import sys

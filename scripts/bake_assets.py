@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# This script runs a bunch of optimizations on your assets to make them
+# more suitable for release builds. It is executed automatically by the release workflow,
+# but you can also run it locally if you want to run `bevy run --release`.
+# Make sure to have installed `kram`, `qbsp`, `light`, and `klafsa` in your PATH.
+
 import shutil
 import subprocess
 import sys

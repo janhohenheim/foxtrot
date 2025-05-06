@@ -31,6 +31,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          shared-key: base
 
       - name: Run tests
         run: |
@@ -60,6 +61,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          shared-key: base
 
       - name: Install Bevy CLI
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
@@ -89,6 +91,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          shared-key: base
 
       - name: Run clippy lints
         run: cargo clippy --locked --workspace --all-targets --all-features -- --deny warnings
@@ -129,6 +132,35 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          shared-key: base
 
       - name: Check documentation
         run: cargo doc --locked --workspace --all-features --document-private-items --no-deps
+
+  # Run Bevy lints.
+  bevy-lint:
+    name: Bevy linter
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      LINTER_TOOLCHAIN: nightly-2025-04-03
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
+
+      - name: Populate target directory from cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+          shared-key: base
+
+      - name: Install Bevy linter
+        uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0
+
+      - name: Run Bevy linter
+        env:
+          RUSTFLAGS: --deny warnings
+        run: bevy_lint --locked --workspace --all-targets --all-features

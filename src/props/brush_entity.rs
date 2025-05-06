@@ -16,6 +16,8 @@ fn setup_light_window(trigger: Trigger<OnAdd, LightWindow>, mut commands: Comman
     let entity = trigger.target();
     commands.entity(entity).insert(children![(
         PointLight {
+            color: Color::WHITE,
+            intensity: 20_000.0,
             radius: 10.0,
             shadows_enabled: true,
             ..default()

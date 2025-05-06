@@ -1603,17 +1603,25 @@
 // entity 6
 {
 "classname" "light_window"
-"angles" "0 270 0"
 // brush 0
 {
-( 1600 -32 176 ) ( 1600 -48 176 ) ( 1600 -48 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 -1 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
-( 1600 -32 176 ) ( 1616 -32 192 ) ( 1616 -48 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
-( 1616 -32 192 ) ( 1632 -32 196 ) ( 1632 -48 196 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 -2.7755575615628914e-16 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
-( 1648 -48 192 ) ( 1664 -48 176 ) ( 1664 -48 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
-( 1664 -48 48 ) ( 1664 -32 48 ) ( 1600 -32 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
-( 1664 -32 48 ) ( 1664 -32 176 ) ( 1648 -32 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
-( 1632 -32 196 ) ( 1648 -32 192 ) ( 1648 -48 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 2.7755575615628914e-16 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
-( 1648 -32 192 ) ( 1664 -32 176 ) ( 1664 -48 176 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
-( 1664 -48 176 ) ( 1664 -32 176 ) ( 1664 -32 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 1 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
+( 1616 0 144 ) ( 1616 16 128 ) ( 1616 16 144 ) origin [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 1632 0 144 ) ( 1616 0 128 ) ( 1616 0 144 ) origin [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 1632 16 128 ) ( 1616 0 128 ) ( 1632 0 128 ) origin [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 1632 16 144 ) ( 1616 0 144 ) ( 1616 16 144 ) origin [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 1632 16 144 ) ( 1616 16 128 ) ( 1632 16 128 ) origin [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 1632 16 144 ) ( 1632 0 128 ) ( 1632 0 144 ) origin [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+}
+// brush 1
+{
+( 1600 16 176 ) ( 1600 0 176 ) ( 1600 0 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 -1 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
+( 1600 16 176 ) ( 1616 16 192 ) ( 1616 0 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
+( 1616 16 192 ) ( 1632 16 196 ) ( 1632 0 196 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 -2.7755575615628914e-16 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
+( 1648 0 192 ) ( 1664 0 176 ) ( 1664 0 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
+( 1664 0 48 ) ( 1664 16 48 ) ( 1600 16 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
+( 1664 16 48 ) ( 1664 16 176 ) ( 1648 16 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
+( 1632 16 196 ) ( 1648 16 192 ) ( 1648 0 192 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ -1 0 2.7755575615628914e-16 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
+( 1648 16 192 ) ( 1664 16 176 ) ( 1664 0 176 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 1 0 0 -96 ] [ 0 -1 0 48 ] 0 0.6 0.5
+( 1664 0 176 ) ( 1664 16 176 ) ( 1664 16 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 1 0 -96 ] [ 0 0 -1 48 ] 0 0.6 0.5
 }
 }

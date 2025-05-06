@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_trenchbroom::hacks::{BrushEntitySpawned, NotifyBrushEntitySpawned};
+use crate::third_party::bevy_trenchbroom::{BrushEntitySpawned, NotifyBrushEntitySpawned};
 
 use super::effects::prepare_light_meshes;
 

@@ -1,17 +1,12 @@
 use std::path::Path;
 
-use bevy::{
-    ecs::{component::HookContext, world::DeferredWorld},
-    image::ImageLoaderSettings,
-    prelude::*,
-};
+use bevy::{image::ImageLoaderSettings, prelude::*};
 use regex::Regex;
 
-use crate::{default_image_sampler_descriptor, gameplay::level::Level};
+use crate::default_image_sampler_descriptor;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, preload_base_color_textures);
-    app.add_systems(PreUpdate, trigger_entity_brush_spawned);
 }
 
 #[derive(Resource)]
@@ -41,26 +36,4 @@ fn preload_base_color_textures(asset_server: Res<AssetServer>, mut commands: Com
         ));
     }
     commands.insert_resource(PreloadedBaseColorTextures(handles));
-}
-
-#[derive(Component, Reflect)]
-#[reflect(Component)]
-pub(crate) struct NotifyBrushEntitySpawned;
-
-#[derive(Event)]
-pub(crate) struct BrushEntitySpawned;
-
-fn trigger_entity_brush_spawned(
-    brush_entities: Query<(Entity, &Children), With<NotifyBrushEntitySpawned>>,
-    mut commands: Commands,
-) {
-    for (entity, children) in brush_entities.iter() {
-        if children.is_empty() {
-            continue;
-        }
-        commands
-            .entity(entity)
-            .trigger(BrushEntitySpawned)
-            .remove::<NotifyBrushEntitySpawned>();
-    }
 }

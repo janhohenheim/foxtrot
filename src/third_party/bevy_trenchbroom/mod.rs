@@ -8,7 +8,7 @@ pub(crate) use util::*;
 
 use crate::asset_processing::default_image_sampler_descriptor;
 
-mod hacks;
+pub(crate) mod hacks;
 mod proxy;
 mod util;
 

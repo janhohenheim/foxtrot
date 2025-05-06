@@ -1,6 +1,6 @@
 # Foxtrot
 
-A 3D reference project for Bevy. Try it out [it in your browser on itch.io](https://janhohenheim.itch.io/foxtrot) :)
+A 3D reference project and tech demo for the Bevy Engine. Try it out [in your browser on itch.io](https://janhohenheim.itch.io/foxtrot) :)
 
 ![image](https://github.com/user-attachments/assets/5050ba4e-45c1-4e73-b2ae-3d4aad3f4712)
 

@@ -32,7 +32,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: base
+          shared-key: native
 
       - name: Run tests
         run: |
@@ -62,7 +62,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: base
+          shared-key: web
 
       - name: Install Bevy CLI
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
@@ -92,7 +92,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: base
+          shared-key: native
 
       - name: Run clippy lints
         run: cargo clippy --locked --workspace --all-targets --all-features -- --deny warnings
@@ -133,7 +133,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: base
+          shared-key: native
 
       - name: Check documentation
         run: cargo doc --locked --workspace --all-features --document-private-items --no-deps
@@ -154,7 +154,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: base
+          shared-key: native
 
       - name: Install Bevy linter
         uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0

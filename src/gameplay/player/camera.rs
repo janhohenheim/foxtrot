@@ -20,9 +20,7 @@ use bevy::{
 #[cfg(feature = "native")]
 use bevy::{
     core_pipeline::{
-        bloom::Bloom,
-        experimental::taa::TemporalAntiAliasing,
-        prepass::{DepthPrepass, NormalPrepass},
+        bloom::Bloom, experimental::taa::TemporalAntiAliasing, prepass::NormalPrepass,
     },
     pbr::{ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
 };
@@ -114,7 +112,6 @@ fn spawn_view_model(
                 (
                     Bloom::NATURAL,
                     TemporalAntiAliasing::default(),
-                    DepthPrepass,
                     NormalPrepass,
                     Msaa::Off,
                     ScreenSpaceAmbientOcclusion::default(),

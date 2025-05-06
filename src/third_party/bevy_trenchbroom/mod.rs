@@ -17,7 +17,12 @@ pub(super) fn plugin(app: &mut App) {
         TrenchBroomConfig::new("foxtrot")
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
             .texture_exclusions(to_string_vec(&[
-                "*_disp_*", "*_arm_*", "*_nor_*", "*_local", "*_normal",
+                "*_disp_*",
+                "*_arm_*",
+                "*_nor_*",
+                "*_local",
+                "*_normal",
+                "*_roughness",
             ]))
             // We only use BSPs for light maps.
             .no_bsp_lighting(true)

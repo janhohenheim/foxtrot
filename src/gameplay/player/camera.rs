@@ -28,7 +28,10 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::{
     AppSystems, CameraOrder, RenderLayer,
-    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
+    gameplay::{
+        animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
+        crosshair::cursor::IsCursorForcedFreed,
+    },
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
@@ -198,7 +201,11 @@ fn configure_player_view_model(
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
     mut transform: Single<&mut Transform, With<PlayerCamera>>,
+    cursor_forced_freed: Res<IsCursorForcedFreed>,
 ) {
+    if cursor_forced_freed.0 {
+        return;
+    }
     let delta = trigger.value;
 
     if delta != Vec2::ZERO {

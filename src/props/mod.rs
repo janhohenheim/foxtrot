@@ -3,6 +3,7 @@
 //! Afterwards, we still need to add new props to the `LevelAssets` struct to preload them for a given level.
 use bevy::prelude::*;
 
+mod brush_entity;
 mod effects;
 mod generic;
 mod setup;
@@ -14,5 +15,6 @@ pub(super) fn plugin(app: &mut App) {
         specific::plugin,
         effects::plugin,
         generic::plugin,
+        brush_entity::plugin,
     ));
 }

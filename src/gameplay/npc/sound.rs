@@ -9,7 +9,7 @@ use bevy::{
 };
 use bevy_tnua::prelude::*;
 
-use crate::{AppSet, audio::SoundEffect, screens::Screen};
+use crate::{AppSystems, audio::SoundEffect, screens::Screen};
 
 use super::{Npc, assets::NpcAssets};
 
@@ -18,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_step_sound
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::PlaySounds),
+            .in_set(AppSystems::PlaySounds),
     );
 }
 

@@ -2,7 +2,7 @@ use avian3d::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
-    AppSet,
+    AppSystems,
     props::{effects::prepare_light_mesh, setup::static_bundle},
     screens::Screen,
 };
@@ -22,7 +22,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         flicker_light
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::Update),
+            .in_set(AppSystems::Update),
     );
     app.add_observer(setup_burning_logs);
     #[cfg(feature = "native")]

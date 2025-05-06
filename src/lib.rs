@@ -29,11 +29,11 @@ impl Plugin for AppPlugin {
         app.configure_sets(
             Update,
             (
-                AppSet::TickTimers,
-                AppSet::ChangeUi,
-                AppSet::PlaySounds,
-                AppSet::PlayAnimations,
-                AppSet::Update,
+                AppSystems::TickTimers,
+                AppSystems::ChangeUi,
+                AppSystems::PlaySounds,
+                AppSystems::PlayAnimations,
+                AppSystems::Update,
             )
                 .chain(),
         );
@@ -95,7 +95,7 @@ impl Plugin for AppPlugin {
 /// When adding a new variant, make sure to order it in the `configure_sets`
 /// call above.
 #[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
-enum AppSet {
+enum AppSystems {
     /// Tick timers.
     TickTimers,
     /// Change UI.

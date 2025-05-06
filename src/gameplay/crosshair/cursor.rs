@@ -5,7 +5,7 @@ use std::any::Any;
 use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_yarnspinner::events::DialogueStartEvent;
 
-use crate::{AppSet, screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
+use crate::{AppSystems, screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
 
 use super::CrosshairState;
 
@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         )
             .chain()
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }

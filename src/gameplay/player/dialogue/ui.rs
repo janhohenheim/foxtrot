@@ -7,16 +7,16 @@ use std::any::Any;
 use bevy::prelude::*;
 use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
 
-use crate::{AppSet, gameplay::crosshair::CrosshairState, screens::Screen};
+use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
 
-use super::{DialogueSet, InteractionPrompt};
+use super::{DialogueSystems, InteractionPrompt};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::SpawnLevel), setup_interaction_prompt);
     app.add_systems(
         Update,
         update_interaction_prompt_ui
-            .in_set(DialogueSet::UpdateUi)
+            .in_set(DialogueSystems::UpdateUi)
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_systems(
@@ -26,7 +26,7 @@ pub(super) fn plugin(app: &mut App) {
             show_crosshair_on_dialogue_end.run_if(on_event::<DialogueCompleteEvent>),
         )
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
 }
 

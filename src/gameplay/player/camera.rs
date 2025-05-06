@@ -27,7 +27,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
-    AppSet, CameraOrder, RenderLayer,
+    AppSystems, CameraOrder, RenderLayer,
     gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
     screens::Screen,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
@@ -43,7 +43,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         sync_camera_translation_with_player
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::Update),
+            .in_set(AppSystems::Update),
     );
     app.register_type::<PlayerCamera>();
 }

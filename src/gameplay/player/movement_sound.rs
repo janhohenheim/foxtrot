@@ -4,7 +4,7 @@ use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 
-use crate::{AppSet, audio::sound_effect, screens::Screen};
+use crate::{AppSystems, audio::sound_effect, screens::Screen};
 
 use super::{Player, assets::PlayerAssets};
 
@@ -13,7 +13,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         (play_jump_grunt, play_step_sound, play_land_sound)
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::PlaySounds),
+            .in_set(AppSystems::PlaySounds),
     );
 }
 

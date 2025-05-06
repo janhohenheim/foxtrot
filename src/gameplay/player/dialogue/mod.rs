@@ -6,7 +6,7 @@ use bevy_enhanced_input::{events::Started, prelude::Actions};
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
-    AppSet,
+    AppSystems,
     screens::Screen,
     third_party::{
         avian3d::CollisionLayer,
@@ -28,15 +28,18 @@ pub(super) fn plugin(app: &mut App) {
 
     app.configure_sets(
         Update,
-        (DialogueSet::UpdateOpportunity, DialogueSet::UpdateUi)
+        (
+            DialogueSystems::UpdateOpportunity,
+            DialogueSystems::UpdateUi,
+        )
             .chain()
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
 
     app.add_systems(
         Update,
         check_for_dialogue_opportunity
-            .in_set(DialogueSet::UpdateOpportunity)
+            .in_set(DialogueSystems::UpdateOpportunity)
             .run_if(
                 in_state(Screen::Gameplay)
                     .and(not(is_dialogue_running))
@@ -47,7 +50,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         restore_input_context
             .run_if(in_state(Screen::Gameplay).and(on_event::<DialogueCompleteEvent>))
-            .in_set(AppSet::Update),
+            .in_set(AppSystems::Update),
     );
 
     app.add_observer(interact_with_dialogue);
@@ -56,7 +59,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[derive(Debug, SystemSet, Hash, Eq, PartialEq, Clone, Copy)]
-pub(super) enum DialogueSet {
+pub(super) enum DialogueSystems {
     UpdateOpportunity,
     UpdateUi,
 }

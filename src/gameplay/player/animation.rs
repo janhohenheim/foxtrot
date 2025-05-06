@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{
-    AppSet,
+    AppSystems,
     gameplay::{animation::AnimationPlayers, crosshair::CrosshairState},
     screens::Screen,
 };
@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_animations
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::PlayAnimations),
+            .in_set(AppSystems::PlayAnimations),
     );
 }
 

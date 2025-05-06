@@ -1,7 +1,7 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
-use crate::{AppSet, gameplay::crosshair::cursor::IsCursorForcedFreed, theme::widget};
+use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForcedFreed, theme::widget};
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::ui::Val::*;
 use bevy::{
@@ -69,7 +69,7 @@ pub(super) fn plugin(app: &mut App) {
             toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
         )
             .chain()
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
 }
 

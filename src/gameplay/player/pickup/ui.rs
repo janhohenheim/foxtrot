@@ -8,7 +8,7 @@ use avian3d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    AppSet,
+    AppSystems,
     gameplay::{crosshair::CrosshairState, player::camera::PlayerCamera},
     screens::Screen,
     third_party::avian3d::CollisionLayer,
@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         check_for_pickup_opportunity
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
     app.add_observer(hide_crosshair_when_picking_up);
     app.add_observer(show_crosshair_when_not_picking_up);

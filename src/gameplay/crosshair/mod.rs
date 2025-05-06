@@ -7,7 +7,7 @@ use std::any::TypeId;
 use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
 use bevy::{platform::collections::HashSet, prelude::*};
 
-use crate::{AppSet, screens::Screen};
+use crate::{AppSystems, screens::Screen};
 
 pub(crate) mod assets;
 pub(crate) mod cursor;
@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         update_crosshair
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::ChangeUi),
+            .in_set(AppSystems::ChangeUi),
     );
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
 

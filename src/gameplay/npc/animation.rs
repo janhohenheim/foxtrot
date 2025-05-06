@@ -5,7 +5,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
-use crate::{AppSet, gameplay::animation::AnimationPlayers, screens::Screen};
+use crate::{AppSystems, gameplay::animation::AnimationPlayers, screens::Screen};
 
 use super::assets::NpcAssets;
 
@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_animations
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSet::PlayAnimations),
+            .in_set(AppSystems::PlayAnimations),
     );
 }
 

@@ -9,8 +9,7 @@ use bevy::prelude::*;
 use bevy_landmass::{PointSampleDistance3d, prelude::*};
 use landmass_oxidized_navigation::{LandmassOxidizedNavigationPlugin, OxidizedArchipelago};
 use oxidized_navigation::{
-    DetailMeshSettings, NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin,
-    colliders::avian::AvianCollider,
+    NavMeshAffector, NavMeshSettings, OxidizedNavigationPlugin, colliders::avian::AvianCollider,
 };
 
 pub(super) fn plugin(app: &mut App) {

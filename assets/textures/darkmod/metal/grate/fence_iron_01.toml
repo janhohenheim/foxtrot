@@ -1,0 +1,6 @@
+inherits = "/textures/base.toml"
+
+[material]
+metallic = 0.7
+perceptual_roughness = 0.7
+alpha_mode = "Blend"

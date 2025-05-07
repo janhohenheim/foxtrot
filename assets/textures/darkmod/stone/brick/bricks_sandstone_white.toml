@@ -1,0 +1,7 @@
+inherits = "/textures/base.toml"
+
+[material]
+base_color = { Srgba = { red = 0.53, green = 0.53, blue = 0.55, alpha = 1.0 } }
+metallic_roughness_texture = "${name}/${name}_roughness.png"
+metallic = 0.0
+perceptual_roughness = 1.0

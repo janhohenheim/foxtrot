@@ -12,7 +12,7 @@ TEXTURES_SUBDIR = "textures"
 # Convert these extensions to PNG
 TEXTURE_EXTENSIONS = [".jpg", ".jpeg", ".dds", ".tga"]
 NORMAL_MAP_SUFFIX = ["_normal", "_local"]
-LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
+LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive", "_depth", "_disp"]
 PHONG_SPECULAR_SUFFIX = ["_s."]
 
 

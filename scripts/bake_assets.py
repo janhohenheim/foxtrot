@@ -16,7 +16,7 @@ TEXTURE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 
 MODELS_SUB_DIR = "models"
 NORMAL_MAP_SUFFIX = ["_normal", "_local"]
-LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ambient_occlusion", "_emissive"]
+LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ambient_occlusion", "_emissive", "_depth", "_disp"]
 
 
 def main():

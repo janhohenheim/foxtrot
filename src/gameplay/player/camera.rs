@@ -102,6 +102,7 @@ fn spawn_view_model(
                     order: CameraOrder::World.into(),
                     // HDR is not supported on WebGL2
                     hdr: cfg!(feature = "native"),
+                    clear_color: Color::srgb_u8(15, 9, 20).into(),
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {

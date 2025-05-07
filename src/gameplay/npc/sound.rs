@@ -60,7 +60,7 @@ fn play_step_sound(
             .with_spatial(true)
             .with_speed(1.5)
             .with_volume(Volume::Linear(1.6))
-            .with_spatial_scale(SpatialScale::new(0.02)),
+            .with_spatial_scale(SpatialScale::new(1.0 / 3.6)),
         SoundEffect,
     ));
 }

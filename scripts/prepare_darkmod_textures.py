@@ -13,7 +13,7 @@ TEXTURES_SUBDIR = "textures"
 TEXTURE_EXTENSIONS = [".jpg", ".jpeg", ".dds", ".tga"]
 NORMAL_MAP_SUFFIX = ["_normal", "_local"]
 LINEAR_TEXTURE_SUFFIX = ["_metallic", "_roughness", "_ao", "_emissive"]
-PHONG_SPECULAR_SUFFIX = ["_s"]
+PHONG_SPECULAR_SUFFIX = ["_s."]
 
 
 def main():
@@ -98,7 +98,7 @@ def process_textures():
                             new_file_path,
                         ]
                     )
-                elif any(suffix in file_name for suffix in PHONG_SPECULAR_SUFFIX):
+                elif any(suffix in file for suffix in PHONG_SPECULAR_SUFFIX):
                     if f"/{TEXTURES_SUBDIR}/" in file_path:
                         name_without_suffix = "_".join(file_name.split("_")[:-1])
                         os.makedirs(

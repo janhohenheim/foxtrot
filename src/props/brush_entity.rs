@@ -10,11 +10,13 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_light_window_brush_entity);
 }
 
-#[derive(SolidClass, Component, Debug, Reflect)]
+#[derive(SolidClass, Component, Debug, Default, Reflect)]
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle().with_lightmaps())]
-pub(crate) struct LightWindow;
+pub(crate) struct LightWindow {
+    angles: Vec3,
+}
 
 fn setup_light_window_brush_entity(trigger: Trigger<OnAdd, LightWindow>, mut commands: Commands) {
     let entity = trigger.target();
@@ -26,16 +28,22 @@ fn setup_light_window_brush_entity(trigger: Trigger<OnAdd, LightWindow>, mut com
 
 fn setup_light_window_brushes(
     trigger: Trigger<BrushEntitySpawned>,
-    children: Query<&Children>,
+    brush_entity: Query<(&LightWindow, &Children)>,
     mut commands: Commands,
 ) {
     let entity = trigger.target();
-    let Ok(brushes) = children.get(entity) else {
+    let Ok((light_window, children)) = brush_entity.get(entity) else {
         return;
     };
-    for brush_entity in brushes.iter() {
+    let rotation = Quat::from_euler(
+        EulerRot::XYZ,
+        light_window.angles.x.to_radians(),
+        light_window.angles.y.to_radians(),
+        light_window.angles.z.to_radians(),
+    );
+    for brush in children.iter() {
         commands
-            .entity(brush_entity)
+            .entity(brush)
             .insert(children![(
                 SpotLight {
                     color: Color::srgb_u8(239, 173, 144),
@@ -46,7 +54,7 @@ fn setup_light_window_brushes(
                     soft_shadows_enabled: true,
                     ..default()
                 },
-                Transform::IDENTITY.looking_to(Vec3::X, Vec3::Y),
+                Transform::IDENTITY.with_rotation(rotation),
             )])
             .queue(prepare_light_meshes);
     }

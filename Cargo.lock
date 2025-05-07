@@ -1216,8 +1216,7 @@ dependencies = [
 [[package]]
 name = "bevy_materialize"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670eb69a0dbee3c001f24a752accce10e3a3bb425623b83b92727de9b199ccf4"
+source = "git+https://github.com/noxmore/bevy_materialize?branch=main#ee2f9ed1bfd0f1df69a0d47c5ae4a5798500520f"
 dependencies = [
  "bevy",
  "serde",
@@ -1652,7 +1651,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hack-linear#3d621b7e0b24476c497e5300751439b19f841b99"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#b6209e3c91184782a9dd71dd5c8327b41d14a6f6"
 dependencies = [
  "anyhow",
  "atomicow",
@@ -1683,7 +1682,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/janhohenheim/bevy_trenchbroom?branch=hack-linear#3d621b7e0b24476c497e5300751439b19f841b99"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#b6209e3c91184782a9dd71dd5c8327b41d14a6f6"
 dependencies = [
  "heck",
  "proc-macro2",

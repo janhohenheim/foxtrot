@@ -8,7 +8,6 @@ pub(crate) use util::*;
 
 use crate::asset_processing::default_image_sampler_descriptor;
 
-mod hacks;
 mod proxy;
 mod util;
 
@@ -31,7 +30,7 @@ pub(super) fn plugin(app: &mut App) {
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_plugins((proxy::plugin, util::plugin, hacks::plugin));
+    app.add_plugins((proxy::plugin, util::plugin));
     app.register_type::<Worldspawn>();
 }
 

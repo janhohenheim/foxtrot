@@ -31,31 +31,8 @@ pub(super) fn plugin(app: &mut App) {
     }));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
-    app.add_systems(PreUpdate, trigger_entity_brush_spawned);
     app.add_plugins((proxy::plugin, util::plugin, hacks::plugin));
     app.register_type::<Worldspawn>();
-}
-
-#[derive(Component, Reflect)]
-#[reflect(Component)]
-pub(crate) struct NotifyBrushEntitySpawned;
-
-#[derive(Event)]
-pub(crate) struct BrushEntitySpawned;
-
-fn trigger_entity_brush_spawned(
-    brush_entities: Query<(Entity, &Children), With<NotifyBrushEntitySpawned>>,
-    mut commands: Commands,
-) {
-    for (entity, children) in brush_entities.iter() {
-        if children.is_empty() {
-            continue;
-        }
-        commands
-            .entity(entity)
-            .trigger(BrushEntitySpawned)
-            .remove::<NotifyBrushEntitySpawned>();
-    }
 }
 
 fn texture_sampler() -> ImageSampler {

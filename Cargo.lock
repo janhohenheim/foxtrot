@@ -419,7 +419,7 @@ dependencies = [
 [[package]]
 name = "avian3d"
 version = "0.2.0"
-source = "git+https://github.com/Jondolf/avian?branch=main#c505c9d66d165576f649457f09c9804e09ced8a8"
+source = "git+https://github.com/Jondolf/avian?branch=main#8a6953298178addc24adc17fcafae3108b5ea4f9"
 dependencies = [
  "avian_derive",
  "bevy",
@@ -438,7 +438,7 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.2"
-source = "git+https://github.com/Jondolf/avian?branch=main#c505c9d66d165576f649457f09c9804e09ced8a8"
+source = "git+https://github.com/Jondolf/avian?branch=main#8a6953298178addc24adc17fcafae3108b5ea4f9"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
@@ -3812,9 +3812,9 @@ checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
 name = "kqueue"
-version = "1.0.8"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7447f1ca1b7b563588a205fe93dea8df60fd981423a768bc1c0ded35ed147d0c"
+checksum = "eac30106d7dce88daf4a3fcb4879ea939476d5074a9b7ddd0fb97fa4bed5596a"
 dependencies = [
  "kqueue-sys",
  "libc",
@@ -3916,9 +3916,9 @@ dependencies = [
 
 [[package]]
 name = "libm"
-version = "0.2.14"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a25169bd5913a4b437588a7e3d127cd6e90127b60e0ffbd834a38f1599e016b8"
+checksum = "f9fbbcab51052fe104eb5e5d351cf728d30a5be1fe14d9be8a3b097481fb97de"
 
 [[package]]
 name = "libredox"
@@ -7363,9 +7363,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.7.9"
+version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9fb597c990f03753e08d3c29efbfcf2019a003b4bf4ba19225c158e1549f0f3"
+checksum = "c06928c8748d81b05c9be96aad92e1b6ff01833332f281e8cfca3be4b35fc9ec"
 dependencies = [
  "memchr",
 ]

@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::bevy_trenchbroom::{BrushEntitySpawned, NotifyBrushEntitySpawned};
-
 use super::effects::prepare_light_meshes;
 
 pub(super) fn plugin(app: &mut App) {
@@ -18,16 +16,8 @@ pub(crate) struct LightWindow {
     angles: Vec3,
 }
 
-fn setup_light_window_brush_entity(trigger: Trigger<OnAdd, LightWindow>, mut commands: Commands) {
-    let entity = trigger.target();
-    commands
-        .entity(entity)
-        .insert(NotifyBrushEntitySpawned)
-        .observe(setup_light_window_brushes);
-}
-
-fn setup_light_window_brushes(
-    trigger: Trigger<BrushEntitySpawned>,
+fn setup_light_window_brush_entity(
+    trigger: Trigger<OnAdd, LightWindow>,
     brush_entity: Query<(&LightWindow, &Children)>,
     mut commands: Commands,
 ) {

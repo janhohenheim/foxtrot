@@ -21,12 +21,8 @@ pub(super) fn plugin(app: &mut App) {
             step_height: 3,
             max_contour_simplification_error: 0.7,
             max_traversable_slope_radians: NPC_MAX_SLOPE,
-            experimental_detail_mesh_generation: Some(DetailMeshSettings {
-                max_height_error: 4.try_into().unwrap(),
-                sample_step: 2.try_into().unwrap(),
-            }),
             ..NavMeshSettings::from_agent_and_bounds(
-                NPC_RADIUS * 0.6,
+                NPC_RADIUS * 0.3,
                 NPC_HEIGHT * 0.95,
                 100.0,
                 -20.0,

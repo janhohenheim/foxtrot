@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::prelude::*;
 
-use super::effects::prepare_light_meshes;
+use crate::props::effects::disable_shadow_casting;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<LightWindow>();
@@ -46,6 +46,6 @@ fn setup_light_window_brush_entity(
                 },
                 Transform::IDENTITY.with_rotation(rotation),
             )])
-            .queue(prepare_light_meshes);
+            .queue(disable_shadow_casting);
     }
 }

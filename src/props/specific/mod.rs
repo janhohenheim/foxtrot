@@ -5,6 +5,7 @@ use bevy::prelude::*;
 mod burning_logs;
 mod chair;
 mod crate_;
+mod lamp_shaded;
 mod lamp_sitting;
 mod lamp_wall_electric;
 
@@ -15,5 +16,6 @@ pub(super) fn plugin(app: &mut App) {
         crate_::plugin,
         lamp_sitting::plugin,
         lamp_wall_electric::plugin,
+        lamp_shaded::plugin,
     ));
 }

@@ -140,7 +140,8 @@ def process_textures():
                     )
                     # write material.toml
                     if f"/{TEXTURES_SUBDIR}/" in file_path:
-                        material_path = os.path.join(root, f"{file_name}.toml")
+                        new_file_name = os.path.splitext(file.replace("_d.", "."))[0]
+                        material_path = os.path.join(root, f"{new_file_name}.toml")
                         with open(material_path, "w") as f:
                             f.write(f'inherits = "/textures/base.toml"\n')
 

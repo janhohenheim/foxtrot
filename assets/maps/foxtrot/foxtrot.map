@@ -2573,3 +2573,9 @@
 ( 1792 -4 446 ) ( 1792 0 446 ) ( 1792 0 304 ) darkmod/stone/brick/red_worn_dirty [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.3 0.3
 }
 }
+// entity 16
+{
+"classname" "light_lamp_shaded03"
+"origin" "824 312 392"
+"angles" "0 90 0"
+}

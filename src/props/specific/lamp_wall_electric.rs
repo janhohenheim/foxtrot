@@ -33,7 +33,7 @@ fn setup_lamp_wall_electric(
             Transform::from_xyz(0.0, -0.08, -0.35),
             PointLight {
                 color: Color::srgb_u8(232, 199, 176),
-                intensity: 20_000.0,
+                intensity: 40_000.0,
                 radius: 0.05,
                 range: 20.0,
                 shadows_enabled: true,

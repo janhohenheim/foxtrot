@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 env:
-  CARGO_TERM_COLOR: always
-  RUSTFLAGS: --deny warnings
+  # Strip unnecessary information from build artifacts to reduce cache size.
+  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only
   RUSTDOCFLAGS: --deny warnings
   LINTER_TOOLCHAIN: nightly-2025-04-03
 
@@ -32,14 +32,14 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: native
 
       - name: Run tests
-        run: |
-          cargo test --locked --workspace --all-features --all-targets
-          # Running doc tests separately is a workaround for https://github.com/rust-lang/cargo/issues/6669
-          # Setting LD_LIBRARY_PATH is a workaround for https://github.com/TheBevyFlock/bevy_new_2d/pull/318#issuecomment-2585935350
-          LD_LIBRARY_PATH="$(rustc --print target-libdir)" cargo test --locked --workspace --all-features --doc
+        run: cargo test --locked --workspace --all-features --all-targets
+
+      # Running doc tests separately is a workaround for <https://github.com/rust-lang/cargo/issues/6669>.
+      - name: Run doctests
+        # Setting LD_LIBRARY_PATH is a workaround for <https://github.com/TheBevyFlock/bevy_new_2d/pull/318#issuecomment-2585935350>.
+        run: LD_LIBRARY_PATH="$(rustc --print target-libdir)" cargo test --locked --workspace --all-features --doc
 
   # Check that the game builds for web.
   build-web:
@@ -62,7 +62,6 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: web
 
       - name: Install Bevy CLI
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
@@ -92,7 +91,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: native
+          shared-key: lints
 
       - name: Run clippy lints
         run: cargo clippy --locked --workspace --all-targets --all-features -- --deny warnings
@@ -133,7 +132,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: native
+          shared-key: lints
 
       - name: Check documentation
         run: cargo doc --locked --workspace --all-features --document-private-items --no-deps
@@ -154,7 +153,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          shared-key: native
+          shared-key: lints
 
       - name: Install Bevy linter
         uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0

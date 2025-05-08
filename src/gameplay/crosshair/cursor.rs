@@ -13,6 +13,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
+            capture_cursor_delayed.run_if(resource_exists::<CaptureCursorDelayed>),
             capture_cursor.run_if(
                 input_just_pressed(MouseButton::Left)
                     .and(not(is_dialogue_running))
@@ -28,9 +29,22 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }
 
-fn capture_cursor(mut window: Single<&mut Window>) {
-    window.cursor_options.grab_mode = CursorGrabMode::Locked;
+fn capture_cursor(mut window: Single<&mut Window>, mut commands: Commands) {
+    // Need to clear Bevy's cache because in some cases the `CursorGrabMode` is set to `Locked` even though the cursor is not actually locked.
+    // But setting it to `Locked` while in this state does not do anything, due to Bevy's cache!
+    // So we need to clear the cache first with this useless call.
+    window.cursor_options.grab_mode = CursorGrabMode::Confined;
+    commands.insert_resource(CaptureCursorDelayed);
 }
+
+fn capture_cursor_delayed(mut window: Single<&mut Window>, mut commands: Commands) {
+    // Set the *actual* cursor mode one frame after the `Confined` mode has been set.
+    window.cursor_options.grab_mode = CursorGrabMode::Locked;
+    commands.remove_resource::<CaptureCursorDelayed>();
+}
+
+#[derive(Resource)]
+struct CaptureCursorDelayed;
 
 fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.grab_mode = CursorGrabMode::None;

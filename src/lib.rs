@@ -1,13 +1,13 @@
 mod asset_processing;
 mod asset_tracking;
 mod audio;
-mod compile_shaders;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
 mod hdr;
 mod props;
 mod screens;
+mod shader_compilation;
 mod theme;
 mod third_party;
 mod ui_camera;
@@ -77,7 +77,7 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_processing::plugin,
             asset_tracking::plugin,
-            compile_shaders::plugin,
+            shader_compilation::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,
             gameplay::plugin,

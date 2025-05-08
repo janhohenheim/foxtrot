@@ -77,3 +77,7 @@ fn load_resource_assets(world: &mut World) {
         });
     });
 }
+
+pub(crate) fn all_assets_loaded(resource_handles: Res<ResourceHandles>) -> bool {
+    resource_handles.is_all_done()
+}

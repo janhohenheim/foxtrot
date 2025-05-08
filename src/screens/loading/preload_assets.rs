@@ -3,18 +3,24 @@
 
 use bevy::prelude::*;
 
-use crate::{asset_tracking::ResourceHandles, screens::Screen, theme::prelude::*};
+use crate::{
+    asset_tracking::{ResourceHandles, all_assets_loaded},
+    theme::prelude::*,
+};
 
 use super::LoadingScreen;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(LoadingScreen::Assets), spawn_loading_screen);
+    app.add_systems(
+        OnEnter(LoadingScreen::Assets),
+        spawn_or_skip_asset_loading_screen,
+    );
 
     app.add_systems(
         Update,
         (
             update_loading_assets_label,
-            enter_spawn_level_screen.run_if(all_assets_loaded),
+            enter_compile_shader_screen.run_if(all_assets_loaded),
         )
             .chain()
             .run_if(in_state(LoadingScreen::Assets)),
@@ -23,7 +29,15 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<LoadingAssetsLabel>();
 }
 
-fn spawn_loading_screen(mut commands: Commands) {
+fn spawn_or_skip_asset_loading_screen(
+    mut commands: Commands,
+    resource_handles: Res<ResourceHandles>,
+    mut next_screen: ResMut<NextState<LoadingScreen>>,
+) {
+    if resource_handles.is_all_done() {
+        next_screen.set(LoadingScreen::Shaders);
+        return;
+    }
     commands.spawn((
         widget::ui_root("Loading Screen"),
         StateScoped(LoadingScreen::Assets),
@@ -35,12 +49,8 @@ fn spawn_loading_screen(mut commands: Commands) {
 #[reflect(Component)]
 struct LoadingAssetsLabel;
 
-fn enter_spawn_level_screen(mut next_screen: ResMut<NextState<LoadingScreen>>) {
-    next_screen.set(LoadingScreen::Level);
-}
-
-fn all_assets_loaded(resource_handles: Res<ResourceHandles>) -> bool {
-    resource_handles.is_all_done()
+fn enter_compile_shader_screen(mut next_screen: ResMut<NextState<LoadingScreen>>) {
+    next_screen.set(LoadingScreen::Shaders);
 }
 
 fn update_loading_assets_label(

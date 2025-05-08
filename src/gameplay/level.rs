@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::util::DoNotFixGltfRotationsUnderMe;
 
-use crate::{asset_tracking::LoadResource, screens::Screen};
+use crate::{asset_tracking::LoadResource, audio::music, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
@@ -21,6 +21,12 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         // so we opt out of bevy_trenchbroom's coordinate system fixing.
         DoNotFixGltfRotationsUnderMe,
     ));
+
+    commands.spawn((
+        Name::new("Level Music"),
+        music(level_assets.music.clone()),
+        StateScoped(Screen::Gameplay),
+    ));
 }
 
 #[derive(Component, Debug, Reflect)]
@@ -33,6 +39,8 @@ pub(crate) struct Level;
 pub(crate) struct LevelAssets {
     #[dependency]
     pub(crate) level: Handle<Scene>,
+    #[dependency]
+    pub(crate) music: Handle<AudioSource>,
 }
 
 impl FromWorld for LevelAssets {
@@ -42,6 +50,7 @@ impl FromWorld for LevelAssets {
         Self {
             // Our main level is inspired by the TheDarkMod fan mission [Volta I: The Stone](https://www.thedarkmod.com/missiondetails/?internalName=volta1_3)
             level: assets.load("maps/volta_i/volta_i.map#Scene"),
+            music: assets.load("audio/music/Ambiance_Rain_Calm_Loop_Stereo.ogg"),
         }
     }
 }

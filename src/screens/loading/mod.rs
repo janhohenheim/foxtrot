@@ -3,14 +3,19 @@
 
 use bevy::prelude::*;
 
-mod compile_shaders;
 mod preload_assets;
+mod shader_compilation;
 mod spawn_level;
 
-use crate::{asset_tracking::ResourceHandles, screens::Screen, theme::prelude::*};
+use crate::screens::Screen;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_sub_state::<LoadingScreen>();
+    app.add_plugins((
+        shader_compilation::plugin,
+        preload_assets::plugin,
+        spawn_level::plugin,
+    ));
 }
 
 /// The game's main screen states.
@@ -22,28 +27,4 @@ pub(crate) enum LoadingScreen {
     Assets,
     Shaders,
     Level,
-}
-
-pub(crate) trait LoadLevelExt {
-    fn load_level(&mut self, level: Handle<Scene>);
-}
-impl LoadLevelExt for Commands<'_, '_> {
-    fn load_level(&mut self, level: Handle<Scene>) {
-        self.queue(LoadLevel(level));
-    }
-}
-
-pub(crate) struct LoadLevel(Handle<Scene>);
-impl Command for LoadLevel {
-    fn apply(self, world: &mut World) {
-        if !world.resource::<ResourceHandles>().is_all_done() {
-            world
-                .resource_mut::<NextState<LoadingScreen>>()
-                .set(LoadingScreen::Assets);
-        } else {
-            world
-                .resource_mut::<NextState<LoadingScreen>>()
-                .set(LoadingScreen::Level);
-        }
-    }
 }

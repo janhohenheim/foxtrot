@@ -74,9 +74,9 @@ struct PointLight;
 /// Shadows are produced via [cascaded shadow maps](https://developer.download.nvidia.com/SDK/10.5/opengl/src/cascaded_shadow_maps/doc/cascaded_shadow_maps.pdf).
 ///
 /// To modify the cascade setup, such as the number of cascades or the maximum shadow distance,
-/// change the [`CascadeShadowConfig`] component of the entity with the [`DirectionalLight`].
+/// change the [`CascadeShadowConfig`](bevy::pbr::CascadeShadowConfig) component of the entity with the [`DirectionalLight`].
 ///
-/// To control the resolution of the shadow maps, use the [`DirectionalLightShadowMap`] resource.
+/// To control the resolution of the shadow maps, use the [`DirectionalLightShadowMap`](bevy::pbr::DirectionalLightShadowMap) resource.
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
 #[base(BspLight, BevyDirectionalLight)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]

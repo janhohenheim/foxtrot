@@ -1,6 +1,6 @@
 //! The title screen that appears when the game starts.
 
-use bevy::prelude::*;
+use bevy::{prelude::*, window::CursorGrabMode};
 
 use crate::{screens::Screen, theme::prelude::*};
 
@@ -28,8 +28,13 @@ fn spawn_title_screen(mut commands: Commands) {
     ));
 }
 
-fn enter_loading_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_loading_screen(
+    _: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+    mut window: Single<&mut Window>,
+) {
     next_screen.set(Screen::Loading);
+    window.cursor_options.grab_mode = CursorGrabMode::Locked;
 }
 
 fn enter_settings_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {

@@ -928,6 +928,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_fix_cursor_unlock_web"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50f22bef3adc4a43f3713aa125ba624f36c0203d4c4e7168d7b9acf554f7b085"
+dependencies = [
+ "bevy",
+ "web-sys",
+]
+
+[[package]]
 name = "bevy_fix_gltf_coordinate_system"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2993,6 +3003,7 @@ dependencies = [
  "bevy-tnua",
  "bevy-tnua-avian3d",
  "bevy_enhanced_input",
+ "bevy_fix_cursor_unlock_web",
  "bevy_fix_gltf_coordinate_system",
  "bevy_hanabi",
  "bevy_landmass",

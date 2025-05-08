@@ -1,7 +1,7 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
-use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForcedFreed, theme::widget};
+use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget};
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
 use bevy::ui::Val::*;
 use bevy::{
@@ -136,7 +136,7 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
 
 fn toogle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
-    mut is_cursor_forced_free: ResMut<IsCursorForcedFreed>,
+    mut is_cursor_forced_free: ResMut<IsCursorForceUnlocked>,
     mut inspector_active: ResMut<InspectorActive>,
 ) {
     is_cursor_forced_free.0 = !is_cursor_forced_free.0;

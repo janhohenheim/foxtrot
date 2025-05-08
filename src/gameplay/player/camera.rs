@@ -16,6 +16,7 @@ use bevy::{
         view::{NoFrustumCulling, RenderLayers},
     },
     scene::SceneInstanceReady,
+    window::CursorGrabMode,
 };
 #[cfg(feature = "native")]
 use bevy::{
@@ -26,10 +27,7 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::{
     AppSystems, CameraOrder, RenderLayer,
-    gameplay::{
-        animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
-        crosshair::cursor::IsCursorForcedFreed,
-    },
+    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
     screens::{Screen, loading::LoadingScreen},
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
@@ -204,11 +202,12 @@ fn configure_player_view_model(
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
     mut transform: Single<&mut Transform, With<PlayerCamera>>,
-    cursor_forced_freed: Res<IsCursorForcedFreed>,
+    window: Single<&Window>,
 ) {
-    if cursor_forced_freed.0 {
+    if window.cursor_options.grab_mode == CursorGrabMode::None {
         return;
     }
+
     let delta = trigger.value;
 
     if delta != Vec2::ZERO {

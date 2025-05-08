@@ -57,6 +57,7 @@ bitflags = "2.9.0"
 anyhow = "1.0.98"
 bevy-inspector-egui = "0.31.0"
 bevy_fix_gltf_coordinate_system = "0.1.0"
+bevy_fix_cursor_unlock_web = "0.1.0"
 regex = "1.11.1"
 
 [features]

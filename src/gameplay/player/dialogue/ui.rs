@@ -4,7 +4,7 @@
 
 use std::any::Any;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, window::CursorGrabMode};
 use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
 
 use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
@@ -12,7 +12,7 @@ use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
 use super::{DialogueSystems, InteractionPrompt};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(Startup, setup_interaction_prompt);
+    app.add_systems(OnEnter(Screen::Gameplay), setup_interaction_prompt);
     app.add_systems(
         Update,
         update_interaction_prompt_ui
@@ -41,6 +41,7 @@ pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
                 align_items: AlignItems::Center,
                 ..default()
             },
+            StateScoped(Screen::Gameplay),
             Pickable::IGNORE,
         ))
         .with_children(|parent| {
@@ -77,14 +78,22 @@ fn update_interaction_prompt_ui(
     }
 }
 
-fn hide_crosshair_on_dialogue_start(mut crosshair: Single<&mut CrosshairState>) {
+fn hide_crosshair_on_dialogue_start(
+    mut crosshair: Single<&mut CrosshairState>,
+    mut window: Single<&mut Window>,
+) {
     crosshair
         .wants_invisible
         .insert(hide_crosshair_on_dialogue_start.type_id());
+    window.cursor_options.grab_mode = CursorGrabMode::None;
 }
 
-fn show_crosshair_on_dialogue_end(mut crosshair: Single<&mut CrosshairState>) {
+fn show_crosshair_on_dialogue_end(
+    mut crosshair: Single<&mut CrosshairState>,
+    mut window: Single<&mut Window>,
+) {
     crosshair
         .wants_invisible
         .remove(&hide_crosshair_on_dialogue_start.type_id());
+    window.cursor_options.grab_mode = CursorGrabMode::Locked;
 }

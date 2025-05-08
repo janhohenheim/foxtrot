@@ -3,16 +3,14 @@
 use bevy::prelude::*;
 use bevy_trenchbroom::util::DoNotFixGltfRotationsUnderMe;
 
-use crate::{asset_tracking::LoadResource, screens::Screen};
+use crate::{asset_tracking::LoadResource, audio::music, screens::Screen};
 
 pub(super) fn plugin(app: &mut App) {
     app.load_resource::<LevelAssets>();
     app.register_type::<Level>();
 }
 
-/// A [`Command`] to spawn the level.
-/// Functions that accept only `&mut World` as their parameter implement [`Command`].
-/// We use this style when a command requires no configuration.
+/// A system that spawns the main level.
 pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>) {
     commands.spawn((
         Name::new("Level"),
@@ -22,6 +20,12 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         // We already fix the coordinate system for all glTFs in the app,
         // so we opt out of bevy_trenchbroom's coordinate system fixing.
         DoNotFixGltfRotationsUnderMe,
+    ));
+
+    commands.spawn((
+        Name::new("Level Music"),
+        music(level_assets.music.clone()),
+        StateScoped(Screen::Gameplay),
     ));
 }
 
@@ -35,6 +39,8 @@ pub(crate) struct Level;
 pub(crate) struct LevelAssets {
     #[dependency]
     pub(crate) level: Handle<Scene>,
+    #[dependency]
+    pub(crate) music: Handle<AudioSource>,
 }
 
 impl FromWorld for LevelAssets {
@@ -42,7 +48,9 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
 
         Self {
-            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
+            // Our main level is inspired by the TheDarkMod fan mission [Volta I: The Stone](https://www.thedarkmod.com/missiondetails/?internalName=volta1_3)
+            level: assets.load("maps/volta_i/volta_i.map#Scene"),
+            music: assets.load("audio/music/Ambiance_Rain_Calm_Loop_Stereo.ogg"),
         }
     }
 }

@@ -12,7 +12,7 @@ use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
 use super::{DialogueSystems, InteractionPrompt};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::SpawnLevel), setup_interaction_prompt);
+    app.add_systems(Startup, setup_interaction_prompt);
     app.add_systems(
         Update,
         update_interaction_prompt_ui
@@ -30,7 +30,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-fn setup_interaction_prompt(mut commands: Commands) {
+pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
     commands
         .spawn((
             Name::new("Interaction Prompt"),
@@ -41,7 +41,7 @@ fn setup_interaction_prompt(mut commands: Commands) {
                 align_items: AlignItems::Center,
                 ..default()
             },
-            StateScoped(Screen::Gameplay),
+            Pickable::IGNORE,
         ))
         .with_children(|parent| {
             parent.spawn((

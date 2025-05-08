@@ -7,6 +7,7 @@ mod gameplay;
 mod hdr;
 mod props;
 mod screens;
+mod shader_compilation;
 mod theme;
 mod third_party;
 mod ui_camera;
@@ -76,6 +77,7 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_processing::plugin,
             asset_tracking::plugin,
+            shader_compilation::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,
             gameplay::plugin,

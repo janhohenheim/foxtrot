@@ -34,7 +34,7 @@ fn setup_lamp_shaded(
                 SpotLight {
                     color: Color::srgb_u8(232, 199, 176),
                     intensity: 800_000.0,
-                    radius: 10.0,
+                    radius: 1.0,
                     shadows_enabled: true,
                     #[cfg(feature = "native")]
                     soft_shadows_enabled: true,

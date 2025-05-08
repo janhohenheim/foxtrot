@@ -38,7 +38,7 @@ fn setup_light_window_brush_entity(
                 SpotLight {
                     color: Color::srgb_u8(239, 173, 144),
                     intensity: 200_000.0,
-                    radius: 0.1,
+                    radius: 7.5,
                     shadows_enabled: true,
                     #[cfg(feature = "native")]
                     soft_shadows_enabled: true,

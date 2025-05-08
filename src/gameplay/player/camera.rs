@@ -17,11 +17,6 @@ use bevy::{
     },
     scene::SceneInstanceReady,
 };
-#[cfg(feature = "native")]
-use bevy::{
-    core_pipeline::{experimental::taa::TemporalAntiAliasing, prepass::NormalPrepass},
-    pbr::{ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
-};
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
@@ -58,7 +53,8 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct PlayerCamera;
 
 fn spawn_view_model(
-    _trigger: Trigger<OnAdd, Player>,
+    trigger: Trigger<OnAdd, Player>,
+    player_transform: Query<&Transform>,
     mut commands: Commands,
     assets: Res<AssetServer>,
 ) {
@@ -67,10 +63,12 @@ fn spawn_view_model(
         brightness: 180.0,
         ..default()
     });
+    let player_transform = player_transform.get(trigger.target()).unwrap();
     commands
         .spawn((
             Name::new("Player Camera Parent"),
             PlayerCamera,
+            *player_transform,
             StateScoped(Screen::Gameplay),
             AvianPickupActor {
                 prop_filter: SpatialQueryFilter::from_mask(CollisionLayer::Prop),
@@ -112,14 +110,6 @@ fn spawn_view_model(
                 Exposure::INDOOR,
                 Tonemapping::TonyMcMapface,
                 Bloom::NATURAL,
-                #[cfg(feature = "native")]
-                (
-                    Msaa::Off,
-                    ScreenSpaceAmbientOcclusion::default(),
-                    TemporalAntiAliasing::default(),
-                    NormalPrepass,
-                    ShadowFilteringMethod::Temporal,
-                ),
             ));
 
             // Spawn view model camera.

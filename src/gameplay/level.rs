@@ -20,12 +20,7 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         // We already fix the coordinate system for all glTFs in the app,
         // so we opt out of bevy_trenchbroom's coordinate system fixing.
         DoNotFixGltfRotationsUnderMe,
-    ));
-
-    commands.spawn((
-        Name::new("Level Music"),
-        music(level_assets.music.clone()),
-        StateScoped(Screen::Gameplay),
+        children![(Name::new("Level Music"), music(level_assets.music.clone()))],
     ));
 }
 

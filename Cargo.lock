@@ -929,9 +929,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_fix_cursor_unlock_web"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50f22bef3adc4a43f3713aa125ba624f36c0203d4c4e7168d7b9acf554f7b085"
+checksum = "04da367e72200deb11be72eeea6582b6daea3bfe76d1e42216f272cc8531ef90"
 dependencies = [
  "bevy",
  "web-sys",

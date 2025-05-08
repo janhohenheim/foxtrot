@@ -118,25 +118,9 @@ jobs:
           cd ..
           mv kram kram-linux
           ln -s kram-linux/kram kram
-
-      - name: Install klafsa
-        run: |
-          git clone https://github.com/superdump/klafsa
-          cd klafsa
-          cargo install --path .
-
-
-      - name: Install ericw-tools
-        run: |
-          mkdir -p baking_tools/ericw-tools
-          cd baking_tools/ericw-tools
-          wget https://github.com/ericwa/ericw-tools/releases/download/2.0.0-alpha9/ericw-tools-2.0.0-alpha9-Linux.zip
-          unzip ericw-tools-2.0.0-alpha9-Linux.zip
-          chmod +x qbsp
-          chmod +x light
-          cd ..
-          ln -s ericw-tools/qbsp qbsp
-          ln -s ericw-tools/light light
+          
+      - name: Install ImageMagick
+        uses: mfinelli/setup-imagemagick@v6
 
       - name: Bake assets
         run: |

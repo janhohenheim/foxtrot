@@ -42,13 +42,7 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
 
         Self {
-            // Use .map for dev builds
-            #[cfg(feature = "dev")]
             level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
-            // We can generate .bsp files from .map files with ./scripts/compile_maps.sh
-            // when we're done prototyping and want some extra performance and lightmaps
-            #[cfg(not(feature = "dev"))]
-            level: assets.load("maps/foxtrot/foxtrot.bsp#Scene"),
         }
     }
 }

@@ -61,15 +61,30 @@ impl LoadedPipelineCount {
         self.0 >= Self::TOTAL_PIPELINES
     }
 
-    /// These numbers have to be tuned by hand for each platform.
+    /// These numbers have to be tuned by hand, unfortunately.
+    /// When in doubt, better stay a bit too low, or the player won't advance past the loading screen.
     pub(crate) const TOTAL_PIPELINES: usize = {
         #[cfg(feature = "native")]
         {
-            63
+            #[cfg(feature = "dev")]
+            {
+                63
+            }
+            #[cfg(not(feature = "dev"))]
+            {
+                62
+            }
         }
         #[cfg(not(feature = "native"))]
         {
-            24
+            #[cfg(feature = "dev")]
+            {
+                24
+            }
+            #[cfg(not(feature = "dev"))]
+            {
+                23
+            }
         }
     };
 }

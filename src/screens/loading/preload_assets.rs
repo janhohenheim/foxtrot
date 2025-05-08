@@ -20,10 +20,9 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         (
             update_loading_assets_label,
-            enter_compile_shader_screen.run_if(all_assets_loaded),
-        )
-            .chain()
-            .run_if(in_state(LoadingScreen::Assets)),
+            enter_compile_shader_screen
+                .run_if(all_assets_loaded.and(in_state(LoadingScreen::Assets))),
+        ),
     );
 
     app.register_type::<LoadingAssetsLabel>();
@@ -45,13 +44,13 @@ fn spawn_or_skip_asset_loading_screen(
     ));
 }
 
-#[derive(Component, Reflect)]
-#[reflect(Component)]
-struct LoadingAssetsLabel;
-
 fn enter_compile_shader_screen(mut next_screen: ResMut<NextState<LoadingScreen>>) {
     next_screen.set(LoadingScreen::Shaders);
 }
+
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+struct LoadingAssetsLabel;
 
 fn update_loading_assets_label(
     mut query: Query<&mut Text, With<LoadingAssetsLabel>>,

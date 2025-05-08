@@ -21,7 +21,7 @@ fn spawn_title_screen(mut commands: Commands) {
         ],
         #[cfg(not(feature = "native"))]
         children![
-            widget::button("Play", enter_loading_or_spawn_screen),
+            widget::button("Play", enter_loading_screen),
             widget::button("Settings", enter_settings_screen),
             widget::button("Credits", enter_credits_screen),
         ],

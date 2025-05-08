@@ -30,7 +30,7 @@ use crate::{
         animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
         crosshair::cursor::IsCursorForcedFreed,
     },
-    screens::Screen,
+    screens::{Screen, loading::LoadingScreen},
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
 
@@ -75,6 +75,7 @@ fn spawn_view_model(
             PlayerCamera,
             *player_transform,
             StateScoped(Screen::Gameplay),
+            StateScoped(LoadingScreen::Shaders),
             AvianPickupActor {
                 prop_filter: SpatialQueryFilter::from_mask(CollisionLayer::Prop),
                 obstacle_filter: SpatialQueryFilter::from_mask(CollisionLayer::Default),

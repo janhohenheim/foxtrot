@@ -18,17 +18,6 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<LoadedPipelineCount>();
 }
 
-pub(crate) const TOTAL_PIPELINES: usize = {
-    #[cfg(feature = "native")]
-    {
-        100
-    }
-    #[cfg(not(feature = "native"))]
-    {
-        10
-    }
-};
-
 pub(crate) fn spawn_shader_compilation_map(
     mut commands: Commands,
     compile_shaders_assets: Res<CompileShadersAssets>,
@@ -65,12 +54,24 @@ impl FromWorld for CompileShadersAssets {
 /// A `Resource` in the main world that stores the number of pipelines that are ready.
 #[derive(Resource, Default, Debug, Deref, DerefMut, Reflect)]
 #[reflect(Resource)]
-pub struct LoadedPipelineCount(usize);
+pub(crate) struct LoadedPipelineCount(pub(crate) usize);
 
 impl LoadedPipelineCount {
-    pub fn is_done(&self) -> bool {
-        self.0 >= TOTAL_PIPELINES
+    pub(crate) fn is_done(&self) -> bool {
+        self.0 >= Self::TOTAL_PIPELINES
     }
+
+    /// These numbers have to be tuned by hand for each platform.
+    pub(crate) const TOTAL_PIPELINES: usize = {
+        #[cfg(feature = "native")]
+        {
+            63
+        }
+        #[cfg(not(feature = "native"))]
+        {
+            24
+        }
+    };
 }
 
 fn update_loaded_pipeline_count(mut main_world: ResMut<MainWorld>, cache: Res<PipelineCache>) {

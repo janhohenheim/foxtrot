@@ -41,6 +41,7 @@ pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
                 align_items: AlignItems::Center,
                 ..default()
             },
+            Pickable::IGNORE,
         ))
         .with_children(|parent| {
             parent.spawn((

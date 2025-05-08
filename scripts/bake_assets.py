@@ -10,7 +10,7 @@ import subprocess
 import sys
 import os
 
-ORIGINAL_ASSETS_DIR = "assets_original"
+ORIGINAL_ASSETS_DIR = "assets"
 BAKED_ASSETS_DIR = "assets_baked"
 TEXTURE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 

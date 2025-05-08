@@ -1,12 +1,8 @@
 //! The loading screen that appears when the game is starting, but still spawning the level.
 
-use bevy::prelude::*;
+use bevy::{prelude::*, scene::SceneInstance};
 
-use crate::{
-    gameplay::{level::spawn_level, player::camera::PlayerCamera},
-    screens::Screen,
-    theme::prelude::*,
-};
+use crate::{gameplay::level::spawn_level, screens::Screen, theme::prelude::*};
 
 use super::LoadingScreen;
 
@@ -30,10 +26,20 @@ fn spawn_level_loading_screen(mut commands: Commands) {
 }
 
 fn advance_to_gameplay_screen(
-    player_camera: Query<&PlayerCamera>,
     mut next_screen: ResMut<NextState<Screen>>,
+    scene_spawner: Res<SceneSpawner>,
+    scene_instances: Query<&SceneInstance>,
+    just_added_scenes: Query<(), (With<SceneRoot>, Without<SceneInstance>)>,
+    just_added_meshes: Query<(), Added<Mesh3d>>,
 ) {
-    if !player_camera.is_empty() {
-        next_screen.set(Screen::Gameplay);
+    if !(just_added_meshes.is_empty() && just_added_scenes.is_empty()) {
+        return;
     }
+
+    for scene_instance in scene_instances.iter() {
+        if !scene_spawner.instance_is_ready(**scene_instance) {
+            return;
+        }
+    }
+    next_screen.set(Screen::Gameplay);
 }

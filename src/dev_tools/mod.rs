@@ -6,11 +6,14 @@ mod debug_ui;
 mod input;
 mod validate_preloading;
 
-use crate::screens::Screen;
+use crate::screens::{Screen, loading::LoadingScreen};
 
 pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
-    app.add_systems(Update, log_transitions::<Screen>);
+    app.add_systems(
+        Update,
+        (log_transitions::<Screen>, log_transitions::<LoadingScreen>).chain(),
+    );
 
     app.add_plugins((debug_ui::plugin, input::plugin, validate_preloading::plugin));
 }

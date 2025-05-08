@@ -2,7 +2,11 @@
 
 use bevy::prelude::*;
 
-use crate::{asset_tracking::ResourceHandles, screens::Screen, theme::prelude::*};
+use super::loading::LoadLevelExt as _;
+use crate::{
+    asset_tracking::ResourceHandles, gameplay::level::LevelAssets, screens::Screen,
+    theme::prelude::*,
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Title), spawn_title_screen);
@@ -30,14 +34,10 @@ fn spawn_title_screen(mut commands: Commands) {
 
 fn enter_loading_or_spawn_screen(
     _: Trigger<Pointer<Click>>,
-    resource_handles: Res<ResourceHandles>,
-    mut next_screen: ResMut<NextState<Screen>>,
+    level_assets: Res<LevelAssets>,
+    mut commands: Commands,
 ) {
-    if resource_handles.is_all_done() {
-        next_screen.set(Screen::SpawnLevel);
-    } else {
-        next_screen.set(Screen::Loading);
-    }
+    commands.load_level(level_assets.level.clone());
 }
 
 fn enter_settings_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {

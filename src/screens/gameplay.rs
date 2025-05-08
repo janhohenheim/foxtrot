@@ -7,7 +7,6 @@ use crate::{AppSystems, asset_tracking::LoadResource, audio::Music, screens::Scr
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<GameplayMusic>();
     app.load_resource::<GameplayMusic>();
-    app.add_systems(OnEnter(Screen::SpawnLevel), start_gameplay_music);
     app.add_systems(OnExit(Screen::Gameplay), stop_gameplay_music);
 
     app.add_systems(
@@ -20,10 +19,10 @@ pub(super) fn plugin(app: &mut App) {
 
 #[derive(Resource, Asset, Clone, Reflect)]
 #[reflect(Resource)]
-struct GameplayMusic {
+pub(crate) struct GameplayMusic {
     #[dependency]
-    music: Handle<AudioSource>,
-    entity: Option<Entity>,
+    pub(crate) music: Handle<AudioSource>,
+    pub(crate) entity: Option<Entity>,
 }
 
 impl FromWorld for GameplayMusic {
@@ -34,18 +33,6 @@ impl FromWorld for GameplayMusic {
             entity: None,
         }
     }
-}
-
-fn start_gameplay_music(mut commands: Commands, mut music: ResMut<GameplayMusic>) {
-    music.entity = Some(
-        commands
-            .spawn((
-                AudioPlayer(music.music.clone()),
-                PlaybackSettings::LOOP.with_volume(Volume::Linear(1.5)),
-                Music,
-            ))
-            .id(),
-    );
 }
 
 fn stop_gameplay_music(mut commands: Commands, mut music: ResMut<GameplayMusic>) {

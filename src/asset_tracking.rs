@@ -52,6 +52,14 @@ impl ResourceHandles {
     pub(crate) fn is_all_done(&self) -> bool {
         self.waiting.is_empty()
     }
+
+    pub(crate) fn total_count(&self) -> usize {
+        self.waiting.len() + self.finished.len()
+    }
+
+    pub(crate) fn finished_count(&self) -> usize {
+        self.finished.len()
+    }
 }
 
 fn load_resource_assets(world: &mut World) {

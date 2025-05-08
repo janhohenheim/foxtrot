@@ -10,9 +10,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<Level>();
 }
 
-/// A [`Command`] to spawn the level.
-/// Functions that accept only `&mut World` as their parameter implement [`Command`].
-/// We use this style when a command requires no configuration.
+/// A system that spawns the main level.
 pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>) {
     commands.spawn((
         Name::new("Level"),
@@ -42,7 +40,8 @@ impl FromWorld for LevelAssets {
         let assets = world.resource::<AssetServer>();
 
         Self {
-            level: assets.load("maps/foxtrot/foxtrot.map#Scene"),
+            // Our main level is inspired by the TheDarkMod fan mission [Volta I: The Stone](https://www.thedarkmod.com/missiondetails/?internalName=volta1_3)
+            level: assets.load("maps/volta_i/volta_i.map#Scene"),
         }
     }
 }

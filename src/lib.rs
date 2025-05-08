@@ -1,6 +1,7 @@
 mod asset_processing;
 mod asset_tracking;
 mod audio;
+mod compile_shaders;
 #[cfg(feature = "dev")]
 mod dev_tools;
 mod gameplay;
@@ -76,6 +77,7 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_processing::plugin,
             asset_tracking::plugin,
+            compile_shaders::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,
             gameplay::plugin,

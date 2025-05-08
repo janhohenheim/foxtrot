@@ -1,6 +1,7 @@
 //! The loading screen that appears when the game is starting, but still spawning the level.
 
 use bevy::{prelude::*, scene::SceneInstance};
+use bevy_landmass::{NavMesh, coords::ThreeD};
 
 use crate::{gameplay::level::spawn_level, screens::Screen, theme::prelude::*};
 
@@ -31,8 +32,12 @@ fn advance_to_gameplay_screen(
     scene_instances: Query<&SceneInstance>,
     just_added_scenes: Query<(), (With<SceneRoot>, Without<SceneInstance>)>,
     just_added_meshes: Query<(), Added<Mesh3d>>,
+    nav_mesh_events: EventReader<AssetEvent<NavMesh<ThreeD>>>,
 ) {
     if !(just_added_meshes.is_empty() && just_added_scenes.is_empty()) {
+        return;
+    }
+    if !nav_mesh_events.is_empty() {
         return;
     }
 

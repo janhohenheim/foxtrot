@@ -40,7 +40,7 @@ def main():
 
 
 def verify_that_all_tools_are_installed():
-    tools = [["kram"], ["klafsa", "--help"]]
+    tools = [["kram"], ["magick", "--help"]]
     for tool in tools:
         try:
             subprocess.run(

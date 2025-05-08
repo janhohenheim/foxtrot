@@ -8,7 +8,7 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    core_pipeline::tonemapping::Tonemapping,
+    core_pipeline::{bloom::Bloom, tonemapping::Tonemapping},
     pbr::NotShadowCaster,
     prelude::*,
     render::{
@@ -19,9 +19,7 @@ use bevy::{
 };
 #[cfg(feature = "native")]
 use bevy::{
-    core_pipeline::{
-        bloom::Bloom, experimental::taa::TemporalAntiAliasing, prepass::NormalPrepass,
-    },
+    core_pipeline::{experimental::taa::TemporalAntiAliasing, prepass::NormalPrepass},
     pbr::{ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
 };
 use bevy_enhanced_input::prelude::*;
@@ -100,8 +98,7 @@ fn spawn_view_model(
                 Camera3d::default(),
                 Camera {
                     order: CameraOrder::World.into(),
-                    // HDR is not supported on WebGL2
-                    hdr: cfg!(feature = "native"),
+                    hdr: true,
                     clear_color: Color::srgb_u8(15, 9, 20).into(),
                     ..default()
                 },
@@ -114,13 +111,13 @@ fn spawn_view_model(
                 ),
                 Exposure::INDOOR,
                 Tonemapping::TonyMcMapface,
+                Bloom::NATURAL,
                 #[cfg(feature = "native")]
                 (
-                    Bloom::NATURAL,
-                    TemporalAntiAliasing::default(),
-                    NormalPrepass,
                     Msaa::Off,
                     ScreenSpaceAmbientOcclusion::default(),
+                    TemporalAntiAliasing::default(),
+                    NormalPrepass,
                     ShadowFilteringMethod::Temporal,
                 ),
             ));
@@ -132,8 +129,7 @@ fn spawn_view_model(
                 Camera {
                     // Bump the order to render on top of the world model.
                     order: CameraOrder::ViewModel.into(),
-                    // HDR is not supported on WebGL2
-                    hdr: cfg!(feature = "native"),
+                    hdr: true,
                     ..default()
                 },
                 Projection::from(PerspectiveProjection {

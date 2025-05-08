@@ -93,7 +93,7 @@ fn setup_burning_logs(
             PointLight {
                 color: Color::srgb(1.0, 0.7, 0.4),
                 intensity: BASE_INTENSITY,
-                radius: 0.5,
+                radius: 0.1,
                 shadows_enabled: true,
                 #[cfg(feature = "native")]
                 soft_shadows_enabled: true,

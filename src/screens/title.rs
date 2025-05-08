@@ -36,7 +36,7 @@ fn enter_loading_or_spawn_screen(
     if resource_handles.is_all_done() {
         next_screen.set(Screen::SpawnLevel);
     } else {
-        next_screen.set(Screen::Gameplay);
+        next_screen.set(Screen::Loading);
     }
 }
 

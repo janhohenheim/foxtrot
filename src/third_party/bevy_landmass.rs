@@ -21,8 +21,8 @@ pub(super) fn plugin(app: &mut App) {
             max_contour_simplification_error: 0.7,
             max_traversable_slope_radians: NPC_MAX_SLOPE,
             ..NavMeshSettings::from_agent_and_bounds(
-                NPC_RADIUS * 0.3,
-                NPC_HEIGHT * 0.95,
+                NPC_RADIUS * 0.5,
+                NPC_HEIGHT * 0.5,
                 100.0,
                 -20.0,
             )

@@ -12,6 +12,9 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(setup_static_prop_with_convex_hull::<CrateSquare>)
         .add_observer(setup_static_prop_with_convex_hull::<FenceBarsDecorativeSingle>);
 
+    app.add_observer(setup_dynamic_prop_with_convex_hull::<PackageMedium>)
+        .add_observer(setup_dynamic_prop_with_convex_hull::<PackageSmall>);
+
     app.register_type::<Grate>();
     app.register_type::<Table>();
     app.register_type::<Bookshelf>();
@@ -20,11 +23,25 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<Barrel01>();
     app.register_type::<CrateSquare>();
     app.register_type::<FenceBarsDecorativeSingle>();
+    app.register_type::<PackageMedium>();
+    app.register_type::<PackageSmall>();
 }
 
 // generic dynamic props
 
-// None yet!
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/package_medium.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct PackageMedium;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/package_small.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct PackageSmall;
 
 // generic static props
 

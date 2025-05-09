@@ -33,6 +33,15 @@ pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
     commands.entity(trigger.target()).insert(bundle);
 }
 
+pub(crate) fn setup_dynamic_prop_with_convex_hull<T: QuakeClass>(
+    trigger: Trigger<OnAdd, T>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+) {
+    let bundle = dynamic_bundle::<T>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
+    commands.entity(trigger.target()).insert(bundle);
+}
+
 pub(crate) fn dynamic_bundle<T: QuakeClass>(
     asset_server: &AssetServer,
     constructor: ColliderConstructor,

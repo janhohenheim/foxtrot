@@ -4727,3 +4727,15 @@
 "origin" "3128 -120 192"
 "angles" "90 0 180"
 }
+// entity 48
+{
+"classname" "chair"
+"origin" "500 76 8"
+"angles" "0 90 0"
+}
+// entity 49
+{
+"classname" "chair"
+"origin" "536 176 16"
+"angles" "-90 0 75"
+}

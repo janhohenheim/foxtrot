@@ -1,5 +1,8 @@
 {
     // Allow `rust-analyzer` and `cargo` to run simultaneously.
     // This uses extra storage space, so consider commenting it out.
-    "rust-analyzer.cargo.targetDir": true
+    "rust-analyzer.cargo.targetDir": true,
+    "workbench.editor.customLabels.patterns": {
+        "**/mod.rs": "${dirname}/mod.rs"
+    },
 }

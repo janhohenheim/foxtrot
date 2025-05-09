@@ -4,7 +4,7 @@ use bevy::prelude::{
     DirectionalLight as BevyDirectionalLight, PointLight as BevyPointLight,
     SpotLight as BevySpotLight, *,
 };
-use bevy_trenchbroom::{bsp::base_classes::BspLight, prelude::*};
+use bevy_trenchbroom::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<PointLight>();
@@ -31,7 +31,7 @@ pub(super) fn plugin(app: &mut App) {
 ///
 /// Source: [Wikipedia](https://en.wikipedia.org/wiki/Lumen_(unit)#Lighting)
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
-#[base(BspLight, BevyPointLight)]
+#[base(BevyPointLight)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]
 #[reflect(QuakeClass, Component, Default, Debug)]
 #[classname("light_point")]
@@ -78,7 +78,7 @@ struct PointLight;
 ///
 /// To control the resolution of the shadow maps, use the [`DirectionalLightShadowMap`](bevy::pbr::DirectionalLightShadowMap) resource.
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
-#[base(BspLight, BevyDirectionalLight)]
+#[base(BevyDirectionalLight)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]
 #[reflect(QuakeClass, Component, Default, Debug)]
 #[classname("light_directional")]
@@ -90,7 +90,7 @@ struct DirectionalLight;
 /// shines light only in a given direction. The direction is taken from
 /// the transform, and can be specified with [`Transform::looking_at`](Transform::looking_at).
 #[derive(PointClass, Component, Debug, Clone, Copy, Default, Reflect)]
-#[base(BspLight, BevySpotLight)]
+#[base(BevySpotLight)]
 #[iconsprite({ path: "images/point_light.png", scale: 0.1 })]
 #[reflect(QuakeClass, Component, Default, Debug)]
 #[classname("light_spot")]
@@ -99,5 +99,5 @@ struct SpotLight;
 #[derive(SolidClass, Component, Debug, Clone, Copy, Default, Reflect)]
 #[base(Transform, Visibility)]
 #[reflect(QuakeClass, Component, Default, Debug)]
-#[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle().with_lightmaps())]
+#[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle())]
 struct FuncGroup;

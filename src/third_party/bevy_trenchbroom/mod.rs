@@ -12,7 +12,7 @@ mod proxy;
 mod util;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins(TrenchBroomPlugin({
+    app.add_plugins(TrenchBroomPlugins(
         TrenchBroomConfig::new("foxtrot")
             .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
             .texture_exclusions(to_string_vec(&[
@@ -23,11 +23,9 @@ pub(super) fn plugin(app: &mut App) {
                 "*_normal",
                 "*_roughness",
             ]))
-            // We only use BSPs for light maps.
-            .no_bsp_lighting(true)
             .texture_sampler(texture_sampler())
-            .linear_filtering()
-    }));
+            .linear_filtering(),
+    ));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);
     app.add_plugins((proxy::plugin, util::plugin));

@@ -89,15 +89,15 @@ checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
 name = "ahash"
-version = "0.8.11"
+version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e89da841a80418a9b391ebaea17f5c112ffaaa96f621d2c285b5174da76b9011"
+checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
 dependencies = [
  "cfg-if",
- "getrandom 0.2.16",
+ "getrandom 0.3.2",
  "once_cell",
  "version_check",
- "zerocopy 0.7.35",
+ "zerocopy",
 ]
 
 [[package]]
@@ -419,7 +419,7 @@ dependencies = [
 [[package]]
 name = "avian3d"
 version = "0.2.0"
-source = "git+https://github.com/Jondolf/avian?branch=main#8a6953298178addc24adc17fcafae3108b5ea4f9"
+source = "git+https://github.com/Jondolf/avian?branch=main#64a4cbdeea8b4a054f7f08e25f122f3042e0ae08"
 dependencies = [
  "avian_derive",
  "bevy",
@@ -427,7 +427,7 @@ dependencies = [
  "bevy_math",
  "bevy_transform_interpolation",
  "bitflags 2.9.0",
- "derive_more 1.0.0",
+ "derive_more",
  "itertools 0.13.0",
  "nalgebra",
  "parry3d",
@@ -438,7 +438,7 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.2"
-source = "git+https://github.com/Jondolf/avian?branch=main#8a6953298178addc24adc17fcafae3108b5ea4f9"
+source = "git+https://github.com/Jondolf/avian?branch=main#64a4cbdeea8b4a054f7f08e25f122f3042e0ae08"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
@@ -601,7 +601,7 @@ dependencies = [
  "bevy_transform",
  "bevy_utils",
  "blake3",
- "derive_more 1.0.0",
+ "derive_more",
  "downcast-rs 2.0.1",
  "either",
  "petgraph",
@@ -658,7 +658,7 @@ dependencies = [
  "bitflags 2.9.0",
  "blake3",
  "crossbeam-channel",
- "derive_more 1.0.0",
+ "derive_more",
  "disqualified",
  "downcast-rs 2.0.1",
  "either",
@@ -717,7 +717,7 @@ dependencies = [
  "bevy_math",
  "bevy_reflect",
  "bytemuck",
- "derive_more 1.0.0",
+ "derive_more",
  "encase",
  "serde",
  "thiserror 2.0.12",
@@ -832,7 +832,7 @@ dependencies = [
  "bitflags 2.9.0",
  "bumpalo",
  "concurrent-queue",
- "derive_more 1.0.0",
+ "derive_more",
  "disqualified",
  "fixedbitset",
  "indexmap",
@@ -1106,7 +1106,7 @@ dependencies = [
  "bevy_platform",
  "bevy_reflect",
  "bevy_utils",
- "derive_more 1.0.0",
+ "derive_more",
  "log",
  "serde",
  "smol_str",
@@ -1226,7 +1226,7 @@ dependencies = [
 [[package]]
 name = "bevy_materialize"
 version = "0.6.0"
-source = "git+https://github.com/noxmore/bevy_materialize?branch=main#c1f95fbf7892f53e09b72d60756bf76238221107"
+source = "git+https://github.com/noxmore/bevy_materialize?branch=main#9d56fb86507ccfe26a4122406aff9bf64de43d3e"
 dependencies = [
  "bevy",
  "serde",
@@ -1242,7 +1242,7 @@ checksum = "f1a3a926d02dc501c6156a047510bdb538dcb1fa744eeba13c824b73ba88de55"
 dependencies = [
  "approx",
  "bevy_reflect",
- "derive_more 1.0.0",
+ "derive_more",
  "glam",
  "itertools 0.14.0",
  "libm",
@@ -1311,7 +1311,7 @@ dependencies = [
  "bevy_window",
  "bitflags 2.9.0",
  "bytemuck",
- "derive_more 1.0.0",
+ "derive_more",
  "fixedbitset",
  "nonmax",
  "offset-allocator",
@@ -1382,7 +1382,7 @@ dependencies = [
  "bevy_ptr",
  "bevy_reflect_derive",
  "bevy_utils",
- "derive_more 1.0.0",
+ "derive_more",
  "disqualified",
  "downcast-rs 2.0.1",
  "erased-serde",
@@ -1439,7 +1439,7 @@ dependencies = [
  "bitflags 2.9.0",
  "bytemuck",
  "codespan-reporting",
- "derive_more 1.0.0",
+ "derive_more",
  "downcast-rs 2.0.1",
  "encase",
  "fixedbitset",
@@ -1490,7 +1490,7 @@ dependencies = [
  "bevy_render",
  "bevy_transform",
  "bevy_utils",
- "derive_more 1.0.0",
+ "derive_more",
  "serde",
  "thiserror 2.0.12",
  "uuid 1.16.0",
@@ -1530,7 +1530,7 @@ dependencies = [
  "bevy_window",
  "bitflags 2.9.0",
  "bytemuck",
- "derive_more 1.0.0",
+ "derive_more",
  "fixedbitset",
  "nonmax",
  "radsort",
@@ -1579,7 +1579,7 @@ dependencies = [
  "cfg-if",
  "concurrent-queue",
  "crossbeam-queue",
- "derive_more 1.0.0",
+ "derive_more",
  "futures-channel",
  "futures-lite",
  "heapless",
@@ -1645,7 +1645,7 @@ dependencies = [
  "bevy_reflect",
  "bevy_tasks",
  "bevy_utils",
- "derive_more 1.0.0",
+ "derive_more",
  "serde",
  "thiserror 2.0.12",
 ]
@@ -1661,7 +1661,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#55be40d023471e22408c53eef45247fe1adca4b6"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#e60483d0627817d41552ab8520fc25f517b56770"
 dependencies = [
  "anyhow",
  "atomicow",
@@ -1680,7 +1680,6 @@ dependencies = [
  "json",
  "ndshape",
  "nil",
- "qbsp",
  "quake-util",
  "serde",
  "serde_json",
@@ -1692,7 +1691,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#55be40d023471e22408c53eef45247fe1adca4b6"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#e60483d0627817d41552ab8520fc25f517b56770"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -1727,7 +1726,7 @@ dependencies = [
  "bevy_utils",
  "bevy_window",
  "bytemuck",
- "derive_more 1.0.0",
+ "derive_more",
  "nonmax",
  "serde",
  "smallvec",
@@ -2487,16 +2486,7 @@ version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4a9b99b9cbbe49445b21764dc0625032a89b145a2642e67603e1c936f5458d05"
 dependencies = [
- "derive_more-impl 1.0.0",
-]
-
-[[package]]
-name = "derive_more"
-version = "2.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "093242cf7570c207c83073cf82f79706fe7b8317e98620a47d5be7c3d8497678"
-dependencies = [
- "derive_more-impl 2.0.1",
+ "derive_more-impl",
 ]
 
 [[package]]
@@ -2509,17 +2499,6 @@ dependencies = [
  "quote",
  "syn",
  "unicode-xid",
-]
-
-[[package]]
-name = "derive_more-impl"
-version = "2.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bda628edc44c4bb645fbe0f758797143e4e07926f7ebf4e9bdfbd3d2ce621df3"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -2795,9 +2774,9 @@ dependencies = [
 
 [[package]]
 name = "error-code"
-version = "3.3.1"
+version = "3.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5d9305ccc6942a704f4335694ecd3de2ea531b114ac2d51f5f843750787a92f"
+checksum = "dea2df4cf52843e0452895c455a1a2cfbb842a1e7329671acf418fdc53ed4c59"
 
 [[package]]
 name = "euclid"
@@ -2934,9 +2913,9 @@ checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
 
 [[package]]
 name = "font-types"
-version = "0.8.4"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fa6a5e5a77b5f3f7f9e32879f484aa5b3632ddfbe568a16266c904a6f32cdaf"
+checksum = "02a596f5713680923a2080d86de50fe472fb290693cf0f701187a1c8b36996b7"
 dependencies = [
  "bytemuck",
 ]
@@ -5048,7 +5027,7 @@ version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
 dependencies = [
- "zerocopy 0.8.25",
+ "zerocopy",
 ]
 
 [[package]]
@@ -5144,33 +5123,6 @@ checksum = "81bddcdb20abf9501610992b6759a4c888aef7d1a7247ef75e2404275ac24af1"
 dependencies = [
  "anyhow",
  "itertools 0.12.1",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "qbsp"
-version = "0.5.0"
-source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
-dependencies = [
- "bevy_reflect",
- "derive_more 2.0.1",
- "glam",
- "image",
- "qbsp_macros",
- "serde",
- "smallvec",
- "strum 0.27.1",
- "texture_packer",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "qbsp_macros"
-version = "0.5.0"
-source = "git+https://github.com/Noxmore/qbsp.git?rev=cc0b9e3#cc0b9e3a2a97f56f54ebe3a6ac910ec1cf1d6569"
-dependencies = [
  "proc-macro2",
  "quote",
  "syn",
@@ -5404,9 +5356,9 @@ dependencies = [
 
 [[package]]
 name = "read-fonts"
-version = "0.25.3"
+version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6f9e8a4f503e5c8750e4cd3b32a4e090035c46374b305a15c70bad833dca05f"
+checksum = "5ce8e2ca6b24313587a03ca61bb74c384e2a815bd90cf2866cfc9f5fb7a11fa0"
 dependencies = [
  "bytemuck",
  "font-types",
@@ -5761,9 +5713,9 @@ dependencies = [
 
 [[package]]
 name = "skrifa"
-version = "0.26.6"
+version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cc1aa86c26dbb1b63875a7180aa0819709b33348eb5b1491e4321fae388179d"
+checksum = "bbe6666ab11018ab91ff7b03f1a3b9fdbecfb610848436fefa5ce50343d3d913"
 dependencies = [
  "bytemuck",
  "read-fonts",
@@ -5953,9 +5905,9 @@ checksum = "0193cc4331cfd2f3d2011ef287590868599a2f33c3e69bc22c1a3d3acf9e02fb"
 
 [[package]]
 name = "swash"
-version = "0.2.2"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fae9a562c7b46107d9c78cd78b75bbe1e991c16734c0aee8ff0ee711fb8b620a"
+checksum = "5dce3f0af95643c855cdc449fbaa17d8c2cd08e0b00a49a6babcbe6e71667f3d"
 dependencies = [
  "skrifa",
  "yazi",
@@ -6044,15 +5996,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
 dependencies = [
  "winapi-util",
-]
-
-[[package]]
-name = "texture_packer"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a976e9faf26d09a951476bd85322e275ccaa61602b93d2bf796fbb6be4535097"
-dependencies = [
- "image",
 ]
 
 [[package]]
@@ -7552,18 +7495,9 @@ dependencies = [
 
 [[package]]
 name = "zeno"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc0de2315dc13d00e5df3cd6b8d2124a6eaec6a2d4b6a1c5f37b7efad17fcc17"
-
-[[package]]
-name = "zerocopy"
-version = "0.7.35"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b9b4fd18abc82b8136838da5d50bae7bdea537c574d8dc1a34ed098d6c166f0"
-dependencies = [
- "zerocopy-derive 0.7.35",
-]
+checksum = "6df3dc4292935e51816d896edcd52aa30bc297907c26167fec31e2b0c6a32524"
 
 [[package]]
 name = "zerocopy"
@@ -7571,18 +7505,7 @@ version = "0.8.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1702d9583232ddb9174e01bb7c15a2ab8fb1bc6f227aa1233858c351a3ba0cb"
 dependencies = [
- "zerocopy-derive 0.8.25",
-]
-
-[[package]]
-name = "zerocopy-derive"
-version = "0.7.35"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa4f8080344d4671fb4e831a13ad1e68092748387dfc4f55e356242fae12ce3e"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "zerocopy-derive",
 ]
 
 [[package]]

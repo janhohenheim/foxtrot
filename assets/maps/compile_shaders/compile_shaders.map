@@ -796,3 +796,13 @@
 "classname" "crate_big"
 "origin" "40 136 24"
 }
+// entity 15
+{
+"classname" "barrel_large_closed"
+"origin" "-8 56 24"
+}
+// entity 16
+{
+"classname" "fence_bars_decorative_single"
+"origin" "8 8 24"
+}

@@ -4612,5 +4612,118 @@
 // entity 27
 {
 "classname" "barrel01"
-"origin" "848 472 8"
+"origin" "924 476 8"
+}
+// entity 28
+{
+"classname" "barrel01"
+"origin" "1212 476 8"
+}
+// entity 29
+{
+"classname" "barrel01"
+"origin" "1212 436 8"
+}
+// entity 30
+{
+"classname" "barrel01"
+"origin" "1172 476 8"
+}
+// entity 31
+{
+"classname" "barrel01"
+"origin" "1528 -172 8"
+}
+// entity 32
+{
+"classname" "crate_small"
+"origin" "1560 -180 8"
+"angles" "0 -15 0"
+}
+// entity 33
+{
+"classname" "crate_small"
+"origin" "1592 -172 8"
+}
+// entity 34
+{
+"classname" "crate_small"
+"origin" "1584 -180 36"
+}
+// entity 35
+{
+"classname" "barrel_large_closed"
+"origin" "1620 -28 16"
+"angles" "90 0 90"
+}
+// entity 36
+{
+"classname" "barrel_large_closed"
+"origin" "1580 -28 16"
+"angles" "90 0 90"
+}
+// entity 37
+{
+"classname" "barrel_large_closed"
+"origin" "1660 -28 16"
+"angles" "90 0 90"
+}
+// entity 38
+{
+"classname" "barrel_large_closed"
+"origin" "1700 -28 16"
+"angles" "90 0 90"
+}
+// entity 39
+{
+"classname" "barrel_large_closed"
+"origin" "1680 -28 44"
+"angles" "90 0 90"
+}
+// entity 40
+{
+"classname" "barrel_large_closed"
+"origin" "1640 -28 44"
+"angles" "90 0 90"
+}
+// entity 41
+{
+"classname" "barrel_large_closed"
+"origin" "1600 -28 44"
+"angles" "90 0 90"
+}
+// entity 42
+{
+"classname" "barrel_large_closed"
+"origin" "1736 -36 8"
+}
+// entity 43
+{
+"classname" "barrel_large_closed"
+"origin" "3128 -140 220"
+"angles" "90 0 180"
+}
+// entity 44
+{
+"classname" "barrel_large_closed"
+"origin" "3128 -180 220"
+"angles" "90 0 180"
+}
+// entity 45
+{
+"classname" "barrel_large_closed"
+"origin" "3128 -200 192"
+"angles" "90 0 180"
+}
+// entity 46
+{
+"classname" "barrel_large_closed"
+"origin" "3128 -160 192"
+"angles" "90 0 180"
+}
+// entity 47
+{
+"classname" "barrel_large_closed"
+"origin" "3128 -120 192"
+"angles" "90 0 180"
 }

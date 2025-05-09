@@ -5,10 +5,15 @@ use bevy_trenchbroom::prelude::*;
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_static_prop_with_convex_hull::<Grate>)
         .add_observer(setup_static_prop_with_convex_decomposition::<Table>)
-        .add_observer(setup_static_prop_with_convex_hull::<Bookshelf>);
+        .add_observer(setup_static_prop_with_convex_hull::<Bookshelf>)
+        .add_observer(setup_static_prop_with_convex_hull::<Generator2>)
+        .add_observer(setup_static_prop_with_convex_hull::<BarrelLargeClosed>);
+
     app.register_type::<Grate>();
     app.register_type::<Table>();
     app.register_type::<Bookshelf>();
+    app.register_type::<Generator2>();
+    app.register_type::<BarrelLargeClosed>();
 }
 
 // generic dynamic props
@@ -37,3 +42,17 @@ pub(crate) struct Table;
 #[model("models/darkmod/furniture/shelves/bookshelf02.gltf")]
 #[spawn_hook(preload_model::<Self>)]
 pub(crate) struct Bookshelf;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/mechanical/generator2/generator2.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+
+pub(crate) struct Generator2;
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/barrel_large_closed.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct BarrelLargeClosed;

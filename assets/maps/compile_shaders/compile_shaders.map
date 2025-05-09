@@ -124,12 +124,12 @@
 }
 // brush 13
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -128 192 ) ( 304 -128 176 ) ( 176 -128 176 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -112 192 ) ( 176 -112 176 ) ( 304 -112 176 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) convert/machine01 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -128 192 ) ( 304 -128 176 ) ( 176 -128 176 ) convert/machine01 [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) convert/machine01 [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) convert/machine01 [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -112 192 ) ( 176 -112 176 ) ( 304 -112 176 ) convert/machine01 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) convert/machine01 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 14
 {
@@ -178,12 +178,12 @@
 }
 // brush 19
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -96 208 ) ( 304 -96 192 ) ( 176 -96 192 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -80 192 ) ( 176 -80 176 ) ( 304 -80 176 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/stone/sculpted/arch01 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -96 208 ) ( 304 -96 192 ) ( 176 -96 192 ) darkmod/stone/sculpted/arch01 [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/stone/sculpted/arch01 [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/stone/sculpted/arch01 [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -80 192 ) ( 176 -80 176 ) ( 304 -80 176 ) darkmod/stone/sculpted/arch01 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/stone/sculpted/arch01 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 20
 {
@@ -232,12 +232,12 @@
 }
 // brush 25
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -64 192 ) ( 304 -64 176 ) ( 176 -64 176 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -48 192 ) ( 176 -48 176 ) ( 304 -48 176 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -64 192 ) ( 304 -64 176 ) ( 176 -64 176 ) darkmod/window/diamond_pattern_andbars01_unlit [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/window/diamond_pattern_andbars01_unlit [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/window/diamond_pattern_andbars01_unlit [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -48 192 ) ( 176 -48 176 ) ( 304 -48 176 ) darkmod/window/diamond_pattern_andbars01_unlit [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 26
 {
@@ -286,12 +286,12 @@
 }
 // brush 31
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -32 192 ) ( 304 -32 176 ) ( 176 -32 176 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -16 192 ) ( 176 -16 176 ) ( 304 -16 176 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/wood/boards/weathered [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -32 192 ) ( 304 -32 176 ) ( 176 -32 176 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -16 192 ) ( 176 -16 176 ) ( 304 -16 176 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/wood/boards/weathered [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 32
 {
@@ -682,12 +682,12 @@
 }
 // brush 75
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -176 176 ) ( 304 -176 144 ) ( 176 -176 144 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -160 128 ) ( 176 -160 112 ) ( 304 -160 112 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/metal/grate/fence_iron_01 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -176 176 ) ( 304 -176 144 ) ( 176 -176 144 ) darkmod/metal/grate/fence_iron_01 [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/metal/grate/fence_iron_01 [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/metal/grate/fence_iron_01 [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -160 128 ) ( 176 -160 112 ) ( 304 -160 112 ) darkmod/metal/grate/fence_iron_01 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/metal/grate/fence_iron_01 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 76
 {
@@ -778,16 +778,21 @@
 }
 // entity 11
 {
-"classname" "crate"
-"origin" "24 -152 24"
-}
-// entity 12
-{
 "classname" "lamp_sitting"
 "origin" "72 40 24"
 }
-// entity 13
+// entity 12
 {
 "classname" "light_lamp_shaded03"
 "origin" "-104 -184 24"
+}
+// entity 13
+{
+"classname" "generator2"
+"origin" "-8 -168 24"
+}
+// entity 14
+{
+"classname" "crate_big"
+"origin" "40 136 24"
 }

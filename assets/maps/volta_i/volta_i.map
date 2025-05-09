@@ -43,12 +43,12 @@
 }
 // brush 4
 {
-( 1728 -192 256 ) ( 1728 -208 256 ) ( 1728 -208 144 ) darkmod/stone/cobblestones/blocks_uneven_blue [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.1 0.1
-( 1728 -208 256 ) ( 1872 -208 256 ) ( 1872 -208 144 ) darkmod/stone/cobblestones/blocks_uneven_blue [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 0.1 0.1
-( 1872 -208 144 ) ( 1872 -192 144 ) ( 1728 -192 144 ) darkmod/stone/cobblestones/blocks_uneven_blue [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 0.1 0.1
-( 1728 -192 256 ) ( 1872 -192 256 ) ( 1872 -208 256 ) darkmod/stone/cobblestones/blocks_uneven_blue [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 0.1 0.1
-( 1872 -192 144 ) ( 1872 -192 256 ) ( 1728 -192 256 ) darkmod/stone/cobblestones/blocks_uneven_blue [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 0.1 0.1
-( 1872 -208 256 ) ( 1872 -192 256 ) ( 1872 -192 144 ) darkmod/stone/cobblestones/blocks_uneven_blue [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.1 0.1
+( 1728 -192 256 ) ( 1728 -208 256 ) ( 1728 -208 144 ) darkmod/metal/grate/fence_iron_01 [ 0 -1 0 0 ] [ 0 0 -1 -1200 ] 0 0.05 0.05
+( 1728 -208 256 ) ( 1872 -208 256 ) ( 1872 -208 144 ) darkmod/metal/grate/fence_iron_01 [ 1 0 0 0 ] [ 0 0 -1 -1200 ] 0 0.05 0.05
+( 1872 -208 144 ) ( 1872 -192 144 ) ( 1728 -192 144 ) darkmod/metal/grate/fence_iron_01 [ -1 0 0 0 ] [ 0 -1 0 -1200 ] 0 0.05 0.05
+( 1728 -192 248 ) ( 1872 -192 248 ) ( 1872 -208 248 ) darkmod/metal/grate/fence_iron_01 [ 1 0 0 0 ] [ 0 -1 0 -1200 ] 180 0.05 0.05
+( 1872 -192 144 ) ( 1872 -192 256 ) ( 1728 -192 256 ) darkmod/metal/grate/fence_iron_01 [ -1 0 0 0 ] [ 0 0 -1 -1200 ] 0 0.05 0.05
+( 1872 -208 256 ) ( 1872 -192 256 ) ( 1872 -192 144 ) darkmod/metal/grate/fence_iron_01 [ 0 1 0 0 ] [ 0 0 -1 -1200 ] 0 0.05 0.05
 }
 // brush 5
 {
@@ -3763,11 +3763,6 @@
 }
 // entity 5
 {
-"classname" "lamp_sitting"
-"origin" "40 104 8"
-}
-// entity 6
-{
 "classname" "func_group"
 "_tb_type" "_tb_group"
 "_tb_name" "window frame"
@@ -3828,7 +3823,7 @@
 ( 2020 200 440 ) ( 2020 208 448 ) ( 2020 208 304 ) darkmod/stone/brick/red_worn_dirty [ 2.220446049250313e-16 -1 0 0 ] [ 0 0 -1 0 ] 90 0.3 0.3
 }
 }
-// entity 7
+// entity 6
 {
 "classname" "light_window"
 // brush 0
@@ -3852,7 +3847,7 @@
 ( 2016 256 448 ) ( 2016 272 432 ) ( 2016 272 304 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 2.220446049250313e-16 -1 0 -54 ] [ 0 0 -1 48 ] 90 0.6 0.5
 }
 }
-// entity 8
+// entity 7
 {
 "classname" "light_window"
 // brush 0
@@ -3876,7 +3871,7 @@
 ( 2016 496 448 ) ( 2016 512 432 ) ( 2016 512 304 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 2.220446049250313e-16 -1 0 -38 ] [ 0 0 -1 48 ] 90 0.6 0.5
 }
 }
-// entity 9
+// entity 8
 {
 "classname" "light_window"
 "angles" "0 270 0"
@@ -3901,7 +3896,7 @@
 ( 1856 0 176 ) ( 1856 16 176 ) ( 1856 16 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 1 0 -44.666668 ] [ 0 0 -1 48 ] 270 0.6 0.5
 }
 }
-// entity 10
+// entity 9
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -3963,7 +3958,7 @@
 ( 1792 -4 192 ) ( 1792 0 192 ) ( 1792 0 48 ) darkmod/stone/brick/red_worn_dirty [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.3 0.3
 }
 }
-// entity 11
+// entity 10
 {
 "classname" "light_window"
 "angles" "0 270 0"
@@ -3988,7 +3983,7 @@
 ( 1664 0 176 ) ( 1664 16 176 ) ( 1664 16 48 ) darkmod/window/roundtop_diamond_pattern01_brightlit [ 0 1 0 -102.666664 ] [ 0 0 -1 48 ] 270 0.6 0.5
 }
 }
-// entity 12
+// entity 11
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4049,7 +4044,7 @@
 ( 1600 -4 192 ) ( 1600 0 192 ) ( 1600 0 48 ) darkmod/stone/brick/red_worn_dirty [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.3 0.3
 }
 }
-// entity 13
+// entity 12
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4111,7 +4106,7 @@
 ( 1600 -4 448 ) ( 1600 0 448 ) ( 1600 0 304 ) darkmod/stone/brick/red_worn_dirty [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.3 0.3
 }
 }
-// entity 14
+// entity 13
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4173,25 +4168,25 @@
 ( 1792 -4 448 ) ( 1792 0 448 ) ( 1792 0 304 ) darkmod/stone/brick/red_worn_dirty [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 0.3 0.3
 }
 }
-// entity 15
+// entity 14
 {
 "classname" "light_lamp_shaded03"
 "origin" "824 312 360"
 "angles" "0 90 0"
 }
-// entity 16
+// entity 15
 {
 "classname" "light_lamp_wall_electric"
 "origin" "632 -1208 344"
 "angles" "0 180 0"
 }
-// entity 17
+// entity 16
 {
 "classname" "light_lamp_shaded03"
 "origin" "1400 -88 344"
 "angles" "0 45 0"
 }
-// entity 18
+// entity 17
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4244,7 +4239,7 @@
 ( 2016 480 464 ) ( 2016 496 448 ) ( 2016 464 448 ) darkmod/stone/brick/red_worn_dirty [ 2.220446049250313e-16 -1 0 0 ] [ 0 0 -1 0 ] 90 0.3 0.3
 }
 }
-// entity 19
+// entity 18
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4330,7 +4325,7 @@
 ( 1712 -200 492 ) ( 1712 -196 492 ) ( 1712 -196 372 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 1 0 200 ] [ 0 0 -0.400000000000009 -240 ] 180 0.1 0.1
 }
 }
-// entity 20
+// entity 19
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4416,7 +4411,7 @@
 ( 2432 -200 492 ) ( 2432 -196 492 ) ( 2432 -196 372 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 0.7666666666668183 0 -10.666748 ] [ 0 0 -0.400000000000001 -240 ] 90 0.1 0.1
 }
 }
-// entity 21
+// entity 20
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4502,7 +4497,7 @@
 ( 2240 -200 492 ) ( 2240 -196 492 ) ( 2240 -196 372 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 0.7666666666668183 0 -10.666748 ] [ 0 0 -0.400000000000009 -240 ] 270 0.1 0.1
 }
 }
-// entity 22
+// entity 21
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -4587,4 +4582,30 @@
 ( 2048 -196 368 ) ( 2048 -196 496 ) ( 1920 -196 496 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0.5000000000000203 0 0 180 ] [ 0 0 -0.3870967741935483 -303.4839 ] 270 0.1 0.1
 ( 2048 -212 496 ) ( 2048 -196 496 ) ( 2048 -196 368 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 0.75 0 -14 ] [ 0 0 -0.3870967741935483 -303.4839 ] 90 0.1 0.1
 }
+}
+// entity 22
+{
+"classname" "generator2"
+"origin" "88 136 -4"
+"angles" "0 -90 -10"
+}
+// entity 23
+{
+"classname" "crate_big"
+"origin" "24 56 8"
+}
+// entity 24
+{
+"classname" "crate_small"
+"origin" "384 -40 8"
+}
+// entity 25
+{
+"classname" "barrel_large_closed"
+"origin" "367 199 8"
+}
+// entity 26
+{
+"classname" "barrel_large_closed"
+"origin" "402 240 8"
 }

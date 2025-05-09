@@ -1,30 +1,42 @@
-use avian_pickup::prop::{PreferredPickupDistanceOverride, PreferredPickupRotation};
+use avian_pickup::prop::PreferredPickupRotation;
 use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_landmass::{Character, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
-use crate::third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _};
+use crate::{
+    props::setup::setup_static_prop_with_convex_hull,
+    third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
+};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_observer(setup_crate);
-    app.register_type::<Crate>();
+    app.add_observer(setup_crate_small);
+    app.add_observer(setup_static_prop_with_convex_hull::<CrateBig>);
+    app.register_type::<CrateBig>();
+    app.register_type::<CrateSmall>();
 }
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
-#[model("models/darkmod/containers/crate01.gltf")]
+#[model("models/darkmod/containers/crate01_big.gltf")]
 #[spawn_hook(preload_model::<Self>)]
-pub(crate) struct Crate;
+pub(crate) struct CrateBig;
 
-fn setup_crate(
-    trigger: Trigger<OnAdd, Crate>,
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/crate01_small.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct CrateSmall;
+
+fn setup_crate_small(
+    trigger: Trigger<OnAdd, CrateSmall>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let model = asset_server.load_trenchbroom_model::<Crate>();
+    let model = asset_server.load_trenchbroom_model::<CrateSmall>();
     commands.entity(trigger.target()).insert(Character3dBundle {
         character: Character::default(),
         settings: CharacterSettings { radius: 0.5 },
@@ -40,7 +52,6 @@ fn setup_crate(
         PreferredPickupRotation(Quat::IDENTITY),
         // Holding a big crate right in your face looks bad, so
         // let's move the pickup distance a bit further away.
-        PreferredPickupDistanceOverride(1.0),
         RigidBody::Dynamic,
     ));
 }

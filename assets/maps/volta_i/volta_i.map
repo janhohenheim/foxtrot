@@ -4592,7 +4592,7 @@
 // entity 23
 {
 "classname" "crate_big"
-"origin" "24 56 8"
+"origin" "48 64 8"
 }
 // entity 24
 {
@@ -4608,4 +4608,9 @@
 {
 "classname" "barrel_large_closed"
 "origin" "402 240 8"
+}
+// entity 27
+{
+"classname" "barrel01"
+"origin" "848 472 8"
 }

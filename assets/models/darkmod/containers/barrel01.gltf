@@ -8,24 +8,40 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				1
 			]
 		}
 	],
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"crate01",
+			"name":"Layer_0",
 			"scale":[
-				0.037127211689949036,
-				0.037127211689949036,
-				0.037127211689949036
+				1.1492319107055664,
+				1.1492319107055664,
+				1.1492319107055664
+			],
+			"translation":[
+				0,
+				-7.859619140625,
+				0
+			]
+		},
+		{
+			"children":[
+				0
+			],
+			"name":"Pivot-Layer_0",
+			"scale":[
+				0.02539999969303608,
+				0.02539999969303608,
+				0.02539999969303608
 			]
 		}
 	],
 	"materials":[
 		{
-			"name":"crate01",
+			"name":"barrel01.003",
 			"normalTexture":{
 				"index":0
 			},
@@ -33,13 +49,16 @@
 				"baseColorTexture":{
 					"index":1
 				},
-				"metallicFactor":0
+				"metallicFactor":0.30000001192092896,
+				"metallicRoughnessTexture":{
+					"index":2
+				}
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.067",
+			"name":"Mesh_0.009",
 			"primitives":[
 				{
 					"attributes":{
@@ -61,79 +80,88 @@
 		{
 			"sampler":0,
 			"source":1
+		},
+		{
+			"sampler":0,
+			"source":2
 		}
 	],
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"crate01_normal",
-			"uri":"crate01_normal.png"
+			"name":"barrel01_normal",
+			"uri":"barrel01_normal.png"
 		},
 		{
 			"mimeType":"image/png",
-			"name":"crate01_d",
-			"uri":"crate01_d.png"
+			"name":"barrel01",
+			"uri":"barrel01.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"barrel01_roughness",
+			"uri":"barrel01_roughness.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":46,
+			"count":194,
 			"max":[
-				13.949999809265137,
-				27.929317474365234,
-				13.949999809265137
+				17.416799545288086,
+				50.66332244873047,
+				17.916799545288086
 			],
 			"min":[
-				-13.949999809265137,
-				0.029317855834960938,
-				-13.949999809265137
+				-17.416799545288086,
+				0.01882171630859375,
+				-16.916799545288086
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":46,
+			"count":194,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":46,
+			"count":194,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":180,
+			"count":576,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":552,
+			"byteLength":2328,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":552,
-			"byteOffset":552,
+			"byteLength":2328,
+			"byteOffset":2328,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":368,
-			"byteOffset":1104,
+			"byteLength":1552,
+			"byteOffset":4656,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":360,
-			"byteOffset":1472,
+			"byteLength":1152,
+			"byteOffset":6208,
 			"target":34963
 		}
 	],
@@ -145,8 +173,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1832,
-			"uri":"crate01.bin"
+			"byteLength":7360,
+			"uri":"barrel01.bin"
 		}
 	]
 }

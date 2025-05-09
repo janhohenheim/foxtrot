@@ -7,13 +7,15 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(setup_static_prop_with_convex_decomposition::<Table>)
         .add_observer(setup_static_prop_with_convex_hull::<Bookshelf>)
         .add_observer(setup_static_prop_with_convex_hull::<Generator2>)
-        .add_observer(setup_static_prop_with_convex_hull::<BarrelLargeClosed>);
+        .add_observer(setup_static_prop_with_convex_hull::<BarrelLargeClosed>)
+        .add_observer(setup_static_prop_with_convex_hull::<Barrel01>);
 
     app.register_type::<Grate>();
     app.register_type::<Table>();
     app.register_type::<Bookshelf>();
     app.register_type::<Generator2>();
     app.register_type::<BarrelLargeClosed>();
+    app.register_type::<Barrel01>();
 }
 
 // generic dynamic props
@@ -48,11 +50,18 @@ pub(crate) struct Bookshelf;
 #[base(Transform, Visibility)]
 #[model("models/darkmod/mechanical/generator2/generator2.gltf")]
 #[spawn_hook(preload_model::<Self>)]
-
 pub(crate) struct Generator2;
+
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/containers/barrel_large_closed.gltf")]
 #[spawn_hook(preload_model::<Self>)]
 pub(crate) struct BarrelLargeClosed;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/containers/barrel01.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct Barrel01;

@@ -2,7 +2,6 @@ inherits = "/textures/base.toml"
 
 [material]
 base_color = { Srgba = { red = 0.6, green = 0.6, blue = 0.6, alpha = 1.0 } }
-# Causes https://github.com/bevyengine/bevy/issues/19124
-#metallic_roughness_texture = "${name}/${name}_roughness.png"
+metallic_roughness_texture = "${name}/${name}_roughness.png"
 metallic = 0.1
 perceptual_roughness = 0.6

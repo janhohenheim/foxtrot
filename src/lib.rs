@@ -77,16 +77,18 @@ impl Plugin for AppPlugin {
         app.add_plugins((
             asset_processing::plugin,
             asset_tracking::plugin,
-            shader_compilation::plugin,
             #[cfg(feature = "dev")]
             dev_tools::plugin,
-            gameplay::plugin,
             props::plugin,
             screens::plugin,
             theme::plugin,
             ui_camera::plugin,
             hdr::plugin,
         ));
+
+        // Add plugins that proload levels. These have to come later than the other plugins
+        // because the objects they reference need to have been registered first.
+        app.add_plugins((gameplay::plugin, shader_compilation::plugin));
     }
 }
 

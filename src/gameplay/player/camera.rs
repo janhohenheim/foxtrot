@@ -109,7 +109,7 @@ fn spawn_view_model(
                     ..default()
                 }),
                 RenderLayers::from(
-                    RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::TRANSLUCENT,
+                    RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::GIZMO3,
                 ),
                 Exposure::INDOOR,
                 Tonemapping::TonyMcMapface,

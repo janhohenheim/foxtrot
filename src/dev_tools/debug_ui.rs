@@ -1,8 +1,10 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
+use crate::RenderLayer;
 use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget};
 use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
+use bevy::render::view::RenderLayers;
 use bevy::ui::Val::*;
 use bevy::{
     dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin},
@@ -10,7 +12,7 @@ use bevy::{
 };
 use bevy_enhanced_input::prelude::*;
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
-use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin};
+use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin, LandmassGizmoConfigGroup};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
@@ -39,6 +41,7 @@ pub(super) fn plugin(app: &mut App) {
         PhysicsGizmos::default(),
         GizmoConfig {
             enabled: false,
+            render_layers: RenderLayers::from(RenderLayer::GIZMO3),
             ..default()
         },
     );
@@ -49,6 +52,16 @@ pub(super) fn plugin(app: &mut App) {
         },
         GizmoConfig {
             enabled: false,
+            render_layers: RenderLayers::from(RenderLayer::GIZMO3),
+            ..default()
+        },
+    );
+    app.insert_gizmo_config(
+        LandmassGizmoConfigGroup,
+        GizmoConfig {
+            enabled: true,
+            depth_bias: -0.03,
+            render_layers: RenderLayers::from(RenderLayer::GIZMO3),
             ..default()
         },
     );

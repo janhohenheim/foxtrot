@@ -8,11 +8,17 @@ use crate::CameraOrder;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, spawn_ui_camera);
+    app.register_type::<UiCamera>();
 }
+
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+pub(crate) struct UiCamera;
 
 fn spawn_ui_camera(mut commands: Commands) {
     commands.spawn((
         Name::new("UI Camera"),
+        UiCamera,
         Camera2d,
         // Render all UI to this camera.
         IsDefaultUiCamera,

@@ -2,9 +2,9 @@
 //! We use a dedicated camera for this because our other two cameras, namely the world and view model cameras,
 //! don't exist during non-gameplay screens such as the main menu.
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::view::RenderLayers};
 
-use crate::CameraOrder;
+use crate::{CameraOrder, RenderLayer};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, spawn_ui_camera);
@@ -27,5 +27,6 @@ fn spawn_ui_camera(mut commands: Commands) {
             order: CameraOrder::Ui.into(),
             ..default()
         },
+        RenderLayers::from(RenderLayer::UI),
     ));
 }

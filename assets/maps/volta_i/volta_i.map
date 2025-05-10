@@ -4392,7 +4392,8 @@
 // entity 1
 {
 "classname" "player"
-"origin" "264 104 56"
+"origin" "1912 -120 56"
+"angles" "0 -135 0"
 }
 // entity 2
 {

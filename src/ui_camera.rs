@@ -27,6 +27,7 @@ fn spawn_ui_camera(mut commands: Commands) {
             order: CameraOrder::Ui.into(),
             ..default()
         },
+        // This line causes https://github.com/bevyengine/bevy/issues/19166 and https://github.com/bevyengine/bevy/issues/19167
         RenderLayers::from(RenderLayer::UI),
     ));
 }

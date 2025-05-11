@@ -16,7 +16,8 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_dynamic_prop_with_convex_hull::<PackageMedium>)
         .add_observer(setup_dynamic_prop_with_convex_hull::<PackageSmall>);
 
-    app.add_observer(setup_nonphysical_prop::<IvyPart8>);
+    app.add_observer(setup_nonphysical_prop::<IvyPart8>)
+        .add_observer(setup_nonphysical_prop::<SmallDoorSign1>);
 
     app.register_type::<Grate>();
     app.register_type::<Table>();
@@ -30,6 +31,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<PackageSmall>();
     app.register_type::<DoorStainedGlass>();
     app.register_type::<IvyPart8>();
+    app.register_type::<SmallDoorSign1>();
 }
 
 // generic dynamic props
@@ -121,3 +123,10 @@ pub(crate) struct DoorStainedGlass;
 #[model("models/darkmod/nature/ivy_part08.gltf")]
 #[spawn_hook(preload_model::<Self>)]
 pub(crate) struct IvyPart8;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/decorative/signs/small_door_sign1.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct SmallDoorSign1;

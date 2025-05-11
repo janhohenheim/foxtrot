@@ -70,12 +70,12 @@
 }
 // brush 7
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -192 176 ) ( 304 -192 160 ) ( 176 -192 160 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -176 176 ) ( 176 -176 144 ) ( 304 -176 144 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/plaster/white_plaster01 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -192 176 ) ( 304 -192 160 ) ( 176 -192 160 ) darkmod/plaster/white_plaster01 [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/plaster/white_plaster01 [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/plaster/white_plaster01 [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -176 176 ) ( 176 -176 144 ) ( 304 -176 144 ) darkmod/plaster/white_plaster01 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/plaster/white_plaster01 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 8
 {
@@ -232,12 +232,12 @@
 }
 // brush 25
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -64 192 ) ( 304 -64 176 ) ( 176 -64 176 ) darkmod/window/diamond_pattern_andbars01_unlit [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/window/diamond_pattern_andbars01_unlit [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/window/diamond_pattern_andbars01_unlit [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -48 192 ) ( 176 -48 176 ) ( 304 -48 176 ) darkmod/window/diamond_pattern_andbars01_unlit [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/window/diamond_pattern_andbars01_unlit [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/wood/boards/weathered [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -64 192 ) ( 304 -64 176 ) ( 176 -64 176 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -48 192 ) ( 176 -48 176 ) ( 304 -48 176 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/wood/boards/weathered [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 26
 {
@@ -286,12 +286,12 @@
 }
 // brush 31
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/wood/boards/weathered [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -32 192 ) ( 304 -32 176 ) ( 176 -32 176 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/wood/boards/weathered [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -16 192 ) ( 176 -16 176 ) ( 304 -16 176 ) darkmod/wood/boards/weathered [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/wood/boards/weathered [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/wood/panels/molding_grey [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -32 192 ) ( 304 -32 176 ) ( 176 -32 176 ) darkmod/wood/panels/molding_grey [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/wood/panels/molding_grey [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/wood/panels/molding_grey [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -16 192 ) ( 176 -16 176 ) ( 304 -16 176 ) darkmod/wood/panels/molding_grey [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/wood/panels/molding_grey [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 32
 {
@@ -709,12 +709,12 @@
 }
 // brush 78
 {
-( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/nature/dirt/dirt_002_dark [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 176 -160 128 ) ( 304 -160 112 ) ( 176 -160 112 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/nature/dirt/dirt_002_dark [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
-( 176 -144 208 ) ( 176 -144 192 ) ( 304 -144 192 ) darkmod/nature/dirt/dirt_002_dark [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
-( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/nature/dirt/dirt_002_dark [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -368 -64 -16 ) ( -368 -63 -16 ) ( -368 -64 -15 ) darkmod/plaster/framed_trim_lions [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 176 -160 128 ) ( 304 -160 112 ) ( 176 -160 112 ) darkmod/plaster/framed_trim_lions [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) darkmod/plaster/framed_trim_lions [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) darkmod/plaster/framed_trim_lions [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 176 -144 208 ) ( 176 -144 192 ) ( 304 -144 192 ) darkmod/plaster/framed_trim_lions [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 192 64 16 ) ( 192 64 17 ) ( 192 65 16 ) darkmod/plaster/framed_trim_lions [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 // brush 79
 {
@@ -800,4 +800,34 @@
 {
 "classname" "fence_bars_decorative_single"
 "origin" "8 8 24"
+}
+// entity 16
+{
+"classname" "door_stained_glass"
+"origin" "72 -136 24"
+}
+// entity 17
+{
+"classname" "ivy_part8"
+"origin" "24 -56 24"
+}
+// entity 18
+{
+"classname" "package_medium"
+"origin" "56 8 24"
+}
+// entity 19
+{
+"classname" "package_small"
+"origin" "24 -104 24"
+}
+// entity 20
+{
+"classname" "small_door_sign1"
+"origin" "-56 136 24"
+}
+// entity 21
+{
+"classname" "npc"
+"origin" "-216 120 24"
 }

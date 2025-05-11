@@ -6955,3 +6955,35 @@
 "origin" "136 88 56"
 "angles" "0 0 0"
 }
+// entity 151
+{
+"classname" "light_lamp_plain"
+"origin" "2024 744 168"
+}
+// entity 152
+{
+"classname" "light_lamp_plain"
+"origin" "3352 88 264"
+}
+// entity 153
+{
+"classname" "light_lamp_wall_electric"
+"origin" "1640 -584 168"
+"angles" "0 -90 0"
+}
+// entity 154
+{
+"classname" "light_lamp_plain"
+"origin" "1448 -1016 120"
+}
+// entity 155
+{
+"classname" "light_lamp_wall_electric"
+"origin" "984 -1608 328"
+}
+// entity 156
+{
+"classname" "light_lamp_wall_electric"
+"origin" "2824 -312 360"
+"angles" "0 90 0"
+}

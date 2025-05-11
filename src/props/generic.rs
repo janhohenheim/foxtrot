@@ -10,7 +10,8 @@ pub(super) fn plugin(app: &mut App) {
         .add_observer(setup_static_prop_with_convex_hull::<BarrelLargeClosed>)
         .add_observer(setup_static_prop_with_convex_hull::<Barrel01>)
         .add_observer(setup_static_prop_with_convex_hull::<CrateSquare>)
-        .add_observer(setup_static_prop_with_convex_hull::<FenceBarsDecorativeSingle>);
+        .add_observer(setup_static_prop_with_convex_hull::<FenceBarsDecorativeSingle>)
+        .add_observer(setup_static_prop_with_convex_hull::<DoorStainedGlass>);
 
     app.add_observer(setup_dynamic_prop_with_convex_hull::<PackageMedium>)
         .add_observer(setup_dynamic_prop_with_convex_hull::<PackageSmall>);
@@ -25,6 +26,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<FenceBarsDecorativeSingle>();
     app.register_type::<PackageMedium>();
     app.register_type::<PackageSmall>();
+    app.register_type::<DoorStainedGlass>();
 }
 
 // generic dynamic props
@@ -100,3 +102,10 @@ pub(crate) struct CrateSquare;
 #[model("models/darkmod/architecture/fencing/fence_bars_decorative01_single.gltf")]
 #[spawn_hook(preload_model::<Self>)]
 pub(crate) struct FenceBarsDecorativeSingle;
+
+#[derive(PointClass, Component, Debug, Reflect)]
+#[reflect(QuakeClass, Component)]
+#[base(Transform, Visibility)]
+#[model("models/darkmod/architecture/doors/door_stained_glass_118x52.gltf")]
+#[spawn_hook(preload_model::<Self>)]
+pub(crate) struct DoorStainedGlass;

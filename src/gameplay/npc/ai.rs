@@ -42,6 +42,7 @@ fn setup_npc_agent(
 ) {
     let npc = trigger.target();
     commands.spawn((
+        Name::new("NPC Agent"),
         Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
         Agent3dBundle {
             agent: default(),

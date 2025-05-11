@@ -23,8 +23,7 @@ pub(super) fn plugin(app: &mut App) {
                 "*_normal",
                 "*_roughness",
             ]))
-            .texture_sampler(texture_sampler())
-            .linear_filtering(),
+            .texture_sampler(texture_sampler()),
     ));
     #[cfg(feature = "native")]
     app.add_systems(Startup, write_trenchbroom_config);

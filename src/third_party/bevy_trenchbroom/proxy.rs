@@ -99,5 +99,5 @@ struct SpotLight;
 #[derive(SolidClass, Component, Debug, Clone, Copy, Default, Reflect)]
 #[base(Transform, Visibility)]
 #[reflect(QuakeClass, Component, Default, Debug)]
-#[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle())]
+#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
 struct FuncGroup;

@@ -11,7 +11,7 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(SolidClass, Component, Debug, Default, Reflect)]
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
-#[geometry(GeometryProvider::new().trimesh_collider().smooth_by_default_angle())]
+#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
 pub(crate) struct LightWindow {
     angles: Vec3,
 }

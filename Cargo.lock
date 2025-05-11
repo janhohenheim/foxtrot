@@ -94,7 +94,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
 dependencies = [
  "cfg-if",
- "getrandom 0.3.2",
+ "getrandom 0.3.3",
  "once_cell",
  "version_check",
  "zerocopy",
@@ -418,8 +418,9 @@ dependencies = [
 
 [[package]]
 name = "avian3d"
-version = "0.2.0"
-source = "git+https://github.com/Jondolf/avian?branch=main#64a4cbdeea8b4a054f7f08e25f122f3042e0ae08"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8ba10c23fee3d432f3c6cf8d036e269d952b8840c1ca4fa6a021ab926786dc4"
 dependencies = [
  "avian_derive",
  "bevy",
@@ -438,7 +439,8 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.2"
-source = "git+https://github.com/Jondolf/avian?branch=main#64a4cbdeea8b4a054f7f08e25f122f3042e0ae08"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12b257f601a1535e0d4a7a7796f535e3a13de62fd422b16dff7c14d27f0d4048"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
@@ -448,8 +450,9 @@ dependencies = [
 
 [[package]]
 name = "avian_pickup"
-version = "0.2.0-dev"
-source = "git+https://github.com/janhohenheim/avian_pickup?branch=avian-main#e6cacd2e97f91fb652800e9de9d448489e807ef2"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc77dbbc2a334640d9ecbf165cb8737db0654b3b813b96b6526dc4aa452f0c5d"
 dependencies = [
  "avian3d",
  "bevy",
@@ -540,8 +543,9 @@ dependencies = [
 
 [[package]]
 name = "bevy-tnua"
-version = "0.23.0"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=bevy-0.16#db13dfd350f86afe70c1f288e1f3cf075a943ffe"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fed533302dfcef51b63d60c2731e0c64bf835ca3e287da686b411869afddee0e"
 dependencies = [
  "bevy",
  "bevy-tnua-physics-integration-layer",
@@ -551,7 +555,8 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-avian3d"
 version = "0.5.0"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=bevy-0.16#db13dfd350f86afe70c1f288e1f3cf075a943ffe"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8767dfb15ed696e07750470145240ca007e5276c367f68b9a3895955e92cbb66"
 dependencies = [
  "avian3d",
  "bevy",
@@ -561,7 +566,8 @@ dependencies = [
 [[package]]
 name = "bevy-tnua-physics-integration-layer"
 version = "0.8.0"
-source = "git+https://github.com/janhohenheim/bevy-tnua?branch=bevy-0.16#db13dfd350f86afe70c1f288e1f3cf075a943ffe"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "914d26cf060dd50852d66fe31edf385fd5b9ea7f57a9ca5ddd9ba628b4157747"
 dependencies = [
  "bevy",
 ]
@@ -1059,8 +1065,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_heavy"
-version = "0.1.0"
-source = "git+https://github.com/Jondolf/bevy_heavy#3905efe581700296de8f48d33388c5471dfca785"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34ccc861fea2ff58c67f4df119512e204050bd7631a3a9c65e1a5e9d162cce28"
 dependencies = [
  "bevy_math",
  "bevy_reflect",
@@ -1226,7 +1233,8 @@ dependencies = [
 [[package]]
 name = "bevy_materialize"
 version = "0.6.0"
-source = "git+https://github.com/noxmore/bevy_materialize?branch=main#9d56fb86507ccfe26a4122406aff9bf64de43d3e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23eba72b8044514f36fab0700c348ddaaa820713d345079322a53697eaaf8f1d"
 dependencies = [
  "bevy",
  "serde",
@@ -1652,8 +1660,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_transform_interpolation"
-version = "0.1.0"
-source = "git+https://github.com/Jondolf/bevy_transform_interpolation#9fd7fe92c32e2d30e38b80566dfa7b740119b593"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72c7c6c4e6a3d5415b3a29a17bd20c17cd0e2f068b96b24e263316d58d5346ea"
 dependencies = [
  "bevy",
 ]
@@ -1661,7 +1670,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#e60483d0627817d41552ab8520fc25f517b56770"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#4072d990fde8cd72403d293ea45211fabbfa53a8"
 dependencies = [
  "anyhow",
  "atomicow",
@@ -1691,7 +1700,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#e60483d0627817d41552ab8520fc25f517b56770"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#4072d990fde8cd72403d293ea45211fabbfa53a8"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -2034,9 +2043,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.21"
+version = "1.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8691782945451c1c383942c4874dbe63814f61cb57ef773cda2972682b7bb3c0"
+checksum = "32db95edf998450acc7881c932f94cd9b05c87b4b2599e8bab064753da4acfd1"
 dependencies = [
  "jobserver",
  "libc",
@@ -2407,11 +2416,11 @@ dependencies = [
 
 [[package]]
 name = "ctrlc"
-version = "3.4.6"
+version = "3.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "697b5419f348fd5ae2478e8018cb016c00a5881c7f46c717de98ffd135a5651c"
+checksum = "46f93780a459b7d656ef7f071fe699c4d3d2cb201c4b24d085b6ddc505276e73"
 dependencies = [
- "nix",
+ "nix 0.30.1",
  "windows-sys 0.59.0",
 ]
 
@@ -2991,7 +3000,7 @@ dependencies = [
  "bevy_yarnspinner",
  "bevy_yarnspinner_example_dialogue_view",
  "bitflags 2.9.0",
- "getrandom 0.3.2",
+ "getrandom 0.3.3",
  "inline_tweak",
  "landmass_oxidized_navigation",
  "log",
@@ -3096,9 +3105,9 @@ dependencies = [
 
 [[package]]
 name = "geographiclib-rs"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6e5ed84f8089c70234b0a8e0aedb6dc733671612ddc0d37c6066052f9781960"
+checksum = "f611040a2bb37eaa29a78a128d1e92a378a03e0b6e66ae27398d42b1ba9a7841"
 dependencies = [
  "libm",
 ]
@@ -3128,9 +3137,9 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.3.2"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73fea8450eea4bac3940448fb7ae50d91f034f941199fcd9d909a5a07aa455f0"
+checksum = "26145e563e54f2cadc477553f1ec5ee650b00862f0a58bcd12cbdc5f0ea2d2f4"
 dependencies = [
  "cfg-if",
  "js-sys",
@@ -3176,7 +3185,7 @@ dependencies = [
  "libc",
  "libudev-sys",
  "log",
- "nix",
+ "nix 0.29.0",
  "uuid 1.16.0",
  "vec_map",
  "wasm-bindgen",
@@ -3769,7 +3778,7 @@ version = "0.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38f262f097c174adebe41eb73d66ae9c06b2844fb0da69969647bbddd9b0538a"
 dependencies = [
- "getrandom 0.3.2",
+ "getrandom 0.3.3",
  "libc",
 ]
 
@@ -3918,12 +3927,12 @@ dependencies = [
 
 [[package]]
 name = "libloading"
-version = "0.8.6"
+version = "0.8.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc2f4eb4bc735547cfed7c0a4922cbd04a4655978c09b54f1f7b228750664c34"
+checksum = "6a793df0d7afeac54f95b471d3af7f0d4fb975699f972341a4b76988d49cdf0c"
 dependencies = [
  "cfg-if",
- "windows-targets 0.52.6",
+ "windows-targets 0.53.0",
 ]
 
 [[package]]
@@ -4265,6 +4274,18 @@ name = "nix"
 version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71e2746dc3a24dd78b3cfcb7be93368c6de9963d30f43a6a73998a9cf4b17b46"
+dependencies = [
+ "bitflags 2.9.0",
+ "cfg-if",
+ "cfg_aliases",
+ "libc",
+]
+
+[[package]]
+name = "nix"
+version = "0.30.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6"
 dependencies = [
  "bitflags 2.9.0",
  "cfg-if",
@@ -4807,7 +4828,7 @@ dependencies = [
 [[package]]
 name = "oxidized_navigation"
 version = "0.12.0"
-source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=bevy-0.16#9a1f33cccc7ccf47ade6dd59c94929d11911c616"
+source = "git+https://github.com/janhohenheim/oxidized_navigation?branch=bevy-0.16#e18b3a318579e9dbe4f414525243982a76c063f0"
 dependencies = [
  "avian3d",
  "bevy",
@@ -5261,7 +5282,7 @@ version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "99d9a13982dcf210057a8a78572b2217b667c3beacbf3a0d8b454f6f82837d38"
 dependencies = [
- "getrandom 0.3.2",
+ "getrandom 0.3.3",
 ]
 
 [[package]]
@@ -5478,9 +5499,9 @@ checksum = "57397d16646700483b67d2dd6511d79318f9d057fdbd21a4066aeac8b41d310a"
 
 [[package]]
 name = "robust"
-version = "1.1.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbf4a6aa5f6d6888f39e980649f3ad6b666acdce1d78e95b8a2cb076e687ae30"
+checksum = "4e27ee8bb91ca0adcf0ecb116293afa12d393f9c2b9b9cd54d33e8078fe19839"
 
 [[package]]
 name = "rodio"
@@ -6408,7 +6429,7 @@ version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
 dependencies = [
- "getrandom 0.3.2",
+ "getrandom 0.3.3",
  "js-sys",
  "serde",
  "wasm-bindgen",
@@ -7146,11 +7167,27 @@ dependencies = [
  "windows_aarch64_gnullvm 0.52.6",
  "windows_aarch64_msvc 0.52.6",
  "windows_i686_gnu 0.52.6",
- "windows_i686_gnullvm",
+ "windows_i686_gnullvm 0.52.6",
  "windows_i686_msvc 0.52.6",
  "windows_x86_64_gnu 0.52.6",
  "windows_x86_64_gnullvm 0.52.6",
  "windows_x86_64_msvc 0.52.6",
+]
+
+[[package]]
+name = "windows-targets"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1e4c7e8ceaaf9cb7d7507c974735728ab453b67ef8f18febdd7c11fe59dca8b"
+dependencies = [
+ "windows_aarch64_gnullvm 0.53.0",
+ "windows_aarch64_msvc 0.53.0",
+ "windows_i686_gnu 0.53.0",
+ "windows_i686_gnullvm 0.53.0",
+ "windows_i686_msvc 0.53.0",
+ "windows_x86_64_gnu 0.53.0",
+ "windows_x86_64_gnullvm 0.53.0",
+ "windows_x86_64_msvc 0.53.0",
 ]
 
 [[package]]
@@ -7172,6 +7209,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32a4622180e7a0ec044bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3"
 
 [[package]]
+name = "windows_aarch64_gnullvm"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86b8d5f90ddd19cb4a147a5fa63ca848db3df085e25fee3cc10b39b6eebae764"
+
+[[package]]
 name = "windows_aarch64_msvc"
 version = "0.42.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7188,6 +7231,12 @@ name = "windows_aarch64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09ec2a7bb152e2252b53fa7803150007879548bc709c039df7627cabbd05d469"
+
+[[package]]
+name = "windows_aarch64_msvc"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7651a1f62a11b8cbd5e0d42526e55f2c99886c77e007179efff86c2b137e66c"
 
 [[package]]
 name = "windows_i686_gnu"
@@ -7208,10 +7257,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e9b5ad5ab802e97eb8e295ac6720e509ee4c243f69d781394014ebfe8bbfa0b"
 
 [[package]]
+name = "windows_i686_gnu"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1dc67659d35f387f5f6c479dc4e28f1d4bb90ddd1a5d3da2e5d97b42d6272c3"
+
+[[package]]
 name = "windows_i686_gnullvm"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0eee52d38c090b3caa76c563b86c3a4bd71ef1a819287c19d586d7334ae8ed66"
+
+[[package]]
+name = "windows_i686_gnullvm"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ce6ccbdedbf6d6354471319e781c0dfef054c81fbc7cf83f338a4296c0cae11"
 
 [[package]]
 name = "windows_i686_msvc"
@@ -7232,6 +7293,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "240948bc05c5e7c6dabba28bf89d89ffce3e303022809e73deaefe4f6ec56c66"
 
 [[package]]
+name = "windows_i686_msvc"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "581fee95406bb13382d2f65cd4a908ca7b1e4c2f1917f143ba16efe98a589b5d"
+
+[[package]]
 name = "windows_x86_64_gnu"
 version = "0.42.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7248,6 +7315,12 @@ name = "windows_x86_64_gnu"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "147a5c80aabfbf0c7d901cb5895d1de30ef2907eb21fbbab29ca94c5b08b1a78"
+
+[[package]]
+name = "windows_x86_64_gnu"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e55b5ac9ea33f2fc1716d1742db15574fd6fc8dadc51caab1c16a3d3b4190ba"
 
 [[package]]
 name = "windows_x86_64_gnullvm"
@@ -7268,6 +7341,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24d5b23dc417412679681396f2b49f3de8c1473deb516bd34410872eff51ed0d"
 
 [[package]]
+name = "windows_x86_64_gnullvm"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0a6e035dd0599267ce1ee132e51c27dd29437f63325753051e71dd9e42406c57"
+
+[[package]]
 name = "windows_x86_64_msvc"
 version = "0.42.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7284,6 +7363,12 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
+
+[[package]]
+name = "windows_x86_64_msvc"
+version = "0.53.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "271414315aff87387382ec3d271b52d7ae78726f5d44ac98b4f4030c91880486"
 
 [[package]]
 name = "winit"

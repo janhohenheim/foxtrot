@@ -37,6 +37,7 @@ pub(super) fn plugin(app: &mut App) {
         pickup::plugin,
     ));
     app.add_observer(setup_player);
+    app.add_systems(PreUpdate, assert_only_one_player);
 }
 
 #[derive(PointClass, Component, Debug, Clone, Copy, PartialEq, Eq, Default, Reflect)]
@@ -116,3 +117,11 @@ fn setup_player(
 
 #[derive(Component)]
 pub(crate) struct PlayerLandmassCharacter(pub(crate) Entity);
+
+fn assert_only_one_player(
+    player: Populated<(), With<Player>>,
+    player_landmass_character: Populated<(), With<PlayerLandmassCharacter>>,
+) {
+    assert_eq!(1, player.iter().count());
+    assert_eq!(1, player_landmass_character.iter().count());
+}

@@ -21,6 +21,8 @@ pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 6.0;
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<Agent>();
     app.register_type::<AgentOf>();
+    app.register_type::<WantsToFollowPlayer>();
+    app.add_systems(PreUpdate, insert_agent_target);
     app.add_systems(
         RunFixedMainLoop,
         (sync_agent_velocity, set_controller_velocity)
@@ -37,7 +39,6 @@ pub(super) fn plugin(app: &mut App) {
 fn setup_npc_agent(
     trigger: Trigger<OnAdd, Npc>,
     mut commands: Commands,
-    player: Single<&PlayerLandmassCharacter>,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
     let npc = trigger.target();
@@ -53,11 +54,30 @@ fn setup_npc_agent(
             },
             archipelago_ref: ArchipelagoRef3d::new(*archipelago),
         },
-        AgentTarget3d::Entity(player.0),
         TargetReachedCondition::Distance(Some(2.0)),
         ChildOf(npc),
         AgentOf(npc),
+        WantsToFollowPlayer,
     ));
+}
+
+#[derive(Component, Debug, Reflect)]
+#[reflect(Component)]
+struct WantsToFollowPlayer;
+
+/// Inserting this a bit after the NPC is spawned because it may be spawned before the player,
+/// in which case we wouldn't be able to find a target.
+fn insert_agent_target(
+    agents: Query<Entity, With<WantsToFollowPlayer>>,
+    player_character: Single<&PlayerLandmassCharacter>,
+    mut commands: Commands,
+) {
+    for agent in &agents {
+        commands
+            .entity(agent)
+            .insert(AgentTarget3d::Entity(player_character.0))
+            .remove::<WantsToFollowPlayer>();
+    }
 }
 
 #[derive(Component, Deref, Debug, Reflect)]

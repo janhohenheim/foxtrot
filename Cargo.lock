@@ -2992,6 +2992,7 @@ dependencies = [
  "bevy_yarnspinner_example_dialogue_view",
  "bitflags 2.9.0",
  "getrandom 0.3.2",
+ "inline_tweak",
  "landmass_oxidized_navigation",
  "log",
  "oxidized_navigation",
@@ -3613,6 +3614,28 @@ name = "inflections"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a257582fdcde896fd96463bf2d40eefea0580021c0712a0e2b028b60b47a837a"
+
+[[package]]
+name = "inline_tweak"
+version = "1.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e09cc2491a8419aa3d0b03b92297cfaf059385b230843cba249ca4cf08c627f8"
+dependencies = [
+ "inline_tweak_derive",
+ "proc-macro2",
+ "syn",
+]
+
+[[package]]
+name = "inline_tweak_derive"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6864ad6962b49a8fc7ce8cfa60ee0725aa543f15fc7e5f34753ccfa881dd6759"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "inotify"

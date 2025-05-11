@@ -22,6 +22,10 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         DoNotFixGltfRotationsUnderMe,
         children![(Name::new("Level Music"), music(level_assets.music.clone()))],
     ));
+    commands.insert_resource(AmbientLight {
+        brightness: 20.0,
+        ..default()
+    });
 }
 
 #[derive(Component, Debug, Reflect)]
@@ -36,6 +40,8 @@ pub(crate) struct LevelAssets {
     pub(crate) level: Handle<Scene>,
     #[dependency]
     pub(crate) music: Handle<AudioSource>,
+    #[dependency]
+    pub(crate) skybox: Handle<Image>,
 }
 
 impl FromWorld for LevelAssets {
@@ -46,6 +52,7 @@ impl FromWorld for LevelAssets {
             // Our main level is inspired by the TheDarkMod fan mission [Volta I: The Stone](https://www.thedarkmod.com/missiondetails/?internalName=volta1_3)
             level: assets.load("maps/volta_i/volta_i.map#Scene"),
             music: assets.load("audio/music/Ambiance_Rain_Calm_Loop_Stereo.ogg"),
+            skybox: assets.load("cubemaps/qwantani_night_2k.ktx2"),
         }
     }
 }

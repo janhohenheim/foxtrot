@@ -67,6 +67,8 @@ impl Plugin for AppPlugin {
                     default_sampler: default_image_sampler_descriptor(),
                 }),
         );
+        app.insert_resource(AmbientLight::NONE);
+
         #[cfg(feature = "native")]
         app.add_plugins(TemporalAntiAliasPlugin);
 

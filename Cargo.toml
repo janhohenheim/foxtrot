@@ -55,10 +55,11 @@ getrandom = { version = "0.3", default-features = false, features = [
 
 bitflags = "2.9.0"
 anyhow = "1.0.98"
-bevy-inspector-egui = "0.31.0"
+bevy-inspector-egui = { version = "0.31.0", optional = true }
 bevy_fix_gltf_coordinate_system = "0.1.0"
 bevy_fix_cursor_unlock_web = "0.1.2"
 regex = "1.11.1"
+inline_tweak = { version = "1.2.2", features = ["derive"], optional = true }
 
 [features]
 default = [
@@ -71,10 +72,11 @@ dev = [
     "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
     # TODO
-    #"dep:aalo",
     "bevy/bevy_ui_debug",
     # Improve error messages coming from Bevy
     "bevy/track_location",
+    "dep:inline_tweak",
+    "dep:bevy-inspector-egui",
 ]
 dev_native = [
     "dev",

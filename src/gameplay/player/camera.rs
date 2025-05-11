@@ -8,7 +8,7 @@ use std::{f32::consts::FRAC_PI_2, iter};
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
 use bevy::{
-    core_pipeline::{bloom::Bloom, tonemapping::Tonemapping},
+    core_pipeline::{Skybox, bloom::Bloom, tonemapping::Tonemapping},
     pbr::NotShadowCaster,
     prelude::*,
     render::{
@@ -27,7 +27,10 @@ use bevy_enhanced_input::prelude::*;
 
 use crate::{
     AppSystems, CameraOrder, RenderLayer,
-    gameplay::animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
+    gameplay::{
+        animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
+        level::LevelAssets,
+    },
     screens::{Screen, loading::LoadingScreen},
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
@@ -60,12 +63,8 @@ fn spawn_view_model(
     player_transform: Query<&Transform>,
     mut commands: Commands,
     assets: Res<AssetServer>,
+    level_assets: Res<LevelAssets>,
 ) {
-    commands.insert_resource(AmbientLight {
-        color: Color::srgb_u8(68, 71, 88),
-        brightness: 180.0,
-        ..default()
-    });
     let player_transform = player_transform.get(trigger.target()).unwrap();
     commands
         .spawn((
@@ -114,6 +113,11 @@ fn spawn_view_model(
                 Exposure::INDOOR,
                 Tonemapping::TonyMcMapface,
                 Bloom::NATURAL,
+                Skybox {
+                    image: level_assets.skybox.clone(),
+                    brightness: 2.0,
+                    ..default()
+                },
                 #[cfg(feature = "native")]
                 (
                     Msaa::Off,

@@ -21,6 +21,15 @@ pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
     commands.entity(trigger.target()).insert(bundle);
 }
 
+pub(crate) fn setup_nonphysical_prop<T: QuakeClass>(
+    trigger: Trigger<OnAdd, T>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+) {
+    let model = asset_server.load_trenchbroom_model::<T>();
+    commands.entity(trigger.target()).insert(SceneRoot(model));
+}
+
 pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
     trigger: Trigger<OnAdd, T>,
     asset_server: Res<AssetServer>,

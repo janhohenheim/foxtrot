@@ -23,7 +23,7 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         children![(Name::new("Level Music"), music(level_assets.music.clone()))],
     ));
     commands.insert_resource(AmbientLight {
-        brightness: 20.0,
+        brightness: 8.0,
         ..default()
     });
 }

@@ -9,6 +9,7 @@ use bevy::prelude::*;
 pub(crate) mod avian3d;
 mod avian_pickup;
 mod bevy_enhanced_input;
+mod bevy_framepace;
 #[cfg(feature = "native")]
 mod bevy_hanabi;
 pub(crate) mod bevy_landmass;
@@ -29,5 +30,6 @@ pub(super) fn plugin(app: &mut App) {
         #[cfg(feature = "native")]
         bevy_hanabi::plugin,
         fixes::plugin,
+        bevy_framepace::plugin,
     ));
 }

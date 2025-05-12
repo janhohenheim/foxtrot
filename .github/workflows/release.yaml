@@ -118,7 +118,7 @@ jobs:
           cd ..
           mv kram kram-linux
           ln -s kram-linux/kram kram
-          
+
       - name: Install ImageMagick
         uses: mfinelli/setup-imagemagick@v6
 
@@ -246,7 +246,7 @@ jobs:
       - name: Install and run Bevy CLI (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
-          cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
+          cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli --features wasm-opt
           bevy build --locked --release --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)

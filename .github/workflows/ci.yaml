@@ -73,7 +73,7 @@ jobs:
         run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install dependencies
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev lld
 
       - name: Populate target directory from cache
         uses: Swatinem/rust-cache@v2

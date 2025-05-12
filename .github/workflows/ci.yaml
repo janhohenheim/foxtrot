@@ -23,7 +23,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustc-codegen-cranelift-preview
+
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
+
+      - name: Install cargo binstall
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Install nextest
+        run: cargo binstall cargo-nextest --secure
 
       - name: Install dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
@@ -34,7 +48,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Run tests
-        run: cargo test --locked --workspace --all-features --all-targets
+        run: cargo nextest run --locked --workspace --all-features --all-targets
 
       # Running doc tests separately is a workaround for <https://github.com/rust-lang/cargo/issues/6669>.
       - name: Run doctests
@@ -51,9 +65,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
         with:
           targets: wasm32-unknown-unknown
+          components: rustc-codegen-cranelift-preview
+
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
@@ -80,9 +101,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          components: clippy
+          components: clippy, rustc-codegen-cranelift-preview
+
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
@@ -106,7 +133,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
 
@@ -123,7 +150,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: rustc-codegen-cranelift-preview
+
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
@@ -157,6 +192,15 @@ jobs:
 
       - name: Install Bevy linter
         uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0
+
+      - name: Add cranelift to rustc
+        run: rustup component add rustc-codegen-cranelift-preview
+
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Run Bevy linter
         run: bevy_lint --locked --workspace --all-targets --all-features

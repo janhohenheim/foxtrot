@@ -152,7 +152,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@nightly
         with:
-          toolchain: rustc-codegen-cranelift-preview
+          components: rustc-codegen-cranelift-preview
 
       - name: Install mold
         uses: rui314/setup-mold@v1

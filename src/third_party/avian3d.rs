@@ -20,6 +20,7 @@ fn enable_interpolation(
     trigger: Trigger<OnAdd, RigidBody>,
     rigid_body: Query<&RigidBody>,
     mut commands: Commands,
+    asset_server: Res<AssetServer>,
 ) {
     let Ok(rigid_body) = rigid_body.get(trigger.target()) else {
         return;

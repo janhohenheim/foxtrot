@@ -1689,7 +1689,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9f40092a912b2a12a9e49ee3cabb81d88e14dbea"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#4072d990fde8cd72403d293ea45211fabbfa53a8"
 dependencies = [
  "anyhow",
  "atomicow",
@@ -1719,7 +1719,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#9f40092a912b2a12a9e49ee3cabb81d88e14dbea"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#4072d990fde8cd72403d293ea45211fabbfa53a8"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -2950,9 +2950,9 @@ dependencies = [
 
 [[package]]
 name = "fontconfig-parser"
-version = "0.5.8"
+version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbc773e24e02d4ddd8395fd30dc147524273a83e54e0f312d986ea30de5f5646"
+checksum = "c1fcfcd44ca6e90c921fee9fa665d530b21ef1327a4c1a6c5250ea44b776ada7"
 dependencies = [
  "roxmltree",
 ]
@@ -4054,9 +4054,9 @@ dependencies = [
 
 [[package]]
 name = "matrixmultiply"
-version = "0.3.10"
+version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a06de3016e9fae57a36fd14dba131fccf49f74b40b7fbdb472f96e361ec71a08"
+checksum = "9380b911e3e96d10c1f415da0876389aaf1b56759054eeb0de7df940c456ba1a"
 dependencies = [
  "autocfg",
  "rawpointer",

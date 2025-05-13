@@ -246,7 +246,7 @@ jobs:
       - name: Install and run Bevy CLI (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |
-          cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli --features wasm-opt
+          cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli --all-features
           bevy build --locked --release --features='${{ matrix.features }}' --yes web --bundle
 
       - name: Add web bundle to app (Web)

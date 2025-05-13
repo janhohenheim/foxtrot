@@ -60,8 +60,6 @@ jobs:
     name: Check build for web
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,7 +84,7 @@ jobs:
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
 
       - name: Build for web
-        run: cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
+        run: RUSTFLAGS='--deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"' cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 
   # Run clippy lints.
   clippy:

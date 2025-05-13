@@ -66,6 +66,12 @@ fn spawn_view_model(
     level_assets: Res<LevelAssets>,
 ) {
     let player_transform = player_transform.get(trigger.target()).unwrap();
+    let env_map = EnvironmentMapLight {
+        diffuse_map: level_assets.env_map_diffuse.clone(),
+        specular_map: level_assets.env_map_specular.clone(),
+        intensity: 8.0,
+        ..default()
+    };
     commands
         .spawn((
             Name::new("Player Camera Parent"),
@@ -114,10 +120,11 @@ fn spawn_view_model(
                 Tonemapping::TonyMcMapface,
                 Bloom::NATURAL,
                 Skybox {
-                    image: level_assets.skybox.clone(),
-                    brightness: 2.0,
+                    image: level_assets.env_map_specular.clone(),
+                    brightness: 1.0,
                     ..default()
                 },
+                env_map.clone(),
                 #[cfg(feature = "native")]
                 (
                     Msaa::Off,
@@ -149,6 +156,7 @@ fn spawn_view_model(
                 RenderLayers::from(RenderLayer::VIEW_MODEL),
                 Exposure::INDOOR,
                 Tonemapping::TonyMcMapface,
+                env_map,
             ));
 
             // Spawn the player's view model

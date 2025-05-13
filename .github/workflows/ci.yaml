@@ -36,18 +36,25 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
+      - name: Set LD_LIBRARY_PATH
+        id: ld_library_path
+        run: |
+          echo "LD_LIBRARY_PATH=$(rustc --print target-libdir)" >> $GITHUB_ENV
+          echo "ld_library_path=$(rustc --print target-libdir)" >> $GITHUB_OUTPUT
+
       - name: Populate target directory from cache
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-directories: ${{ steps.ld_library_path.outputs.ld_library_path }}
 
       - name: Run tests
-        run: cargo nextest run --locked --workspace --all-features --all-targets --no-fail-fast --no-tests warn
+        run: cargo nextest run --config 'profile.dev.package."*".opt-level=1' --locked --workspace --all-targets --no-fail-fast --no-tests warn
 
       # Running doc tests separately is a workaround for <https://github.com/rust-lang/cargo/issues/6669>.
       - name: Run doctests
         # Setting LD_LIBRARY_PATH is a workaround for <https://github.com/TheBevyFlock/bevy_new_2d/pull/318#issuecomment-2585935350>.
-        run: LD_LIBRARY_PATH="$(rustc --print target-libdir)" cargo test --locked --workspace --all-features --doc
+        run: cargo test --config 'profile.dev.package."*".opt-level=1' --locked --workspace --doc
 
   # Check that the game builds for web.
   build-web:

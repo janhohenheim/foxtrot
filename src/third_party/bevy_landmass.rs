@@ -23,7 +23,7 @@ pub(super) fn plugin(app: &mut App) {
             ..NavMeshSettings::from_agent_and_bounds(
                 NPC_RADIUS * 0.5,
                 NPC_HEIGHT * 0.5,
-                100.0,
+                150.0,
                 -20.0,
             )
         }),

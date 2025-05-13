@@ -55,7 +55,7 @@ fn assets() -> impl Bundle {
             "You can use it commercially without the need to credit me by Drillimpact",
         ],
         ["Vocals", "CC BY 4.0 by Dillon Becker"],
-        ["Qwantani Night skybox", "CC0 by Greg Zaal and Jarod Guest"],
+        ["Night Sky HDRI 001", "CC0 by ambientCG"],
         [
             "Rest of the assets",
             "CC BY-NC-SA 3.0 by The Dark Mod Team, converted to Bevy-friendly assets by Jan Hohenheim",

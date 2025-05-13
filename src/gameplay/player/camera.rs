@@ -69,7 +69,7 @@ fn spawn_view_model(
     let env_map = EnvironmentMapLight {
         diffuse_map: level_assets.env_map_diffuse.clone(),
         specular_map: level_assets.env_map_specular.clone(),
-        intensity: 8.0,
+        intensity: 300.0,
         ..default()
     };
     commands
@@ -121,7 +121,7 @@ fn spawn_view_model(
                 Bloom::NATURAL,
                 Skybox {
                     image: level_assets.env_map_specular.clone(),
-                    brightness: 1.0,
+                    brightness: 8.0,
                     ..default()
                 },
                 env_map.clone(),

@@ -1,10 +1,13 @@
+# This config is used for the CI workflow.
+# Feel free to also use it locally for fast builds if you have the required setup!
+
 [unstable]
 codegen-backend = true
 
 [profile.dev]
 codegen-backend = "cranelift"
 
-# compile deps with llvm still for runtime perf
+# Compile deps with LLVM because cranelift can crash the test runner otherwise
 [profile.dev.package."*"]
 codegen-backend = "llvm"
 
@@ -21,11 +24,16 @@ codegen-backend = "llvm"
 # so we cannot use mold either: https://github.com/flathub/org.freedesktop.Sdk.Extension.rust-stable/issues/168
 linker = "lld"
 rustflags = [
+    "-Dwarnings",
+    "-Cdebuginfo=line-tables-only",
+    "--cfg",
+    "getrandom_backend=\"wasm_js\"",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",
 ]
 rustdocflags = [
+    "-Dwarnings",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",
@@ -35,6 +43,8 @@ rustdocflags = [
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = [
+    "-Dwarnings",
+    "-Cdebuginfo=line-tables-only",
     # Mold linker
     "-Clink-arg=-fuse-ld=mold",
     # Nightly
@@ -42,6 +52,7 @@ rustflags = [
     "-Zthreads=0",
 ]
 rustdocflags = [
+    "-Dwarnings",
     # Mold linker
     "-Clink-arg=-fuse-ld=mold",
     # Nightly

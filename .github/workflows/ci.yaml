@@ -80,9 +80,6 @@ jobs:
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Install Bevy CLI
-        run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-
       - name: Build for web
         run: RUSTFLAGS='--deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"' cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 

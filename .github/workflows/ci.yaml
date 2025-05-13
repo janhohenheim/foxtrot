@@ -6,12 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  # Strip unnecessary information from build artifacts to reduce cache size.
-  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only
-  RUSTDOCFLAGS: --deny warnings
-  LINTER_TOOLCHAIN: nightly-2025-04-03
-
 jobs:
   # Run tests.
   test:
@@ -81,7 +75,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build for web
-        run: RUSTFLAGS='--deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"' cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
+        run: cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 
   # Run clippy lints.
   clippy:

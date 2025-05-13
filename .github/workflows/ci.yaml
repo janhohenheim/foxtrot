@@ -8,7 +8,7 @@ on:
 
 env:
   # Strip unnecessary information from build artifacts to reduce cache size.
-  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only"
+  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only
   RUSTDOCFLAGS: --deny warnings
   LINTER_TOOLCHAIN: nightly-2025-04-03
 

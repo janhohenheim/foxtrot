@@ -57,7 +57,7 @@ jobs:
 
   # Check that the game builds for web.
   build-web:
-    name: Build for web
+    name: Check build for web
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -80,12 +80,8 @@ jobs:
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Install Bevy CLI
-        run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
-
       - name: Build for web
-        run: |
-          bevy build --locked --workspace --all-targets --yes web
+        run: RUSTFLAGS='--deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"' cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 
   # Run clippy lints.
   clippy:

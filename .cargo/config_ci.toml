@@ -19,6 +19,10 @@ codegen-backend = "llvm"
 [profile.web]
 codegen-backend = "llvm"
 
+# Override the high opt-level from the dev profile for the test profile
+[profile.test.package."*"]
+opt-level = 1
+
 [target.wasm32-unknown-unknown]
 # Clang does not support wasm32-unknown-unknown,
 # so we cannot use mold either: https://github.com/flathub/org.freedesktop.Sdk.Extension.rust-stable/issues/168

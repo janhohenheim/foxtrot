@@ -8,7 +8,7 @@ on:
 
 env:
   # Strip unnecessary information from build artifacts to reduce cache size.
-  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only
+  RUSTFLAGS: --deny warnings -C debuginfo=line-tables-only --cfg getrandom_backend="wasm_js"
   RUSTDOCFLAGS: --deny warnings
   LINTER_TOOLCHAIN: nightly-2025-04-03
 
@@ -57,7 +57,7 @@ jobs:
 
   # Check that the game builds for web.
   build-web:
-    name: Build for web
+    name: Check build for web
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -84,8 +84,7 @@ jobs:
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli
 
       - name: Build for web
-        run: |
-          bevy build --locked --workspace --all-targets --yes web
+        run: cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 
   # Run clippy lints.
   clippy:

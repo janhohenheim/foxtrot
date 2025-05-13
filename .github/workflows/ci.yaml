@@ -43,14 +43,11 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
           cache-directories: ${{ steps.ld_library_path.outputs.ld_library_path }}
 
-      - name: Add cargo bin to PATH
-        run: echo "PATH=$PATH:$HOME/.cargo/bin" >> $GITHUB_ENV
-
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
 
       - name: Install nextest
-        run: cargo binstall cargo-nextest --locked
+        run: cargo binstall cargo-nextest --locked --force
 
       - name: Run tests
         run: cargo nextest run --locked --workspace --all-targets --no-fail-fast --no-tests warn

@@ -5,7 +5,7 @@
 codegen-backend = true
 
 [profile.dev]
-codegen-backend = "cranelift"
+#codegen-backend = "cranelift"
 
 # Compile deps with LLVM because cranelift can crash the test runner otherwise
 [profile.dev.package."*"]

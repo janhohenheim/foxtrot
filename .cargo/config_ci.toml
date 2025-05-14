@@ -7,9 +7,11 @@ codegen-backend = true
 [profile.dev]
 codegen-backend = "cranelift"
 
-# Compile deps with LLVM because cranelift can crash the test runner otherwise
+# Consider using llvm for this setting if you use tests that `#[should_panic]`,
+# as cranelift only supports `panic = abort`.
+# Since Foxtrot does not use `#[should_panic]` so far, we can use cranelift for speed increases.
 [profile.dev.package."*"]
-codegen-backend = "llvm"
+codegen-backend = "cranelift"
 
 # Disable cranelift for release profile
 [profile.release]
@@ -19,14 +21,17 @@ codegen-backend = "llvm"
 [profile.web]
 codegen-backend = "llvm"
 
+[profile.web.package."*"]
+codegen-backend = "llvm"
+
 # Override the high opt-level from the dev profile for the test profile
 [profile.test.package."*"]
 opt-level = 1
 
 [target.wasm32-unknown-unknown]
 # Clang does not support wasm32-unknown-unknown,
-# so we cannot use mold either: https://github.com/flathub/org.freedesktop.Sdk.Extension.rust-stable/issues/168
-linker = "lld"
+# so it's hard to use a better linker.
+# Note that Wasm already uses rust-lld by default.
 rustflags = [
     "-Dwarnings",
     "-Cdebuginfo=line-tables-only",
@@ -49,16 +54,16 @@ linker = "clang"
 rustflags = [
     "-Dwarnings",
     "-Cdebuginfo=line-tables-only",
-    # Mold linker
-    "-Clink-arg=-fuse-ld=mold",
+    # Faster linker
+    "-Clink-arg=--ld-path=wild",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",
 ]
 rustdocflags = [
     "-Dwarnings",
-    # Mold linker
-    "-Clink-arg=-fuse-ld=mold",
+    # Faster linker
+    "-Clink-arg=--ld-path=wild",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",

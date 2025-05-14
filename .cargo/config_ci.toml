@@ -52,7 +52,7 @@ rustflags = [
     "-Dwarnings",
     "-Cdebuginfo=line-tables-only",
     # Faster linker
-    "-Clink-arg=-fuse-ld=wild",
+    "-Clink-arg=--ld-path=wild",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",
@@ -60,7 +60,7 @@ rustflags = [
 rustdocflags = [
     "-Dwarnings",
     # Faster linker
-    "-Clink-arg=-fuse-ld=wild",
+    "-Clink-arg=--ld-path=wild",
     # Nightly
     "-Zshare-generics=y",
     "-Zthreads=0",

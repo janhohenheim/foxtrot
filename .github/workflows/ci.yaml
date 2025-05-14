@@ -32,7 +32,7 @@ jobs:
         run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install dependencies
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev lld
 
       - name: Set LD_LIBRARY_PATH
         id: ld_library_path

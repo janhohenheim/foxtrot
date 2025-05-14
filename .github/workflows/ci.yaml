@@ -86,7 +86,7 @@ jobs:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build for web
-        run: cargo check --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
+        run: cargo build --config 'profile.web.inherits="dev"' --features dev --no-default-features --profile web --target wasm32-unknown-unknown
 
   # Run clippy lints.
   clippy:

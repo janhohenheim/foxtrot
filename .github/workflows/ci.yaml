@@ -25,30 +25,30 @@ jobs:
         with:
           components: rustc-codegen-cranelift-preview
 
-      - name: Install mold
-        uses: rui314/setup-mold@v1
-
-      - name: Active CI cargo config
-        run: mv .cargo/config_ci.toml .cargo/config.toml
-
-      - name: Install dependencies
-        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev lld
-
       - name: Set LD_LIBRARY_PATH
         id: ld_library_path
         run: |
           # Setting LD_LIBRARY_PATH is a workaround for <https://github.com/TheBevyFlock/bevy_new_2d/pull/318#issuecomment-2585935350>.
           echo "LD_LIBRARY_PATH=$(rustc --print target-libdir)" >> $GITHUB_ENV
-          echo "ld_library_path=$(rustc --print target-libdir)" >> $GITHUB_OUTPUT
 
       - name: Populate target directory from cache
         uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
-          cache-directories: ${{ steps.ld_library_path.outputs.ld_library_path }}
+          cache-directories: ${{ env.LD_LIBRARY_PATH }}
+
+
+      - name: Install dependencies
+        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev lld
+
+      - name: Active CI cargo config
+        run: mv .cargo/config_ci.toml .cargo/config.toml
 
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
+
+      - name: Install Wild
+        run: cargo binstall wild-linker --locked --force
 
       - name: Install nextest
         run: cargo binstall cargo-nextest --locked --force

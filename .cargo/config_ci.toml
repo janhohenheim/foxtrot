@@ -21,6 +21,9 @@ codegen-backend = "llvm"
 [profile.web]
 codegen-backend = "llvm"
 
+[profile.web.package."*"]
+codegen-backend = "llvm"
+
 # Override the high opt-level from the dev profile for the test profile
 [profile.test.package."*"]
 opt-level = 1

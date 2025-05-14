@@ -84,6 +84,7 @@ dev = [
     "bevy/track_location",
     "dep:inline_tweak",
     "dep:bevy-inspector-egui",
+    "avian3d/diagnostic_ui",
 ]
 dev_native = [
     "dev",

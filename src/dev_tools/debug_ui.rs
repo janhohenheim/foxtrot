@@ -3,7 +3,7 @@
 use super::input::{ForceFreeCursor, ToggleDebugUi};
 use crate::RenderLayer;
 use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget};
-use avian3d::prelude::{PhysicsDebugPlugin, PhysicsGizmos};
+use avian3d::prelude::*;
 use bevy::render::view::RenderLayers;
 use bevy::ui::Val::*;
 use bevy::{
@@ -32,11 +32,17 @@ pub(super) fn plugin(app: &mut App) {
 
     app.add_plugins((
         PhysicsDebugPlugin::default(),
+        PhysicsDiagnosticsPlugin,
+        PhysicsDiagnosticsUiPlugin,
         Landmass3dDebugPlugin {
             draw_on_start: false,
             ..default()
         },
     ));
+    app.insert_resource(PhysicsDiagnosticsUiSettings {
+        enabled: false,
+        ..default()
+    });
     app.insert_gizmo_config(
         PhysicsGizmos::default(),
         GizmoConfig {
@@ -129,9 +135,13 @@ fn toggle_debug_ui(mut options: ResMut<UiDebugOptions>) {
     options.toggle();
 }
 
-fn toggle_physics_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
+fn toggle_physics_debug_ui(
+    mut config_store: ResMut<GizmoConfigStore>,
+    mut physics_diagnostics: ResMut<PhysicsDiagnosticsUiSettings>,
+) {
     let config = config_store.config_mut::<PhysicsGizmos>().0;
     config.enabled = !config.enabled;
+    physics_diagnostics.enabled = !physics_diagnostics.enabled;
 }
 
 fn toggle_lighting_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {

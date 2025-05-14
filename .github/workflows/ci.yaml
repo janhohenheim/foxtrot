@@ -211,7 +211,7 @@ jobs:
         uses: TheBevyFlock/bevy_cli/bevy_lint@lint-v0.3.0
 
       - name: Add cranelift to rustc
-        run: rustup component add rustc-codegen-cranelift-preview
+        run: rustup component add rustc-codegen-cranelift-preview --toolchain ${{ env.toolchain }}
 
       - name: Active CI cargo config
         run: mv .cargo/config_ci.toml .cargo/config.toml

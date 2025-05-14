@@ -66,7 +66,7 @@ pub(super) fn plugin(app: &mut App) {
         },
     );
     app.add_observer(advance_debug_state);
-    app.add_observer(toogle_egui_inspector);
+    app.add_observer(toggle_egui_inspector);
     app.add_systems(Startup, setup_debug_ui_text);
     app.add_systems(
         Update,
@@ -147,7 +147,7 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
     config.enabled = !config.enabled;
 }
 
-fn toogle_egui_inspector(
+fn toggle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForceUnlocked>,
     mut inspector_active: ResMut<InspectorActive>,

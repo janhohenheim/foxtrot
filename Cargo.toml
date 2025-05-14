@@ -5,7 +5,15 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16", features = ["jpeg", "tga", "ktx2", "png"] }
+bevy = { version = "0.16", features = [
+    "jpeg",
+    "tga",
+    "ktx2",
+    "png",
+    # Due to some Bevy bug, we need to enable the UI debug plugin even in non-dev builds,
+    # otherwise we only render the view model and the skybox.
+    "bevy_ui_debug",
+] }
 bevy_enhanced_input = "0.11"
 
 # physics

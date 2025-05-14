@@ -26,7 +26,7 @@ opt-level = 1
 [target.wasm32-unknown-unknown]
 # Clang does not support wasm32-unknown-unknown,
 # so we cannot use mold either: https://github.com/flathub/org.freedesktop.Sdk.Extension.rust-stable/issues/168
-linker = "lld"
+#linker = "lld"
 rustflags = [
     "-Dwarnings",
     "-Cdebuginfo=line-tables-only",

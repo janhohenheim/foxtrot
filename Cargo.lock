@@ -1689,12 +1689,13 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3acfccfd7a5b56448a831c0f00157644cbdbfced"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=remove-geometry-provider#b0b4d57bec1d3fd86c6ccb66796aa438f680998e"
 dependencies = [
  "anyhow",
  "atomicow",
  "avian3d",
  "bevy",
+ "bevy_fix_gltf_coordinate_system",
  "bevy_materialize",
  "bevy_mesh",
  "bevy_reflect",
@@ -1719,7 +1720,7 @@ dependencies = [
 [[package]]
 name = "bevy_trenchbroom_macros"
 version = "0.8.0-dev"
-source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=main#3acfccfd7a5b56448a831c0f00157644cbdbfced"
+source = "git+https://github.com/noxmore/bevy_trenchbroom?branch=remove-geometry-provider#b0b4d57bec1d3fd86c6ccb66796aa438f680998e"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -3011,7 +3012,6 @@ dependencies = [
  "bevy-tnua-avian3d",
  "bevy_enhanced_input",
  "bevy_fix_cursor_unlock_web",
- "bevy_fix_gltf_coordinate_system",
  "bevy_framepace",
  "bevy_hanabi",
  "bevy_landmass",

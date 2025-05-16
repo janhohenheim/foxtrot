@@ -20,14 +20,14 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/containers/crate01_big.gltf")]
-#[spawn_hook(preload_model::<Self>)]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct CrateBig;
 
 #[derive(PointClass, Component, Debug, Reflect)]
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/containers/crate01_small.gltf")]
-#[spawn_hook(preload_model::<Self>)]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct CrateSmall;
 
 fn setup_crate_small(

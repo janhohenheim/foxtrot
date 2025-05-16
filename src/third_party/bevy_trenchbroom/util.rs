@@ -7,7 +7,7 @@ pub(super) fn plugin(_app: &mut App) {}
 
 #[derive(SolidClass, Component, Reflect, Default)]
 #[reflect(Component, QuakeClass)]
-#[geometry(GeometryProvider::new().convex_collider().smooth_by_default_angle())]
+#[spawn_hooks(SpawnHooks::new().convex_collider().smooth_by_default_angle())]
 pub(crate) struct Worldspawn;
 
 pub(crate) trait GetTrenchbroomModelPath: QuakeClass {

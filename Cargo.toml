@@ -63,7 +63,6 @@ getrandom = { version = "0.3", default-features = false, features = [
 bitflags = "2.9.0"
 anyhow = "1.0.98"
 bevy-inspector-egui = { version = "0.31.0", optional = true }
-bevy_fix_gltf_coordinate_system = "0.1.0"
 bevy_fix_cursor_unlock_web = "0.1.2"
 regex = "1.11.1"
 inline_tweak = { version = "1.2.2", features = ["derive"], optional = true }
@@ -146,7 +145,7 @@ opt-level = 3
 debug-assertions = false
 
 [patch.crates-io]
-bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "remove-geometry-provider" }
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }
 bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", optional = true }

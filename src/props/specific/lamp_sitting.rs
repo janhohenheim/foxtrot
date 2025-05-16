@@ -16,7 +16,7 @@ pub(super) fn plugin(app: &mut App) {
 #[model(
     "models/darkmod/lights/non-extinguishable/round_lantern_sitting/round_lantern_sitting.gltf"
 )]
-#[spawn_hook(preload_model::<Self>)]
+ #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct LampSitting;
 
 fn setup_lamp_sitting(

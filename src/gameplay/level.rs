@@ -1,7 +1,6 @@
 //! Spawn the main level.
 
 use bevy::prelude::*;
-use bevy_trenchbroom::util::DoNotFixGltfRotationsUnderMe;
 
 use crate::{asset_tracking::LoadResource, audio::music, screens::Screen};
 
@@ -17,9 +16,6 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
         SceneRoot(level_assets.level.clone()),
         StateScoped(Screen::Gameplay),
         Level,
-        // We already fix the coordinate system for all glTFs in the app,
-        // so we opt out of bevy_trenchbroom's coordinate system fixing.
-        DoNotFixGltfRotationsUnderMe,
         children![(Name::new("Level Music"), music(level_assets.music.clone()))],
     ));
     commands.insert_resource(AmbientLight::NONE);

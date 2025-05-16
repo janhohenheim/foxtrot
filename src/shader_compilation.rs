@@ -2,7 +2,6 @@ use bevy::prelude::*;
 
 use bevy::render::render_resource::{CachedPipelineState, PipelineCache};
 use bevy::render::{MainWorld, RenderApp};
-use bevy_trenchbroom::util::DoNotFixGltfRotationsUnderMe;
 
 use crate::asset_tracking::LoadResource as _;
 use crate::screens::loading::LoadingScreen;
@@ -26,9 +25,6 @@ pub(crate) fn spawn_shader_compilation_map(
         Name::new("Compile Shaders Map"),
         SceneRoot(compile_shaders_assets.level.clone()),
         StateScoped(LoadingScreen::Shaders),
-        // We already fix the coordinate system for all glTFs in the app,
-        // so we opt out of bevy_trenchbroom's coordinate system fixing.
-        DoNotFixGltfRotationsUnderMe,
     ));
 }
 

@@ -20,6 +20,7 @@ mod fixes;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
+        fixes::plugin,
         bevy_trenchbroom::plugin,
         avian3d::plugin,
         bevy_enhanced_input::plugin,
@@ -29,7 +30,6 @@ pub(super) fn plugin(app: &mut App) {
         avian_pickup::plugin,
         #[cfg(feature = "native")]
         bevy_hanabi::plugin,
-        fixes::plugin,
         bevy_framepace::plugin,
     ));
 }

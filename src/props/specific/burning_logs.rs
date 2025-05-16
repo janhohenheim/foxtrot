@@ -34,7 +34,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/fireplace/burntwood.gltf")]
-#[spawn_hook(preload_model::<Self>)]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct BurningLogs;
 
 #[derive(Resource, Asset, Clone, TypePath)]

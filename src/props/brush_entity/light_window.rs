@@ -18,6 +18,7 @@ fn setup_light_window_brush_entity(trigger: Trigger<OnAdd, LightWindow>, mut com
     let entity = trigger.target();
     commands
         .entity(entity)
+        // Using `children!` here would run into https://github.com/Noxmore/bevy_trenchbroom/issues/95
         .with_child(SpotLight {
             color: Color::srgb_u8(239, 173, 144),
             intensity: 200_000.0,

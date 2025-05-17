@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
 #[model(
     "models/darkmod/lights/non-extinguishable/lamp_wall_electric_01/lamp_wall_electric_01.gltf"
 )]
- #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 #[classname("light_lamp_wall_electric")]
 pub(crate) struct LampWallElectric;
 

@@ -13,7 +13,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/lights/non-extinguishable/electric_plain1_unattached.gltf")]
- #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 #[classname("light_lamp_plain")]
 struct LampPlain {
     color: Color,

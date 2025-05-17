@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/lights/non-extinguishable/lamp_shaded03/lamp_shaded03.gltf")]
- #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 #[classname("light_lamp_shaded03")]
 pub(crate) struct LampShaded;
 

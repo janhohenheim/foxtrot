@@ -14,7 +14,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(QuakeClass, Component)]
 #[base(Transform, Visibility)]
 #[model("models/darkmod/furniture/seating/wchair1.gltf")]
- #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
+#[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct Chair;
 
 fn setup_chair(

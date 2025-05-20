@@ -1526,9 +1526,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_simple_subsecond_system"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bf71d2655cf40da612f4efb2a84446587ffcbe3121a46f19de2ac2a0d47b20b"
+checksum = "7abea844c712f6e59623ad70016f5d39b13c0140415cd5b98ffff68459dcac38"
 dependencies = [
  "bevy",
  "bevy_simple_subsecond_system_macros",

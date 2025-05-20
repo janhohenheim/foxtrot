@@ -67,6 +67,7 @@ bevy_fix_cursor_unlock_web = "0.1.2"
 regex = "1.11.1"
 inline_tweak = { version = "1.2.2", features = ["derive"], optional = true }
 bevy_framepace = "0.19.1"
+bevy_simple_subsecond_system = { version = "0.1.1", optional = true }
 
 [features]
 default = [
@@ -76,7 +77,8 @@ default = [
 native = ["dep:bevy_hanabi", "bevy/experimental_pbr_pcss"]
 dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
-    "bevy/dynamic_linking",
+    # blocked on https://github.com/DioxusLabs/dioxus/issues/4154
+    # "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
     "bevy/bevy_ui_debug",
     # Improve error messages coming from Bevy
@@ -88,12 +90,14 @@ dev = [
 dev_native = [
     "dev",
     "native",
+    "hot_patch",
     # Enable asset hot reloading for native dev builds.
     "bevy/file_watcher",
     # Enable embedded asset hot reloading for native dev builds.
     "bevy/embedded_watcher",
     "oxidized_navigation/debug_draw",
 ]
+hot_patch = ["dep:bevy_simple_subsecond_system"]
 
 [package.metadata.bevy_cli]
 default-features = false
@@ -143,6 +147,16 @@ opt-level = 3
 # Remove expensive debug assertions due to <https://github.com/bevyengine/bevy/issues/14291>
 [profile.dev.package.wgpu-types]
 debug-assertions = false
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
 
 [patch.crates-io]
 bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }

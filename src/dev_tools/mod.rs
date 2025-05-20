@@ -1,6 +1,7 @@
 //! Development tools for the game. This plugin is only enabled in dev builds.
 
 use bevy::{dev_tools::states::log_transitions, prelude::*};
+#[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::prelude::*;
 
 mod debug_ui;
@@ -17,16 +18,10 @@ pub(super) fn plugin(app: &mut App) {
     );
 
     app.add_plugins((
+        #[cfg(feature = "hot_patch")]
         SimpleSubsecondPlugin::default(),
         debug_ui::plugin,
         input::plugin,
         validate_preloading::plugin,
     ));
-
-    app.add_systems(Update, debug_print);
-}
-
-#[hot]
-fn debug_print() {
-    println!("Debug");
 }

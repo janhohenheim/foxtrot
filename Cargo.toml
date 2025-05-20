@@ -77,6 +77,7 @@ default = [
 native = ["dep:bevy_hanabi", "bevy/experimental_pbr_pcss"]
 dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
+    # blocked on https://github.com/DioxusLabs/dioxus/issues/4154
     # "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
     "bevy/bevy_ui_debug",
@@ -89,13 +90,14 @@ dev = [
 dev_native = [
     "dev",
     "native",
+    "hot_patch",
     # Enable asset hot reloading for native dev builds.
     "bevy/file_watcher",
     # Enable embedded asset hot reloading for native dev builds.
     "bevy/embedded_watcher",
     "oxidized_navigation/debug_draw",
-    "dep:bevy_simple_subsecond_system",
 ]
+hot_patch = ["dep:bevy_simple_subsecond_system"]
 
 [package.metadata.bevy_cli]
 default-features = false

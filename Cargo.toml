@@ -67,7 +67,7 @@ bevy_fix_cursor_unlock_web = "0.1.2"
 regex = "1.11.1"
 inline_tweak = { version = "1.2.2", features = ["derive"], optional = true }
 bevy_framepace = "0.19.1"
-bevy_simple_subsecond_system = { version = "0.1.2", optional = true }
+bevy_simple_subsecond_system = { version = "0.1.6", optional = true }
 
 [features]
 default = [
@@ -91,6 +91,7 @@ dev_native = [
     "dev",
     "native",
     "hot_patch",
+    "bevy_remote",
     # Enable asset hot reloading for native dev builds.
     "bevy/file_watcher",
     # Enable embedded asset hot reloading for native dev builds.
@@ -98,6 +99,7 @@ dev_native = [
     "oxidized_navigation/debug_draw",
 ]
 hot_patch = ["dep:bevy_simple_subsecond_system"]
+bevy_remote = ["bevy/bevy_remote"]
 
 [package.metadata.bevy_cli]
 default-features = false

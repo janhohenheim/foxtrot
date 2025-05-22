@@ -20,6 +20,12 @@ pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
         #[cfg(feature = "hot_patch")]
         SimpleSubsecondPlugin::default(),
+        // There are nice editor inspectors for VS Code that can connect to the remote server.
+        #[cfg(feature = "bevy_remote")]
+        (
+            bevy::remote::RemotePlugin::default(),
+            bevy::remote::http::RemoteHttpPlugin::default(),
+        ),
         debug_ui::plugin,
         input::plugin,
         validate_preloading::plugin,

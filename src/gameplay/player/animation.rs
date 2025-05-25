@@ -8,7 +8,7 @@ use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{
-    AppSystems,
+    PostPhysicsAppSystems,
     gameplay::{animation::AnimationPlayers, crosshair::CrosshairState},
     screens::Screen,
 };
@@ -21,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_animations
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::PlayAnimations),
+            .in_set(PostPhysicsAppSystems::PlayAnimations),
     );
 }
 

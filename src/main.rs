@@ -17,12 +17,14 @@ mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
 use audio::DEFAULT_VOLUME;
+use bevy_landmass::LandmassSystemSet;
 use bitflags::bitflags;
 
 use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
 
 #[cfg(feature = "native")]
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
+use oxidized_navigation::OxidizedNavigation;
 
 pub struct AppPlugin;
 
@@ -32,15 +34,26 @@ fn main() -> AppExit {
     app.configure_sets(
         Update,
         (
-            AppSystems::TickTimers,
-            AppSystems::ChangeUi,
-            AppSystems::PlaySounds,
-            AppSystems::PlayAnimations,
-            AppSystems::Update,
+            PostPhysicsAppSystems::TickTimers,
+            PostPhysicsAppSystems::ChangeUi,
+            PostPhysicsAppSystems::PlaySounds,
+            PostPhysicsAppSystems::PlayAnimations,
+            PostPhysicsAppSystems::Update,
         )
             .chain(),
     );
-
+    app.configure_sets(
+        RunFixedMainLoop,
+        (
+            PrePhysicsAppSystems::UpdateNavmeshPositions,
+            PrePhysicsAppSystems::UpdateNavmeshTargets,
+            OxidizedNavigation::RemovedComponent,
+            OxidizedNavigation::Main,
+            LandmassSystemSet::SyncExistence,
+        )
+            .chain()
+            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
+    );
     // Add Bevy plugins.
     app.add_plugins(
         DefaultPlugins
@@ -97,11 +110,23 @@ fn main() -> AppExit {
     app.run()
 }
 
-/// High-level groupings of systems for the app in the `Update` schedule.
+/// High-level groupings of systems for the app in the [`RunFixedMainLoop`] schedule
+/// and the [`RunFixedMainLoopSystem::BeforeFixedMainLoop`] system set.
 /// When adding a new variant, make sure to order it in the `configure_sets`
 /// call above.
 #[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
-enum AppSystems {
+enum PrePhysicsAppSystems {
+    /// Update last valid positions on the navmesh
+    UpdateNavmeshPositions,
+    /// Update agent targets to the last valid navmesh position
+    UpdateNavmeshTargets,
+}
+
+/// High-level groupings of systems for the app in the [`Update`] schedule.
+/// When adding a new variant, make sure to order it in the `configure_sets`
+/// call above.
+#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
+enum PostPhysicsAppSystems {
     /// Tick timers.
     TickTimers,
     /// Change UI.

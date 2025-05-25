@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
 
-use crate::{AppSystems, gameplay::animation::AnimationPlayers, screens::Screen};
+use crate::{PostPhysicsAppSystems, gameplay::animation::AnimationPlayers, screens::Screen};
 
 use super::assets::NpcAssets;
 
@@ -17,7 +17,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_animations
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::PlayAnimations),
+            .in_set(PostPhysicsAppSystems::PlayAnimations),
     );
 }
 

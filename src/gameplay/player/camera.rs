@@ -28,7 +28,7 @@ use bevy_enhanced_input::prelude::*;
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
-    AppSystems, CameraOrder, RenderLayer,
+    CameraOrder, PostPhysicsAppSystems, RenderLayer,
     gameplay::{
         animation::{AnimationPlayerAncestor, AnimationPlayerOf, AnimationPlayers},
         level::LevelAssets,
@@ -49,7 +49,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         sync_camera_translation_with_player
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::Update),
+            .in_set(PostPhysicsAppSystems::Update),
     );
     app.register_type::<PlayerCamera>();
 }

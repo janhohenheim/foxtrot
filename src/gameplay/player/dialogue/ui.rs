@@ -3,7 +3,7 @@
 //! When a dialogue is able to be started, we signal this to other systems by inserting a `InteractionPrompt`.
 
 use super::{DialogueSystems, InteractionPrompt};
-use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
+use crate::{PostPhysicsAppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
 use bevy::{prelude::*, window::CursorGrabMode};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
@@ -25,7 +25,7 @@ pub(super) fn plugin(app: &mut App) {
             show_crosshair_on_dialogue_end.run_if(on_event::<DialogueCompleteEvent>),
         )
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::ChangeUi),
+            .in_set(PostPhysicsAppSystems::ChangeUi),
     );
 }
 

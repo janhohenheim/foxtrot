@@ -14,7 +14,10 @@ use bevy_landmass::{
 use bevy_simple_subsecond_system::hot;
 use bevy_tnua::prelude::*;
 
-use crate::{gameplay::player::PlayerLandmassCharacter, screens::Screen};
+use crate::{
+    PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition,
+    screens::Screen,
+};
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
@@ -24,7 +27,6 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<Agent>();
     app.register_type::<AgentOf>();
     app.register_type::<WantsToFollowPlayer>();
-    app.add_systems(PreUpdate, insert_agent_target);
     app.add_systems(
         RunFixedMainLoop,
         (sync_agent_velocity, set_controller_velocity)
@@ -32,6 +34,10 @@ pub(super) fn plugin(app: &mut App) {
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop)
             .before(LandmassSystemSet::SyncExistence)
             .run_if(in_state(Screen::Gameplay)),
+    );
+    app.add_systems(
+        RunFixedMainLoop,
+        update_agent_target.in_set(PrePhysicsAppSystems::UpdateNavmeshTargets),
     );
     app.add_observer(setup_npc_agent);
 }
@@ -60,6 +66,7 @@ fn setup_npc_agent(
         TargetReachedCondition::Distance(Some(2.0)),
         ChildOf(npc),
         AgentOf(npc),
+        AgentTarget3d::default(),
         WantsToFollowPlayer,
     ));
 }
@@ -68,19 +75,16 @@ fn setup_npc_agent(
 #[reflect(Component)]
 struct WantsToFollowPlayer;
 
-/// Inserting this a bit after the NPC is spawned because it may be spawned before the player,
-/// in which case we wouldn't be able to find a target.
 #[cfg_attr(feature = "hot_patch", hot)]
-fn insert_agent_target(
-    agents: Query<Entity, With<WantsToFollowPlayer>>,
-    player_character: Single<&PlayerLandmassCharacter>,
-    mut commands: Commands,
+fn update_agent_target(
+    mut agents: Query<&mut AgentTarget3d, With<WantsToFollowPlayer>>,
+    player_position: Single<&LastValidPlayerNavmeshPosition>,
 ) {
-    for agent in &agents {
-        commands
-            .entity(agent)
-            .insert(AgentTarget3d::Entity(player_character.0))
-            .remove::<WantsToFollowPlayer>();
+    let Some(player_position) = player_position.0 else {
+        return;
+    };
+    for mut target in &mut agents {
+        *target = AgentTarget3d::Point(player_position);
     }
 }
 

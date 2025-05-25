@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 
-use crate::{AppSystems, audio::sound_effect, screens::Screen};
+use crate::{PostPhysicsAppSystems, audio::sound_effect, screens::Screen};
 
 use super::{Player, assets::PlayerAssets};
 
@@ -15,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         (play_jump_grunt, play_step_sound, play_land_sound)
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::PlaySounds),
+            .in_set(PostPhysicsAppSystems::PlaySounds),
     );
 }
 

@@ -2,7 +2,9 @@
 
 use super::input::{ForceFreeCursor, ToggleDebugUi};
 use crate::RenderLayer;
-use crate::{AppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget};
+use crate::{
+    PostPhysicsAppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget,
+};
 use avian3d::prelude::*;
 use bevy::render::view::RenderLayers;
 use bevy::ui::Val::*;
@@ -90,7 +92,7 @@ pub(super) fn plugin(app: &mut App) {
             toggle_landmass_debug_ui.run_if(toggled_state(DebugState::Landmass)),
         )
             .chain()
-            .in_set(AppSystems::ChangeUi),
+            .in_set(PostPhysicsAppSystems::ChangeUi),
     );
 }
 

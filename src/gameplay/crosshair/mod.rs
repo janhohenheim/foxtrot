@@ -2,7 +2,7 @@
 //! The crosshair is a UI element that is used to indicate the player's aim. We change the crosshair when the player is looking at a prop or an NPC.
 //! This is done by registering which systems are interested in the crosshair state.
 
-use crate::{AppSystems, screens::Screen};
+use crate::{PostPhysicsAppSystems, screens::Screen};
 use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
 use bevy::{platform::collections::HashSet, prelude::*};
 #[cfg(feature = "hot_patch")]
@@ -19,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         update_crosshair
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::ChangeUi),
+            .in_set(PostPhysicsAppSystems::ChangeUi),
     );
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
 

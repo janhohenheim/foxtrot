@@ -4,7 +4,7 @@ use bevy_simple_subsecond_system::hot;
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
-    AppSystems,
+    PostPhysicsAppSystems,
     props::{effects::disable_shadow_casting_on_instance_ready, setup::static_bundle},
     screens::Screen,
 };
@@ -24,7 +24,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         flicker_light
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::Update),
+            .in_set(PostPhysicsAppSystems::Update),
     );
     app.add_observer(setup_burning_logs);
     #[cfg(feature = "native")]

@@ -8,7 +8,7 @@ use bevy_simple_subsecond_system::hot;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
-    AppSystems,
+    PostPhysicsAppSystems,
     screens::Screen,
     third_party::{
         avian3d::CollisionLayer,
@@ -35,7 +35,7 @@ pub(super) fn plugin(app: &mut App) {
             DialogueSystems::UpdateUi,
         )
             .chain()
-            .in_set(AppSystems::ChangeUi),
+            .in_set(PostPhysicsAppSystems::ChangeUi),
     );
 
     app.add_systems(
@@ -52,7 +52,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         restore_input_context
             .run_if(in_state(Screen::Gameplay).and(on_event::<DialogueCompleteEvent>))
-            .in_set(AppSystems::Update),
+            .in_set(PostPhysicsAppSystems::Update),
     );
 
     app.add_observer(interact_with_dialogue);

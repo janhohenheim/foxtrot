@@ -14,6 +14,7 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
+use navmesh_position::LastValidPlayerNavmeshPosition;
 
 use crate::third_party::avian3d::CollisionLayer;
 
@@ -24,6 +25,7 @@ pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
 pub(crate) mod movement_sound;
+pub(crate) mod navmesh_position;
 pub(crate) mod pickup;
 
 pub(super) fn plugin(app: &mut App) {
@@ -37,6 +39,7 @@ pub(super) fn plugin(app: &mut App) {
         movement::plugin,
         movement_sound::plugin,
         pickup::plugin,
+        navmesh_position::plugin,
     ));
     app.add_observer(setup_player);
     app.add_systems(PreUpdate, assert_only_one_player);
@@ -86,6 +89,7 @@ fn setup_player(
                 archipelago_ref: ArchipelagoRef3d::new(*archipelago),
             },
             ChildOf(trigger.target()),
+            LastValidPlayerNavmeshPosition::default(),
         ))
         .id();
 

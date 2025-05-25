@@ -77,22 +77,6 @@ fn setup_player(
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let player_character = commands
-        .spawn((
-            Name::new("Player Landmass Character"),
-            Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
-            Character3dBundle {
-                character: Character::default(),
-                settings: CharacterSettings {
-                    radius: PLAYER_RADIUS,
-                },
-                archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-            },
-            ChildOf(trigger.target()),
-            LastValidPlayerNavmeshPosition::default(),
-        ))
-        .id();
-
     commands
         .entity(trigger.target())
         .insert((
@@ -117,19 +101,23 @@ fn setup_player(
             ColliderDensity(100.0),
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
             TnuaAnimatingState::<PlayerAnimationState>::default(),
-            PlayerLandmassCharacter(player_character),
+            children![(
+                Name::new("Player Landmass Character"),
+                Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
+                Character3dBundle {
+                    character: Character::default(),
+                    settings: CharacterSettings {
+                        radius: PLAYER_RADIUS,
+                    },
+                    archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+                },
+                LastValidPlayerNavmeshPosition::default(),
+            )],
         ))
         .observe(setup_player_animations);
 }
 
-#[derive(Component)]
-pub(crate) struct PlayerLandmassCharacter(pub(crate) Entity);
-
 #[cfg_attr(feature = "hot_patch", hot)]
-fn assert_only_one_player(
-    player: Populated<(), With<Player>>,
-    player_landmass_character: Populated<(), With<PlayerLandmassCharacter>>,
-) {
+fn assert_only_one_player(player: Populated<(), With<Player>>) {
     assert_eq!(1, player.iter().count());
-    assert_eq!(1, player_landmass_character.iter().count());
 }

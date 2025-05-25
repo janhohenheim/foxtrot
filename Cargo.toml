@@ -60,6 +60,8 @@ getrandom = { version = "0.3", default-features = false, features = [
     "wasm_js",
 ] }
 
+bevy_simple_subsecond_system = { version = "0.2.0", optional = true, git = "https://github.com/TheBevyFlock/bevy_simple_subsecond_system" }
+
 bitflags = "2.9.0"
 anyhow = "1.0.98"
 bevy-inspector-egui = { version = "0.31.0", optional = true }
@@ -67,8 +69,6 @@ bevy_fix_cursor_unlock_web = "0.1.2"
 regex = "1.11.1"
 inline_tweak = { version = "1.2.2", features = ["derive"], optional = true }
 bevy_framepace = "0.19.1"
-bevy_simple_subsecond_system = { version = "0.1.6", optional = true }
-
 [features]
 default = [
     # Default to a native dev build.
@@ -77,8 +77,7 @@ default = [
 native = ["dep:bevy_hanabi", "bevy/experimental_pbr_pcss"]
 dev = [
     # Improve compile times for dev builds by linking Bevy as a dynamic library.
-    # blocked on https://github.com/DioxusLabs/dioxus/issues/4154
-    # "bevy/dynamic_linking",
+    "bevy/dynamic_linking",
     "bevy/bevy_dev_tools",
     "bevy/bevy_ui_debug",
     # Improve error messages coming from Bevy

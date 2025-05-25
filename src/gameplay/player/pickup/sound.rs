@@ -6,7 +6,8 @@ use bevy::{audio::Volume, prelude::*};
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
-    AppSystems, audio::SoundEffect, gameplay::player::assets::PlayerAssets, screens::Screen,
+    PostPhysicsAppSystems, audio::SoundEffect, gameplay::player::assets::PlayerAssets,
+    screens::Screen,
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -14,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_throw_sound
             .run_if(in_state(Screen::Gameplay).and(on_event::<PropThrown>))
-            .in_set(AppSystems::PlaySounds),
+            .in_set(PostPhysicsAppSystems::PlaySounds),
     );
 }
 

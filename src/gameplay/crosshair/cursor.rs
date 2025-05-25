@@ -1,6 +1,8 @@
 //! Handle cursor capture and release. This is a bit hacky because winit does not have a nice way to keep the cursor locked in a browser.
 
-use crate::{AppSystems, screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
+use crate::{
+    PostPhysicsAppSystems, screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running,
+};
 use bevy::{input::common_conditions::input_just_pressed, prelude::*, window::CursorGrabMode};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
@@ -24,7 +26,7 @@ pub(super) fn plugin(app: &mut App) {
             on_cursor_lock_changed,
         )
             .chain()
-            .in_set(AppSystems::ChangeUi),
+            .in_set(PostPhysicsAppSystems::ChangeUi),
     );
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }

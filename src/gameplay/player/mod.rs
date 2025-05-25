@@ -14,6 +14,7 @@ use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
 use default_input::DefaultInputContext;
+use navmesh_position::LastValidPlayerNavmeshPosition;
 
 use crate::third_party::avian3d::CollisionLayer;
 
@@ -24,6 +25,7 @@ pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
 pub(crate) mod movement_sound;
+pub(crate) mod navmesh_position;
 pub(crate) mod pickup;
 
 pub(super) fn plugin(app: &mut App) {
@@ -37,6 +39,7 @@ pub(super) fn plugin(app: &mut App) {
         movement::plugin,
         movement_sound::plugin,
         pickup::plugin,
+        navmesh_position::plugin,
     ));
     app.add_observer(setup_player);
     app.add_systems(PreUpdate, assert_only_one_player);
@@ -74,21 +77,6 @@ fn setup_player(
     mut commands: Commands,
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
-    let player_character = commands
-        .spawn((
-            Name::new("Player Landmass Character"),
-            Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
-            Character3dBundle {
-                character: Character::default(),
-                settings: CharacterSettings {
-                    radius: PLAYER_RADIUS,
-                },
-                archipelago_ref: ArchipelagoRef3d::new(*archipelago),
-            },
-            ChildOf(trigger.target()),
-        ))
-        .id();
-
     commands
         .entity(trigger.target())
         .insert((
@@ -113,19 +101,23 @@ fn setup_player(
             ColliderDensity(100.0),
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
             TnuaAnimatingState::<PlayerAnimationState>::default(),
-            PlayerLandmassCharacter(player_character),
+            children![(
+                Name::new("Player Landmass Character"),
+                Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),
+                Character3dBundle {
+                    character: Character::default(),
+                    settings: CharacterSettings {
+                        radius: PLAYER_RADIUS,
+                    },
+                    archipelago_ref: ArchipelagoRef3d::new(*archipelago),
+                },
+                LastValidPlayerNavmeshPosition::default(),
+            )],
         ))
         .observe(setup_player_animations);
 }
 
-#[derive(Component)]
-pub(crate) struct PlayerLandmassCharacter(pub(crate) Entity);
-
 #[cfg_attr(feature = "hot_patch", hot)]
-fn assert_only_one_player(
-    player: Populated<(), With<Player>>,
-    player_landmass_character: Populated<(), With<PlayerLandmassCharacter>>,
-) {
+fn assert_only_one_player(player: Populated<(), With<Player>>) {
     assert_eq!(1, player.iter().count());
-    assert_eq!(1, player_landmass_character.iter().count());
 }

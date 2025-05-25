@@ -8,7 +8,7 @@ use bevy::{
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
-use crate::{AppSystems, screens::Screen, theme::prelude::*};
+use crate::{PostPhysicsAppSystems, screens::Screen, theme::prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
     // Spawn splash screen.
@@ -19,8 +19,8 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            tick_fade_in_out.in_set(AppSystems::TickTimers),
-            apply_fade_in_out.in_set(AppSystems::Update),
+            tick_fade_in_out.in_set(PostPhysicsAppSystems::TickTimers),
+            apply_fade_in_out.in_set(PostPhysicsAppSystems::Update),
         )
             .run_if(in_state(Screen::Splash)),
     );
@@ -32,8 +32,8 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            tick_splash_timer.in_set(AppSystems::TickTimers),
-            check_splash_timer.in_set(AppSystems::Update),
+            tick_splash_timer.in_set(PostPhysicsAppSystems::TickTimers),
+            check_splash_timer.in_set(PostPhysicsAppSystems::Update),
         )
             .run_if(in_state(Screen::Splash)),
     );

@@ -24,7 +24,7 @@ pub(super) fn plugin(app: &mut App) {
             max_traversable_slope_radians: NPC_MAX_SLOPE,
             ..NavMeshSettings::from_agent_and_bounds(
                 NPC_RADIUS * 0.5,
-                NPC_HEIGHT * 0.5,
+                NPC_HEIGHT * 0.25,
                 150.0,
                 -20.0,
             )

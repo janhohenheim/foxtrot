@@ -1,7 +1,7 @@
 //! NPC sound handling. The only sound is a step sound that plays when the NPC is walking.
 
 use super::{Npc, assets::NpcAssets};
-use crate::{AppSystems, audio::SoundEffect, screens::Screen};
+use crate::{PostPhysicsAppSystems, audio::SoundEffect, screens::Screen};
 use avian3d::prelude::LinearVelocity;
 use bevy::{
     audio::{SpatialScale, Volume},
@@ -17,7 +17,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         play_step_sound
             .run_if(in_state(Screen::Gameplay))
-            .in_set(AppSystems::PlaySounds),
+            .in_set(PostPhysicsAppSystems::PlaySounds),
     );
 }
 

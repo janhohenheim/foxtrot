@@ -6,7 +6,8 @@ use bevy::{audio::Volume, prelude::*};
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
-    PostPhysicsAppSystems, audio::SoundEffect, gameplay::player::assets::PlayerAssets, screens::Screen,
+    PostPhysicsAppSystems, audio::SoundEffect, gameplay::player::assets::PlayerAssets,
+    screens::Screen,
 };
 
 pub(super) fn plugin(app: &mut App) {

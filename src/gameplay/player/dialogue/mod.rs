@@ -64,6 +64,7 @@ pub(super) enum DialogueSystems {
     UpdateUi,
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn check_for_dialogue_opportunity(
     player: Single<&GlobalTransform, With<PlayerCamera>>,
     player_collider: Single<Entity, With<Player>>,
@@ -93,6 +94,7 @@ fn check_for_dialogue_opportunity(
 #[reflect(Component, Default)]
 struct InteractionPrompt(Option<YarnNode>);
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
     mut commands: Commands,
@@ -109,6 +111,7 @@ fn interact_with_dialogue(
         .remove::<Actions<DefaultInputContext>>();
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn restore_input_context(mut commands: Commands, player: Single<Entity, With<Player>>) {
     commands
         .entity(*player)

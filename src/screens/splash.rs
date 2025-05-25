@@ -48,6 +48,7 @@ const SPLASH_BACKGROUND_COLOR: Color = Color::srgb(0.157, 0.157, 0.157);
 const SPLASH_DURATION_SECS: f32 = 1.8;
 const SPLASH_FADE_DURATION_SECS: f32 = 0.6;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_splash_screen(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((
@@ -128,24 +129,29 @@ impl Default for SplashTimer {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn insert_splash_timer(mut commands: Commands) {
     commands.init_resource::<SplashTimer>();
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn remove_splash_timer(mut commands: Commands) {
     commands.remove_resource::<SplashTimer>();
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn tick_splash_timer(time: Res<Time>, mut timer: ResMut<SplashTimer>) {
     timer.0.tick(time.delta());
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn check_splash_timer(timer: ResMut<SplashTimer>, mut next_screen: ResMut<NextState<Screen>>) {
     if timer.0.just_finished() {
         next_screen.set(Screen::Title);
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn enter_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Title);
 }

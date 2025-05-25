@@ -13,6 +13,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(drop_prop);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn pull_prop(
     _trigger: Trigger<Fired<PickupProp>>,
     actor: Single<Entity, With<AvianPickupActor>>,
@@ -24,6 +25,7 @@ fn pull_prop(
     });
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn throw_prop(
     _trigger: Trigger<Started<PickupProp>>,
     actor: Single<Entity, With<AvianPickupActor>>,
@@ -35,6 +37,7 @@ fn throw_prop(
     });
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn drop_prop(
     _trigger: Trigger<Started<DropProp>>,
     actor: Single<Entity, With<AvianPickupActor>>,

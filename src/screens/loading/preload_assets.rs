@@ -28,6 +28,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<LoadingAssetsLabel>();
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_or_skip_asset_loading_screen(
     mut commands: Commands,
     resource_handles: Res<ResourceHandles>,
@@ -44,6 +45,7 @@ fn spawn_or_skip_asset_loading_screen(
     ));
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn enter_compile_shader_screen(mut next_screen: ResMut<NextState<LoadingScreen>>) {
     next_screen.set(LoadingScreen::Shaders);
 }
@@ -52,6 +54,7 @@ fn enter_compile_shader_screen(mut next_screen: ResMut<NextState<LoadingScreen>>
 #[reflect(Component)]
 struct LoadingAssetsLabel;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn update_loading_assets_label(
     mut query: Query<&mut Text, With<LoadingAssetsLabel>>,
     resource_handles: Res<ResourceHandles>,

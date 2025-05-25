@@ -9,6 +9,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(validate_audio);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn validate_mesh(
     trigger: Trigger<OnAdd, Mesh3d>,
     q_mesh: Query<&Mesh3d>,
@@ -18,6 +19,7 @@ fn validate_mesh(
     validate_asset(handle, &assets, "Mesh");
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn validate_material(
     trigger: Trigger<OnAdd, MeshMaterial3d<StandardMaterial>>,
     q_material: Query<&MeshMaterial3d<StandardMaterial>>,
@@ -27,6 +29,7 @@ fn validate_material(
     validate_asset(handle, &assets, "Material");
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn validate_scene(
     trigger: Trigger<OnAdd, SceneRoot>,
     q_scene: Query<&SceneRoot>,
@@ -36,6 +39,7 @@ fn validate_scene(
     validate_asset(handle, &assets, "Scene");
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn validate_asset<T: Asset>(handle: &Handle<T>, assets: &AssetServer, type_name: &str) {
     let Some(path) = handle.path() else {
         return;
@@ -45,6 +49,7 @@ fn validate_asset<T: Asset>(handle: &Handle<T>, assets: &AssetServer, type_name:
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn validate_audio(
     trigger: Trigger<OnAdd, AudioPlayer>,
     q_audio: Query<&AudioPlayer>,

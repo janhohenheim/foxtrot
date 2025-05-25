@@ -18,6 +18,7 @@ pub(crate) fn default_image_sampler_descriptor() -> ImageSamplerDescriptor {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn move_textures_to_render_world(
     mut events: EventReader<AssetEvent<Image>>,
     mut images: ResMut<Assets<Image>>,

@@ -22,6 +22,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>) {
     let dialogue_runner = yarn_project.create_dialogue_runner(&mut commands);
     commands.spawn((
@@ -31,6 +32,7 @@ fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>)
     ));
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn abort_all_dialogues_when_leaving_gameplay(
     q_dialogue_runner: Query<Entity, With<DialogueRunner>>,
     mut dialogue_complete_events: EventWriter<DialogueCompleteEvent>,

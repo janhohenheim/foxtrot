@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 #[classname("light_lamp_wall_electric")]
 pub(crate) struct LampWallElectric;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_lamp_wall_electric(
     trigger: Trigger<OnAdd, LampWallElectric>,
     asset_server: Res<AssetServer>,

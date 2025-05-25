@@ -14,6 +14,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(make_hdr_compatible);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn make_hdr_compatible(
     trigger: Trigger<OnAdd, Camera>,
     mut cameras: Query<&mut Camera>,

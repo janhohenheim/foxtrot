@@ -44,6 +44,7 @@ fn to_string_vec(slice: &[&str]) -> Vec<String> {
 /// Set up TrenchBroom so that it can create maps for our game.
 /// This is intentionally not gated to dev builds so that players can edit the levels themselves if they want.
 #[cfg(feature = "native")]
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn write_trenchbroom_config(server: Res<TrenchBroomServer>, type_registry: Res<AppTypeRegistry>) {
     info!("Writing TrenchBroom config");
     // Errors at this point usually mean that the player has not installed TrenchBroom.

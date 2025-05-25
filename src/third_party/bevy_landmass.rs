@@ -33,6 +33,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(add_nav_mesh_affector_to_colliders_under_nav_mesh_affector_parent);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_archipelago(mut commands: Commands) {
     // This *should* be scoped to the `Screen::Gameplay` state, but doing so
     // seems to never regenerate the nav mesh when the level is loaded the second
@@ -55,6 +56,7 @@ fn setup_archipelago(mut commands: Commands) {
 #[derive(Component)]
 pub(crate) struct NavMeshAffectorParent;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn add_nav_mesh_affector_to_trenchbroom_worldspawn(
     trigger: Trigger<OnAdd, Worldspawn>,
     mut commands: Commands,
@@ -62,6 +64,7 @@ fn add_nav_mesh_affector_to_trenchbroom_worldspawn(
     commands.entity(trigger.target()).insert(NavMeshAffector);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn add_nav_mesh_affector_to_colliders_under_nav_mesh_affector_parent(
     trigger: Trigger<OnAdd, ColliderOf>,
     collider_parent: Query<&ColliderOf>,

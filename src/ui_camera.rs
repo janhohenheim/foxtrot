@@ -15,6 +15,7 @@ pub(super) fn plugin(app: &mut App) {
 #[reflect(Component)]
 pub(crate) struct UiCamera;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_ui_camera(mut commands: Commands) {
     commands.spawn((
         Name::new("UI Camera"),

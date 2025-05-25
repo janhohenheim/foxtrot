@@ -22,6 +22,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn play_step_sound(
     mut commands: Commands,
     npc: Single<(Entity, &TnuaController, &LinearVelocity), With<Npc>>,

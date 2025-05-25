@@ -12,6 +12,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Credits), start_credits_music);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_credits_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Credits Screen"),
@@ -91,7 +92,11 @@ fn grid(content: Vec<[&'static str; 2]>) -> impl Bundle {
     )
 }
 
-fn enter_title_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+fn enter_title_screen(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
     next_screen.set(Screen::Title);
 }
 
@@ -111,6 +116,7 @@ impl FromWorld for CreditsAssets {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn start_credits_music(mut commands: Commands, credits_music: Res<CreditsAssets>) {
     commands.spawn((
         Name::new("Credits Music"),

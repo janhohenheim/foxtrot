@@ -15,6 +15,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(jump);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     for mut controller in &mut controllers {
         controller.basis(TnuaBuiltinWalk {
@@ -24,6 +25,7 @@ fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
     mut controllers: Query<&mut TnuaController, With<Player>>,
@@ -50,6 +52,7 @@ fn apply_movement(
     });
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaController>) {
     let mut controller = controllers.get_mut(trigger.target()).unwrap();
     controller.action(TnuaBuiltinJump {

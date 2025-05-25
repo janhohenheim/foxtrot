@@ -16,6 +16,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(enable_collision_with_no_longer_held_prop);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn disable_collision_with_held_prop(
     trigger: Trigger<OnAdd, HeldProp>,
     q_children: Query<&Children>,
@@ -30,6 +31,7 @@ fn disable_collision_with_held_prop(
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn enable_collision_with_no_longer_held_prop(
     trigger: Trigger<OnRemove, HeldProp>,
     q_children: Query<&Children>,

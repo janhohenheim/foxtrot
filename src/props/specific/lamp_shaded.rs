@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 #[classname("light_lamp_shaded03")]
 pub(crate) struct LampShaded;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_lamp_shaded(
     trigger: Trigger<OnAdd, LampShaded>,
     asset_server: Res<AssetServer>,

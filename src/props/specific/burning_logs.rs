@@ -69,6 +69,7 @@ const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 
 const BASE_INTENSITY: f32 = 150_000.0;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_burning_logs(
     trigger: Trigger<OnAdd, BurningLogs>,
     asset_server: Res<AssetServer>,
@@ -108,6 +109,7 @@ fn setup_burning_logs(
 #[reflect(Component)]
 struct Flicker;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn flicker_light(time: Res<Time>, mut query: Query<&mut PointLight, With<Flicker>>) {
     for mut light in &mut query {
         let flickers_per_second = 20.0;
@@ -125,6 +127,7 @@ mod particles {
     use bevy_hanabi::prelude::*;
     use std::f32::consts::TAU;
 
+    #[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
     pub(super) fn add_particle_effects(
         trigger: Trigger<OnAdd, BurningLogs>,
         asset_server: Res<AssetServer>,

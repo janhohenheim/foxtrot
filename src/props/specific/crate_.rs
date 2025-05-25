@@ -30,6 +30,7 @@ pub(crate) struct CrateBig;
 #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct CrateSmall;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_crate_small(
     trigger: Trigger<OnAdd, CrateSmall>,
     asset_server: Res<AssetServer>,

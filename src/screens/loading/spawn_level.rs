@@ -18,6 +18,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_level_loading_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Loading Screen"),
@@ -26,6 +27,7 @@ fn spawn_level_loading_screen(mut commands: Commands) {
     ));
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn advance_to_gameplay_screen(
     mut next_screen: ResMut<NextState<Screen>>,
     scene_spawner: Res<SceneSpawner>,

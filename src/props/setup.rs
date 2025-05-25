@@ -12,6 +12,7 @@ use bevy_trenchbroom::class::QuakeClass;
 
 pub(super) fn plugin(_app: &mut App) {}
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
     trigger: Trigger<OnAdd, T>,
     asset_server: Res<AssetServer>,
@@ -21,6 +22,7 @@ pub(crate) fn setup_static_prop_with_convex_hull<T: QuakeClass>(
     commands.entity(trigger.target()).insert(bundle);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_nonphysical_prop<T: QuakeClass>(
     trigger: Trigger<OnAdd, T>,
     asset_server: Res<AssetServer>,
@@ -30,6 +32,7 @@ pub(crate) fn setup_nonphysical_prop<T: QuakeClass>(
     commands.entity(trigger.target()).insert(SceneRoot(model));
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
     trigger: Trigger<OnAdd, T>,
     asset_server: Res<AssetServer>,
@@ -42,6 +45,7 @@ pub(crate) fn setup_static_prop_with_convex_decomposition<T: QuakeClass>(
     commands.entity(trigger.target()).insert(bundle);
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_dynamic_prop_with_convex_hull<T: QuakeClass>(
     trigger: Trigger<OnAdd, T>,
     asset_server: Res<AssetServer>,

@@ -25,6 +25,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_settings_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Settings Screen"),
@@ -121,6 +122,7 @@ impl Default for VolumeSliderSettings {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn update_global_volume(
     mut global_volume: ResMut<GlobalVolume>,
     volume_step: Res<VolumeSliderSettings>,
@@ -128,11 +130,13 @@ fn update_global_volume(
     global_volume.volume = volume_step.volume();
 }
 
-fn lower_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+fn lower_volume(_trigger: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.decrement();
 }
 
-fn raise_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+fn raise_volume(_trigger: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.increment();
 }
 
@@ -140,6 +144,7 @@ fn raise_volume(_: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSlider
 #[reflect(Component)]
 struct GlobalVolumeLabel;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn update_volume_label(
     mut label: Single<&mut Text, With<GlobalVolumeLabel>>,
     slider: Res<VolumeSliderSettings>,
@@ -151,6 +156,10 @@ fn update_volume_label(
     label.0 = text;
 }
 
-fn enter_title_screen(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+fn enter_title_screen(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
     next_screen.set(Screen::Title);
 }

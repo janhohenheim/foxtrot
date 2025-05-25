@@ -30,6 +30,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
     commands
         .spawn((
@@ -57,6 +58,7 @@ pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
         });
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn update_interaction_prompt_ui(
     dialogue_prompt: Single<(&mut Text, &mut Visibility, Ref<InteractionPrompt>)>,
     mut crosshair: Single<&mut CrosshairState>,
@@ -78,6 +80,7 @@ fn update_interaction_prompt_ui(
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn hide_crosshair_on_dialogue_start(
     mut crosshair: Single<&mut CrosshairState>,
     mut window: Single<&mut Window>,
@@ -88,6 +91,7 @@ fn hide_crosshair_on_dialogue_start(
     window.cursor_options.grab_mode = CursorGrabMode::None;
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn show_crosshair_on_dialogue_end(
     mut crosshair: Single<&mut CrosshairState>,
     mut window: Single<&mut Window>,

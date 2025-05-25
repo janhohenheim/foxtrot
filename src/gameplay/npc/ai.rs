@@ -36,6 +36,7 @@ pub(super) fn plugin(app: &mut App) {
 
 /// Setup the NPC agent. An "agent" is what `bevy_landmass` can move around.
 /// Since we use a floating character controller, we need to offset the agent's position by the character's float height.
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_npc_agent(
     trigger: Trigger<OnAdd, Npc>,
     mut commands: Commands,
@@ -67,6 +68,7 @@ struct WantsToFollowPlayer;
 
 /// Inserting this a bit after the NPC is spawned because it may be spawned before the player,
 /// in which case we wouldn't be able to find a target.
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn insert_agent_target(
     agents: Query<Entity, With<WantsToFollowPlayer>>,
     player_character: Single<&PlayerLandmassCharacter>,
@@ -91,6 +93,7 @@ struct AgentOf(Entity);
 struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn set_controller_velocity(
     mut agent_query: Query<(&mut TnuaController, &Agent)>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
@@ -112,6 +115,7 @@ fn set_controller_velocity(
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn sync_agent_velocity(mut agent_query: Query<(&LinearVelocity, &mut LandmassVelocity)>) {
     for (avian_velocity, mut landmass_velocity) in &mut agent_query {
         landmass_velocity.velocity = avian_velocity.0;

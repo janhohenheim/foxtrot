@@ -19,6 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 #[spawn_hooks(SpawnHooks::new().preload_model::<Self>())]
 pub(crate) struct LampSitting;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_lamp_sitting(
     trigger: Trigger<OnAdd, LampSitting>,
     asset_server: Res<AssetServer>,

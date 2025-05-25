@@ -10,6 +10,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 /// A system that spawns the main level.
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>) {
     commands.spawn((
         Name::new("Level"),

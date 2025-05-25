@@ -66,6 +66,7 @@ const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
 /// In this case, we use 30 cm of padding to make the player float nicely up stairs.
 const PLAYER_FLOAT_HEIGHT: f32 = PLAYER_HALF_HEIGHT + 0.01;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_player(
     trigger: Trigger<OnAdd, Player>,
     mut commands: Commands,
@@ -118,6 +119,7 @@ fn setup_player(
 #[derive(Component)]
 pub(crate) struct PlayerLandmassCharacter(pub(crate) Entity);
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn assert_only_one_player(
     player: Populated<(), With<Player>>,
     player_landmass_character: Populated<(), With<PlayerLandmassCharacter>>,

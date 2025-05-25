@@ -6,6 +6,7 @@ use bevy::{pbr::NotShadowCaster, prelude::*, scene::SceneInstanceReady};
 
 pub(super) fn plugin(_app: &mut App) {}
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn disable_shadow_casting_on_instance_ready(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,

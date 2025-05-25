@@ -16,6 +16,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn play_throw_sound(mut commands: Commands, player_assets: Res<PlayerAssets>) {
     let sound = player_assets.throw_sound.clone();
 

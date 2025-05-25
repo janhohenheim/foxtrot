@@ -27,6 +27,7 @@ struct NpcAnimations {
     run: AnimationNodeIndex,
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 pub(crate) fn setup_npc_animations(
     trigger: Trigger<OnAdd, AnimationPlayers>,
     q_anim_players: Query<&AnimationPlayers>,
@@ -69,6 +70,7 @@ pub(crate) enum NpcAnimationState {
     Running(f32),
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<NpcAnimationState>,

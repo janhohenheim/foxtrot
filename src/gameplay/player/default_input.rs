@@ -40,6 +40,7 @@ pub(crate) struct DropProp;
 #[derive(Debug, InputContext, Default)]
 pub(crate) struct DefaultInputContext;
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn default_binding(
     trigger: Trigger<Binding<DefaultInputContext>>,
     mut players: Query<&mut Actions<DefaultInputContext>>,

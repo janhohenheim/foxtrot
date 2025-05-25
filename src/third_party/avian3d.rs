@@ -16,6 +16,7 @@ pub(crate) enum CollisionLayer {
     Character,
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn enable_interpolation(
     trigger: Trigger<OnAdd, RigidBody>,
     rigid_body: Query<&RigidBody>,

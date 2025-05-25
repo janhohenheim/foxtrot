@@ -29,6 +29,7 @@ impl Default for LampPlain {
     }
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn setup_lamp_wall_electric(
     trigger: Trigger<OnAdd, LampPlain>,
     lamp: Query<&LampPlain>,

@@ -27,6 +27,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 /// Show a crosshair for better aiming
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn spawn_crosshair(mut commands: Commands, assets: Res<AssetServer>) {
     commands
         .spawn((
@@ -56,6 +57,7 @@ pub(crate) struct CrosshairState {
     pub(crate) wants_invisible: HashSet<TypeId>,
 }
 
+#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
 fn update_crosshair(
     crosshair: Option<
         Single<(&CrosshairState, &mut ImageNode, &mut Visibility), Changed<CrosshairState>>,

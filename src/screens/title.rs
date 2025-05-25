@@ -40,12 +40,18 @@ fn enter_loading_screen(
 }
 
 #[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
-fn enter_settings_screen(_trigger: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_settings_screen(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
     next_screen.set(Screen::Settings);
 }
 
 #[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
-fn enter_credits_screen(_trigger: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn enter_credits_screen(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+) {
     next_screen.set(Screen::Credits);
 }
 #[cfg(feature = "native")]

@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_trenchbroom::prelude::*;
 
 use crate::props::effects::disable_shadow_casting;
@@ -14,7 +16,7 @@ pub(super) fn plugin(app: &mut App) {
 #[spawn_hooks(SpawnHooks::new().convex_collider().smooth_by_default_angle())]
 pub(crate) struct LightWindow;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn setup_light_window_brush_entity(trigger: Trigger<OnAdd, LightWindow>, mut commands: Commands) {
     let entity = trigger.target();
     commands

@@ -1,10 +1,10 @@
 //! Handle cursor capture and release. This is a bit hacky because winit does not have a nice way to keep the cursor locked in a browser.
 
-use std::any::Any;
-
-use bevy::{input::common_conditions::input_just_pressed, prelude::*, window::CursorGrabMode};
-
 use crate::{AppSystems, screens::Screen, third_party::bevy_yarnspinner::is_dialogue_running};
+use bevy::{input::common_conditions::input_just_pressed, prelude::*, window::CursorGrabMode};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
+use std::any::Any;
 
 use super::CrosshairState;
 
@@ -29,7 +29,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnExit(Screen::Gameplay), release_cursor);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn capture_cursor(mut window: Single<&mut Window>, mut commands: Commands) {
     // Need to clear Bevy's cache because in some cases the `CursorGrabMode` is set to `Locked` even though the cursor is not actually locked.
     // But setting it to `Locked` while in this state does not do anything, due to Bevy's cache!
@@ -38,7 +38,7 @@ fn capture_cursor(mut window: Single<&mut Window>, mut commands: Commands) {
     commands.insert_resource(CaptureCursorDelayed);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn capture_cursor_delayed(mut window: Single<&mut Window>, mut commands: Commands) {
     // Set the *actual* cursor mode one frame after the `Confined` mode has been set.
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
@@ -48,12 +48,12 @@ fn capture_cursor_delayed(mut window: Single<&mut Window>, mut commands: Command
 #[derive(Resource)]
 struct CaptureCursorDelayed;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn release_cursor(mut window: Single<&mut Window>) {
     window.cursor_options.grab_mode = CursorGrabMode::None;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn on_cursor_lock_changed(
     #[cfg_attr(not(feature = "native"), allow(unused_mut))] mut window: Single<
         &mut Window,

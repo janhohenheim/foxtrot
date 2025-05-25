@@ -2,6 +2,8 @@
 
 use avian_pickup::output::PropThrown;
 use bevy::{audio::Volume, prelude::*};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{
     AppSystems, audio::SoundEffect, gameplay::player::assets::PlayerAssets, screens::Screen,
@@ -16,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn play_throw_sound(mut commands: Commands, player_assets: Res<PlayerAssets>) {
     let sound = player_assets.throw_sound.clone();
 

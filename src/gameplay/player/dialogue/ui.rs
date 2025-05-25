@@ -2,14 +2,13 @@
 //! When the dialogue is complete, we restore everything.
 //! When a dialogue is able to be started, we signal this to other systems by inserting a `InteractionPrompt`.
 
-use std::any::Any;
-
-use bevy::{prelude::*, window::CursorGrabMode};
-use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
-
-use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
-
 use super::{DialogueSystems, InteractionPrompt};
+use crate::{AppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
+use bevy::{prelude::*, window::CursorGrabMode};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
+use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
+use std::any::Any;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Gameplay), setup_interaction_prompt);
@@ -30,7 +29,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
     commands
         .spawn((
@@ -58,7 +57,7 @@ pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
         });
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_interaction_prompt_ui(
     dialogue_prompt: Single<(&mut Text, &mut Visibility, Ref<InteractionPrompt>)>,
     mut crosshair: Single<&mut CrosshairState>,
@@ -80,7 +79,7 @@ fn update_interaction_prompt_ui(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn hide_crosshair_on_dialogue_start(
     mut crosshair: Single<&mut CrosshairState>,
     mut window: Single<&mut Window>,
@@ -91,7 +90,7 @@ fn hide_crosshair_on_dialogue_start(
     window.cursor_options.grab_mode = CursorGrabMode::None;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn show_crosshair_on_dialogue_end(
     mut crosshair: Single<&mut CrosshairState>,
     mut window: Single<&mut Window>,

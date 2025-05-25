@@ -3,6 +3,8 @@
 use std::time::Duration;
 
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
 
 use crate::{
@@ -30,7 +32,7 @@ pub(crate) struct PlayerAnimations {
     a_pose: AnimationNodeIndex,
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 pub(crate) fn setup_player_animations(
     trigger: Trigger<OnAdd, AnimationPlayers>,
     q_anim_players: Query<&AnimationPlayers>,
@@ -69,7 +71,7 @@ pub(crate) enum PlayerAnimationState {
     Idle,
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn play_animations(
     mut query: Query<(
         &mut TnuaAnimatingState<PlayerAnimationState>,

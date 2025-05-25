@@ -2,6 +2,8 @@
 
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
@@ -40,7 +42,7 @@ pub(crate) struct DropProp;
 #[derive(Debug, InputContext, Default)]
 pub(crate) struct DefaultInputContext;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn default_binding(
     trigger: Trigger<Binding<DefaultInputContext>>,
     mut players: Query<&mut Actions<DefaultInputContext>>,

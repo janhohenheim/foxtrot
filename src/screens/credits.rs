@@ -1,6 +1,8 @@
 //! A credits screen that can be accessed from the title screen.
 
 use bevy::{ecs::spawn::SpawnIter, prelude::*, ui::Val::*};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{asset_tracking::LoadResource, audio::music, screens::Screen, theme::prelude::*};
 
@@ -12,7 +14,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Credits), start_credits_music);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_credits_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Credits Screen"),
@@ -92,7 +94,7 @@ fn grid(content: Vec<[&'static str; 2]>) -> impl Bundle {
     )
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enter_title_screen(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,
@@ -116,7 +118,7 @@ impl FromWorld for CreditsAssets {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn start_credits_music(mut commands: Commands, credits_music: Res<CreditsAssets>) {
     commands.spawn((
         Name::new("Credits Music"),

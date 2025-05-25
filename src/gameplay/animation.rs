@@ -1,5 +1,7 @@
 //! Animation system boilerplate.
 
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use std::iter;
 
 use bevy::{prelude::*, scene::SceneInstanceReady};
@@ -27,7 +29,7 @@ pub(crate) struct AnimationPlayerOf(pub(crate) Entity);
 /// Bevy likes to hide the [`AnimationPlayer`] component deep in the hierarchy of a model.
 /// This system ensures that we can find the animation player easily by inserting an [`AnimationPlayers`] relationship
 /// into the same entity that contains the [`AnimationPlayerAncestor`] component.
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn link_animation_player(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,

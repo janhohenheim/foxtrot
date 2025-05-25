@@ -1,17 +1,16 @@
 //! NPC sound handling. The only sound is a step sound that plays when the NPC is walking.
 
-use std::time::Duration;
-
+use super::{Npc, assets::NpcAssets};
+use crate::{AppSystems, audio::SoundEffect, screens::Screen};
 use avian3d::prelude::LinearVelocity;
 use bevy::{
     audio::{SpatialScale, Volume},
     prelude::*,
 };
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_tnua::prelude::*;
-
-use crate::{AppSystems, audio::SoundEffect, screens::Screen};
-
-use super::{Npc, assets::NpcAssets};
+use std::time::Duration;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
@@ -22,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn play_step_sound(
     mut commands: Commands,
     npc: Single<(Entity, &TnuaController, &LinearVelocity), With<Npc>>,

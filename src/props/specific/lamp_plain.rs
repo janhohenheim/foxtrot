@@ -1,5 +1,7 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_trenchbroom::prelude::*;
 
 use crate::props::{effects::disable_shadow_casting_on_instance_ready, setup::static_bundle};
@@ -29,7 +31,7 @@ impl Default for LampPlain {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn setup_lamp_wall_electric(
     trigger: Trigger<OnAdd, LampPlain>,
     lamp: Query<&LampPlain>,

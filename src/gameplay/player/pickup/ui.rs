@@ -6,6 +6,8 @@ use std::any::Any as _;
 use avian_pickup::{actor::AvianPickupActor, prop::HeldProp};
 use avian3d::prelude::*;
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{
     AppSystems,
@@ -25,7 +27,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(show_crosshair_when_not_picking_up);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn check_for_pickup_opportunity(
     player: Single<(&GlobalTransform, &AvianPickupActor), With<PlayerCamera>>,
     spatial_query: SpatialQuery,
@@ -48,7 +50,7 @@ fn check_for_pickup_opportunity(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn hide_crosshair_when_picking_up(
     _trigger: Trigger<OnAdd, HeldProp>,
     mut crosshair: Single<&mut CrosshairState>,
@@ -58,7 +60,7 @@ fn hide_crosshair_when_picking_up(
         .insert(hide_crosshair_when_picking_up.type_id());
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn show_crosshair_when_not_picking_up(
     _trigger: Trigger<OnRemove, HeldProp>,
     mut crosshair: Single<&mut CrosshairState>,

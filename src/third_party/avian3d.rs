@@ -2,6 +2,8 @@
 
 use avian3d::prelude::*;
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins(PhysicsPlugins::default());
@@ -16,7 +18,7 @@ pub(crate) enum CollisionLayer {
     Character,
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enable_interpolation(
     trigger: Trigger<OnAdd, RigidBody>,
     rigid_body: Query<&RigidBody>,

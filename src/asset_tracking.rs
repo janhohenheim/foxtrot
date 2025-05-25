@@ -3,6 +3,8 @@
 use std::collections::VecDeque;
 
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<ResourceHandles>();
@@ -62,7 +64,7 @@ impl ResourceHandles {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn load_resource_assets(world: &mut World) {
     world.resource_scope(|world, mut resource_handles: Mut<ResourceHandles>| {
         world.resource_scope(|world, assets: Mut<AssetServer>| {

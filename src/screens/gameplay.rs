@@ -1,6 +1,8 @@
 //! The screen state for the main gameplay.
 
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{AppSystems, screens::Screen};
 
@@ -13,7 +15,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn return_to_title_screen(mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Title);
 }

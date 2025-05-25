@@ -2,12 +2,12 @@
 //! The crosshair is a UI element that is used to indicate the player's aim. We change the crosshair when the player is looking at a prop or an NPC.
 //! This is done by registering which systems are interested in the crosshair state.
 
-use std::any::TypeId;
-
+use crate::{AppSystems, screens::Screen};
 use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
 use bevy::{platform::collections::HashSet, prelude::*};
-
-use crate::{AppSystems, screens::Screen};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
+use std::any::TypeId;
 
 pub(crate) mod assets;
 pub(crate) mod cursor;
@@ -27,7 +27,7 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 /// Show a crosshair for better aiming
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_crosshair(mut commands: Commands, assets: Res<AssetServer>) {
     commands
         .spawn((
@@ -57,7 +57,7 @@ pub(crate) struct CrosshairState {
     pub(crate) wants_invisible: HashSet<TypeId>,
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_crosshair(
     crosshair: Option<
         Single<(&CrosshairState, &mut ImageNode, &mut Visibility), Changed<CrosshairState>>,

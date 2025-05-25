@@ -3,6 +3,8 @@
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::{events::Started, prelude::Actions};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
@@ -64,7 +66,7 @@ pub(super) enum DialogueSystems {
     UpdateUi,
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn check_for_dialogue_opportunity(
     player: Single<&GlobalTransform, With<PlayerCamera>>,
     player_collider: Single<Entity, With<Player>>,
@@ -94,7 +96,7 @@ fn check_for_dialogue_opportunity(
 #[reflect(Component, Default)]
 struct InteractionPrompt(Option<YarnNode>);
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
     mut commands: Commands,
@@ -111,7 +113,7 @@ fn interact_with_dialogue(
         .remove::<Actions<DefaultInputContext>>();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn restore_input_context(mut commands: Commands, player: Single<Entity, With<Player>>) {
     commands
         .entity(*player)

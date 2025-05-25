@@ -3,6 +3,8 @@
 //! For 3D, we'd also place the camera sensitivity and FOV here.
 
 use bevy::{audio::Volume, prelude::*, ui::Val::*};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{
     audio::{DEFAULT_VOLUME, max_volume},
@@ -25,7 +27,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_settings_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Settings Screen"),
@@ -122,7 +124,7 @@ impl Default for VolumeSliderSettings {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_global_volume(
     mut global_volume: ResMut<GlobalVolume>,
     volume_step: Res<VolumeSliderSettings>,
@@ -130,12 +132,12 @@ fn update_global_volume(
     global_volume.volume = volume_step.volume();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn lower_volume(_trigger: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.decrement();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn raise_volume(_trigger: Trigger<Pointer<Click>>, mut volume_step: ResMut<VolumeSliderSettings>) {
     volume_step.increment();
 }
@@ -144,7 +146,7 @@ fn raise_volume(_trigger: Trigger<Pointer<Click>>, mut volume_step: ResMut<Volum
 #[reflect(Component)]
 struct GlobalVolumeLabel;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_volume_label(
     mut label: Single<&mut Text, With<GlobalVolumeLabel>>,
     slider: Res<VolumeSliderSettings>,
@@ -156,7 +158,7 @@ fn update_volume_label(
     label.0 = text;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enter_title_screen(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,

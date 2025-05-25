@@ -2,6 +2,8 @@ use std::f32::consts::TAU;
 
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use bevy_tnua::prelude::*;
 
 use super::default_input::{Jump, Move};
@@ -15,7 +17,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(jump);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     for mut controller in &mut controllers {
         controller.basis(TnuaBuiltinWalk {
@@ -25,7 +27,7 @@ fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn apply_movement(
     trigger: Trigger<Fired<Move>>,
     mut controllers: Query<&mut TnuaController, With<Player>>,
@@ -52,7 +54,7 @@ fn apply_movement(
     });
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn jump(trigger: Trigger<Fired<Jump>>, mut controllers: Query<&mut TnuaController>) {
     let mut controller = controllers.get_mut(trigger.target()).unwrap();
     controller.action(TnuaBuiltinJump {

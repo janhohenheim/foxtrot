@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{AppSystems, asset_tracking::LoadResource, audio::sound_effect};
 
@@ -33,7 +35,7 @@ pub(crate) struct InteractionPalette {
 #[derive(Event)]
 pub(crate) struct OnPress;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn trigger_on_press(
     interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
     mut commands: Commands,
@@ -45,7 +47,7 @@ fn trigger_on_press(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn apply_interaction_palette(
     mut palette_query: Query<
         (&Interaction, &InteractionPalette, &mut BackgroundColor),
@@ -85,7 +87,7 @@ impl FromWorld for InteractionAssets {
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn trigger_interaction_sound_effect(
     interaction_query: Query<&Interaction, Changed<Interaction>>,
     interaction_assets: Res<InteractionAssets>,

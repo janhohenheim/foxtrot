@@ -1,6 +1,8 @@
 //! The title screen that appears when the game starts.
 
 use bevy::{prelude::*, window::CursorGrabMode};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{screens::Screen, theme::prelude::*};
 
@@ -8,7 +10,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Screen::Title), spawn_title_screen);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_title_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Title Screen"),
@@ -29,7 +31,7 @@ fn spawn_title_screen(mut commands: Commands) {
     ));
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enter_loading_screen(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,
@@ -39,7 +41,7 @@ fn enter_loading_screen(
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enter_settings_screen(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,
@@ -47,7 +49,7 @@ fn enter_settings_screen(
     next_screen.set(Screen::Settings);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enter_credits_screen(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,

@@ -13,6 +13,8 @@ use bevy::{
 use bevy_enhanced_input::prelude::*;
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use bevy_landmass::debug::{EnableLandmassDebug, Landmass3dDebugPlugin, LandmassGizmoConfigGroup};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<DebugState>();
@@ -92,7 +94,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn setup_debug_ui_text(mut commands: Commands) {
     commands.spawn((
         Name::new("Debug UI"),
@@ -111,7 +113,7 @@ fn setup_debug_ui_text(mut commands: Commands) {
 #[derive(Component)]
 struct DebugUiText;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn advance_debug_state(
     _trigger: Trigger<Started<ToggleDebugUi>>,
     mut debug_state: ResMut<DebugState>,
@@ -119,7 +121,7 @@ fn advance_debug_state(
     *debug_state = debug_state.next();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_debug_ui_text(
     debug_state: Res<DebugState>,
     mut text: Single<&mut Text, With<DebugUiText>>,
@@ -134,12 +136,12 @@ fn update_debug_ui_text(
     .to_string();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_debug_ui(mut options: ResMut<UiDebugOptions>) {
     options.toggle();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_physics_debug_ui(
     mut config_store: ResMut<GizmoConfigStore>,
     mut physics_diagnostics: ResMut<PhysicsDiagnosticsUiSettings>,
@@ -149,23 +151,23 @@ fn toggle_physics_debug_ui(
     physics_diagnostics.enabled = !physics_diagnostics.enabled;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_lighting_debug_ui(mut config_store: ResMut<GizmoConfigStore>) {
     let config = config_store.config_mut::<LightGizmoConfigGroup>().0;
     config.enabled = !config.enabled;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_landmass_debug_ui(mut debug: ResMut<EnableLandmassDebug>) {
     **debug = !**debug;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
     config.enabled = !config.enabled;
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
     mut is_cursor_forced_free: ResMut<IsCursorForceUnlocked>,

@@ -2,6 +2,8 @@
 //! so this module contains some workarounds.
 
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use bevy::{
     core_pipeline::tonemapping::Tonemapping,
@@ -14,7 +16,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(make_hdr_compatible);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn make_hdr_compatible(
     trigger: Trigger<OnAdd, Camera>,
     mut cameras: Query<&mut Camera>,

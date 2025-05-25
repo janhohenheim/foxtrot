@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use bevy::render::render_resource::{CachedPipelineState, PipelineCache};
 use bevy::render::{MainWorld, RenderApp};
@@ -17,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
     app.register_type::<LoadedPipelineCount>();
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 pub(crate) fn spawn_shader_compilation_map(
     mut commands: Commands,
     compile_shaders_assets: Res<CompileShadersAssets>,
@@ -86,7 +88,7 @@ impl LoadedPipelineCount {
     };
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn update_loaded_pipeline_count(mut main_world: ResMut<MainWorld>, cache: Res<PipelineCache>) {
     if let Some(mut pipelines_ready) = main_world.get_resource_mut::<LoadedPipelineCount>() {
         let count = cache

@@ -24,6 +24,8 @@ use bevy::{
     pbr::{ScreenSpaceAmbientOcclusion, ShadowFilteringMethod},
 };
 use bevy_enhanced_input::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 use crate::{
     AppSystems, CameraOrder, RenderLayer,
@@ -58,7 +60,7 @@ pub(super) fn plugin(app: &mut App) {
 #[require(Transform, Visibility)]
 pub(crate) struct PlayerCamera;
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_view_model(
     trigger: Trigger<OnAdd, Player>,
     player_transform: Query<&Transform>,
@@ -173,7 +175,7 @@ fn spawn_view_model(
 
 /// It makes more sense for the animation players to be related to the [`Player`] entity
 /// than to the [`PlayerCamera`] entity, so let's move the relationship there.
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn move_anim_players_relationship_to_player(
     trigger: Trigger<OnAdd, AnimationPlayers>,
     q_anim_player: Query<&AnimationPlayers>,
@@ -188,7 +190,7 @@ fn move_anim_players_relationship_to_player(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn configure_player_view_model(
     trigger: Trigger<SceneInstanceReady>,
     mut commands: Commands,
@@ -214,7 +216,7 @@ fn configure_player_view_model(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
     mut transform: Single<&mut Transform, With<PlayerCamera>>,
@@ -252,7 +254,7 @@ fn rotate_camera_yaw_and_pitch(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn sync_camera_translation_with_player(
     mut player_camera_parent: Single<&mut Transform, With<PlayerCamera>>,
     player: Single<&Transform, (With<Player>, Without<PlayerCamera>)>,
@@ -262,7 +264,7 @@ fn sync_camera_translation_with_player(
         player.translation + Vec3::Y * (camera_height - PLAYER_FLOAT_HEIGHT);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut commands: Commands) {
     let entity = trigger.target();
     commands.entity(entity).insert(RenderLayers::from(
@@ -270,7 +272,7 @@ fn add_render_layers_to_point_light(trigger: Trigger<OnAdd, PointLight>, mut com
     ));
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn add_render_layers_to_spot_light(trigger: Trigger<OnAdd, SpotLight>, mut commands: Commands) {
     let entity = trigger.target();
     commands.entity(entity).insert(RenderLayers::from(
@@ -278,7 +280,7 @@ fn add_render_layers_to_spot_light(trigger: Trigger<OnAdd, SpotLight>, mut comma
     ));
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn add_render_layers_to_directional_light(
     trigger: Trigger<OnAdd, DirectionalLight>,
     mut commands: Commands,

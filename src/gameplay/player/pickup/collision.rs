@@ -4,6 +4,8 @@
 //! Re-enable collision when the player is no longer holding a prop.
 
 use bevy::prelude::*;
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 use std::iter;
 
 use avian_pickup::prop::HeldProp;
@@ -16,7 +18,7 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(enable_collision_with_no_longer_held_prop);
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn disable_collision_with_held_prop(
     trigger: Trigger<OnAdd, HeldProp>,
     q_children: Query<&Children>,
@@ -31,7 +33,7 @@ fn disable_collision_with_held_prop(
     }
 }
 
-#[cfg_attr(feature = "hot_patch", bevy_simple_subsecond_system::hot)]
+#[cfg_attr(feature = "hot_patch", hot)]
 fn enable_collision_with_no_longer_held_prop(
     trigger: Trigger<OnRemove, HeldProp>,
     q_children: Query<&Children>,

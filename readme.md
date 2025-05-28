@@ -9,7 +9,7 @@ A 3D reference project and tech demo for the Bevy Engine. Try it out [in your br
 https://github.com/user-attachments/assets/f648a085-4b3f-4fcb-9f54-e7d5249dc735
 </details>
 
-## Running the demo
+## Running the demo locally
 
 Everything works out of the box as you would expect!
 You can just clone the repo and do

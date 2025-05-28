@@ -1,8 +1,16 @@
 [package]
 name = "foxtrot"
+description = "A 3D reference project and tech demo for the Bevy Engine."
+license = "MIT OR Apache-2.0 OR CC0-1.0"
 authors = ["Jan Hohenheim <jan@hohenheim.ch>"]
 version = "0.1.0"
 edition = "2024"
+exclude = ["assets"]
+readme = "readme.md"
+keywords = ["bevy", "demo", "3d", "game"]
+repository = "https://github.com/janhohenheim/foxtrot"
+categories = ["game-development"]
+homepage = "https://janhohenheim.itch.io/foxtrot"
 
 [dependencies]
 bevy = { version = "0.16", features = [

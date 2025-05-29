@@ -6,7 +6,7 @@ use bevy_enhanced_input::prelude::*;
 use bevy_simple_subsecond_system::hot;
 use bevy_tnua::prelude::*;
 
-use crate::PhysicsAppSystems;
+use crate::fixed_update_inspection::did_fixed_update_happen;
 
 use super::default_input::{Jump, Move};
 
@@ -16,7 +16,11 @@ use super::{Player, camera::PlayerCamera};
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         FixedUpdate,
-        apply_movement.in_set(PhysicsAppSystems::SetCharacterControllers),
+        apply_movement.in_set(TnuaUserControlsSystemSet),
+    );
+    app.add_systems(
+        Update,
+        clear_accumulated_input.run_if(did_fixed_update_happen),
     );
     app.add_observer(jump);
     app.add_observer(accumulate_movement);
@@ -54,13 +58,19 @@ fn accumulate_movement(
     accumulated_inputs.last_move.replace(trigger.value);
 }
 
+fn clear_accumulated_input(mut accumulated_inputs: Query<&mut AccumulatedInput>) {
+    for mut accumulated_input in &mut accumulated_inputs {
+        accumulated_input.last_move = None;
+    }
+}
+
 #[cfg_attr(feature = "hot_patch", hot)]
 fn apply_movement(
-    player_controller: Single<(&mut TnuaController, &mut AccumulatedInput)>,
+    player_controller: Single<(&mut TnuaController, &AccumulatedInput)>,
     transform: Single<&Transform, With<PlayerCamera>>,
 ) {
-    let (mut controller, mut accumulated_input) = player_controller.into_inner();
-    let last_move = accumulated_input.last_move.take().unwrap_or_default();
+    let (mut controller, accumulated_input) = player_controller.into_inner();
+    let last_move = accumulated_input.last_move.unwrap_or_default();
     // Feed the basis every frame. Even if the player doesn't move - just use `desired_velocity:
     // Vec3::ZERO`. `TnuaController` starts without a basis, which will make the character collider
     // just fall.

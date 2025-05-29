@@ -6,6 +6,7 @@ mod asset_tracking;
 mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod fixed_update_inspection;
 mod gameplay;
 mod hdr;
 mod props;
@@ -18,7 +19,6 @@ mod ui_camera;
 use asset_processing::default_image_sampler_descriptor;
 use audio::DEFAULT_VOLUME;
 use bevy_landmass::LandmassSystemSet;
-use bevy_tnua::TnuaUserControlsSystemSet;
 use bitflags::bitflags;
 
 use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
@@ -56,10 +56,6 @@ fn main() -> AppExit {
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
     );
 
-    app.configure_sets(
-        FixedUpdate,
-        (PhysicsAppSystems::SetCharacterControllers.in_set(TnuaUserControlsSystemSet),).chain(),
-    );
     // Add Bevy plugins.
     app.add_plugins(
         DefaultPlugins
@@ -108,6 +104,7 @@ fn main() -> AppExit {
         theme::plugin,
         ui_camera::plugin,
         hdr::plugin,
+        fixed_update_inspection::plugin,
     ));
 
     // Add plugins that proload levels. These have to come later than the other plugins
@@ -126,15 +123,6 @@ enum PrePhysicsAppSystems {
     UpdateNavmeshPositions,
     /// Update agent targets to the last valid navmesh position
     UpdateNavmeshTargets,
-}
-
-/// High-level groupings of systems for the app in the [`FixedUpdate`] schedule.
-/// When adding a new variant, make sure to order it in the `configure_sets`
-/// call above.
-#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
-enum PhysicsAppSystems {
-    /// Set character controllers to the last valid movement input
-    SetCharacterControllers,
 }
 
 /// High-level groupings of systems for the app in the [`Update`] schedule.

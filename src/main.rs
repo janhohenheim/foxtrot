@@ -17,7 +17,9 @@ mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
 use audio::DEFAULT_VOLUME;
+use avian3d::prelude::PhysicsSchedule;
 use bevy_landmass::LandmassSystemSet;
+use bevy_tnua::TnuaUserControlsSystemSet;
 use bitflags::bitflags;
 
 use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::RenderLayers};
@@ -53,6 +55,11 @@ fn main() -> AppExit {
         )
             .chain()
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
+    );
+
+    app.configure_sets(
+        PhysicsSchedule,
+        (PhysicsAppSystems::SetCharacterControllers.in_set(TnuaUserControlsSystemSet),).chain(),
     );
     // Add Bevy plugins.
     app.add_plugins(
@@ -120,6 +127,12 @@ enum PrePhysicsAppSystems {
     UpdateNavmeshPositions,
     /// Update agent targets to the last valid navmesh position
     UpdateNavmeshTargets,
+}
+
+#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
+enum PhysicsAppSystems {
+    /// Set character controllers to the last valid movement input
+    SetCharacterControllers,
 }
 
 /// High-level groupings of systems for the app in the [`Update`] schedule.

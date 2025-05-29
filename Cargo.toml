@@ -168,7 +168,12 @@ inherits = "dev"
 inherits = "dev"
 
 [patch.crates-io]
+# bevy_trenchbroom usually has quite a few nice things on `main`
 bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
+# oxidized_navigation and landmass_oxidized_navigation have no 0.16 releases yet
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }
+# bevy_hanabi has no 0.16 release yet
 bevy_hanabi = { git = "https://github.com/djeedai/bevy_hanabi", branch = "main", optional = true }
+# This rev includes massive performance improvements due to collider caching
+avian3d = { git = "https://github.com/Jondolf/avian", rev = "4f31166ee5e0cc1116756952d754386333b75cb0" }

@@ -39,10 +39,7 @@ oxidized_navigation = { version = "0.12.0", features = ["avian"] }
 landmass_oxidized_navigation = { version = "0.3.0-dev" }
 
 # Level editor
-bevy_trenchbroom = { version = "0.8.0-dev", features = [
-    "avian",
-    "client",
-], default-features = false }
+bevy_trenchbroom = { version = "0.8.1", features = ["avian"] }
 
 # dialogue
 bevy_yarnspinner = "0.5"
@@ -168,8 +165,6 @@ inherits = "dev"
 inherits = "dev"
 
 [patch.crates-io]
-# bevy_trenchbroom usually has quite a few nice things on `main`
-bevy_trenchbroom = { git = "https://github.com/noxmore/bevy_trenchbroom", branch = "main" }
 # oxidized_navigation and landmass_oxidized_navigation have no 0.16 releases yet
 oxidized_navigation = { git = "https://github.com/janhohenheim/oxidized_navigation", branch = "bevy-0.16" }
 landmass_oxidized_navigation = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.16-oxidized" }

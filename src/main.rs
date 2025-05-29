@@ -128,6 +128,9 @@ enum PrePhysicsAppSystems {
     UpdateNavmeshTargets,
 }
 
+/// High-level groupings of systems for the app in the [`FixedUpdate`] schedule.
+/// When adding a new variant, make sure to order it in the `configure_sets`
+/// call above.
 #[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
 enum PhysicsAppSystems {
     /// Set character controllers to the last valid movement input

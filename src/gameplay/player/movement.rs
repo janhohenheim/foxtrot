@@ -35,6 +35,7 @@ struct AccumulatedInput {
     last_move: Option<Vec3>,
 }
 
+#[cfg_attr(feature = "hot_patch", hot)]
 fn init_accumulated_input(trigger: Trigger<OnAdd, Player>, mut commands: Commands) {
     commands
         .entity(trigger.target())
@@ -42,15 +43,6 @@ fn init_accumulated_input(trigger: Trigger<OnAdd, Player>, mut commands: Command
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn reset_movement(mut controllers: Query<&mut TnuaController, With<Player>>) {
-    for mut controller in &mut controllers {
-        controller.basis(TnuaBuiltinWalk {
-            float_height: PLAYER_FLOAT_HEIGHT,
-            ..default()
-        });
-    }
-}
-
 fn accumulate_movement(
     trigger: Trigger<Fired<Move>>,
     mut accumulated_inputs: Single<&mut AccumulatedInput>,
@@ -58,6 +50,7 @@ fn accumulate_movement(
     accumulated_inputs.last_move.replace(trigger.value);
 }
 
+#[cfg_attr(feature = "hot_patch", hot)]
 fn clear_accumulated_input(mut accumulated_inputs: Query<&mut AccumulatedInput>) {
     for mut accumulated_input in &mut accumulated_inputs {
         accumulated_input.last_move = None;

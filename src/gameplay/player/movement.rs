@@ -1,6 +1,5 @@
 use std::f32::consts::TAU;
 
-use avian3d::prelude::*;
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 #[cfg(feature = "hot_patch")]
@@ -16,7 +15,7 @@ use super::{Player, camera::PlayerCamera};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
-        PhysicsSchedule,
+        FixedUpdate,
         apply_movement.in_set(PhysicsAppSystems::SetCharacterControllers),
     );
     app.add_observer(jump);

@@ -17,7 +17,6 @@ mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
 use audio::DEFAULT_VOLUME;
-use avian3d::prelude::PhysicsSchedule;
 use bevy_landmass::LandmassSystemSet;
 use bevy_tnua::TnuaUserControlsSystemSet;
 use bitflags::bitflags;
@@ -58,7 +57,7 @@ fn main() -> AppExit {
     );
 
     app.configure_sets(
-        PhysicsSchedule,
+        FixedUpdate,
         (PhysicsAppSystems::SetCharacterControllers.in_set(TnuaUserControlsSystemSet),).chain(),
     );
     // Add Bevy plugins.

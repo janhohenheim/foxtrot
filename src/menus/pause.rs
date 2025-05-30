@@ -2,9 +2,10 @@
 
 use std::any::Any as _;
 
-use bevy::{input::common_conditions::input_just_pressed, prelude::*};
-
 use crate::{gameplay::crosshair::CrosshairState, menus::Menu, screens::Screen, theme::widget};
+use bevy::{input::common_conditions::input_just_pressed, prelude::*};
+#[cfg(feature = "hot_patch")]
+use bevy_simple_subsecond_system::hot;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Pause), spawn_pause_menu);
@@ -31,18 +32,22 @@ fn spawn_pause_menu(mut commands: Commands, mut crosshair: Single<&mut Crosshair
         .insert(spawn_pause_menu.type_id());
 }
 
-fn open_settings_menu(_: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
+#[cfg_attr(feature = "hot_patch", hot)]
+fn open_settings_menu(_trigger: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
     next_menu.set(Menu::Settings);
 }
 
-fn close_menu(_: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
+#[cfg_attr(feature = "hot_patch", hot)]
+fn close_menu(_trigger: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
     next_menu.set(Menu::None);
 }
 
-fn quit_to_title(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+#[cfg_attr(feature = "hot_patch", hot)]
+fn quit_to_title(_trigger: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
     next_screen.set(Screen::Title);
 }
 
+#[cfg_attr(feature = "hot_patch", hot)]
 fn go_back(mut next_menu: ResMut<NextState<Menu>>, mut crosshair: Single<&mut CrosshairState>) {
     next_menu.set(Menu::None);
     crosshair

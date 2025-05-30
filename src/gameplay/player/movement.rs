@@ -11,16 +11,19 @@ use crate::fixed_update_inspection::did_fixed_update_happen;
 use super::default_input::{Jump, Move};
 
 use super::PLAYER_FLOAT_HEIGHT;
+use super::noclip::is_noclipping;
 use super::{Player, camera::PlayerCamera};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
         FixedUpdate,
-        apply_movement.in_set(TnuaUserControlsSystemSet),
+        apply_movement
+            .in_set(TnuaUserControlsSystemSet)
+            .run_if(not(is_noclipping)),
     );
     app.add_systems(
         Update,
-        clear_accumulated_input.run_if(did_fixed_update_happen),
+        clear_accumulated_input.run_if(did_fixed_update_happen.or(is_noclipping)),
     );
     app.add_observer(jump);
     app.add_observer(accumulate_movement);

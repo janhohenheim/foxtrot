@@ -26,6 +26,7 @@ pub(crate) mod dialogue;
 pub(crate) mod movement;
 pub(crate) mod movement_sound;
 pub(crate) mod navmesh_position;
+pub(crate) mod noclip;
 pub(crate) mod pickup;
 
 pub(super) fn plugin(app: &mut App) {
@@ -40,6 +41,7 @@ pub(super) fn plugin(app: &mut App) {
         movement_sound::plugin,
         pickup::plugin,
         navmesh_position::plugin,
+        noclip::plugin,
     ));
     app.add_observer(setup_player);
     app.add_systems(PreUpdate, assert_only_one_player);

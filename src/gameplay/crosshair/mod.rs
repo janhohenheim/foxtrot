@@ -4,13 +4,12 @@
 
 use crate::{PostPhysicsAppSystems, screens::Screen};
 use assets::{CROSSHAIR_DOT_PATH, CROSSHAIR_SQUARE_PATH};
-use bevy::{platform::collections::HashSet, prelude::*};
+use bevy::{platform::collections::HashSet, prelude::*, window::CursorGrabMode};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
-use std::any::TypeId;
+use std::any::{Any as _, TypeId};
 
 pub(crate) mod assets;
-pub(crate) mod cursor;
 
 pub(super) fn plugin(app: &mut App) {
     app.register_type::<CrosshairState>();
@@ -23,7 +22,7 @@ pub(super) fn plugin(app: &mut App) {
     );
     app.add_systems(OnEnter(Screen::Gameplay), spawn_crosshair);
 
-    app.add_plugins((assets::plugin, cursor::plugin));
+    app.add_plugins(assets::plugin);
 }
 
 /// Show a crosshair for better aiming
@@ -55,16 +54,19 @@ fn spawn_crosshair(mut commands: Commands, assets: Res<AssetServer>) {
 pub(crate) struct CrosshairState {
     pub(crate) wants_square: HashSet<TypeId>,
     pub(crate) wants_invisible: HashSet<TypeId>,
+    pub(crate) wants_free_cursor: HashSet<TypeId>,
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn update_crosshair(
     crosshair: Option<
-        Single<(&CrosshairState, &mut ImageNode, &mut Visibility), Changed<CrosshairState>>,
+        Single<(&mut CrosshairState, &mut ImageNode, &mut Visibility), Changed<CrosshairState>>,
     >,
     assets: Res<AssetServer>,
+    mut window: Single<&mut Window, Changed<Window>>,
 ) {
-    let Some((crosshair_state, mut image_node, mut visibility)) = crosshair.map(|c| c.into_inner())
+    let Some((mut crosshair_state, mut image_node, mut visibility)) =
+        crosshair.map(|c| c.into_inner())
     else {
         return;
     };
@@ -72,6 +74,26 @@ fn update_crosshair(
         image_node.image = assets.load(CROSSHAIR_DOT_PATH);
     } else {
         image_node.image = assets.load(CROSSHAIR_SQUARE_PATH);
+    }
+
+    if crosshair_state.wants_free_cursor.is_empty() {
+        window.cursor_options.grab_mode = CursorGrabMode::Locked;
+        crosshair_state
+            .wants_invisible
+            .remove(&update_crosshair.type_id());
+        #[cfg(feature = "native")]
+        {
+            window.cursor_options.visible = false;
+        }
+    } else {
+        window.cursor_options.grab_mode = CursorGrabMode::None;
+        crosshair_state
+            .wants_invisible
+            .insert(update_crosshair.type_id());
+        #[cfg(feature = "native")]
+        {
+            window.cursor_options.visible = true;
+        }
     }
 
     if crosshair_state.wants_invisible.is_empty() {

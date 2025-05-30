@@ -2,12 +2,7 @@
 
 use std::any::Any as _;
 
-use crate::{
-    gameplay::{crosshair::CrosshairState, player::default_input::BlocksInput},
-    menus::Menu,
-    screens::Screen,
-    theme::widget,
-};
+use crate::{gameplay::crosshair::CrosshairState, menus::Menu, screens::Screen, theme::widget};
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
@@ -23,7 +18,6 @@ pub(super) fn plugin(app: &mut App) {
 fn spawn_pause_menu(
     mut commands: Commands,
     mut crosshair: Single<&mut CrosshairState>,
-    mut blocks_input: ResMut<BlocksInput>,
     mut time: ResMut<Time<Virtual>>,
 ) {
     commands.spawn((
@@ -37,7 +31,6 @@ fn spawn_pause_menu(
             widget::button("Quit to title", quit_to_title),
         ],
     ));
-    blocks_input.insert(spawn_pause_menu.type_id());
     crosshair
         .wants_free_cursor
         .insert(spawn_pause_menu.type_id());
@@ -53,12 +46,10 @@ fn open_settings_menu(_trigger: Trigger<Pointer<Click>>, mut next_menu: ResMut<N
 fn close_menu(
     _trigger: Trigger<Pointer<Click>>,
     mut next_menu: ResMut<NextState<Menu>>,
-    mut blocks_input: ResMut<BlocksInput>,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
 ) {
     next_menu.set(Menu::None);
-    blocks_input.remove(&spawn_pause_menu.type_id());
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
@@ -69,12 +60,10 @@ fn close_menu(
 fn quit_to_title(
     _trigger: Trigger<Pointer<Click>>,
     mut next_screen: ResMut<NextState<Screen>>,
-    mut blocks_input: ResMut<BlocksInput>,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
 ) {
     next_screen.set(Screen::Title);
-    blocks_input.remove(&spawn_pause_menu.type_id());
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
@@ -85,13 +74,11 @@ fn quit_to_title(
 fn go_back(
     mut next_menu: ResMut<NextState<Menu>>,
     mut crosshair: Single<&mut CrosshairState>,
-    mut blocks_input: ResMut<BlocksInput>,
     mut time: ResMut<Time<Virtual>>,
 ) {
     next_menu.set(Menu::None);
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
-    blocks_input.remove(&spawn_pause_menu.type_id());
     time.unpause();
 }

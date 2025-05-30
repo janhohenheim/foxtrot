@@ -6,6 +6,7 @@ mod asset_tracking;
 mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
+mod fixed_update_inspection;
 mod gameplay;
 mod hdr;
 mod props;
@@ -54,6 +55,7 @@ fn main() -> AppExit {
             .chain()
             .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
     );
+
     // Add Bevy plugins.
     app.add_plugins(
         DefaultPlugins
@@ -102,6 +104,7 @@ fn main() -> AppExit {
         theme::plugin,
         ui_camera::plugin,
         hdr::plugin,
+        fixed_update_inspection::plugin,
     ));
 
     // Add plugins that proload levels. These have to come later than the other plugins

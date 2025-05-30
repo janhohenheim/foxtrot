@@ -15,7 +15,7 @@ use crate::{
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<VolumeSliderSettings>();
-    app.add_systems(OnEnter(Menu::Settings), spawn_settings_screen);
+    app.add_systems(OnEnter(Menu::Settings), spawn_settings_menu);
     app.add_systems(
         Update,
         go_back.run_if(in_state(Menu::Settings).and(input_just_pressed(KeyCode::Escape))),
@@ -33,10 +33,11 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn spawn_settings_screen(mut commands: Commands) {
+fn spawn_settings_menu(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Settings Screen"),
         StateScoped(Menu::Settings),
+        GlobalZIndex(2),
         children![
             widget::header("Settings"),
             (

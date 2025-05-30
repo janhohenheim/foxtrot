@@ -6,12 +6,10 @@ use bevy::{
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
-use crate::{
-    asset_tracking::LoadResource, audio::music, menus::Menu, theme::prelude::*,
-};
+use crate::{asset_tracking::LoadResource, audio::music, menus::Menu, theme::prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Menu::Credits), spawn_credits_screen);
+    app.add_systems(OnEnter(Menu::Credits), spawn_credits_menu);
     app.add_systems(
         Update,
         go_back.run_if(in_state(Menu::Credits).and(input_just_pressed(KeyCode::Escape))),
@@ -23,10 +21,11 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn spawn_credits_screen(mut commands: Commands) {
+fn spawn_credits_menu(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Credits Screen"),
         StateScoped(Menu::Credits),
+        GlobalZIndex(2),
         children![
             widget::header("Created by"),
             created_by(),

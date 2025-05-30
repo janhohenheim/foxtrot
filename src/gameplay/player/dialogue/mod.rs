@@ -1,14 +1,17 @@
 //! Player dialogue handling. This module starts the Yarn Spinner dialogue when the player starts interacting with an NPC.
 
+use std::any::Any;
+
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
-use bevy_enhanced_input::{events::Started, prelude::Actions};
+use bevy_enhanced_input::events::Started;
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
     PostPhysicsAppSystems,
+    gameplay::crosshair::CrosshairState,
     screens::Screen,
     third_party::{
         avian3d::CollisionLayer,
@@ -21,7 +24,7 @@ mod ui;
 use super::{
     Player,
     camera::PlayerCamera,
-    default_input::{DefaultInputContext, Interact},
+    default_input::{BlocksInput, Interact},
     pickup::is_holding_prop,
 };
 
@@ -99,23 +102,28 @@ struct InteractionPrompt(Option<YarnNode>);
 #[cfg_attr(feature = "hot_patch", hot)]
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
-    mut commands: Commands,
     mut interaction_prompt: Single<&mut InteractionPrompt>,
     mut dialogue_runner: Single<&mut DialogueRunner>,
-    player: Single<Entity, With<Player>>,
+    mut crosshair: Single<&mut CrosshairState>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     let Some(node) = interaction_prompt.0.take() else {
         return;
     };
     dialogue_runner.start_node(&node.yarn_node);
-    commands
-        .entity(*player)
-        .remove::<Actions<DefaultInputContext>>();
+    blocks_input.insert(interact_with_dialogue.type_id());
+    crosshair
+        .wants_free_cursor
+        .insert(interact_with_dialogue.type_id());
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn restore_input_context(mut commands: Commands, player: Single<Entity, With<Player>>) {
-    commands
-        .entity(*player)
-        .insert(Actions::<DefaultInputContext>::default());
+fn restore_input_context(
+    mut crosshair: Single<&mut CrosshairState>,
+    mut blocks_input: ResMut<BlocksInput>,
+) {
+    blocks_input.remove(&interact_with_dialogue.type_id());
+    crosshair
+        .wants_free_cursor
+        .remove(&interact_with_dialogue.type_id());
 }

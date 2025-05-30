@@ -1,15 +1,26 @@
 //! Input handling for the player.
 
-use bevy::prelude::*;
+use std::any::TypeId;
+
+use bevy::{platform::collections::HashSet, prelude::*};
 use bevy_enhanced_input::prelude::*;
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
+
+use super::Player;
 
 pub(super) fn plugin(app: &mut App) {
     // Record directional input as movement controls.
     app.add_input_context::<DefaultInputContext>();
     // Add observer to set up bindings.
     app.add_observer(default_binding);
+
+    app.init_resource::<BlocksInput>();
+    app.register_type::<BlocksInput>();
+    app.add_systems(
+        PreUpdate,
+        update_player_input_binding.run_if(resource_changed::<BlocksInput>),
+    );
 }
 
 // All actions should implement the `InputAction` trait.
@@ -88,4 +99,24 @@ fn default_binding(
     actions
         .bind::<DropProp>()
         .to((MouseButton::Right, GamepadButton::East));
+}
+
+#[derive(Resource, Default, Reflect, Deref, DerefMut)]
+#[reflect(Resource)]
+pub(crate) struct BlocksInput(HashSet<TypeId>);
+
+fn update_player_input_binding(
+    player: Single<Entity, With<Player>>,
+    blocks_input: Res<BlocksInput>,
+    mut commands: Commands,
+) {
+    if blocks_input.is_empty() {
+        commands
+            .entity(*player)
+            .insert(Actions::<DefaultInputContext>::default());
+    } else {
+        commands
+            .entity(*player)
+            .remove::<Actions<DefaultInputContext>>();
+    }
 }

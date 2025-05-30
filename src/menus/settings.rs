@@ -2,19 +2,25 @@
 //! We can add all manner of settings and accessibility options here.
 //! For 3D, we'd also place the camera sensitivity and FOV here.
 
-use bevy::{audio::Volume, prelude::*, ui::Val::*};
+use bevy::{audio::Volume, input::common_conditions::input_just_pressed, prelude::*, ui::Val::*};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
+    Pause,
     audio::{DEFAULT_VOLUME, max_volume},
+    menus::Menu,
     screens::Screen,
-    theme::prelude::*,
+    theme::{palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<VolumeSliderSettings>();
-    app.add_systems(OnEnter(Screen::Settings), spawn_settings_screen);
+    app.add_systems(OnEnter(Menu::Settings), spawn_settings_menu);
+    app.add_systems(
+        Update,
+        go_back.run_if(in_state(Menu::Settings).and(input_just_pressed(KeyCode::Escape))),
+    );
 
     app.register_type::<GlobalVolumeLabel>();
     app.add_systems(
@@ -23,15 +29,16 @@ pub(super) fn plugin(app: &mut App) {
             update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
             update_volume_label,
         )
-            .run_if(in_state(Screen::Settings)),
+            .run_if(in_state(Menu::Settings)),
     );
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn spawn_settings_screen(mut commands: Commands) {
-    commands.spawn((
+fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
+    let mut entity_commands = commands.spawn((
         widget::ui_root("Settings Screen"),
-        StateScoped(Screen::Settings),
+        StateScoped(Menu::Settings),
+        GlobalZIndex(2),
         children![
             widget::header("Settings"),
             (
@@ -54,9 +61,12 @@ fn spawn_settings_screen(mut commands: Commands) {
                     volume_widget(),
                 ],
             ),
-            widget::button("Back", enter_title_screen),
+            widget::button("Back", go_back_on_click),
         ],
     ));
+    if paused.get() == &Pause(false) {
+        entity_commands.insert(BackgroundColor(SCREEN_BACKGROUND));
+    }
 }
 
 fn volume_widget() -> impl Bundle {
@@ -159,9 +169,23 @@ fn update_volume_label(
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn enter_title_screen(
+fn go_back_on_click(
     _trigger: Trigger<Pointer<Click>>,
-    mut next_screen: ResMut<NextState<Screen>>,
+    screen: Res<State<Screen>>,
+    mut next_menu: ResMut<NextState<Menu>>,
 ) {
-    next_screen.set(Screen::Title);
+    next_menu.set(if screen.get() == &Screen::Title {
+        Menu::Main
+    } else {
+        Menu::Pause
+    });
+}
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn go_back(screen: Res<State<Screen>>, mut next_menu: ResMut<NextState<Menu>>) {
+    next_menu.set(if screen.get() == &Screen::Title {
+        Menu::Main
+    } else {
+        Menu::Pause
+    });
 }

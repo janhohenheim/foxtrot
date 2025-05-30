@@ -24,7 +24,6 @@ pub(crate) fn ui_root(name: impl Into<Cow<'static, str>>) -> impl Bundle {
             row_gap: Px(20.0),
             ..default()
         },
-        BackgroundColor(SCREEN_BACKGROUND),
         // Don't block picking events for other UI roots.
         Pickable::IGNORE,
     )
@@ -71,7 +70,7 @@ where
         action,
         (
             Node {
-                width: Px(300.0),
+                width: Px(380.0),
                 height: Px(80.0),
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::Center,

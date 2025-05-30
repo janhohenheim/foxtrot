@@ -7,7 +7,7 @@ use bevy_simple_subsecond_system::hot;
 
 use crate::{
     asset_tracking::{ResourceHandles, all_assets_loaded},
-    theme::prelude::*,
+    theme::{palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 use super::LoadingScreen;
@@ -42,6 +42,7 @@ fn spawn_or_skip_asset_loading_screen(
     }
     commands.spawn((
         widget::ui_root("Loading Screen"),
+        BackgroundColor(SCREEN_BACKGROUND),
         StateScoped(LoadingScreen::Assets),
         children![(widget::label("Loading Assets"), LoadingAssetsLabel)],
     ));

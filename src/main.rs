@@ -9,6 +9,7 @@ mod dev_tools;
 mod fixed_update_inspection;
 mod gameplay;
 mod hdr;
+mod menus;
 mod props;
 mod screens;
 mod shader_compilation;
@@ -31,30 +32,6 @@ pub struct AppPlugin;
 
 fn main() -> AppExit {
     let mut app = App::new();
-    // Order new `AppSet` variants by adding them here:
-    app.configure_sets(
-        Update,
-        (
-            PostPhysicsAppSystems::TickTimers,
-            PostPhysicsAppSystems::ChangeUi,
-            PostPhysicsAppSystems::PlaySounds,
-            PostPhysicsAppSystems::PlayAnimations,
-            PostPhysicsAppSystems::Update,
-        )
-            .chain(),
-    );
-    app.configure_sets(
-        RunFixedMainLoop,
-        (
-            PrePhysicsAppSystems::UpdateNavmeshPositions,
-            PrePhysicsAppSystems::UpdateNavmeshTargets,
-            OxidizedNavigation::RemovedComponent,
-            OxidizedNavigation::Main,
-            LandmassSystemSet::SyncExistence,
-        )
-            .chain()
-            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
-    );
 
     // Add Bevy plugins.
     app.add_plugins(
@@ -86,9 +63,36 @@ fn main() -> AppExit {
             }),
     );
     app.insert_resource(AmbientLight::NONE);
-
     #[cfg(feature = "native")]
     app.add_plugins(TemporalAntiAliasPlugin);
+
+    // Order new `AppSet` variants by adding them here:
+    app.configure_sets(
+        Update,
+        (
+            PostPhysicsAppSystems::TickTimers,
+            PostPhysicsAppSystems::ChangeUi,
+            PostPhysicsAppSystems::PlaySounds,
+            PostPhysicsAppSystems::PlayAnimations,
+            PostPhysicsAppSystems::Update,
+        )
+            .chain(),
+    );
+    app.configure_sets(
+        RunFixedMainLoop,
+        (
+            PrePhysicsAppSystems::UpdateNavmeshPositions,
+            PrePhysicsAppSystems::UpdateNavmeshTargets,
+            OxidizedNavigation::RemovedComponent,
+            OxidizedNavigation::Main,
+            LandmassSystemSet::SyncExistence,
+        )
+            .chain()
+            .in_set(RunFixedMainLoopSystem::BeforeFixedMainLoop),
+    );
+    // Set up the `Pause` state.
+    app.init_state::<Pause>();
+    app.configure_sets(Update, PausableSystems.run_if(in_state(Pause(false))));
 
     // Add third-party plugins.
     app.add_plugins(third_party::plugin);
@@ -99,11 +103,13 @@ fn main() -> AppExit {
         asset_tracking::plugin,
         #[cfg(feature = "dev")]
         dev_tools::plugin,
-        props::plugin,
         screens::plugin,
+        menus::plugin,
+        props::plugin,
         theme::plugin,
         ui_camera::plugin,
         hdr::plugin,
+        audio::plugin,
         fixed_update_inspection::plugin,
     ));
 
@@ -182,3 +188,12 @@ impl From<RenderLayer> for RenderLayers {
         RenderLayers::from_iter(layer.iter().map(|l| (l.bits() >> 1) as usize))
     }
 }
+
+/// Whether or not the game is paused.
+#[derive(States, Copy, Clone, Eq, PartialEq, Hash, Debug, Default)]
+#[states(scoped_entities)]
+struct Pause(pub bool);
+
+/// A system set for systems that shouldn't run while the game is paused.
+#[derive(SystemSet, Copy, Clone, Eq, PartialEq, Hash, Debug)]
+struct PausableSystems;

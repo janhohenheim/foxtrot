@@ -48,13 +48,31 @@ fn open_settings_menu(_trigger: Trigger<Pointer<Click>>, mut next_menu: ResMut<N
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn close_menu(_trigger: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
+fn close_menu(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_menu: ResMut<NextState<Menu>>,
+    mut blocks_input: ResMut<BlocksInput>,
+    mut crosshair: Single<&mut CrosshairState>,
+) {
     next_menu.set(Menu::None);
+    blocks_input.remove(&spawn_pause_menu.type_id());
+    crosshair
+        .wants_free_cursor
+        .remove(&spawn_pause_menu.type_id());
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn quit_to_title(_trigger: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<Screen>>) {
+fn quit_to_title(
+    _trigger: Trigger<Pointer<Click>>,
+    mut next_screen: ResMut<NextState<Screen>>,
+    mut blocks_input: ResMut<BlocksInput>,
+    mut crosshair: Single<&mut CrosshairState>,
+) {
     next_screen.set(Screen::Title);
+    blocks_input.remove(&spawn_pause_menu.type_id());
+    crosshair
+        .wants_free_cursor
+        .remove(&spawn_pause_menu.type_id());
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]

@@ -4,7 +4,7 @@ use std::any::Any;
 
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
-use bevy_enhanced_input::{events::Started, prelude::Actions};
+use bevy_enhanced_input::events::Started;
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};

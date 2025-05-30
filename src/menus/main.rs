@@ -1,7 +1,7 @@
 //! The main menu (seen on the title screen).
 use bevy::{prelude::*, window::CursorGrabMode};
 
-use crate::{asset_tracking::ResourceHandles, menus::Menu, screens::Screen, theme::widget};
+use crate::{menus::Menu, screens::Screen, theme::widget};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Main), spawn_main_menu);

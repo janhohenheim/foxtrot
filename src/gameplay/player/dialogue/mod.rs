@@ -1,5 +1,7 @@
 //! Player dialogue handling. This module starts the Yarn Spinner dialogue when the player starts interacting with an NPC.
 
+use std::any::Any;
+
 use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::{events::Started, prelude::Actions};
@@ -9,6 +11,7 @@ use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
 
 use crate::{
     PostPhysicsAppSystems,
+    gameplay::crosshair::CrosshairState,
     screens::Screen,
     third_party::{
         avian3d::CollisionLayer,
@@ -102,6 +105,7 @@ fn interact_with_dialogue(
     mut commands: Commands,
     mut interaction_prompt: Single<&mut InteractionPrompt>,
     mut dialogue_runner: Single<&mut DialogueRunner>,
+    mut crosshair: Single<&mut CrosshairState>,
     player: Single<Entity, With<Player>>,
 ) {
     let Some(node) = interaction_prompt.0.take() else {
@@ -111,11 +115,21 @@ fn interact_with_dialogue(
     commands
         .entity(*player)
         .remove::<Actions<DefaultInputContext>>();
+    crosshair
+        .wants_free_cursor
+        .insert(interact_with_dialogue.type_id());
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn restore_input_context(mut commands: Commands, player: Single<Entity, With<Player>>) {
+fn restore_input_context(
+    mut commands: Commands,
+    player: Single<Entity, With<Player>>,
+    mut crosshair: Single<&mut CrosshairState>,
+) {
     commands
         .entity(*player)
         .insert(Actions::<DefaultInputContext>::default());
+    crosshair
+        .wants_free_cursor
+        .remove(&interact_with_dialogue.type_id());
 }

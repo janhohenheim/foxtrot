@@ -1,10 +1,11 @@
 //! Toggles for the different debug UIs that our plugins provide.
 
+use std::any::Any as _;
+
 use super::input::{ForceFreeCursor, ToggleDebugUi};
 use crate::RenderLayer;
-use crate::{
-    PostPhysicsAppSystems, gameplay::crosshair::cursor::IsCursorForceUnlocked, theme::widget,
-};
+use crate::gameplay::crosshair::CrosshairState;
+use crate::{PostPhysicsAppSystems, theme::widget};
 use avian3d::prelude::*;
 use bevy::render::view::RenderLayers;
 use bevy::ui::Val::*;
@@ -172,11 +173,19 @@ fn toggle_fps_overlay(mut config: ResMut<FpsOverlayConfig>) {
 #[cfg_attr(feature = "hot_patch", hot)]
 fn toggle_egui_inspector(
     _trigger: Trigger<Started<ForceFreeCursor>>,
-    mut is_cursor_forced_free: ResMut<IsCursorForceUnlocked>,
+    mut crosshair_state: Single<&mut CrosshairState>,
     mut inspector_active: ResMut<InspectorActive>,
 ) {
-    is_cursor_forced_free.0 = !is_cursor_forced_free.0;
     inspector_active.0 = !inspector_active.0;
+    if inspector_active.0 {
+        crosshair_state
+            .wants_free_cursor
+            .insert(toggle_egui_inspector.type_id());
+    } else {
+        crosshair_state
+            .wants_free_cursor
+            .remove(&toggle_egui_inspector.type_id());
+    }
 }
 
 #[derive(Resource, Debug, Default, Eq, PartialEq)]

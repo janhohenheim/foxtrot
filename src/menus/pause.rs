@@ -1,8 +1,10 @@
 //! The pause menu.
 
+use std::any::Any as _;
+
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
-use crate::{menus::Menu, screens::Screen, theme::widget};
+use crate::{gameplay::crosshair::CrosshairState, menus::Menu, screens::Screen, theme::widget};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Pause), spawn_pause_menu);
@@ -12,7 +14,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-fn spawn_pause_menu(mut commands: Commands) {
+fn spawn_pause_menu(mut commands: Commands, mut crosshair: Single<&mut CrosshairState>) {
     commands.spawn((
         widget::ui_root("Pause Menu"),
         GlobalZIndex(2),
@@ -24,6 +26,9 @@ fn spawn_pause_menu(mut commands: Commands) {
             widget::button("Quit to title", quit_to_title),
         ],
     ));
+    crosshair
+        .wants_free_cursor
+        .insert(spawn_pause_menu.type_id());
 }
 
 fn open_settings_menu(_: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
@@ -38,6 +43,9 @@ fn quit_to_title(_: Trigger<Pointer<Click>>, mut next_screen: ResMut<NextState<S
     next_screen.set(Screen::Title);
 }
 
-fn go_back(mut next_menu: ResMut<NextState<Menu>>) {
+fn go_back(mut next_menu: ResMut<NextState<Menu>>, mut crosshair: Single<&mut CrosshairState>) {
     next_menu.set(Menu::None);
+    crosshair
+        .wants_free_cursor
+        .remove(&spawn_pause_menu.type_id());
 }

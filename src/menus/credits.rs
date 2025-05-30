@@ -6,7 +6,13 @@ use bevy::{
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
-use crate::{asset_tracking::LoadResource, audio::music, menus::Menu, theme::prelude::*};
+use crate::{
+    Pause,
+    asset_tracking::LoadResource,
+    audio::music,
+    menus::Menu,
+    theme::{palette::SCREEN_BACKGROUND, prelude::*},
+};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Credits), spawn_credits_menu);
@@ -21,8 +27,8 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn spawn_credits_menu(mut commands: Commands) {
-    commands.spawn((
+fn spawn_credits_menu(mut commands: Commands, paused: Res<State<Pause>>) {
+    let mut entity_commands = commands.spawn((
         widget::ui_root("Credits Screen"),
         StateScoped(Menu::Credits),
         GlobalZIndex(2),
@@ -34,6 +40,9 @@ fn spawn_credits_menu(mut commands: Commands) {
             widget::button("Back", go_back_on_click),
         ],
     ));
+    if paused.get() == &Pause(false) {
+        entity_commands.insert(BackgroundColor(SCREEN_BACKGROUND));
+    }
 }
 
 fn created_by() -> impl Bundle {

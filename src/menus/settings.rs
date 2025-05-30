@@ -7,10 +7,11 @@ use bevy::{audio::Volume, input::common_conditions::input_just_pressed, prelude:
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
+    Pause,
     audio::{DEFAULT_VOLUME, max_volume},
     menus::Menu,
     screens::Screen,
-    theme::prelude::*,
+    theme::{palette::SCREEN_BACKGROUND, prelude::*},
 };
 
 pub(super) fn plugin(app: &mut App) {
@@ -33,8 +34,8 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn spawn_settings_menu(mut commands: Commands) {
-    commands.spawn((
+fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
+    let mut entity_commands = commands.spawn((
         widget::ui_root("Settings Screen"),
         StateScoped(Menu::Settings),
         GlobalZIndex(2),
@@ -63,6 +64,9 @@ fn spawn_settings_menu(mut commands: Commands) {
             widget::button("Back", go_back_on_click),
         ],
     ));
+    if paused.get() == &Pause(false) {
+        entity_commands.insert(BackgroundColor(SCREEN_BACKGROUND));
+    }
 }
 
 fn volume_widget() -> impl Bundle {

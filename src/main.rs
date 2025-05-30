@@ -109,6 +109,7 @@ fn main() -> AppExit {
         theme::plugin,
         ui_camera::plugin,
         hdr::plugin,
+        audio::plugin,
         fixed_update_inspection::plugin,
     ));
 

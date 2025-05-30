@@ -24,7 +24,7 @@ mod ui;
 use super::{
     Player,
     camera::PlayerCamera,
-    default_input::{DefaultInputContext, Interact},
+    default_input::{BlocksInput, Interact},
     pickup::is_holding_prop,
 };
 
@@ -102,19 +102,16 @@ struct InteractionPrompt(Option<YarnNode>);
 #[cfg_attr(feature = "hot_patch", hot)]
 fn interact_with_dialogue(
     _trigger: Trigger<Started<Interact>>,
-    mut commands: Commands,
     mut interaction_prompt: Single<&mut InteractionPrompt>,
     mut dialogue_runner: Single<&mut DialogueRunner>,
     mut crosshair: Single<&mut CrosshairState>,
-    player: Single<Entity, With<Player>>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     let Some(node) = interaction_prompt.0.take() else {
         return;
     };
     dialogue_runner.start_node(&node.yarn_node);
-    commands
-        .entity(*player)
-        .remove::<Actions<DefaultInputContext>>();
+    blocks_input.insert(interact_with_dialogue.type_id());
     crosshair
         .wants_free_cursor
         .insert(interact_with_dialogue.type_id());
@@ -122,13 +119,10 @@ fn interact_with_dialogue(
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn restore_input_context(
-    mut commands: Commands,
-    player: Single<Entity, With<Player>>,
     mut crosshair: Single<&mut CrosshairState>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
-    commands
-        .entity(*player)
-        .insert(Actions::<DefaultInputContext>::default());
+    blocks_input.remove(&interact_with_dialogue.type_id());
     crosshair
         .wants_free_cursor
         .remove(&interact_with_dialogue.type_id());

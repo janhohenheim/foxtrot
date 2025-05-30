@@ -16,3 +16,8 @@ assets/**/*.bsp
 
 # Baked assets
 /assets_baked
+
+# Flamegraph
+flamegraph.svg
+perf.data
+perf.data.old

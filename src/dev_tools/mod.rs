@@ -8,13 +8,13 @@ mod debug_ui;
 mod input;
 mod validate_preloading;
 
-use crate::screens::{Screen, loading::LoadingScreen};
+use crate::{menus::Menu, screens::loading::LoadingScreen};
 
 pub(super) fn plugin(app: &mut App) {
     // Log `Screen` state transitions.
     app.add_systems(
         Update,
-        (log_transitions::<Screen>, log_transitions::<LoadingScreen>).chain(),
+        (log_transitions::<Menu>, log_transitions::<LoadingScreen>).chain(),
     );
 
     app.add_plugins((

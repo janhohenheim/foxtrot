@@ -15,8 +15,7 @@ use bevy_simple_subsecond_system::hot;
 use bevy_tnua::prelude::*;
 
 use crate::{
-    PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition,
-    screens::Screen,
+    PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition, screens::Screen,
 };
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};

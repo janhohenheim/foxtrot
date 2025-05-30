@@ -1,30 +1,38 @@
-//! A credits screen that can be accessed from the title screen.
+//! A credits menu.
 
-use bevy::{ecs::spawn::SpawnIter, prelude::*, ui::Val::*};
+use bevy::{
+    ecs::spawn::SpawnIter, input::common_conditions::input_just_pressed, prelude::*, ui::Val::*,
+};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
-use crate::{asset_tracking::LoadResource, audio::music, screens::Screen, theme::prelude::*};
+use crate::{
+    asset_tracking::LoadResource, audio::music, menus::Menu, theme::prelude::*,
+};
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(Screen::Credits), spawn_credits_screen);
+    app.add_systems(OnEnter(Menu::Credits), spawn_credits_screen);
+    app.add_systems(
+        Update,
+        go_back.run_if(in_state(Menu::Credits).and(input_just_pressed(KeyCode::Escape))),
+    );
 
     app.register_type::<CreditsAssets>();
     app.load_resource::<CreditsAssets>();
-    app.add_systems(OnEnter(Screen::Credits), start_credits_music);
+    app.add_systems(OnEnter(Menu::Credits), start_credits_music);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_credits_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Credits Screen"),
-        StateScoped(Screen::Credits),
+        StateScoped(Menu::Credits),
         children![
             widget::header("Created by"),
             created_by(),
             widget::header("Assets"),
             assets(),
-            widget::button("Back", enter_title_screen),
+            widget::button("Back", go_back_on_click),
         ],
     ));
 }
@@ -94,12 +102,12 @@ fn grid(content: Vec<[&'static str; 2]>) -> impl Bundle {
     )
 }
 
-#[cfg_attr(feature = "hot_patch", hot)]
-fn enter_title_screen(
-    _trigger: Trigger<Pointer<Click>>,
-    mut next_screen: ResMut<NextState<Screen>>,
-) {
-    next_screen.set(Screen::Title);
+fn go_back_on_click(_: Trigger<Pointer<Click>>, mut next_menu: ResMut<NextState<Menu>>) {
+    next_menu.set(Menu::Main);
+}
+
+fn go_back(mut next_menu: ResMut<NextState<Menu>>) {
+    next_menu.set(Menu::Main);
 }
 
 #[derive(Resource, Asset, Clone, Reflect)]
@@ -122,7 +130,7 @@ impl FromWorld for CreditsAssets {
 fn start_credits_music(mut commands: Commands, credits_music: Res<CreditsAssets>) {
     commands.spawn((
         Name::new("Credits Music"),
-        StateScoped(Screen::Credits),
+        StateScoped(Menu::Credits),
         music(credits_music.music.clone()),
     ));
 }

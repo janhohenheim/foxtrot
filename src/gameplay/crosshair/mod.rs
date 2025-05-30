@@ -55,6 +55,7 @@ fn spawn_crosshair(mut commands: Commands, assets: Res<AssetServer>) {
 pub(crate) struct CrosshairState {
     pub(crate) wants_square: HashSet<TypeId>,
     pub(crate) wants_invisible: HashSet<TypeId>,
+    pub(crate) wants_free_cursor: HashSet<TypeId>,
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]

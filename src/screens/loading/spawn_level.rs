@@ -5,7 +5,9 @@ use bevy_landmass::{NavMesh, coords::ThreeD};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
-use crate::{gameplay::level::spawn_level, screens::Screen, theme::prelude::*};
+use crate::{
+    gameplay::level::spawn_level, screens::Screen, theme::prelude::*,
+};
 
 use super::LoadingScreen;
 

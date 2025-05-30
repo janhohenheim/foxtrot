@@ -6,7 +6,6 @@ use bevy::prelude::*;
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
-    screens::Screen,
     shader_compilation::{LoadedPipelineCount, all_pipelines_loaded, spawn_shader_compilation_map},
     theme::prelude::*,
 };
@@ -47,7 +46,7 @@ fn spawn_or_skip_shader_compilation_loading_screen(
     }
     commands.spawn((
         widget::ui_root("Loading Screen"),
-        StateScoped(Screen::Loading),
+        StateScoped(LoadingScreen::Shaders),
         children![(widget::label("Compiling shaders..."), LoadingShadersLabel)],
     ));
 }

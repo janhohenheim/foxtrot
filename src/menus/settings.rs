@@ -2,19 +2,24 @@
 //! We can add all manner of settings and accessibility options here.
 //! For 3D, we'd also place the camera sensitivity and FOV here.
 
-use bevy::{audio::Volume, prelude::*, ui::Val::*};
+use bevy::{audio::Volume, input::common_conditions::input_just_pressed, prelude::*, ui::Val::*};
 #[cfg(feature = "hot_patch")]
 use bevy_simple_subsecond_system::hot;
 
 use crate::{
     audio::{DEFAULT_VOLUME, max_volume},
+    menus::Menu,
     screens::Screen,
     theme::prelude::*,
 };
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<VolumeSliderSettings>();
-    app.add_systems(OnEnter(Screen::Settings), spawn_settings_screen);
+    app.add_systems(OnEnter(Menu::Settings), spawn_settings_screen);
+    app.add_systems(
+        Update,
+        go_back.run_if(in_state(Menu::Settings).and(input_just_pressed(KeyCode::Escape))),
+    );
 
     app.register_type::<GlobalVolumeLabel>();
     app.add_systems(
@@ -23,7 +28,7 @@ pub(super) fn plugin(app: &mut App) {
             update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
             update_volume_label,
         )
-            .run_if(in_state(Screen::Settings)),
+            .run_if(in_state(Menu::Settings)),
     );
 }
 
@@ -31,7 +36,7 @@ pub(super) fn plugin(app: &mut App) {
 fn spawn_settings_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Settings Screen"),
-        StateScoped(Screen::Settings),
+        StateScoped(Menu::Settings),
         children![
             widget::header("Settings"),
             (
@@ -54,7 +59,7 @@ fn spawn_settings_screen(mut commands: Commands) {
                     volume_widget(),
                 ],
             ),
-            widget::button("Back", enter_title_screen),
+            widget::button("Back", go_back_on_click),
         ],
     ));
 }
@@ -158,10 +163,22 @@ fn update_volume_label(
     label.0 = text;
 }
 
-#[cfg_attr(feature = "hot_patch", hot)]
-fn enter_title_screen(
-    _trigger: Trigger<Pointer<Click>>,
-    mut next_screen: ResMut<NextState<Screen>>,
+fn go_back_on_click(
+    _: Trigger<Pointer<Click>>,
+    screen: Res<State<Screen>>,
+    mut next_menu: ResMut<NextState<Menu>>,
 ) {
-    next_screen.set(Screen::Title);
+    next_menu.set(if screen.get() == &Screen::Title {
+        Menu::Main
+    } else {
+        Menu::Pause
+    });
+}
+
+fn go_back(screen: Res<State<Screen>>, mut next_menu: ResMut<NextState<Menu>>) {
+    next_menu.set(if screen.get() == &Screen::Title {
+        Menu::Main
+    } else {
+        Menu::Pause
+    });
 }

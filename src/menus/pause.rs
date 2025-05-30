@@ -24,6 +24,7 @@ fn spawn_pause_menu(
     mut commands: Commands,
     mut crosshair: Single<&mut CrosshairState>,
     mut blocks_input: ResMut<BlocksInput>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
     commands.spawn((
         widget::ui_root("Pause Menu"),
@@ -40,6 +41,7 @@ fn spawn_pause_menu(
     crosshair
         .wants_free_cursor
         .insert(spawn_pause_menu.type_id());
+    time.pause();
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -53,12 +55,14 @@ fn close_menu(
     mut next_menu: ResMut<NextState<Menu>>,
     mut blocks_input: ResMut<BlocksInput>,
     mut crosshair: Single<&mut CrosshairState>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
     next_menu.set(Menu::None);
     blocks_input.remove(&spawn_pause_menu.type_id());
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
+    time.unpause();
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -67,12 +71,14 @@ fn quit_to_title(
     mut next_screen: ResMut<NextState<Screen>>,
     mut blocks_input: ResMut<BlocksInput>,
     mut crosshair: Single<&mut CrosshairState>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
     next_screen.set(Screen::Title);
     blocks_input.remove(&spawn_pause_menu.type_id());
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
+    time.unpause();
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -80,10 +86,12 @@ fn go_back(
     mut next_menu: ResMut<NextState<Menu>>,
     mut crosshair: Single<&mut CrosshairState>,
     mut blocks_input: ResMut<BlocksInput>,
+    mut time: ResMut<Time<Virtual>>,
 ) {
     next_menu.set(Menu::None);
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
     blocks_input.remove(&spawn_pause_menu.type_id());
+    time.unpause();
 }

@@ -6,9 +6,7 @@ use bevy::prelude::*;
 use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 
-use crate::{
-    PostPhysicsAppSystems, audio::sound_effect, screens::Screen,
-};
+use crate::{PostPhysicsAppSystems, audio::sound_effect, screens::Screen};
 
 use super::{Player, assets::PlayerAssets};
 

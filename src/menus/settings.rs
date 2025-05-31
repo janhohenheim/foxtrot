@@ -183,6 +183,9 @@ fn lower_camera_sensitivity(
     mut camera_sensitivity: ResMut<CameraSensitivity>,
 ) {
     camera_sensitivity.0 -= 0.1;
+    const MIN_SENSITIVITY: f32 = 0.1;
+    camera_sensitivity.x = camera_sensitivity.x.max(MIN_SENSITIVITY);
+    camera_sensitivity.y = camera_sensitivity.y.max(MIN_SENSITIVITY);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -191,6 +194,9 @@ fn raise_camera_sensitivity(
     mut camera_sensitivity: ResMut<CameraSensitivity>,
 ) {
     camera_sensitivity.0 += 0.1;
+    const MAX_SENSITIVITY: f32 = 20.0;
+    camera_sensitivity.x = camera_sensitivity.x.min(MAX_SENSITIVITY);
+    camera_sensitivity.y = camera_sensitivity.y.min(MAX_SENSITIVITY);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -207,11 +213,13 @@ struct CameraFovLabel;
 
 fn lower_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
     camera_fov.0 -= 1.0;
+    camera_fov.0 = camera_fov.0.max(45.0);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn raise_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
     camera_fov.0 += 1.0;
+    camera_fov.0 = camera_fov.0.min(130.0);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]

@@ -33,13 +33,13 @@ pub(crate) fn is_noclipping(player: Query<(), With<Noclip>>) -> bool {
 fn move_camera_in_noclip(
     trigger: Trigger<Fired<Move>>,
     mut player_camera_parent: Single<&mut Transform, With<PlayerCamera>>,
-    player: Single<(Entity, Has<Noclip>), With<Player>>,
+    has_noclip: Single<Has<Noclip>, With<Player>>,
 ) {
-    if !player.1 {
+    if !has_noclip.into_inner() {
         return;
     }
 
     let noclip_speed_multiplier = 0.25;
-    player_camera_parent.translation = player_camera_parent.translation
-        + (player_camera_parent.rotation * noclip_speed_multiplier * trigger.value);
+    let rotation = player_camera_parent.rotation;
+    player_camera_parent.translation += rotation * noclip_speed_multiplier * trigger.value;
 }

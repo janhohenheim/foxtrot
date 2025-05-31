@@ -59,7 +59,7 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                             ..default()
                         }
                     ),
-                    volume_widget(),
+                    widget::plus_minus_bar(CameraSensitivityLabel, lower_volume, raise_volume),
                     (
                         widget::label("Camera Sensitivity"),
                         Node {
@@ -67,7 +67,11 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                             ..default()
                         }
                     ),
-                    camera_sensitivity_widget(),
+                    widget::plus_minus_bar(
+                        CameraSensitivityLabel,
+                        lower_camera_sensitivity,
+                        raise_camera_sensitivity
+                    ),
                     (
                         widget::label("Camera FOV"),
                         Node {
@@ -75,7 +79,7 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                             ..default()
                         }
                     ),
-                    camera_fov_widget(),
+                    widget::plus_minus_bar(CameraFovLabel, lower_camera_fov, raise_camera_fov),
                 ],
             ),
             widget::button("Back", go_back_on_click),
@@ -84,27 +88,6 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
     if paused.get() == &Pause(false) {
         entity_commands.insert(BackgroundColor(SCREEN_BACKGROUND));
     }
-}
-
-fn volume_widget() -> impl Bundle {
-    (
-        Node {
-            justify_self: JustifySelf::Start,
-            ..default()
-        },
-        children![
-            widget::button_small("-", lower_volume),
-            widget::button_small("+", raise_volume),
-            (
-                Node {
-                    padding: UiRect::horizontal(Px(10.0)),
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                children![(widget::label(""), GlobalVolumeLabel)],
-            ),
-        ],
-    )
 }
 
 #[derive(Resource, Reflect, Debug)]
@@ -189,27 +172,6 @@ fn update_volume_label(
 #[reflect(Component)]
 struct CameraSensitivityLabel;
 
-fn camera_sensitivity_widget() -> impl Bundle {
-    (
-        Node {
-            justify_self: JustifySelf::Start,
-            ..default()
-        },
-        children![
-            widget::button_small("-", lower_camera_sensitivity),
-            widget::button_small("+", raise_camera_sensitivity),
-            (
-                Node {
-                    padding: UiRect::horizontal(Px(10.0)),
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                children![(widget::label(""), CameraSensitivityLabel)],
-            ),
-        ],
-    )
-}
-
 #[cfg_attr(feature = "hot_patch", hot)]
 fn lower_camera_sensitivity(
     _trigger: Trigger<Pointer<Click>>,
@@ -229,26 +191,6 @@ fn raise_camera_sensitivity(
 #[derive(Component, Reflect)]
 #[reflect(Component)]
 struct CameraFovLabel;
-fn camera_fov_widget() -> impl Bundle {
-    (
-        Node {
-            justify_self: JustifySelf::Start,
-            ..default()
-        },
-        children![
-            widget::button_small("-", lower_camera_fov),
-            widget::button_small("+", raise_camera_fov),
-            (
-                Node {
-                    padding: UiRect::horizontal(Px(10.0)),
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                children![(widget::label(""), CameraFovLabel)],
-            ),
-        ],
-    )
-}
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn lower_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: Single<&mut WorldModelFov>) {

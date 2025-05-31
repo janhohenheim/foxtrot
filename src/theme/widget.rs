@@ -142,3 +142,34 @@ where
         })),
     )
 }
+
+pub(crate) fn plus_minus_bar<E, B, M, I1, I2>(
+    label_marker: impl Component,
+    lower: I1,
+    raise: I2,
+) -> impl Bundle
+where
+    E: Event,
+    B: Bundle,
+    I1: IntoObserverSystem<E, B, M>,
+    I2: IntoObserverSystem<E, B, M>,
+{
+    (
+        Node {
+            justify_self: JustifySelf::Start,
+            ..default()
+        },
+        children![
+            button_small("-", lower),
+            button_small("+", raise),
+            (
+                Node {
+                    padding: UiRect::horizontal(Px(10.0)),
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                children![(label(""), label_marker)],
+            ),
+        ],
+    )
+}

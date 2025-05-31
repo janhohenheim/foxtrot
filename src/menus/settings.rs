@@ -180,23 +180,23 @@ struct CameraSensitivityLabel;
 #[cfg_attr(feature = "hot_patch", hot)]
 fn lower_camera_sensitivity(
     _trigger: Trigger<Pointer<Click>>,
-    mut camera_sensitivity: Single<&mut CameraSensitivity>,
+    mut camera_sensitivity: ResMut<CameraSensitivity>,
 ) {
-    ***camera_sensitivity -= 0.1;
+    camera_sensitivity.0 -= 0.1;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn raise_camera_sensitivity(
     _trigger: Trigger<Pointer<Click>>,
-    mut camera_sensitivity: Single<&mut CameraSensitivity>,
+    mut camera_sensitivity: ResMut<CameraSensitivity>,
 ) {
-    ***camera_sensitivity += 0.1;
+    camera_sensitivity.0 += 0.1;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn update_camera_sensitivity_label(
     mut label: Single<&mut Text, With<CameraSensitivityLabel>>,
-    camera_sensitivity: Single<&CameraSensitivity>,
+    camera_sensitivity: Res<CameraSensitivity>,
 ) {
     label.0 = format!("{:.1}", camera_sensitivity.x);
 }
@@ -205,19 +205,19 @@ fn update_camera_sensitivity_label(
 #[reflect(Component)]
 struct CameraFovLabel;
 
-fn lower_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: Single<&mut WorldModelFov>) {
+fn lower_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
     camera_fov.0 -= 1.0;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn raise_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: Single<&mut WorldModelFov>) {
+fn raise_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
     camera_fov.0 += 1.0;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
 fn update_camera_fov_label(
     mut label: Single<&mut Text, With<CameraFovLabel>>,
-    camera_fov: Single<&WorldModelFov>,
+    camera_fov: Res<WorldModelFov>,
 ) {
     label.0 = format!("{:.1}", camera_fov.0);
 }

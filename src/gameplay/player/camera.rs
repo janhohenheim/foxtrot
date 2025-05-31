@@ -40,6 +40,9 @@ use crate::{
 use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
+    app.init_resource::<CameraSensitivity>();
+    app.init_resource::<WorldModelFov>();
+
     app.add_observer(spawn_view_model);
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(add_render_layers_to_spot_light);
@@ -51,7 +54,16 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(PostPhysicsAppSystems::Update),
     );
+    app.add_systems(
+        Update,
+        update_world_model_fov
+            .run_if(resource_changed::<WorldModelFov>)
+            .in_set(PostPhysicsAppSystems::Update),
+    );
     app.register_type::<PlayerCamera>();
+    app.register_type::<WorldModelCamera>();
+    app.register_type::<CameraSensitivity>();
+    app.register_type::<WorldModelFov>();
 }
 
 /// The parent entity of the player's cameras.
@@ -60,6 +72,11 @@ pub(super) fn plugin(app: &mut App) {
 #[require(Transform, Visibility)]
 pub(crate) struct PlayerCamera;
 
+#[derive(Component, Debug, Reflect)]
+#[reflect(Component)]
+#[require(Transform, Visibility)]
+struct WorldModelCamera;
+
 #[cfg_attr(feature = "hot_patch", hot)]
 fn spawn_view_model(
     trigger: Trigger<OnAdd, Player>,
@@ -67,6 +84,7 @@ fn spawn_view_model(
     mut commands: Commands,
     assets: Res<AssetServer>,
     level_assets: Res<LevelAssets>,
+    fov: Res<WorldModelFov>,
 ) {
     let player_transform = player_transform.get(trigger.target()).unwrap();
     let env_map = EnvironmentMapLight {
@@ -105,17 +123,18 @@ fn spawn_view_model(
         .with_children(|parent| {
             parent.spawn((
                 Name::new("World Model Camera"),
+                WorldModelCamera,
                 Camera3d::default(),
+                Projection::from(PerspectiveProjection {
+                    fov: fov.to_radians(),
+                    ..default()
+                }),
                 Camera {
                     order: CameraOrder::World.into(),
                     hdr: true,
                     clear_color: Color::srgb_u8(15, 9, 20).into(),
                     ..default()
                 },
-                Projection::from(PerspectiveProjection {
-                    fov: 75.0_f32.to_radians(),
-                    ..default()
-                }),
                 RenderLayers::from(
                     RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::GIZMO3,
                 ),
@@ -220,6 +239,7 @@ fn configure_player_view_model(
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
     mut transform: Single<&mut Transform, With<PlayerCamera>>,
+    sensitivity: Res<CameraSensitivity>,
     window: Single<&Window>,
 ) {
     if window.cursor_options.grab_mode == CursorGrabMode::None {
@@ -228,30 +248,32 @@ fn rotate_camera_yaw_and_pitch(
 
     let delta = trigger.value;
 
-    if delta != Vec2::ZERO {
-        // Note that we are not multiplying by delta_time here.
-        // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
-        // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
-        // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
-        // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
-        // independent of the framerate.
-        let delta_yaw = delta.x;
-        let delta_pitch = delta.y;
-
-        let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
-        let yaw = yaw + delta_yaw;
-
-        // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
-        // When the user wants to move the camera back to the horizon, which way should the camera face?
-        // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
-        // so the direction picked will for all intents and purposes be arbitrary.
-        // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
-        // To not run into these issues, we clamp the pitch to a safe range.
-        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
-        let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
-
-        transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    if delta == Vec2::ZERO {
+        return;
     }
+
+    // Note that we are not multiplying by delta_time here.
+    // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
+    // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
+    // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
+    // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
+    // independent of the framerate.
+    let delta_yaw = delta.x * sensitivity.x;
+    let delta_pitch = delta.y * sensitivity.y;
+
+    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
+    let yaw = yaw + delta_yaw;
+
+    // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
+    // When the user wants to move the camera back to the horizon, which way should the camera face?
+    // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
+    // so the direction picked will for all intents and purposes be arbitrary.
+    // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
+    // To not run into these issues, we clamp the pitch to a safe range.
+    const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+    let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
+
+    transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -289,4 +311,34 @@ fn add_render_layers_to_directional_light(
     commands.entity(entity).insert(RenderLayers::from(
         RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
     ));
+}
+
+#[derive(Resource, Reflect, Debug, Deref, DerefMut)]
+#[reflect(Resource)]
+pub(crate) struct WorldModelFov(pub(crate) f32);
+
+impl Default for WorldModelFov {
+    fn default() -> Self {
+        Self(75.0)
+    }
+}
+
+fn update_world_model_fov(
+    projection: Single<&mut Projection, With<WorldModelCamera>>,
+    fov: Res<WorldModelFov>,
+) {
+    let Projection::Perspective(ref mut perspective) = *projection.into_inner() else {
+        return;
+    };
+    perspective.fov = fov.to_radians();
+}
+
+#[derive(Resource, Reflect, Debug, Deref, DerefMut)]
+#[reflect(Resource)]
+pub(crate) struct CameraSensitivity(pub(crate) Vec2);
+
+impl Default for CameraSensitivity {
+    fn default() -> Self {
+        Self(Vec2::splat(1.0))
+    }
 }

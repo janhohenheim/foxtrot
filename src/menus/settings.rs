@@ -9,6 +9,7 @@ use bevy_simple_subsecond_system::hot;
 use crate::{
     Pause,
     audio::{DEFAULT_VOLUME, max_volume},
+    gameplay::player::camera::{CameraSensitivity, WorldModelFov},
     menus::Menu,
     screens::Screen,
     theme::{palette::SCREEN_BACKGROUND, prelude::*},
@@ -28,6 +29,8 @@ pub(super) fn plugin(app: &mut App) {
         (
             update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
             update_volume_label,
+            update_camera_sensitivity_label,
+            update_camera_fov_label,
         )
             .run_if(in_state(Menu::Settings)),
     );
@@ -51,6 +54,7 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                     ..default()
                 },
                 children![
+                    // Audio
                     (
                         widget::label("Audio Volume"),
                         Node {
@@ -58,7 +62,29 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                             ..default()
                         }
                     ),
-                    volume_widget(),
+                    widget::plus_minus_bar(GlobalVolumeLabel, lower_volume, raise_volume),
+                    // Camera Sensitivity
+                    (
+                        widget::label("Camera Sensitivity"),
+                        Node {
+                            justify_self: JustifySelf::End,
+                            ..default()
+                        }
+                    ),
+                    widget::plus_minus_bar(
+                        CameraSensitivityLabel,
+                        lower_camera_sensitivity,
+                        raise_camera_sensitivity
+                    ),
+                    // Camera FOV
+                    (
+                        widget::label("Camera FOV"),
+                        Node {
+                            justify_self: JustifySelf::End,
+                            ..default()
+                        }
+                    ),
+                    widget::plus_minus_bar(CameraFovLabel, lower_camera_fov, raise_camera_fov),
                 ],
             ),
             widget::button("Back", go_back_on_click),
@@ -67,27 +93,6 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
     if paused.get() == &Pause(false) {
         entity_commands.insert(BackgroundColor(SCREEN_BACKGROUND));
     }
-}
-
-fn volume_widget() -> impl Bundle {
-    (
-        Node {
-            justify_self: JustifySelf::Start,
-            ..default()
-        },
-        children![
-            widget::button_small("-", lower_volume),
-            widget::button_small("+", raise_volume),
-            (
-                Node {
-                    padding: UiRect::horizontal(Px(10.0)),
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                children![(widget::label(""), GlobalVolumeLabel)],
-            ),
-        ],
-    )
 }
 
 #[derive(Resource, Reflect, Debug)]
@@ -166,6 +171,63 @@ fn update_volume_label(
     let empty = " ".repeat(VolumeSliderSettings::MAX_TICK_COUNT - ticks);
     let text = filled + &empty + "|";
     label.0 = text;
+}
+
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+struct CameraSensitivityLabel;
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn lower_camera_sensitivity(
+    _trigger: Trigger<Pointer<Click>>,
+    mut camera_sensitivity: ResMut<CameraSensitivity>,
+) {
+    camera_sensitivity.0 -= 0.1;
+    const MIN_SENSITIVITY: f32 = 0.1;
+    camera_sensitivity.x = camera_sensitivity.x.max(MIN_SENSITIVITY);
+    camera_sensitivity.y = camera_sensitivity.y.max(MIN_SENSITIVITY);
+}
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn raise_camera_sensitivity(
+    _trigger: Trigger<Pointer<Click>>,
+    mut camera_sensitivity: ResMut<CameraSensitivity>,
+) {
+    camera_sensitivity.0 += 0.1;
+    const MAX_SENSITIVITY: f32 = 20.0;
+    camera_sensitivity.x = camera_sensitivity.x.min(MAX_SENSITIVITY);
+    camera_sensitivity.y = camera_sensitivity.y.min(MAX_SENSITIVITY);
+}
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn update_camera_sensitivity_label(
+    mut label: Single<&mut Text, With<CameraSensitivityLabel>>,
+    camera_sensitivity: Res<CameraSensitivity>,
+) {
+    label.0 = format!("{:.1}", camera_sensitivity.x);
+}
+
+#[derive(Component, Reflect)]
+#[reflect(Component)]
+struct CameraFovLabel;
+
+fn lower_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
+    camera_fov.0 -= 1.0;
+    camera_fov.0 = camera_fov.0.max(45.0);
+}
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn raise_camera_fov(_trigger: Trigger<Pointer<Click>>, mut camera_fov: ResMut<WorldModelFov>) {
+    camera_fov.0 += 1.0;
+    camera_fov.0 = camera_fov.0.min(130.0);
+}
+
+#[cfg_attr(feature = "hot_patch", hot)]
+fn update_camera_fov_label(
+    mut label: Single<&mut Text, With<CameraFovLabel>>,
+    camera_fov: Res<WorldModelFov>,
+) {
+    label.0 = format!("{:.1}", camera_fov.0);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]

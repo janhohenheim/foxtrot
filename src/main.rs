@@ -28,7 +28,7 @@ use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
 use oxidized_navigation::OxidizedNavigation;
 
-pub struct AppPlugin;
+pub(crate) struct AppPlugin;
 
 fn main() -> AppExit {
     let mut app = App::new();
@@ -192,7 +192,7 @@ impl From<RenderLayer> for RenderLayers {
 /// Whether or not the game is paused.
 #[derive(States, Copy, Clone, Eq, PartialEq, Hash, Debug, Default)]
 #[states(scoped_entities)]
-struct Pause(pub bool);
+struct Pause(pub(crate) bool);
 
 /// A system set for systems that shouldn't run while the game is paused.
 #[derive(SystemSet, Copy, Clone, Eq, PartialEq, Hash, Debug)]

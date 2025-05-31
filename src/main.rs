@@ -28,8 +28,6 @@ use bevy::{asset::AssetMetaCheck, audio::AudioPlugin, prelude::*, render::view::
 use bevy::core_pipeline::experimental::taa::TemporalAntiAliasPlugin;
 use oxidized_navigation::OxidizedNavigation;
 
-pub(crate) struct AppPlugin;
-
 fn main() -> AppExit {
     let mut app = App::new();
 

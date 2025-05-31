@@ -298,7 +298,7 @@ fn add_render_layers_to_directional_light(
 
 #[derive(Component, Reflect, Debug, Deref, DerefMut)]
 #[reflect(Component)]
-struct WorldModelFov(f32);
+pub(crate) struct WorldModelFov(pub(crate) f32);
 
 fn update_world_model_fov(fov: Single<(&mut Projection, &WorldModelFov), Changed<WorldModelFov>>) {
     let (mut projection, fov) = fov.into_inner();
@@ -310,7 +310,7 @@ fn update_world_model_fov(fov: Single<(&mut Projection, &WorldModelFov), Changed
 
 #[derive(Component, Reflect, Debug, Deref, DerefMut)]
 #[reflect(Component)]
-struct CameraSensitivity(Vec2);
+pub(crate) struct CameraSensitivity(pub(crate) Vec2);
 
 impl Default for CameraSensitivity {
     fn default() -> Self {

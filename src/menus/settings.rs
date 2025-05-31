@@ -29,8 +29,7 @@ pub(super) fn plugin(app: &mut App) {
         (
             update_global_volume.run_if(resource_exists_and_changed::<VolumeSliderSettings>),
             update_volume_label,
-            update_horizontal_camera_sensitivity_label,
-            update_vertical_camera_sensitivity_label,
+            update_camera_sensitivity_label,
             update_camera_fov_label,
         )
             .run_if(in_state(Menu::Settings)),
@@ -55,6 +54,7 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                     ..default()
                 },
                 children![
+                    // Audio
                     (
                         widget::label("Audio Volume"),
                         Node {
@@ -62,35 +62,21 @@ fn spawn_settings_menu(mut commands: Commands, paused: Res<State<Pause>>) {
                             ..default()
                         }
                     ),
-                    widget::plus_minus_bar(
-                        HorizontalCameraSensitivityLabel,
-                        lower_volume,
-                        raise_volume
-                    ),
+                    widget::plus_minus_bar(GlobalVolumeLabel, lower_volume, raise_volume),
+                    // Camera Sensitivity
                     (
-                        widget::label("Horizontal Camera Sensitivity"),
+                        widget::label("Camera Sensitivity"),
                         Node {
                             justify_self: JustifySelf::End,
                             ..default()
                         }
                     ),
                     widget::plus_minus_bar(
-                        HorizontalCameraSensitivityLabel,
-                        lower_horizontal_camera_sensitivity,
-                        raise_horizontal_camera_sensitivity
+                        CameraSensitivityLabel,
+                        lower_camera_sensitivity,
+                        raise_camera_sensitivity
                     ),
-                    (
-                        widget::label("Vertical Camera Sensitivity"),
-                        Node {
-                            justify_self: JustifySelf::End,
-                            ..default()
-                        }
-                    ),
-                    widget::plus_minus_bar(
-                        VerticalCameraSensitivityLabel,
-                        lower_vertical_camera_sensitivity,
-                        raise_vertical_camera_sensitivity
-                    ),
+                    // Camera FOV
                     (
                         widget::label("Camera FOV"),
                         Node {
@@ -189,58 +175,30 @@ fn update_volume_label(
 
 #[derive(Component, Reflect)]
 #[reflect(Component)]
-struct HorizontalCameraSensitivityLabel;
+struct CameraSensitivityLabel;
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn lower_horizontal_camera_sensitivity(
+fn lower_camera_sensitivity(
     _trigger: Trigger<Pointer<Click>>,
     mut camera_sensitivity: Single<&mut CameraSensitivity>,
 ) {
-    camera_sensitivity.x -= 0.1;
+    ***camera_sensitivity -= 0.1;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn raise_horizontal_camera_sensitivity(
+fn raise_camera_sensitivity(
     _trigger: Trigger<Pointer<Click>>,
     mut camera_sensitivity: Single<&mut CameraSensitivity>,
 ) {
-    camera_sensitivity.x += 0.1;
+    ***camera_sensitivity += 0.1;
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
-fn update_horizontal_camera_sensitivity_label(
-    mut label: Single<&mut Text, With<HorizontalCameraSensitivityLabel>>,
+fn update_camera_sensitivity_label(
+    mut label: Single<&mut Text, With<CameraSensitivityLabel>>,
     camera_sensitivity: Single<&CameraSensitivity>,
 ) {
     label.0 = format!("{:.1}", camera_sensitivity.x);
-}
-
-#[derive(Component, Reflect)]
-#[reflect(Component)]
-struct VerticalCameraSensitivityLabel;
-
-#[cfg_attr(feature = "hot_patch", hot)]
-fn lower_vertical_camera_sensitivity(
-    _trigger: Trigger<Pointer<Click>>,
-    mut camera_sensitivity: Single<&mut CameraSensitivity>,
-) {
-    camera_sensitivity.y -= 0.1;
-}
-
-#[cfg_attr(feature = "hot_patch", hot)]
-fn raise_vertical_camera_sensitivity(
-    _trigger: Trigger<Pointer<Click>>,
-    mut camera_sensitivity: Single<&mut CameraSensitivity>,
-) {
-    camera_sensitivity.y += 0.1;
-}
-
-#[cfg_attr(feature = "hot_patch", hot)]
-fn update_vertical_camera_sensitivity_label(
-    mut label: Single<&mut Text, With<VerticalCameraSensitivityLabel>>,
-    camera_sensitivity: Single<&CameraSensitivity>,
-) {
-    label.0 = format!("{:.1}", camera_sensitivity.y);
 }
 
 #[derive(Component, Reflect)]

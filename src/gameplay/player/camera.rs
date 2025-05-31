@@ -51,6 +51,10 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(PostPhysicsAppSystems::Update),
     );
+    app.add_systems(
+        Update,
+        update_world_model_fov.in_set(PostPhysicsAppSystems::Update),
+    );
     app.register_type::<PlayerCamera>();
 }
 
@@ -100,6 +104,7 @@ fn spawn_view_model(
                 ..default()
             },
             AnimationPlayerAncestor,
+            CameraSensitivity::default(),
             SpatialListener::new(0.4),
         ))
         .with_children(|parent| {
@@ -112,10 +117,7 @@ fn spawn_view_model(
                     clear_color: Color::srgb_u8(15, 9, 20).into(),
                     ..default()
                 },
-                Projection::from(PerspectiveProjection {
-                    fov: 75.0_f32.to_radians(),
-                    ..default()
-                }),
+                WorldModelFov(75.0),
                 RenderLayers::from(
                     RenderLayer::DEFAULT | RenderLayer::PARTICLES | RenderLayer::GIZMO3,
                 ),
@@ -219,7 +221,7 @@ fn configure_player_view_model(
 #[cfg_attr(feature = "hot_patch", hot)]
 fn rotate_camera_yaw_and_pitch(
     trigger: Trigger<Fired<Rotate>>,
-    mut transform: Single<&mut Transform, With<PlayerCamera>>,
+    camera: Single<(&mut Transform, &CameraSensitivity)>,
     window: Single<&Window>,
 ) {
     if window.cursor_options.grab_mode == CursorGrabMode::None {
@@ -228,30 +230,33 @@ fn rotate_camera_yaw_and_pitch(
 
     let delta = trigger.value;
 
-    if delta != Vec2::ZERO {
-        // Note that we are not multiplying by delta_time here.
-        // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
-        // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
-        // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
-        // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
-        // independent of the framerate.
-        let delta_yaw = delta.x;
-        let delta_pitch = delta.y;
-
-        let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
-        let yaw = yaw + delta_yaw;
-
-        // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
-        // When the user wants to move the camera back to the horizon, which way should the camera face?
-        // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
-        // so the direction picked will for all intents and purposes be arbitrary.
-        // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
-        // To not run into these issues, we clamp the pitch to a safe range.
-        const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
-        let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
-
-        transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
+    if delta == Vec2::ZERO {
+        return;
     }
+
+    let (mut transform, sensitivity) = camera.into_inner();
+    // Note that we are not multiplying by delta_time here.
+    // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
+    // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
+    // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
+    // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
+    // independent of the framerate.
+    let delta_yaw = delta.x * sensitivity.x;
+    let delta_pitch = delta.y * sensitivity.y;
+
+    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
+    let yaw = yaw + delta_yaw;
+
+    // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
+    // When the user wants to move the camera back to the horizon, which way should the camera face?
+    // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
+    // so the direction picked will for all intents and purposes be arbitrary.
+    // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
+    // To not run into these issues, we clamp the pitch to a safe range.
+    const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
+    let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
+
+    transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
 }
 
 #[cfg_attr(feature = "hot_patch", hot)]
@@ -289,4 +294,26 @@ fn add_render_layers_to_directional_light(
     commands.entity(entity).insert(RenderLayers::from(
         RenderLayer::DEFAULT | RenderLayer::VIEW_MODEL,
     ));
+}
+
+#[derive(Component, Reflect, Debug, Deref, DerefMut)]
+#[reflect(Component)]
+struct WorldModelFov(f32);
+
+fn update_world_model_fov(fov: Single<(&mut Projection, &WorldModelFov), Changed<WorldModelFov>>) {
+    let (mut projection, fov) = fov.into_inner();
+    let Projection::Perspective(ref mut perspective) = *projection else {
+        return;
+    };
+    perspective.fov = fov.to_radians();
+}
+
+#[derive(Component, Reflect, Debug, Deref, DerefMut)]
+#[reflect(Component)]
+struct CameraSensitivity(Vec2);
+
+impl Default for CameraSensitivity {
+    fn default() -> Self {
+        Self(Vec2::splat(1.0))
+    }
 }

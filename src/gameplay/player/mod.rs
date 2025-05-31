@@ -13,6 +13,7 @@ use bevy_simple_subsecond_system::hot;
 use bevy_tnua::{TnuaAnimatingState, prelude::*};
 use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
+use debug_input::DebugInputContext;
 use default_input::DefaultInputContext;
 use navmesh_position::LastValidPlayerNavmeshPosition;
 
@@ -21,6 +22,7 @@ use crate::third_party::avian3d::CollisionLayer;
 mod animation;
 pub(crate) mod assets;
 pub(crate) mod camera;
+pub(crate) mod debug_input;
 pub(crate) mod default_input;
 pub(crate) mod dialogue;
 pub(crate) mod movement;
@@ -42,6 +44,7 @@ pub(super) fn plugin(app: &mut App) {
         pickup::plugin,
         navmesh_position::plugin,
         noclip::plugin,
+        debug_input::plugin,
     ));
     app.add_observer(setup_player);
     app.add_systems(PreUpdate, assert_only_one_player);
@@ -84,6 +87,7 @@ fn setup_player(
         .insert((
             RigidBody::Dynamic,
             Actions::<DefaultInputContext>::default(),
+            Actions::<DebugInputContext>::default(),
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
             Collider::capsule(PLAYER_RADIUS, PLAYER_CAPSULE_LENGTH),

@@ -37,7 +37,7 @@ use crate::{
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
 
-use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
+use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate, noclip::is_noclipping};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<CameraSensitivity>();
@@ -52,6 +52,7 @@ pub(super) fn plugin(app: &mut App) {
         Update,
         sync_camera_translation_with_player
             .run_if(in_state(Screen::Gameplay))
+            .run_if(not(is_noclipping))
             .in_set(PostPhysicsAppSystems::Update),
     );
     app.add_systems(

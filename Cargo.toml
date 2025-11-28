@@ -90,13 +90,10 @@ getrandom = { version = "0.3", default-features = false, features = [
 bevy_mod_skinned_aabb = "0.3.0"
 
 bitflags = "2.9.1"
-anyhow = "1.0.99"
 bevy-inspector-egui = { version = "0.34", optional = true }
 bevy_fix_cursor_unlock_web = "0.2.0"
-regex = "1.11.1"
 bevy_framepace = "0.20.0-rc"
 bevy_seedling = "0.6.0"
-bincode = "2"
 # Latest version that works with bevy_seedling
 wasm-bindgen = { version = "=0.2.101", optional = true }
 

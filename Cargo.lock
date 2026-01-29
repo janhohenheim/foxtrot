@@ -452,7 +452,7 @@ dependencies = [
 [[package]]
 name = "avian_rerecast"
 version = "0.5.0-dev"
-source = "git+https://github.com/janhohenheim/rerecast#5a65b116ead6478dfb593aab5046ad30185f1cd2"
+source = "git+https://github.com/janhohenheim/rerecast#5290f1447b5129b9f923caee3e1e674296f0e39f"
 dependencies = [
  "avian3d",
  "bevy_app",
@@ -1698,7 +1698,7 @@ dependencies = [
 [[package]]
 name = "bevy_rerecast_core"
 version = "0.4.0"
-source = "git+https://github.com/janhohenheim/rerecast#5a65b116ead6478dfb593aab5046ad30185f1cd2"
+source = "git+https://github.com/janhohenheim/rerecast#5290f1447b5129b9f923caee3e1e674296f0e39f"
 dependencies = [
  "anyhow",
  "bevy_app",
@@ -4463,7 +4463,7 @@ dependencies = [
  "png",
  "tiff",
  "zune-core 0.5.1",
- "zune-jpeg 0.5.11",
+ "zune-jpeg 0.5.12",
 ]
 
 [[package]]
@@ -6200,7 +6200,7 @@ dependencies = [
 [[package]]
 name = "rerecast"
 version = "0.3.0"
-source = "git+https://github.com/janhohenheim/rerecast#5a65b116ead6478dfb593aab5046ad30185f1cd2"
+source = "git+https://github.com/janhohenheim/rerecast#5290f1447b5129b9f923caee3e1e674296f0e39f"
 dependencies = [
  "anyhow",
  "bevy_reflect",
@@ -8694,9 +8694,9 @@ dependencies = [
 
 [[package]]
 name = "zune-jpeg"
-version = "0.5.11"
+version = "0.5.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2959ca473aae96a14ecedf501d20b3608d2825ba280d5adb57d651721885b0c2"
+checksum = "410e9ecef634c709e3831c2cfdb8d9c32164fae1c67496d5b68fff728eec37fe"
 dependencies = [
  "zune-core 0.5.1",
 ]

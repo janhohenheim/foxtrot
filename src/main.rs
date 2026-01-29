@@ -76,7 +76,10 @@ fn main() -> AppExit {
                 default_sampler: default_image_sampler_descriptor(),
             })
             .set(GltfPlugin {
-                use_model_forward_direction: true,
+                convert_coordinates: GltfConvertCoordinates {
+                    rotate_scene_entity: true,
+                    rotate_meshes: true,
+                },
                 ..default()
             })
             .set(LogPlugin {

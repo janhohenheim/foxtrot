@@ -61,8 +61,8 @@ avian_pickup = "0.5.0-dev"
 bevy_ahoy = "0.0.3"
 
 # navigation
-bevy_landmass = "0.10.0"
-landmass_rerecast = "0.1.0"
+bevy_landmass = "0.11.0"
+landmass_rerecast = "0.2.0"
 bevy_rerecast = { version = "0.4.0", default-features = false }
 avian_rerecast = "0.5.0-dev"
 
@@ -99,7 +99,7 @@ bincode = "2"
 # Latest version that works with bevy_seedling
 wasm-bindgen = { version = "=0.2.108", optional = true }
 
-bevy_hanabi = { version = "0.16.0", default-features = false, features = [
+bevy_hanabi = { version = "0.18", default-features = false, features = [
     "3d",
     "gpu_tests",
 ] }
@@ -197,3 +197,5 @@ avian3d = { git = "https://github.com/avianphysics/avian" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup" }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy" }
 avian_rerecast = { git = "https://github.com/janhohenheim/rerecast" }
+bevy_landmass = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.18" }
+landmass_rerecast = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.18" }

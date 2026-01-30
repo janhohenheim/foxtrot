@@ -23,28 +23,8 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 #[derive(Debug, InputAction)]
-#[action_output(Vec3)]
-pub(crate) struct Move;
-
-#[derive(Debug, InputAction)]
-#[action_output(bool)]
-pub(crate) struct Jump;
-
-#[derive(Debug, InputAction)]
 #[action_output(bool)]
 pub(crate) struct Interact;
-
-#[derive(Debug, InputAction)]
-#[action_output(Vec2)]
-pub(crate) struct Rotate;
-
-#[derive(Debug, InputAction)]
-#[action_output(bool)]
-pub(crate) struct PickupProp;
-
-#[derive(Debug, InputAction)]
-#[action_output(bool)]
-pub(crate) struct DropProp;
 
 #[derive(Debug, Component, Default)]
 #[component(on_add = PlayerInputContext::on_add)]
@@ -149,6 +129,10 @@ impl PlayerInputContext {
                         Spawn((Binding::mouse_motion(), Scale::splat(0.07))),
                         Axial::right_stick().with((Scale::splat(4.0),  DeadZone::default())),
                     ))
+                ),
+                (
+                    Action::<Interact>::new(),
+                    bindings![KeyCode::KeyE, GamepadButton::South]
                 ),
             ]));
     }

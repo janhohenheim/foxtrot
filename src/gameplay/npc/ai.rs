@@ -14,7 +14,8 @@ use bevy_landmass::{
 };
 
 use crate::{
-    PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition,
+    PrePhysicsAppSystems,
+    gameplay::{npc::NPC_SPEED, player::navmesh_position::LastValidPlayerNavmeshPosition},
     screens::Screen,
 };
 
@@ -68,12 +69,12 @@ fn setup_npc_agent(
             agent: default(),
             settings: AgentSettings {
                 radius: NPC_RADIUS,
-                desired_speed: 7.0,
-                max_speed: 8.0,
+                desired_speed: NPC_SPEED,
+                max_speed: NPC_SPEED + 1.0,
             },
             archipelago_ref: ArchipelagoRef3d::new(*archipelago),
         },
-        TargetReachedCondition::Distance(Some(2.0)),
+        TargetReachedCondition::Distance(Some(3.0)),
         ChildOf(npc),
         AgentOf(npc),
         AgentTarget3d::default(),
@@ -133,7 +134,9 @@ fn set_controller_velocity(
             };
             if global_movements.contains(action) {
                 mock.enabled = velocity != Vec3::ZERO;
-                mock.value = velocity.into();
+                let speed = velocity.length();
+                let normalized = speed / NPC_SPEED;
+                mock.value = (velocity.normalize_or_zero() * normalized).into();
             }
         }
     }

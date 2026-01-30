@@ -36,6 +36,7 @@ pub(crate) const NPC_RADIUS: f32 = 0.6;
 pub(crate) const NPC_HEIGHT: f32 = 1.3;
 const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
 const NPC_FLOAT_HEIGHT: f32 = NPC_HALF_HEIGHT + 0.01;
+const NPC_SPEED: f32 = 7.0;
 
 fn on_add(add: On<Add, Npc>, mut commands: Commands, assets: Res<AssetServer>) {
     commands
@@ -43,7 +44,10 @@ fn on_add(add: On<Add, Npc>, mut commands: Commands, assets: Res<AssetServer>) {
         .insert((
             Npc,
             Collider::cylinder(NPC_RADIUS, NPC_HEIGHT),
-            CharacterController::default(),
+            CharacterController {
+                speed: NPC_SPEED,
+                ..default()
+            },
             ColliderDensity(2_000.0),
             RigidBody::Dynamic,
             AnimationState::<NpcAnimationState>::default(),

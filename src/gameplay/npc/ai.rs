@@ -12,7 +12,6 @@ use bevy_landmass::{
 };
 
 use crate::{
-    PrePhysicsAppSystems,
     gameplay::{npc::NPC_SPEED, player::navmesh_position::LastValidPlayerNavmeshPosition},
     screens::Screen,
 };

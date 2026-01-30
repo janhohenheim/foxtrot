@@ -3,16 +3,10 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_landmass::{Archipelago3d, FromAgentRadius, PointSampleDistance3d};
 
-use crate::PrePhysicsAppSystems;
-
 use super::PLAYER_RADIUS;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_systems(
-        RunFixedMainLoop,
-        update_last_valid_player_navmesh_position
-            .in_set(PrePhysicsAppSystems::UpdateNavmeshPositions),
-    );
+    app.add_systems(FixedUpdate, update_last_valid_player_navmesh_position);
 }
 
 #[derive(Component, Reflect, Default, Deref, DerefMut)]

@@ -127,16 +127,6 @@ fn main() -> AppExit {
         )
             .chain(),
     );
-    app.configure_sets(
-        RunFixedMainLoop,
-        (
-            PrePhysicsAppSystems::UpdateNavmeshPositions,
-            PrePhysicsAppSystems::UpdateNavmeshTargets,
-            LandmassSystems::SyncExistence,
-        )
-            .chain()
-            .in_set(RunFixedMainLoopSystems::BeforeFixedMainLoop),
-    );
     // Set up the `Pause` state.
     app.init_state::<Pause>();
     app.configure_sets(Update, PausableSystems.run_if(in_state(Pause(false))));
@@ -170,18 +160,6 @@ fn main() -> AppExit {
     // because the objects they reference need to have been registered first.
     app.add_plugins((gameplay::plugin, shader_compilation::plugin));
     app.run()
-}
-
-/// High-level groupings of systems for the app in the [`RunFixedMainLoop`] schedule
-/// and the [`RunFixedMainLoopSystems::BeforeFixedMainLoop`] system set.
-/// When adding a new variant, make sure to order it in the `configure_sets`
-/// call above.
-#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
-enum PrePhysicsAppSystems {
-    /// Update last valid positions on the navmesh
-    UpdateNavmeshPositions,
-    /// Update agent targets to the last valid navmesh position
-    UpdateNavmeshTargets,
 }
 
 /// High-level groupings of systems for the app in the [`Update`] schedule.

@@ -31,7 +31,7 @@ fn play_jump_grunt(
 
     let (entity, state) = player.into_inner();
     // TODO: use actual observer
-    if state.grounded.is_none() {
+    if state.grounded.is_some() {
         *is_jumping = false;
         return;
     }

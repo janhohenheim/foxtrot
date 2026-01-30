@@ -24,6 +24,7 @@ use bevy::{
     scene::SceneInstanceReady,
     window::{CursorGrabMode, CursorOptions},
 };
+use bevy_ahoy::camera::CharacterControllerCameraOf;
 use bevy_enhanced_input::prelude::*;
 
 use crate::{
@@ -46,13 +47,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_observer(add_render_layers_to_point_light);
     app.add_observer(add_render_layers_to_spot_light);
     app.add_observer(add_render_layers_to_directional_light);
-    app.add_observer(rotate_camera_yaw_and_pitch);
-    app.add_systems(
-        Update,
-        sync_camera_translation_with_player
-            .run_if(in_state(Screen::Gameplay))
-            .in_set(PostPhysicsAppSystems::Update),
-    );
     app.add_systems(
         Update,
         update_world_model_fov
@@ -74,7 +68,6 @@ struct WorldModelCamera;
 
 fn spawn_view_model(
     add: On<Add, Player>,
-    player_transform: Query<&Transform>,
     mut commands: Commands,
     assets: Res<AssetServer>,
     level_assets: Res<LevelAssets>,
@@ -82,7 +75,6 @@ fn spawn_view_model(
 ) {
     use bevy_seedling::spatial::SpatialListener3D;
 
-    let player_transform = player_transform.get(add.entity).unwrap();
     let env_map = EnvironmentMapLight {
         diffuse_map: level_assets.env_map_diffuse.clone(),
         specular_map: level_assets.env_map_specular.clone(),
@@ -92,11 +84,14 @@ fn spawn_view_model(
 
     // Optimized for a dark outdoor scene at night
     let exposure = Exposure { ev100: 4.5 };
+
+    // Spawn the player camera
     commands
         .spawn((
+            // Enable the optional builtin camera controller
+            CharacterControllerCameraOf::new(add.entity),
             Name::new("Player Camera Parent"),
             PlayerCamera,
-            *player_transform,
             DespawnOnExit(Screen::Gameplay),
             DespawnOnExit(LoadingScreen::Shaders),
             AvianPickupActor {
@@ -228,55 +223,6 @@ fn configure_player_view_model(
             NotShadowCaster,
         ));
     }
-}
-
-fn rotate_camera_yaw_and_pitch(
-    rotate: On<Fire<Rotate>>,
-    mut transform: Single<&mut Transform, With<PlayerCamera>>,
-    sensitivity: Res<CameraSensitivity>,
-    cursor_options: Single<&CursorOptions>,
-) {
-    if cursor_options.grab_mode == CursorGrabMode::None {
-        return;
-    }
-
-    let delta = rotate.value;
-
-    if delta == Vec2::ZERO {
-        return;
-    }
-
-    // Note that we are not multiplying by delta_time here.
-    // The reason is that for mouse movement, we already get the full movement that happened since the last frame.
-    // This means that if we multiply by delta_time, we will get a smaller rotation than intended by the user.
-    // This situation is reversed when reading e.g. analog input from a gamepad however, where the same rules
-    // as for keyboard input apply. Such an input should be multiplied by delta_time to get the intended rotation
-    // independent of the framerate.
-    let delta_yaw = delta.x * sensitivity.x;
-    let delta_pitch = delta.y * sensitivity.y;
-
-    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
-    let yaw = yaw + delta_yaw;
-
-    // If the pitch was ±¹⁄₂ π, the camera would look straight up or down.
-    // When the user wants to move the camera back to the horizon, which way should the camera face?
-    // The camera has no way of knowing what direction was "forward" before landing in that extreme position,
-    // so the direction picked will for all intents and purposes be arbitrary.
-    // Another issue is that for mathematical reasons, the yaw will effectively be flipped when the pitch is at the extremes.
-    // To not run into these issues, we clamp the pitch to a safe range.
-    const PITCH_LIMIT: f32 = FRAC_PI_2 - 0.01;
-    let pitch = (pitch + delta_pitch).clamp(-PITCH_LIMIT, PITCH_LIMIT);
-
-    transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
-}
-
-fn sync_camera_translation_with_player(
-    mut player_camera_parent: Single<&mut Transform, With<PlayerCamera>>,
-    player: Single<&Transform, (With<Player>, Without<PlayerCamera>)>,
-) {
-    let camera_height = 1.84;
-    player_camera_parent.translation =
-        player.translation + Vec3::Y * (camera_height - PLAYER_FLOAT_HEIGHT);
 }
 
 fn add_render_layers_to_point_light(add: On<Add, PointLight>, mut commands: Commands) {

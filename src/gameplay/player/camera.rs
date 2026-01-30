@@ -3,7 +3,7 @@
 //! The code is adapted from <https://bevyengine.org/examples/camera/first-person-view-model/>.
 //! See that example for more information.
 
-use std::{f32::consts::FRAC_PI_2, iter};
+use std::iter;
 
 use avian_pickup::prelude::*;
 use avian3d::prelude::*;
@@ -22,10 +22,8 @@ use bevy::{
     prelude::*,
     render::view::Hdr,
     scene::SceneInstanceReady,
-    window::{CursorGrabMode, CursorOptions},
 };
 use bevy_ahoy::camera::CharacterControllerCameraOf;
-use bevy_enhanced_input::prelude::*;
 
 use crate::{
     CameraOrder, PostPhysicsAppSystems, RenderLayer,
@@ -37,7 +35,7 @@ use crate::{
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
 
-use super::{PLAYER_FLOAT_HEIGHT, Player};
+use super::Player;
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<CameraSensitivity>();

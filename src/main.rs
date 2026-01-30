@@ -7,7 +7,6 @@ mod asset_tracking;
 mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
-mod fixed_update_inspection;
 mod gameplay;
 mod hdr;
 mod menus;
@@ -165,7 +164,6 @@ fn main() -> AppExit {
         ui_camera::plugin,
         hdr::plugin,
         audio::plugin,
-        fixed_update_inspection::plugin,
     ));
 
     // Add plugins that proload levels. These have to come later than the other plugins

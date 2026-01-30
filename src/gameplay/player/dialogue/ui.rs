@@ -21,7 +21,7 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay)),
     );
     app.add_observer(hide_crosshair_on_dialogue_start)
-        .add_observer(hide_crosshair_on_dialogue_start);
+        .add_observer(show_crosshair_on_dialogue_end);
 }
 
 pub(crate) fn setup_interaction_prompt(mut commands: Commands) {

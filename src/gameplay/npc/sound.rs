@@ -4,7 +4,7 @@ use super::{Npc, assets::NpcAssets};
 use crate::{PostPhysicsAppSystems, audio::SpatialPool, screens::Screen};
 use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
-use bevy_ahoy::{CharacterController, CharacterControllerState};
+use bevy_ahoy::CharacterControllerState;
 use bevy_seedling::prelude::*;
 
 use std::time::Duration;

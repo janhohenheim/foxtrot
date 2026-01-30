@@ -14,9 +14,15 @@ impl<T> Default for AnimationState<T> {
 }
 
 pub(crate) enum AnimationStateTransition<'a, T> {
-    Maintain { state: &'a T },
+    Maintain {
+        state: &'a T,
+    },
 
-    Alter { old_state: Option<T>, state: &'a T },
+    Alter {
+        #[allow(dead_code)]
+        old_state: Option<T>,
+        state: &'a T,
+    },
 }
 
 impl<T> AnimationState<T> {
@@ -45,6 +51,7 @@ impl<T> AnimationState<T> {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn update_by_value(&'_ mut self, new_state: T) -> AnimationStateTransition<'_, T>
     where
         T: PartialEq,
@@ -59,6 +66,7 @@ impl<T> AnimationState<T> {
         self.update_by(new_state, |a, b| discriminant(a) == discriminant(b))
     }
 
+    #[allow(dead_code)]
     pub(crate) fn get(&self) -> Option<&T> {
         self.state.as_ref()
     }

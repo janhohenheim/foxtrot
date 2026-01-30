@@ -1,10 +1,8 @@
 //! NPC AI. In this case, the only AI is the ability to move towards the player.
 
-use std::f32::consts::TAU;
-
 use avian3d::prelude::*;
 use bevy::prelude::*;
-use bevy_ahoy::{CharacterController, input::GlobalMovement};
+use bevy_ahoy::input::GlobalMovement;
 use bevy_enhanced_input::prelude::*;
 use bevy_landmass::{
     TargetReachedCondition,
@@ -20,8 +18,6 @@ use crate::{
 };
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
-
-pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 6.0;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(

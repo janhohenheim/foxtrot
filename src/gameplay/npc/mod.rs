@@ -48,8 +48,8 @@ fn on_add(add: On<Add, Npc>, mut commands: Commands, assets: Res<AssetServer>) {
                 speed: NPC_SPEED,
                 ..default()
             },
-            ColliderDensity(2_000.0),
-            RigidBody::Dynamic,
+            ColliderDensity(1_000.0),
+            RigidBody::Kinematic,
             AnimationState::<NpcAnimationState>::default(),
             AnimationPlayerAncestor,
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),

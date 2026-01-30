@@ -2,6 +2,7 @@
 
 use std::time::Duration;
 
+use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
 use bevy_ahoy::{CharacterController, CharacterControllerState};
 
@@ -76,7 +77,7 @@ pub(crate) enum NpcAnimationState {
 fn play_animations(
     mut query: Query<(
         &mut AnimationState<NpcAnimationState>,
-        &CharacterController,
+        &LinearVelocity,
         &CharacterControllerState,
         &AnimationPlayers,
     )>,
@@ -86,11 +87,11 @@ fn play_animations(
         &mut AnimationTransitions,
     )>,
 ) {
-    for (mut animating_state, controller, state, anim_players) in &mut query {
+    for (mut animating_state, velocity, state, anim_players) in &mut query {
         let mut iter = q_animation.iter_many_mut(anim_players.iter());
         while let Some((animations, mut anim_player, mut transitions)) = iter.fetch_next() {
             match animating_state.update_by_discriminant({
-                let speed = controller.speed;
+                let speed = velocity.length();
                 if state.grounded.is_none() {
                     NpcAnimationState::Airborne
                 } else if speed > 4.5 {

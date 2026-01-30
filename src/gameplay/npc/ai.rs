@@ -21,16 +21,15 @@ use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
-        RunFixedMainLoop,
-        (sync_agent_velocity, set_controller_velocity)
+        FixedUpdate,
+        (
+            sync_agent_velocity,
+            set_controller_velocity,
+            rotate_npc,
+            update_agent_target,
+        )
             .chain()
-            .in_set(RunFixedMainLoopSystems::BeforeFixedMainLoop)
-            .before(LandmassSystems::SyncExistence)
             .run_if(in_state(Screen::Gameplay)),
-    );
-    app.add_systems(
-        RunFixedMainLoop,
-        update_agent_target.in_set(PrePhysicsAppSystems::UpdateNavmeshTargets),
     );
     app.add_observer(setup_npc_agent);
     app.add_input_context::<NpcInputContext>();
@@ -109,19 +108,16 @@ struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
-    mut agent_query: Query<(&Agent, &mut Transform, &Actions<NpcInputContext>)>,
+    mut agent_query: Query<(&Agent, &Actions<NpcInputContext>)>,
     mut action_mocks: Query<&mut ActionMock>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
     global_movements: Query<(), With<Action<GlobalMovement>>>,
 ) {
-    for (agent, mut transform, actions) in &mut agent_query {
+    for (agent, actions) in &mut agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();
-        if let Ok(dir) = Dir3::try_from(velocity) {
-            transform.look_to(dir, Vec3::Y);
-        }
         // TODO: make this a nice relationship query instead
         for action in actions {
             let Ok(mut mock) = action_mocks.get_mut(action) else {
@@ -134,6 +130,15 @@ fn set_controller_velocity(
                 let normalized = speed / NPC_SPEED;
                 mock.value = (velocity.normalize_or_zero() * normalized).into();
             }
+        }
+    }
+}
+
+fn rotate_npc(mut agent_query: Query<(&mut Transform, &LinearVelocity), With<Npc>>) {
+    for (mut transform, velocity) in &mut agent_query {
+        let hz_velocity = vec3(velocity.x, 0.0, velocity.z);
+        if let Ok(dir) = Dir3::new(hz_velocity) {
+            transform.look_to(dir, Vec3::Y);
         }
     }
 }

@@ -73,23 +73,14 @@ fn setup_player(
     commands
         .entity(add.entity)
         .insert((
-            RigidBody::Dynamic,
+            RigidBody::Kinematic,
             PlayerInputContext,
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
             Collider::cylinder(PLAYER_RADIUS, PLAYER_HEIGHT),
             // This is Tnua's interface component.
             CharacterController::default(),
-            // Tnua can fix the rotation, but the character will still get rotated before it can do so.
-            // By locking the rotation we can prevent this.
-            LockedAxes::ROTATION_LOCKED,
-            // Movement feels nicer without friction.
-            Friction {
-                dynamic_coefficient: 0.0,
-                static_coefficient: 0.0,
-                combine_rule: CoefficientCombine::Multiply,
-            },
-            ColliderDensity(100.0),
+            ColliderDensity(1_000.0),
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
             AnimationState::<PlayerAnimationState>::default(),
             children![(

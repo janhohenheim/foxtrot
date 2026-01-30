@@ -26,7 +26,10 @@ pub(super) fn plugin(app: &mut App) {
                         .convex_collider()
                         .smooth_by_default_angle()
                 }),
-        ),
+        )
+        .build()
+        // Fix issue with textures
+        .disable::<bevy_trenchbroom::config::ConfigPlugin>(),
         TrenchBroomPhysicsPlugin::new(AvianPhysicsBackend),
     ));
 }

@@ -3,27 +3,31 @@
 
 use bevy::{ecs::world::DeferredWorld, image::ImageSampler, prelude::*};
 use bevy_trenchbroom::prelude::*;
+use bevy_trenchbroom_avian::AvianPhysicsBackend;
 
 use crate::asset_processing::default_image_sampler_descriptor;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_plugins(TrenchBroomPlugins(
-        TrenchBroomConfig::new("foxtrot")
-            .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
-            .texture_exclusions(to_string_vec(&[
-                "*_disp_*",
-                "*_arm_*",
-                "*_nor_*",
-                "*_local",
-                "*_normal",
-                "*_roughness",
-            ]))
-            .texture_sampler(texture_sampler())
-            .default_solid_spawn_hooks(|| {
-                SpawnHooks::new()
-                    .convex_collider()
-                    .smooth_by_default_angle()
-            }),
+    app.add_plugins((
+        TrenchBroomPlugins(
+            TrenchBroomConfig::new("foxtrot")
+                .texture_extensions(to_string_vec(&["png", "jpg", "jpeg"]))
+                .texture_exclusions(to_string_vec(&[
+                    "*_disp_*",
+                    "*_arm_*",
+                    "*_nor_*",
+                    "*_local",
+                    "*_normal",
+                    "*_roughness",
+                ]))
+                .texture_sampler(texture_sampler())
+                .default_solid_scene_hooks(|| {
+                    SceneHooks::new()
+                        .convex_collider()
+                        .smooth_by_default_angle()
+                }),
+        ),
+        TrenchBroomPhysicsPlugin::new(AvianPhysicsBackend),
     ));
 }
 

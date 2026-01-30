@@ -4,11 +4,11 @@ use animation::{NpcAnimationState, setup_npc_animations};
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use bevy_tnua::{TnuaAnimatingState, prelude::*};
-use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
+use bevy_ahoy::CharacterController;
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
+    animation::AnimationState,
     asset_tracking::LoadResource,
     third_party::{
         avian3d::CollisionLayer,
@@ -33,8 +33,7 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct Npc;
 
 pub(crate) const NPC_RADIUS: f32 = 0.6;
-const NPC_CAPSULE_LENGTH: f32 = 0.1;
-pub(crate) const NPC_HEIGHT: f32 = NPC_CAPSULE_LENGTH + 2.0 * NPC_RADIUS;
+pub(crate) const NPC_HEIGHT: f32 = 1.3;
 const NPC_HALF_HEIGHT: f32 = NPC_HEIGHT / 2.0;
 const NPC_FLOAT_HEIGHT: f32 = NPC_HALF_HEIGHT + 0.01;
 
@@ -43,12 +42,11 @@ fn on_add(add: On<Add, Npc>, mut commands: Commands, assets: Res<AssetServer>) {
         .entity(add.entity)
         .insert((
             Npc,
-            Collider::capsule(NPC_RADIUS, NPC_CAPSULE_LENGTH),
-            TnuaController::default(),
-            TnuaAvian3dSensorShape(Collider::cylinder(NPC_RADIUS - 0.01, 0.0)),
+            Collider::cylinder(NPC_RADIUS, NPC_HEIGHT),
+            CharacterController::default(),
             ColliderDensity(2_000.0),
             RigidBody::Dynamic,
-            TnuaAnimatingState::<NpcAnimationState>::default(),
+            AnimationState::<NpcAnimationState>::default(),
             AnimationPlayerAncestor,
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
             // The Yarn Node is what we use to trigger dialogue.

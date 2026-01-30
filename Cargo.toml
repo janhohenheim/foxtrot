@@ -197,5 +197,3 @@ avian3d = { git = "https://github.com/avianphysics/avian" }
 avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup" }
 bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy" }
 avian_rerecast = { git = "https://github.com/janhohenheim/rerecast" }
-bevy_landmass = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.18" }
-landmass_rerecast = { git = "https://github.com/janhohenheim/landmass", branch = "bevy-0.18" }

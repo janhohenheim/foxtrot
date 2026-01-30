@@ -7,7 +7,6 @@ use crate::third_party::bevy_trenchbroom::LoadTrenchbroomModel as _;
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-use bevy_tnua::TnuaNotPlatform;
 use bevy_trenchbroom::class::QuakeClass;
 
 pub(super) fn plugin(_app: &mut App) {}
@@ -62,9 +61,6 @@ pub(crate) fn dynamic_bundle<T: QuakeClass>(
             // About the density of oak wood (600-800 kg/m^3)
             .with_default_density(800.0),
         RigidBody::Dynamic,
-        // `TnuaNotPlatform` ensures that the character controller will not try to walk on the prop.
-        // Removing this will make it so that throwing a prop at a controller sends them flying so that they stand on top of it.
-        TnuaNotPlatform,
         SceneRoot(model),
     )
 }

@@ -1274,7 +1274,8 @@ dependencies = [
 [[package]]
 name = "bevy_landmass"
 version = "0.11.0"
-source = "git+https://github.com/janhohenheim/landmass?branch=bevy-0.18#085c9369395d0d61d9042f6276e2166127abb088"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef2ebaf0dbc2e7ff2f7f58b44781e624dd257b9a723bac15870785de61c31c06"
 dependencies = [
  "bevy_app",
  "bevy_asset",
@@ -4657,7 +4658,8 @@ dependencies = [
 [[package]]
 name = "landmass"
 version = "0.9.1"
-source = "git+https://github.com/janhohenheim/landmass?branch=bevy-0.18#085c9369395d0d61d9042f6276e2166127abb088"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6a89496cbf307f53baa9d6a33e9d1eaa461452afb67e9c59ebc6b9a6a0cf28c"
 dependencies = [
  "disjoint",
  "dodgy_2d",
@@ -4671,7 +4673,8 @@ dependencies = [
 [[package]]
 name = "landmass_rerecast"
 version = "0.2.0"
-source = "git+https://github.com/janhohenheim/landmass?branch=bevy-0.18#085c9369395d0d61d9042f6276e2166127abb088"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c5a5062ce86cd41d252d93154cb1557279d61c4c543cdf0c579ffe296c9d41f"
 dependencies = [
  "bevy_app",
  "bevy_asset",

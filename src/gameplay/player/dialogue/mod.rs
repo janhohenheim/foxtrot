@@ -6,7 +6,7 @@ use avian3d::prelude::{SpatialQuery, SpatialQueryFilter};
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::*;
 
-use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
+use bevy_yarnspinner::{events::DialogueCompleted, prelude::*};
 
 use crate::{
     PostPhysicsAppSystems,
@@ -48,13 +48,7 @@ pub(super) fn plugin(app: &mut App) {
                     .and(not(is_holding_prop)),
             ),
     );
-    app.add_systems(
-        Update,
-        restore_input_context
-            .run_if(in_state(Screen::Gameplay).and(on_message::<DialogueCompleteEvent>))
-            .in_set(PostPhysicsAppSystems::Update),
-    );
-
+    app.add_observer(restore_input_context);
     app.add_observer(interact_with_dialogue);
 
     app.add_plugins(ui::plugin);
@@ -113,6 +107,7 @@ fn interact_with_dialogue(
 }
 
 fn restore_input_context(
+    _complete: On<DialogueCompleted>,
     mut crosshair: Single<&mut CrosshairState>,
     mut blocks_input: ResMut<BlocksInput>,
 ) {

@@ -28,7 +28,6 @@ pub(crate) fn spawn_level(mut commands: Commands, level_assets: Res<LevelAssets>
             MusicPool
         )],
     ));
-    commands.insert_resource(AmbientLight::NONE);
 
     let archipelago = commands
         .spawn((

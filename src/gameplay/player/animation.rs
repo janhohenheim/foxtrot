@@ -4,10 +4,9 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective};
-
 use crate::{
     PostPhysicsAppSystems,
+    animation::{AnimationState, AnimationStateTransition},
     gameplay::{animation::AnimationPlayers, crosshair::CrosshairState},
     screens::Screen,
 };
@@ -69,10 +68,7 @@ pub(crate) enum PlayerAnimationState {
 }
 
 fn play_animations(
-    mut query: Query<(
-        &mut TnuaAnimatingState<PlayerAnimationState>,
-        &AnimationPlayers,
-    )>,
+    mut query: Query<(&mut AnimationState<PlayerAnimationState>, &AnimationPlayers)>,
     mut q_animation: Query<(
         &PlayerAnimations,
         &mut AnimationPlayer,
@@ -91,8 +87,8 @@ fn play_animations(
                     PlayerAnimationState::None
                 },
             ) {
-                TnuaAnimatingStateDirective::Maintain { .. } => {}
-                TnuaAnimatingStateDirective::Alter {
+                AnimationStateTransition::Maintain { .. } => {}
+                AnimationStateTransition::Alter {
                     // We don't need the old state here, but it's available for transition
                     // animations.
                     old_state: _,

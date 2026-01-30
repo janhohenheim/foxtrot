@@ -1,6 +1,7 @@
 // Disable console on Windows for non-dev builds.
 #![cfg_attr(feature = "release", windows_subsystem = "windows")]
 
+mod animation;
 mod asset_processing;
 mod asset_tracking;
 mod audio;
@@ -19,12 +20,12 @@ mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
 use bevy::gltf::GltfPlugin;
+use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
 use bevy::log::LogPlugin;
 use bevy::log::tracing_subscriber::field::MakeExt;
 use bevy::pbr::DefaultOpaqueRendererMethod;
 use bevy::{camera::visibility::RenderLayers, ecs::error::error};
 use bevy_landmass::LandmassSystems;
-use bevy_mod_skinned_aabb::SkinnedAabbPlugin;
 use bevy_seedling::SeedlingPlugin;
 use bitflags::bitflags;
 
@@ -113,8 +114,7 @@ fn main() -> AppExit {
         SeedlingPlugin::new_web_audio(),
     ));
 
-    app.insert_resource(AmbientLight::NONE);
-    app.add_plugins(SkinnedAabbPlugin);
+    app.insert_resource(GlobalAmbientLight::NONE);
 
     // Order new `AppSet` variants by adding them here:
     app.configure_sets(

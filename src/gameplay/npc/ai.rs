@@ -4,14 +4,14 @@ use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
 use bevy::prelude::*;
+use bevy_ahoy::{CharacterController, input::GlobalMovement};
+use bevy_enhanced_input::prelude::*;
 use bevy_landmass::{
     TargetReachedCondition,
     prelude::{
         AgentDesiredVelocity3d as LandmassAgentDesiredVelocity, Velocity3d as LandmassVelocity, *,
     },
 };
-
-use bevy_tnua::prelude::*;
 
 use crate::{
     PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition,
@@ -36,6 +36,7 @@ pub(super) fn plugin(app: &mut App) {
         update_agent_target.in_set(PrePhysicsAppSystems::UpdateNavmeshTargets),
     );
     app.add_observer(setup_npc_agent);
+    app.add_input_context::<NpcInputContext>();
 }
 
 /// Setup the NPC agent. An "agent" is what `bevy_landmass` can move around.
@@ -63,8 +64,22 @@ fn setup_npc_agent(
         AgentOf(npc),
         AgentTarget3d::default(),
         WantsToFollowPlayer,
+        actions!(
+            NpcInputContext[(
+                Action::<GlobalMovement>::new(),
+                ActionMock {
+                    state: ActionState::Fired,
+                    value: Vec3::ZERO.into(),
+                    span: MockSpan::Manual,
+                    enabled: false
+                }
+            )]
+        ),
     ));
 }
+
+#[derive(Component)]
+struct NpcInputContext;
 
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
@@ -94,23 +109,27 @@ struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
-    mut agent_query: Query<(&mut TnuaController, &Agent)>,
+    agent_query: Query<(&Agent, &Actions<NpcInputContext>)>,
+    mut action_mocks: Query<&mut ActionMock>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
+    global_movements: Query<(), With<Action<GlobalMovement>>>,
 ) {
-    for (mut controller, agent) in &mut agent_query {
+    for (agent, actions) in &agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();
-        let forward = Dir3::try_from(velocity).ok();
-        controller.basis(TnuaBuiltinWalk {
-            desired_velocity: velocity,
-            desired_forward: forward,
-            float_height: NPC_FLOAT_HEIGHT,
-            spring_strength: 1500.0,
-            max_slope: NPC_MAX_SLOPE,
-            ..default()
-        });
+        // TODO: make this a nice relationship query instead
+        for action in actions {
+            let Ok(mut mock) = action_mocks.get_mut(action) else {
+                error!("Failed to get action mock");
+                continue;
+            };
+            if global_movements.contains(action) {
+                mock.enabled = velocity != Vec3::ZERO;
+                mock.value = velocity.into();
+            }
+        }
     }
 }
 

@@ -5,9 +5,8 @@ use crate::audio::SpatialPool;
 use crate::{PostPhysicsAppSystems, screens::Screen};
 use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
+use bevy_ahoy::prelude::*;
 use bevy_seedling::prelude::*;
-
-use bevy_tnua::{builtins::TnuaBuiltinJumpState, prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
@@ -20,7 +19,7 @@ pub(super) fn plugin(app: &mut App) {
 
 fn play_jump_grunt(
     mut commands: Commands,
-    player: Single<(Entity, &TnuaController), With<Player>>,
+    player: Single<(Entity, &CharacterControllerState), With<Player>>,
     mut player_assets: ResMut<PlayerAssets>,
     mut is_jumping: Local<bool>,
     mut sound_cooldown: Local<Option<Timer>>,
@@ -30,11 +29,9 @@ fn play_jump_grunt(
         .get_or_insert_with(|| Timer::new(Duration::from_millis(1000), TimerMode::Once));
     sound_cooldown.tick(time.delta());
 
-    let (entity, controller) = player.into_inner();
-    if controller
-        .concrete_action::<TnuaBuiltinJump>()
-        .is_none_or(|x| matches!(x, (_, TnuaBuiltinJumpState::FallSection)))
-    {
+    let (entity, state) = player.into_inner();
+    // TODO: use actual observer
+    if state.grounded.is_none() {
         *is_jumping = false;
         return;
     }
@@ -64,7 +61,7 @@ fn play_jump_grunt(
 
 fn play_step_sound(
     mut commands: Commands,
-    player: Single<(Entity, &TnuaController, &LinearVelocity), With<Player>>,
+    player: Single<(Entity, &CharacterControllerState, &LinearVelocity), With<Player>>,
     mut player_assets: ResMut<PlayerAssets>,
     time: Res<Time>,
     mut timer: Local<Option<Timer>>,
@@ -76,8 +73,8 @@ fn play_step_sound(
         return;
     }
 
-    let (entity, controller, linear_velocity) = player.into_inner();
-    if controller.is_airborne().unwrap_or(true) {
+    let (entity, state, linear_velocity) = player.into_inner();
+    if state.grounded.is_none() {
         return;
     }
     if linear_velocity.length_squared() < 5.0 {
@@ -94,12 +91,12 @@ fn play_step_sound(
 
 fn play_land_sound(
     mut commands: Commands,
-    player: Single<(Entity, &TnuaController), With<Player>>,
+    player: Single<(Entity, &CharacterControllerState), With<Player>>,
     mut player_assets: ResMut<PlayerAssets>,
     mut was_airborne: Local<bool>,
 ) {
-    let (entity, controller) = player.into_inner();
-    let is_airborne = controller.is_airborne().unwrap_or(true);
+    let (entity, state) = player.into_inner();
+    let is_airborne = state.grounded.is_none();
     if is_airborne {
         *was_airborne = true;
         return;

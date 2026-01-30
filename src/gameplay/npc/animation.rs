@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
-use bevy_ahoy::{CharacterController, CharacterControllerState};
+use bevy_ahoy::CharacterControllerState;
 
 use crate::{
     PostPhysicsAppSystems,

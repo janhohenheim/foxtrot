@@ -24,7 +24,6 @@ use bevy::log::LogPlugin;
 use bevy::log::tracing_subscriber::field::MakeExt;
 use bevy::pbr::DefaultOpaqueRendererMethod;
 use bevy::{camera::visibility::RenderLayers, ecs::error::error};
-use bevy_landmass::LandmassSystems;
 use bevy_seedling::SeedlingPlugin;
 use bitflags::bitflags;
 

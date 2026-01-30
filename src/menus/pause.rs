@@ -2,7 +2,12 @@
 
 use std::any::Any as _;
 
-use crate::{gameplay::crosshair::CrosshairState, menus::Menu, screens::Screen, theme::widget};
+use crate::{
+    gameplay::{crosshair::CrosshairState, player::input::BlocksInput},
+    menus::Menu,
+    screens::Screen,
+    theme::widget,
+};
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
 pub(super) fn plugin(app: &mut App) {
@@ -17,6 +22,7 @@ fn spawn_pause_menu(
     mut commands: Commands,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     commands.spawn((
         widget::ui_root("Pause Menu"),
@@ -32,6 +38,7 @@ fn spawn_pause_menu(
     crosshair
         .wants_free_cursor
         .insert(spawn_pause_menu.type_id());
+    blocks_input.insert(spawn_pause_menu.type_id());
     time.pause();
 }
 
@@ -44,11 +51,13 @@ fn close_menu(
     mut next_menu: ResMut<NextState<Menu>>,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     next_menu.set(Menu::None);
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
+    blocks_input.remove(&spawn_pause_menu.type_id());
     time.unpause();
 }
 

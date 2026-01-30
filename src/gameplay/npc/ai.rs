@@ -48,9 +48,9 @@ fn setup_npc_agent(
             NpcInputContext[(
                 Action::<GlobalMovement>::new(),
                 ActionMock {
-                    state: ActionState::Fired,
+                    state: ActionState::None,
                     value: Vec3::ZERO.into(),
-                    span: MockSpan::Manual,
+                    span: MockSpan::Updates(1),
                     enabled: false
                 }
             )]
@@ -108,27 +108,20 @@ struct Agent(Entity);
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
     mut agent_query: Query<(&Agent, &Actions<NpcInputContext>)>,
-    mut action_mocks: Query<&mut ActionMock>,
+    mut action_mocks: Query<&mut ActionMock, With<Action<GlobalMovement>>>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
-    global_movements: Query<(), With<Action<GlobalMovement>>>,
 ) {
     for (agent, actions) in &mut agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();
-        // TODO: make this a nice relationship query instead
-        for action in actions {
-            let Ok(mut mock) = action_mocks.get_mut(action) else {
-                error!("Failed to get action mock");
-                continue;
-            };
-            if global_movements.contains(action) {
-                mock.enabled = velocity != Vec3::ZERO;
-                let speed = velocity.length();
-                let normalized = speed / NPC_SPEED;
-                mock.value = (velocity.normalize_or_zero() * normalized).into();
-            }
+        let mut iter = action_mocks.iter_many_mut(actions);
+        let mut mock = iter.fetch_next().unwrap();
+
+        if let Ok((dir, speed)) = Dir3::new_and_length(velocity) {
+            let normalized = speed / NPC_SPEED;
+            *mock = ActionMock::once(ActionState::Fired, dir * normalized);
         }
     }
 }

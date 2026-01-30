@@ -56,7 +56,6 @@ impl PlayerInputContext {
                     bindings![
                         KeyCode::Space,
                         GamepadButton::South,
-                        Binding::mouse_wheel(),
                     ],
                 ),
                 (
@@ -66,7 +65,6 @@ impl PlayerInputContext {
                     bindings![
                         KeyCode::Space,
                         GamepadButton::South,
-                        Binding::mouse_wheel(),
                     ],
                 ),
                 (
@@ -76,7 +74,6 @@ impl PlayerInputContext {
                     bindings![
                         KeyCode::Space,
                         GamepadButton::South,
-                        Binding::mouse_wheel(),
                     ],
                 ),
                 (

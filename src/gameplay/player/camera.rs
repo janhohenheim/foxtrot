@@ -37,7 +37,7 @@ use crate::{
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::LoadTrenchbroomModel as _},
 };
 
-use super::{PLAYER_FLOAT_HEIGHT, Player, default_input::Rotate};
+use super::{PLAYER_FLOAT_HEIGHT, Player, input::Rotate};
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<CameraSensitivity>();

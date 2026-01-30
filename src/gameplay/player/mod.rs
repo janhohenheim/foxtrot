@@ -10,7 +10,7 @@ use bevy_ahoy::prelude::*;
 use bevy_landmass::{Character, prelude::*};
 
 use bevy_trenchbroom::prelude::*;
-use default_input::DefaultInputContext;
+use input::PlayerInputContext;
 use navmesh_position::LastValidPlayerNavmeshPosition;
 
 use crate::{
@@ -22,8 +22,8 @@ use crate::{
 mod animation;
 pub(crate) mod assets;
 pub(crate) mod camera;
-pub(crate) mod default_input;
 pub(crate) mod dialogue;
+pub(crate) mod input;
 pub(crate) mod movement_sound;
 pub(crate) mod navmesh_position;
 pub(crate) mod pickup;
@@ -33,7 +33,7 @@ pub(super) fn plugin(app: &mut App) {
         animation::plugin,
         assets::plugin,
         camera::plugin,
-        default_input::plugin,
+        input::plugin,
         dialogue::plugin,
         movement_sound::plugin,
         pickup::plugin,
@@ -74,7 +74,7 @@ fn setup_player(
         .entity(add.entity)
         .insert((
             RigidBody::Dynamic,
-            DefaultInputContext,
+            PlayerInputContext,
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
             Collider::cylinder(PLAYER_RADIUS, PLAYER_HEIGHT),

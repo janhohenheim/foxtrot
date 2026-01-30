@@ -13,7 +13,7 @@ use bevy_enhanced_input::prelude::{Press, *};
 use super::Player;
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_input_context::<DefaultInputContext>();
+    app.add_input_context::<PlayerInputContext>();
 
     app.init_resource::<BlocksInput>();
     app.add_systems(
@@ -47,19 +47,19 @@ pub(crate) struct PickupProp;
 pub(crate) struct DropProp;
 
 #[derive(Debug, Component, Default)]
-#[component(on_add = DefaultInputContext::on_add)]
-pub(crate) struct DefaultInputContext;
+#[component(on_add = PlayerInputContext::on_add)]
+pub(crate) struct PlayerInputContext;
 
 #[derive(Resource, Default, Reflect, Deref, DerefMut)]
 #[reflect(Resource)]
 pub(crate) struct BlocksInput(HashSet<TypeId>);
 
-impl DefaultInputContext {
+impl PlayerInputContext {
     fn on_add(mut world: DeferredWorld, ctx: HookContext) {
         world
             .commands()
             .entity(ctx.entity)
-            .insert(actions!(DefaultInputContext[
+            .insert(actions!(PlayerInputContext[
                 (
                     Action::<Movement>::new(),
                     ActionSettings { consume_input: false, ..default() },
@@ -160,11 +160,11 @@ fn update_player_input_binding(
     mut commands: Commands,
 ) {
     if blocks_input.is_empty() {
-        commands.entity(*player).insert(DefaultInputContext);
+        commands.entity(*player).insert(PlayerInputContext);
     } else {
         commands
             .entity(*player)
-            .remove_with_requires::<DefaultInputContext>()
-            .despawn_related::<Actions<DefaultInputContext>>();
+            .remove_with_requires::<PlayerInputContext>()
+            .despawn_related::<Actions<PlayerInputContext>>();
     }
 }

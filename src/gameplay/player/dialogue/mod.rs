@@ -23,7 +23,7 @@ mod ui;
 use super::{
     Player,
     camera::PlayerCamera,
-    default_input::{BlocksInput, Interact},
+    input::{BlocksInput, Interact},
     pickup::is_holding_prop,
 };
 

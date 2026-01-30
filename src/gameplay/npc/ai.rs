@@ -47,6 +47,20 @@ fn setup_npc_agent(
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
     let npc = add.entity;
+    commands.entity(npc).insert((
+        NpcInputContext,
+        actions!(
+            NpcInputContext[(
+                Action::<GlobalMovement>::new(),
+                ActionMock {
+                    state: ActionState::Fired,
+                    value: Vec3::ZERO.into(),
+                    span: MockSpan::Manual,
+                    enabled: false
+                }
+            )]
+        ),
+    ));
     commands.spawn((
         Name::new("NPC Agent"),
         Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
@@ -64,17 +78,6 @@ fn setup_npc_agent(
         AgentOf(npc),
         AgentTarget3d::default(),
         WantsToFollowPlayer,
-        actions!(
-            NpcInputContext[(
-                Action::<GlobalMovement>::new(),
-                ActionMock {
-                    state: ActionState::Fired,
-                    value: Vec3::ZERO.into(),
-                    span: MockSpan::Manual,
-                    enabled: false
-                }
-            )]
-        ),
     ));
 }
 
@@ -109,16 +112,19 @@ struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
-    agent_query: Query<(&Agent, &Actions<NpcInputContext>)>,
+    mut agent_query: Query<(&Agent, &mut Transform, &Actions<NpcInputContext>)>,
     mut action_mocks: Query<&mut ActionMock>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
     global_movements: Query<(), With<Action<GlobalMovement>>>,
 ) {
-    for (agent, actions) in &agent_query {
+    for (agent, mut transform, actions) in &mut agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();
+        if let Ok(dir) = Dir3::try_from(velocity) {
+            transform.look_to(dir, Vec3::Y);
+        }
         // TODO: make this a nice relationship query instead
         for action in actions {
             let Ok(mut mock) = action_mocks.get_mut(action) else {

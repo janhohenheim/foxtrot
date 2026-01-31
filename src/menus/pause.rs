@@ -66,11 +66,13 @@ fn quit_to_title(
     mut next_screen: ResMut<NextState<Screen>>,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     next_screen.set(Screen::Title);
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
+    blocks_input.remove(&spawn_pause_menu.type_id());
     time.unpause();
 }
 
@@ -78,10 +80,12 @@ fn go_back(
     mut next_menu: ResMut<NextState<Menu>>,
     mut crosshair: Single<&mut CrosshairState>,
     mut time: ResMut<Time<Virtual>>,
+    mut blocks_input: ResMut<BlocksInput>,
 ) {
     next_menu.set(Menu::None);
     crosshair
         .wants_free_cursor
         .remove(&spawn_pause_menu.type_id());
+    blocks_input.remove(&spawn_pause_menu.type_id());
     time.unpause();
 }

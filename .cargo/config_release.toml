@@ -2,11 +2,23 @@
 
 [target.wasm32-unknown-unknown]
 rustflags = [
+    # Improve performance
     "--cfg",
     "web_sys_unstable_apis",
-    "-Ctarget-feature=+sign-ext,+nontrapping-fptoint",
+    # sign-ext, nontrapping: improve performance
+    # atomics and the following args: enable multi-threading
+    "-Ctarget-feature=+sign-ext,+nontrapping-fptoint,+atomics",
+    "-Clink-arg=--shared-memory",
+    "-Clink-arg=--max-memory=1073741824",
+    "-Clink-arg=--import-memory",
+    "-Clink-arg=--export=__wasm_init_tls",
+    "-Clink-arg=--export=__tls_size",
+    "-Clink-arg=--export=__tls_align",
+    "-Clink-arg=--export=__tls_base",
+    # Compile faster
+    "-Zshare-generics=y",
+    "-Zthreads=8",
 ]
-
 [profile.web-relese]
 codegen_units = 1
 lto = "Fat"

@@ -126,11 +126,18 @@ fn set_controller_velocity(
     }
 }
 
-fn rotate_npc(mut agent_query: Query<(&mut Transform, &LinearVelocity), With<Npc>>) {
+fn rotate_npc(
+    mut agent_query: Query<(&mut Transform, &LinearVelocity), With<Npc>>,
+    time: Res<Time>,
+) {
     for (mut transform, velocity) in &mut agent_query {
         let hz_velocity = vec3(velocity.x, 0.0, velocity.z);
         if let Ok(dir) = Dir3::new(hz_velocity) {
-            transform.look_to(dir, Vec3::Y);
+            let target = transform.looking_to(dir, Vec3::Y).rotation;
+            let decay_rate = f32::ln(600.0);
+            transform
+                .rotation
+                .smooth_nudge(&target, decay_rate, time.delta_secs());
         }
     }
 }

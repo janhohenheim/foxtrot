@@ -4,9 +4,9 @@ use super::{Npc, assets::NpcAssets};
 use crate::{PostPhysicsAppSystems, audio::SpatialPool, screens::Screen};
 use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
+use bevy_ahoy::CharacterControllerState;
 use bevy_seedling::prelude::*;
 
-use bevy_tnua::prelude::*;
 use std::time::Duration;
 
 pub(super) fn plugin(app: &mut App) {
@@ -20,7 +20,7 @@ pub(super) fn plugin(app: &mut App) {
 
 fn play_step_sound(
     mut commands: Commands,
-    npc: Single<(Entity, &TnuaController, &LinearVelocity), With<Npc>>,
+    npc: Single<(Entity, &CharacterControllerState, &LinearVelocity), With<Npc>>,
     mut npc_assets: ResMut<NpcAssets>,
     time: Res<Time>,
     mut timer: Local<Option<Timer>>,
@@ -34,8 +34,8 @@ fn play_step_sound(
         return;
     }
 
-    let (entity, controller, linear_velocity) = npc.into_inner();
-    if controller.is_airborne().unwrap_or(true) {
+    let (entity, state, linear_velocity) = npc.into_inner();
+    if state.grounded.is_none() {
         return;
     }
     let speed = linear_velocity.length();

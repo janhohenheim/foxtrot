@@ -3,13 +3,13 @@
 //! When a dialogue is able to be started, we signal this to other systems by inserting a `InteractionPrompt`.
 
 use super::{DialogueSystems, InteractionPrompt};
-use crate::{PostPhysicsAppSystems, gameplay::crosshair::CrosshairState, screens::Screen};
+use crate::{gameplay::crosshair::CrosshairState, screens::Screen};
 use bevy::{
     prelude::*,
     window::{CursorGrabMode, CursorOptions},
 };
 
-use bevy_yarnspinner::events::{DialogueCompleteEvent, DialogueStartEvent};
+use bevy_yarnspinner::events::{DialogueCompleted, DialogueStarted};
 use std::any::Any;
 
 pub(super) fn plugin(app: &mut App) {
@@ -20,15 +20,8 @@ pub(super) fn plugin(app: &mut App) {
             .in_set(DialogueSystems::UpdateUi)
             .run_if(in_state(Screen::Gameplay)),
     );
-    app.add_systems(
-        Update,
-        (
-            hide_crosshair_on_dialogue_start.run_if(on_message::<DialogueStartEvent>),
-            show_crosshair_on_dialogue_end.run_if(on_message::<DialogueCompleteEvent>),
-        )
-            .run_if(in_state(Screen::Gameplay))
-            .in_set(PostPhysicsAppSystems::ChangeUi),
-    );
+    app.add_observer(hide_crosshair_on_dialogue_start)
+        .add_observer(show_crosshair_on_dialogue_end);
 }
 
 pub(crate) fn setup_interaction_prompt(mut commands: Commands) {
@@ -80,6 +73,7 @@ fn update_interaction_prompt_ui(
 }
 
 fn hide_crosshair_on_dialogue_start(
+    _start: On<DialogueStarted>,
     mut crosshair: Single<&mut CrosshairState>,
     mut cursor_options: Single<&mut CursorOptions>,
 ) {
@@ -90,6 +84,7 @@ fn hide_crosshair_on_dialogue_start(
 }
 
 fn show_crosshair_on_dialogue_end(
+    _complete: On<DialogueCompleted>,
     mut crosshair: Single<&mut CrosshairState>,
     mut cursor_options: Single<&mut CursorOptions>,
 ) {

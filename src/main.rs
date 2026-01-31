@@ -1,12 +1,12 @@
 // Disable console on Windows for non-dev builds.
 #![cfg_attr(feature = "release", windows_subsystem = "windows")]
 
+mod animation;
 mod asset_processing;
 mod asset_tracking;
 mod audio;
 #[cfg(feature = "dev")]
 mod dev_tools;
-mod fixed_update_inspection;
 mod gameplay;
 mod hdr;
 mod menus;
@@ -19,12 +19,11 @@ mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
 use bevy::gltf::GltfPlugin;
+use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
 use bevy::log::LogPlugin;
 use bevy::log::tracing_subscriber::field::MakeExt;
 use bevy::pbr::DefaultOpaqueRendererMethod;
 use bevy::{camera::visibility::RenderLayers, ecs::error::error};
-use bevy_landmass::LandmassSystems;
-use bevy_mod_skinned_aabb::SkinnedAabbPlugin;
 use bevy_seedling::SeedlingPlugin;
 use bitflags::bitflags;
 
@@ -76,7 +75,10 @@ fn main() -> AppExit {
                 default_sampler: default_image_sampler_descriptor(),
             })
             .set(GltfPlugin {
-                use_model_forward_direction: true,
+                convert_coordinates: GltfConvertCoordinates {
+                    rotate_scene_entity: true,
+                    rotate_meshes: true,
+                },
                 ..default()
             })
             .set(LogPlugin {
@@ -110,8 +112,7 @@ fn main() -> AppExit {
         SeedlingPlugin::new_web_audio(),
     ));
 
-    app.insert_resource(AmbientLight::NONE);
-    app.add_plugins(SkinnedAabbPlugin);
+    app.insert_resource(GlobalAmbientLight::NONE);
 
     // Order new `AppSet` variants by adding them here:
     app.configure_sets(
@@ -124,16 +125,6 @@ fn main() -> AppExit {
             PostPhysicsAppSystems::Update,
         )
             .chain(),
-    );
-    app.configure_sets(
-        RunFixedMainLoop,
-        (
-            PrePhysicsAppSystems::UpdateNavmeshPositions,
-            PrePhysicsAppSystems::UpdateNavmeshTargets,
-            LandmassSystems::SyncExistence,
-        )
-            .chain()
-            .in_set(RunFixedMainLoopSystems::BeforeFixedMainLoop),
     );
     // Set up the `Pause` state.
     app.init_state::<Pause>();
@@ -162,25 +153,12 @@ fn main() -> AppExit {
         ui_camera::plugin,
         hdr::plugin,
         audio::plugin,
-        fixed_update_inspection::plugin,
     ));
 
     // Add plugins that proload levels. These have to come later than the other plugins
     // because the objects they reference need to have been registered first.
     app.add_plugins((gameplay::plugin, shader_compilation::plugin));
     app.run()
-}
-
-/// High-level groupings of systems for the app in the [`RunFixedMainLoop`] schedule
-/// and the [`RunFixedMainLoopSystems::BeforeFixedMainLoop`] system set.
-/// When adding a new variant, make sure to order it in the `configure_sets`
-/// call above.
-#[derive(SystemSet, Debug, Clone, Copy, Eq, PartialEq, Hash, PartialOrd, Ord)]
-enum PrePhysicsAppSystems {
-    /// Update last valid positions on the navmesh
-    UpdateNavmeshPositions,
-    /// Update agent targets to the last valid navmesh position
-    UpdateNavmeshTargets,
 }
 
 /// High-level groupings of systems for the app in the [`Update`] schedule.

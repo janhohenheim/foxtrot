@@ -6,15 +6,15 @@
 use animation::{PlayerAnimationState, setup_player_animations};
 use avian3d::prelude::*;
 use bevy::prelude::*;
+use bevy_ahoy::prelude::*;
 use bevy_landmass::{Character, prelude::*};
 
-use bevy_tnua::{TnuaAnimatingState, prelude::*};
-use bevy_tnua_avian3d::TnuaAvian3dSensorShape;
 use bevy_trenchbroom::prelude::*;
-use default_input::DefaultInputContext;
+use input::PlayerInputContext;
 use navmesh_position::LastValidPlayerNavmeshPosition;
 
 use crate::{
+    animation::AnimationState,
     asset_tracking::LoadResource,
     third_party::{avian3d::CollisionLayer, bevy_trenchbroom::GetTrenchbroomModelPath as _},
 };
@@ -22,9 +22,8 @@ use crate::{
 mod animation;
 pub(crate) mod assets;
 pub(crate) mod camera;
-pub(crate) mod default_input;
 pub(crate) mod dialogue;
-pub(crate) mod movement;
+pub(crate) mod input;
 pub(crate) mod movement_sound;
 pub(crate) mod navmesh_position;
 pub(crate) mod pickup;
@@ -34,9 +33,8 @@ pub(super) fn plugin(app: &mut App) {
         animation::plugin,
         assets::plugin,
         camera::plugin,
-        default_input::plugin,
+        input::plugin,
         dialogue::plugin,
-        movement::plugin,
         movement_sound::plugin,
         pickup::plugin,
         navmesh_position::plugin,
@@ -54,11 +52,8 @@ pub(crate) struct Player;
 
 /// The radius of the player character's capsule.
 pub(crate) const PLAYER_RADIUS: f32 = 0.5;
-/// The length of the player character's capsule. Note that
-const PLAYER_CAPSULE_LENGTH: f32 = 1.0;
+const PLAYER_HEIGHT: f32 = 1.8;
 
-/// The total height of the player character's capsule. A capsule's height is `length + 2 * radius`.
-const PLAYER_HEIGHT: f32 = PLAYER_CAPSULE_LENGTH + 2.0 * PLAYER_RADIUS;
 /// The half height of the player character's capsule is the distance between the character's center and the lowest point of its collider.
 const PLAYER_HALF_HEIGHT: f32 = PLAYER_HEIGHT / 2.0;
 
@@ -78,27 +73,16 @@ fn setup_player(
     commands
         .entity(add.entity)
         .insert((
-            RigidBody::Dynamic,
-            DefaultInputContext,
+            RigidBody::Kinematic,
+            PlayerInputContext,
             // The player character needs to be configured as a dynamic rigid body of the physics
             // engine.
-            Collider::capsule(PLAYER_RADIUS, PLAYER_CAPSULE_LENGTH),
+            Collider::cylinder(PLAYER_RADIUS, PLAYER_HEIGHT),
             // This is Tnua's interface component.
-            TnuaController::default(),
-            // A sensor shape is not strictly necessary, but without it we'll get weird results.
-            TnuaAvian3dSensorShape(Collider::cylinder(PLAYER_RADIUS - 0.01, 0.0)),
-            // Tnua can fix the rotation, but the character will still get rotated before it can do so.
-            // By locking the rotation we can prevent this.
-            LockedAxes::ROTATION_LOCKED,
-            // Movement feels nicer without friction.
-            Friction {
-                dynamic_coefficient: 0.0,
-                static_coefficient: 0.0,
-                combine_rule: CoefficientCombine::Multiply,
-            },
-            ColliderDensity(100.0),
+            CharacterController::default(),
+            ColliderDensity(1_000.0),
             CollisionLayers::new(CollisionLayer::Character, LayerMask::ALL),
-            TnuaAnimatingState::<PlayerAnimationState>::default(),
+            AnimationState::<PlayerAnimationState>::default(),
             children![(
                 Name::new("Player Landmass Character"),
                 Transform::from_xyz(0.0, -PLAYER_FLOAT_HEIGHT, 0.0),

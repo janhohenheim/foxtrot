@@ -1,9 +1,9 @@
 //! NPC AI. In this case, the only AI is the ability to move towards the player.
 
-use std::f32::consts::TAU;
-
 use avian3d::prelude::*;
 use bevy::prelude::*;
+use bevy_ahoy::input::GlobalMovement;
+use bevy_enhanced_input::prelude::*;
 use bevy_landmass::{
     TargetReachedCondition,
     prelude::{
@@ -11,31 +11,27 @@ use bevy_landmass::{
     },
 };
 
-use bevy_tnua::prelude::*;
-
 use crate::{
-    PrePhysicsAppSystems, gameplay::player::navmesh_position::LastValidPlayerNavmeshPosition,
+    gameplay::{npc::NPC_SPEED, player::navmesh_position::LastValidPlayerNavmeshPosition},
     screens::Screen,
 };
 
 use super::{NPC_FLOAT_HEIGHT, NPC_RADIUS, Npc};
 
-pub(crate) const NPC_MAX_SLOPE: f32 = TAU / 6.0;
-
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(
-        RunFixedMainLoop,
-        (sync_agent_velocity, set_controller_velocity)
+        FixedUpdate,
+        (
+            sync_agent_velocity,
+            set_controller_velocity,
+            rotate_npc,
+            update_agent_target,
+        )
             .chain()
-            .in_set(RunFixedMainLoopSystems::BeforeFixedMainLoop)
-            .before(LandmassSystems::SyncExistence)
             .run_if(in_state(Screen::Gameplay)),
     );
-    app.add_systems(
-        RunFixedMainLoop,
-        update_agent_target.in_set(PrePhysicsAppSystems::UpdateNavmeshTargets),
-    );
     app.add_observer(setup_npc_agent);
+    app.add_input_context::<NpcInputContext>();
 }
 
 /// Setup the NPC agent. An "agent" is what `bevy_landmass` can move around.
@@ -46,6 +42,20 @@ fn setup_npc_agent(
     archipelago: Single<Entity, With<Archipelago3d>>,
 ) {
     let npc = add.entity;
+    commands.entity(npc).insert((
+        NpcInputContext,
+        actions!(
+            NpcInputContext[(
+                Action::<GlobalMovement>::new(),
+                ActionMock {
+                    state: ActionState::None,
+                    value: Vec3::ZERO.into(),
+                    span: MockSpan::Updates(1),
+                    enabled: false
+                }
+            )]
+        ),
+    ));
     commands.spawn((
         Name::new("NPC Agent"),
         Transform::from_translation(Vec3::new(0.0, -NPC_FLOAT_HEIGHT, 0.0)),
@@ -53,18 +63,21 @@ fn setup_npc_agent(
             agent: default(),
             settings: AgentSettings {
                 radius: NPC_RADIUS,
-                desired_speed: 7.0,
-                max_speed: 8.0,
+                desired_speed: NPC_SPEED,
+                max_speed: NPC_SPEED + 1.0,
             },
             archipelago_ref: ArchipelagoRef3d::new(*archipelago),
         },
-        TargetReachedCondition::Distance(Some(2.0)),
+        TargetReachedCondition::Distance(Some(3.0)),
         ChildOf(npc),
         AgentOf(npc),
         AgentTarget3d::default(),
         WantsToFollowPlayer,
     ));
 }
+
+#[derive(Component)]
+struct NpcInputContext;
 
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
@@ -94,23 +107,38 @@ struct Agent(Entity);
 
 /// Use the desired velocity as the agent's velocity.
 fn set_controller_velocity(
-    mut agent_query: Query<(&mut TnuaController, &Agent)>,
+    mut agent_query: Query<(&Agent, &Actions<NpcInputContext>)>,
+    mut action_mocks: Query<&mut ActionMock, With<Action<GlobalMovement>>>,
     desired_velocity_query: Query<&LandmassAgentDesiredVelocity>,
 ) {
-    for (mut controller, agent) in &mut agent_query {
+    for (agent, actions) in &mut agent_query {
         let Ok(desired_velocity) = desired_velocity_query.get(**agent) else {
             continue;
         };
         let velocity = desired_velocity.velocity();
-        let forward = Dir3::try_from(velocity).ok();
-        controller.basis(TnuaBuiltinWalk {
-            desired_velocity: velocity,
-            desired_forward: forward,
-            float_height: NPC_FLOAT_HEIGHT,
-            spring_strength: 1500.0,
-            max_slope: NPC_MAX_SLOPE,
-            ..default()
-        });
+        let mut iter = action_mocks.iter_many_mut(actions);
+        let mut mock = iter.fetch_next().unwrap();
+
+        if let Ok((dir, speed)) = Dir3::new_and_length(velocity) {
+            let normalized = speed / NPC_SPEED;
+            *mock = ActionMock::once(ActionState::Fired, dir * normalized);
+        }
+    }
+}
+
+fn rotate_npc(
+    mut agent_query: Query<(&mut Transform, &LinearVelocity), With<Npc>>,
+    time: Res<Time>,
+) {
+    for (mut transform, velocity) in &mut agent_query {
+        let hz_velocity = vec3(velocity.x, 0.0, velocity.z);
+        if let Ok(dir) = Dir3::new(hz_velocity) {
+            let target = transform.looking_to(dir, Vec3::Y).rotation;
+            let decay_rate = f32::ln(600.0);
+            transform
+                .rotation
+                .smooth_nudge(&target, decay_rate, time.delta_secs());
+        }
     }
 }
 

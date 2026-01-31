@@ -2,11 +2,16 @@
 
 use std::time::Duration;
 
+use avian3d::prelude::LinearVelocity;
 use bevy::prelude::*;
+use bevy_ahoy::CharacterControllerState;
 
-use bevy_tnua::{TnuaAnimatingState, TnuaAnimatingStateDirective, prelude::*};
-
-use crate::{PostPhysicsAppSystems, gameplay::animation::AnimationPlayers, screens::Screen};
+use crate::{
+    PostPhysicsAppSystems,
+    animation::{AnimationState, AnimationStateTransition},
+    gameplay::animation::AnimationPlayers,
+    screens::Screen,
+};
 
 use super::assets::NpcAssets;
 
@@ -71,8 +76,9 @@ pub(crate) enum NpcAnimationState {
 
 fn play_animations(
     mut query: Query<(
-        &mut TnuaAnimatingState<NpcAnimationState>,
-        &TnuaController,
+        &mut AnimationState<NpcAnimationState>,
+        &LinearVelocity,
+        &CharacterControllerState,
         &AnimationPlayers,
     )>,
     mut q_animation: Query<(
@@ -81,15 +87,12 @@ fn play_animations(
         &mut AnimationTransitions,
     )>,
 ) {
-    for (mut animating_state, controller, anim_players) in &mut query {
+    for (mut animating_state, velocity, state, anim_players) in &mut query {
         let mut iter = q_animation.iter_many_mut(anim_players.iter());
         while let Some((animations, mut anim_player, mut transitions)) = iter.fetch_next() {
             match animating_state.update_by_discriminant({
-                let Some((_, basis_state)) = controller.concrete_basis::<TnuaBuiltinWalk>() else {
-                    continue;
-                };
-                let speed = basis_state.running_velocity.length();
-                if controller.is_airborne().unwrap() {
+                let speed = velocity.length();
+                if state.grounded.is_none() {
                     NpcAnimationState::Airborne
                 } else if speed > 4.5 {
                     NpcAnimationState::Running(speed)
@@ -99,7 +102,7 @@ fn play_animations(
                     NpcAnimationState::Standing
                 }
             }) {
-                TnuaAnimatingStateDirective::Maintain { state } => {
+                AnimationStateTransition::Maintain { state } => {
                     if let NpcAnimationState::Running(speed) | NpcAnimationState::Walking(speed) =
                         state
                     {
@@ -111,7 +114,7 @@ fn play_animations(
                         }
                     }
                 }
-                TnuaAnimatingStateDirective::Alter {
+                AnimationStateTransition::Alter {
                     // We don't need the old state here, but it's available for transition
                     // animations.
                     old_state: _,

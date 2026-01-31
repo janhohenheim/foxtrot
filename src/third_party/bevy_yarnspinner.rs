@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 
 use bevy_trenchbroom::prelude::*;
-use bevy_yarnspinner::{events::DialogueCompleteEvent, prelude::*};
+use bevy_yarnspinner::{events::DialogueCompleted, prelude::*};
 use bevy_yarnspinner_example_dialogue_view::prelude::*;
 
 use crate::screens::Screen;
@@ -32,12 +32,12 @@ fn setup_dialogue_runner(mut commands: Commands, yarn_project: Res<YarnProject>)
 
 fn abort_all_dialogues_when_leaving_gameplay(
     q_dialogue_runner: Query<Entity, With<DialogueRunner>>,
-    mut dialogue_complete_events: MessageWriter<DialogueCompleteEvent>,
+    mut commands: Commands,
 ) {
     for dialogue_runner in q_dialogue_runner.iter() {
-        dialogue_complete_events.write(DialogueCompleteEvent {
-            source: dialogue_runner,
-        });
+        commands
+            .entity(dialogue_runner)
+            .trigger(|entity| DialogueCompleted { entity });
     }
 }
 

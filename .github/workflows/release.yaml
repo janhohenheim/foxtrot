@@ -73,7 +73,7 @@ env:
   use_github_cache: false
 
   # Need to use nightly for stutterless audio on Wasm. For simplicity, use the same toolchain across all build targets
-  toolchain: nightly-2025-08-07
+  toolchain: nightly-2025-12-11
 
 jobs:
   # Forward some environment variables as outputs of this job.

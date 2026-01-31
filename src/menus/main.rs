@@ -14,7 +14,8 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(OnEnter(Menu::Main), spawn_main_menu);
 }
 
-fn spawn_main_menu(mut commands: Commands) {
+fn spawn_main_menu(mut commands: Commands, mut cursor_options: Single<&mut CursorOptions>) {
+    cursor_options.grab_mode = CursorGrabMode::None;
     commands.spawn((
         widget::ui_root("Main Menu"),
         BackgroundColor(SCREEN_BACKGROUND),

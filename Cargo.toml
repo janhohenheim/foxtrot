@@ -189,7 +189,7 @@ debug-assertions = false
 # Not released yet
 bevy_framepace = { git = "https://github.com/aevyrie/bevy_framepace" }
 # AI-generated bandaid until upstream is on 0.18
-# Note: Hanabi-batched supports 0.18, but requires a forked Bevy
+# Note: Hanabi-batched supports 0.18, but does not support WebGPU
 bevy_hanabi = { git = "https://github.com/morgenthum/bevy_hanabi", branch = "bevy-0.18" }
 # Avian 0.6 not released yet
 bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "avian-0.6" }

@@ -1,18 +1,47 @@
 name: Release
 
 on:
-  # Trigger this workflow when a tag is pushed in the format `v1.2.3`.
-  push:
-    tags:
-      # Pattern syntax: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - "v[0-9]+.[0-9]+.[0-9]+*"
-  # Trigger this workflow manually via workflow dispatch.
+  # Trigger this workflow on a manual workflow dispatch.
   workflow_dispatch:
     inputs:
       version:
         description: "Version number in the format `v1.2.3`"
         required: true
         type: string
+      build_for_windows:
+        description: "Build for Windows (WARNING: slow!)"
+        default: true
+        type: boolean
+      build_for_macos:
+        description: "Build for macOS"
+        default: true
+        type: boolean
+      build_for_linux:
+        description: "Build for Linux"
+        default: true
+        type: boolean
+      build_for_web:
+        description: "Build for web"
+        default: true
+        type: boolean
+      upload_to_github:
+        description: "Upload to GitHub releases"
+        default: true
+        type: boolean
+      deploy_to_itch:
+        description: "Deploy to itch.io (if configured)"
+        default: true
+        type: boolean
+      deploy_to_github_pages:
+        description: "Deploy web build to GitHub Pages"
+        default: false
+        type: boolean
+      deny_warnings:
+        description: "Deny warnings"
+        default: false
+        type: boolean
+  push:
+    branches: [main]
 
 # Configure the release workflow by editing the following values.
 env:
@@ -22,55 +51,47 @@ env:
   # The path to the assets directory.
   assets_path: assets
 
-  # Whether to build and package a release for a given target platform.
-  build_for_web: true
-  build_for_linux: true
-  build_for_windows: true
-  build_for_macos: true
-
-  # Whether to upload the packages produced by this workflow to a GitHub release.
-  upload_to_github: true
-
-  # The itch.io project to upload to in the format `user-name/project-name`.
-  # There will be no upload to itch.io if this is commented out.
+  # The itch.io project to deploy to in the format `user-name/project-name`.
+  # There will be no deployment to itch.io if this is commented out.
   upload_to_itch: janhohenheim/foxtrot
-
-  ############
-  # ADVANCED #
-  ############
 
   # The ID of the app produced by this workflow.
   # Applies to macOS releases.
-  # Must contain only A-Z, a-z, 0-9, hyphen, and period: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleidentifier
+  # Must contain only A-Z, a-z, 0-9, hyphen, and period: <https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleidentifier>.
   app_id: janhohenheim.foxtrot
 
   # The base filename of the binary in the package produced by this workflow.
   # Applies to Windows, macOS, and Linux releases.
   # Defaults to `cargo_build_binary_name` if commented out.
-  #app_binary_name: foxtrot
+  #app_binary_name: my_game
 
   # The name of the `.zip` or `.dmg` file produced by this workflow.
   # Defaults to `app_binary_name` if commented out.
-  app_package_name: foxtrot
+  #app_package_name: foxtrot
 
   # The display name of the app produced by this workflow.
   # Applies to macOS releases.
   # Defaults to `app_package_name` if commented out.
-  app_display_name: Foxtrot
+  #app_display_name: Foxtrot
 
   # The short display name of the app produced by this workflow.
   # Applies to macOS releases.
-  # Must be 15 or fewer characters: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundlename
+  # Must be 15 or fewer characters: <https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundlename>.
   # Defaults to `app_display_name` if commented out.
-  #app_short_name: Foxtrot
+  #app_short_name: My Game
 
   # Before enabling LFS, please take a look at GitHub's documentation for costs and quota limits:
-  # https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-storage-and-bandwidth-usage
+  # <https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-storage-and-bandwidth-usage>
   git_lfs: false
 
-  # Enabling this only helps with consecutive releases to the same tag (and takes up cache storage space).
-  # See: https://github.com/orgs/community/discussions/27059
-  use_github_cache: false
+  # Enabling this only helps with consecutive releases to the same version (and takes up cache storage space).
+  # See: <https://github.com/orgs/community/discussions/27059>.
+  # This is most useful in combination with `continuous_deployment_to_itch`
+  use_github_cache: true
+
+  # Whether to deploy the newest version of the app on every push to `main` to itch.io. Requires `itch_page` to be set.
+  # Will ignore warnings.
+  continuous_deployment_to_itch: true
 
   # Need to use nightly for stutterless audio on Wasm. For simplicity, use the same toolchain across all build targets
   toolchain: nightly-2025-12-11
@@ -78,25 +99,32 @@ env:
 jobs:
   # Forward some environment variables as outputs of this job.
   # This is needed because the `env` context can't be used in the `if:` condition of a job:
-  # https://docs.github.com/en/actions/learn-github-actions/contexts#context-availability
+  # <https://docs.github.com/en/actions/learn-github-actions/contexts#context-availability>
   forward-env:
     runs-on: ubuntu-latest
     steps:
       - name: Do nothing
         run: "true"
     outputs:
-      upload_to_itch: ${{ env.upload_to_itch }}
+      itch_page: ${{ env.itch_page }}
+      continuous_deployment_to_itch: ${{ env.continuous_deployment_to_itch }}
 
   # Determine the version number for this workflow.
   get-version:
     runs-on: ubuntu-latest
-    steps:
-      - name: Get version number from tag
-        id: tag
-        run: echo "tag=${GITHUB_REF#refs/tags/}" >> "${GITHUB_OUTPUT}"
     outputs:
-      # Use the input from workflow dispatch, or fall back to the git tag.
-      version: ${{ inputs.version || steps.tag.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine version number
+        id: version
+        # Use the input from workflow dispatch, or fall back to the Cargo.toml version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$(cargo pkgid | sed 's/.*#//')" >> "$GITHUB_OUTPUT"
+          fi
 
   bake-assets:
     name: Bake Assets
@@ -148,6 +176,8 @@ jobs:
       - bake-assets
     env:
       version: ${{ needs.get-version.outputs.version }}
+      # Avoid rate-limiting. See: <https://github.com/cargo-bins/cargo-binstall/issues/2045>.
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         include:
@@ -194,18 +224,28 @@ jobs:
           echo "app=tmp/app/${app_package_name}"'${{ matrix.app_suffix }}' >> "${GITHUB_ENV}"
           echo "package=${app_package_name}-"'${{ matrix.platform }}${{ matrix.package_ext }}' >> "${GITHUB_ENV}"
 
+          # Rustflags:
+          RUSTFLAGS='-Zthreads=0'
+          if [ '${{ matrix.platform }}' != 'windows' ]; then
+            RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }"'-Zshare-generics=y'
+          fi
+          if [ '${{ inputs.deny_warnings }}' = 'true' ]; then
+            RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }"'-Dwarnings'
+          fi
+          echo "RUSTFLAGS=${RUSTFLAGS}" >> "${GITHUB_ENV}"
+
           # macOS environment:
-          if [ '${{ matrix.platform }}' == 'macos' ]; then
+          if [ '${{ matrix.platform }}' = 'macos' ]; then
             echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "${GITHUB_ENV}" # macOS 11.0 Big Sur is the first version to support universal binaries.
             echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> "${GITHUB_ENV}"
           fi
 
           # Check if building for this platform is enabled.
           echo 'is_platform_enabled=${{
-            (matrix.platform == 'web' && env.build_for_web == 'true') ||
-            (matrix.platform == 'linux' && env.build_for_linux == 'true') ||
-            (matrix.platform == 'windows' && env.build_for_windows == 'true') ||
-            (matrix.platform == 'macos' && env.build_for_macos == 'true')
+            (matrix.platform == 'web' && (inputs.build_for_web || (github.event_name == 'push' && env.continuous_deployment_to_itch == 'true'))) ||
+            (matrix.platform == 'linux' && inputs.build_for_linux) ||
+            (matrix.platform == 'windows' && inputs.build_for_windows) ||
+            (matrix.platform == 'macos' && inputs.build_for_macos)
           }}' >> "${GITHUB_ENV}"
 
       - name: Checkout repository
@@ -233,10 +273,11 @@ jobs:
           components: rust-src
           toolchain: ${{ env.toolchain }}
 
-      - name: Populate cargo cache
+      - name: Restore Rust cache
         if: ${{ env.is_platform_enabled == 'true' && env.use_github_cache == 'true' }}
         uses: Swatinem/rust-cache@v2
         with:
+          shared-key: release
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Install dependencies (Linux)
@@ -253,26 +294,22 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' }}
         run: rm -rf tmp; mkdir -p tmp/binary '${{ env.app }}'
 
-      - name: Build (Web)
+      - name: Build and add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
-        run: bevy build --locked --release --yes web --bundle --verbose
+        run: |
+          cargo binstall --locked --no-confirm --force wasm-bindgen-cli
+          cargo binstall --locked --no-confirm --force wasm-opt
+          bevy build --locked --release --features='${{ matrix.features }}' --yes web --bundle
+          mv 'target/bevy_web/web-release/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
 
-      - name: Add web bundle to app (Web)
-        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
-        run: mv 'target/bevy_web/web-release/${{ env.cargo_build_binary_name }}' '${{ env.app }}'
-
-      - name: Build binaries (non-Web)
+      - name: Build and add binaries to app (non-Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
         run: |
           for target in ${{ matrix.targets }}; do
-            bevy build --locked --release --target="${target}" --verbose
-            mv target/"${target}"/'release/${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
+            bevy build --locked --release --target="${target}" --features='${{ matrix.features }}'
+            mv target/"${target}"/release/'${{ env.cargo_build_binary_name }}${{ matrix.binary_ext }}' tmp/binary/"${target}"'${{ matrix.binary_ext }}'
           done
-
-      - name: Add binaries to app (non-Web)
-        if: ${{ env.is_platform_enabled == 'true' && matrix.platform != 'web' }}
-        run: |
-          if [ '${{ matrix.platform }}' == 'macos' ]; then
+          if [ '${{ matrix.platform }}' = 'macos' ]; then
             lipo tmp/binary/*'${{ matrix.binary_ext }}' -create -output '${{ env.app }}/${{ env.app_binary_name }}${{ matrix.binary_ext }}'
           else
             mv tmp/binary/*'${{ matrix.binary_ext }}' '${{ env.app }}/${{ env.app_binary_name }}${{ matrix.binary_ext }}'
@@ -341,6 +378,12 @@ jobs:
           name: package-${{ matrix.platform }}
           retention-days: 1
 
+      - name: Upload web bundle to workflow artifacts for GitHub Pages (Web)
+        if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' && inputs.deploy_to_github_pages }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.app }}/${{ env.cargo_build_binary_name }}
+
       - name: Upload package to GitHub release
         if: ${{ env.is_platform_enabled == 'true' && env.upload_to_github == 'true' }}
         uses: svenstaro/upload-release-action@v2
@@ -359,7 +402,7 @@ jobs:
       - forward-env
       - get-version
       - build
-    if: ${{ needs.forward-env.outputs.upload_to_itch != '' }}
+    if: ${{ (inputs.deploy_to_itch || (github.event_name == 'push' && needs.forward-env.outputs.continuous_deployment_to_itch == 'true')) && needs.forward-env.outputs.itch_page != '' }}
 
     steps:
       - name: Download all packages
@@ -386,3 +429,23 @@ jobs:
               tmp/"${channel}"/* \
               '${{ env.upload_to_itch }}':"${channel#package-}"
           done
+
+  # Deploy to GitHub Pages.
+  deploy-to-github-pages:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      # Required to deploy to GitHub Pages.
+      pages: write
+      # Required for GitHub Pages to verify the source of the deployment.
+      # See: <https://github.com/actions/deploy-pages/issues/329>.
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    if: ${{ inputs.deploy_to_github_pages && inputs.build_for_web }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

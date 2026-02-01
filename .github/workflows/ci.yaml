@@ -216,7 +216,7 @@ jobs:
           shared-key: lints
 
       - name: Install Bevy linter
-        run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli --all-features
+        run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_lint --all-features
 
       - name: Add cranelift to rustc
         run: rustup component add rustc-codegen-cranelift-preview --toolchain ${{ env.toolchain }}

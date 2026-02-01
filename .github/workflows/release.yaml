@@ -224,16 +224,6 @@ jobs:
           echo "app=tmp/app/${app_package_name}"'${{ matrix.app_suffix }}' >> "${GITHUB_ENV}"
           echo "package=${app_package_name}-"'${{ matrix.platform }}${{ matrix.package_ext }}' >> "${GITHUB_ENV}"
 
-          # Rustflags:
-          RUSTFLAGS='-Zthreads=0'
-          if [ '${{ matrix.platform }}' != 'windows' ]; then
-            RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }"'-Zshare-generics=y'
-          fi
-          if [ '${{ inputs.deny_warnings }}' = 'true' ]; then
-            RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }"'-Dwarnings'
-          fi
-          echo "RUSTFLAGS=${RUSTFLAGS}" >> "${GITHUB_ENV}"
-
           # macOS environment:
           if [ '${{ matrix.platform }}' = 'macos' ]; then
             echo 'MACOSX_DEPLOYMENT_TARGET=11.0' >> "${GITHUB_ENV}" # macOS 11.0 Big Sur is the first version to support universal binaries.

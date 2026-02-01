@@ -391,8 +391,8 @@ jobs:
           tag: ${{ env.version }}
           overwrite: true
 
-  # Upload all packages to itch.io.
-  upload-to-itch:
+  # Deploy to itch.io.
+  deploy-to-itch:
     runs-on: ubuntu-latest
     needs:
       - forward-env
@@ -401,7 +401,7 @@ jobs:
     if: ${{ (inputs.deploy_to_itch || (github.event_name == 'push' && needs.forward-env.outputs.continuous_deployment_to_itch == 'true')) && needs.forward-env.outputs.itch_page != '' }}
 
     steps:
-      - name: Download all packages
+      - name: Download packages
         uses: actions/download-artifact@v4
         with:
           pattern: package-*
@@ -414,16 +414,16 @@ jobs:
           chmod +x butler
           ./butler -V
 
-      - name: Upload all packages to itch.io
+      - name: Upload packages to itch.io
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_CREDENTIALS }}
         run: |
-          for channel in $(ls tmp); do
+          for package in $(ls tmp); do
             ./butler push \
               --fix-permissions \
               --userversion='${{ needs.get-version.outputs.version }}' \
-              tmp/"${channel}"/* \
-              '${{ env.upload_to_itch }}':"${channel#package-}"
+              tmp/"${package}"/* \
+              '${{ env.itch_page }}':"${package#package-}"
           done
 
   # Deploy to GitHub Pages.

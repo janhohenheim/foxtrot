@@ -287,6 +287,10 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' }}
         run: rm -rf tmp; mkdir -p tmp/binary '${{ env.app }}'
 
+      - name: Install cargo-binstall
+        if: ${{ env.is_platform_enabled == 'true' }}
+        uses: cargo-bins/cargo-binstall@main
+
       - name: Build and add web bundle to app (Web)
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'web' }}
         run: |

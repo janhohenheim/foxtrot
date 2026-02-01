@@ -274,13 +274,12 @@ jobs:
         if: ${{ env.is_platform_enabled == 'true' && matrix.platform == 'linux' }}
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
 
-      - name: Active release cargo config
-        run: |
-          ls -l
-          ls -l .cargo/
-          mv .cargo/config_release.toml .cargo/config.toml
+      - name: Activate release cargo config
+        if: ${{ env.is_platform_enabled == 'true' }}
+        run: mv .cargo/config_release.toml .cargo/config.toml
 
       - name: Install Bevy CLI
+        if: ${{ env.is_platform_enabled == 'true' }}
         run: cargo install --git=https://github.com/TheBevyFlock/bevy_cli --locked bevy_cli --all-features
 
       - name: Prepare output directories

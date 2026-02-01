@@ -94,7 +94,7 @@ env:
   continuous_deployment_to_itch: true
 
   # Need to use nightly for stutterless audio on Wasm. For simplicity, use the same toolchain across all build targets
-  toolchain: nightly-2026-01-22"
+  toolchain: nightly-2026-01-22
 
 jobs:
   # Forward some environment variables as outputs of this job.

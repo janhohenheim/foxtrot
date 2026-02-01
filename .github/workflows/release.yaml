@@ -53,7 +53,7 @@ env:
 
   # The itch.io project to deploy to in the format `user-name/project-name`.
   # There will be no deployment to itch.io if this is commented out.
-  upload_to_itch: janhohenheim/foxtrot
+  itch_page: janhohenheim/foxtrot
 
   # The ID of the app produced by this workflow.
   # Applies to macOS releases.

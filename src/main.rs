@@ -66,6 +66,8 @@ fn main() -> AppExit {
                 primary_window: Window {
                     title: "Foxtrot".to_string(),
                     fit_canvas_to_parent: true,
+                    #[cfg(feature = "web")]
+                    prevent_default_event_handling: true,
                     ..default()
                 }
                 .into(),

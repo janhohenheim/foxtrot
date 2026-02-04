@@ -10,6 +10,8 @@ import subprocess
 import sys
 import os
 import math
+import concurrent.futures
+import multiprocessing
 
 ORIGINAL_ASSETS_DIR = "assets"
 BAKED_ASSETS_DIR = "assets_baked"
@@ -55,7 +57,7 @@ def verify_that_all_tools_are_installed():
         try:
             subprocess.run(
                 tool, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            ).check_returncode()
+            )
         except FileNotFoundError:
             print(f"{tool[0]} is not installed")
             sys.exit(1)
@@ -88,85 +90,108 @@ def copy_non_texture_files_to_bake_directory():
 
 def copy_all_files_to_bake_directory():
     os.rmdir(BAKED_ASSETS_DIR)
-    _ = shutil.copytree(ORIGINAL_ASSETS_DIR, BAKED_ASSETS_DIR, dirs_exist_ok=True)
+    shutil.copytree(ORIGINAL_ASSETS_DIR, BAKED_ASSETS_DIR, dirs_exist_ok=True)
 
 
 def convert_textures_to_ktx2():
+    files_to_process = []
     for texture_dir in TEXTURE_DIRS:
-        for root, _dirs, files in os.walk(os.path.join(BAKED_ASSETS_DIR, texture_dir)):
+        search_path = os.path.join(BAKED_ASSETS_DIR, texture_dir)
+
+        for root, _dirs, files in os.walk(search_path):
             for file in files:
-                texture_name, ext_name = os.path.splitext(file)
+                _, ext_name = os.path.splitext(file)
                 if ext_name in TEXTURE_EXTENSIONS:
-                    file_path = os.path.join(root, file)
-                    resize_to_pot(file_path, file_path)
+                    files_to_process.append(os.path.join(root, file))
 
-                    # kram encode -input your_image.png -output your_image.ktx2 -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
-                    command = [
-                        "kram",
-                        "encode",
-                        "-input",
-                        file_path,
-                        "-output",
-                        os.path.join(root, f"{texture_name}.ktx2"),
-                        "-mipmin",
-                        "1",
-                        "-zstd",
-                        "0",
-                        "-encoder",
-                        "bcenc",
-                    ]
-                    base_color = False
-                    if any(suffix in file for suffix in NORMAL_MAP_SUFFIX):
-                        command.extend(["-normal", "-format", "bc5"])
-                    elif any(suffix in file for suffix in LINEAR_TEXTURE_SUFFIX):
-                        command.extend(["-format", "bc5"])
-                    else:
-                        command.extend(["-srgb", "-format", "bc7"])
-                        base_color = True
+    max_workers = max(1, multiprocessing.cpu_count() - 1)
+    print(f"Processing {len(files_to_process)} textures with {max_workers} workers...")
 
-                    # convert the texture to ktx2
-                    subprocess.run(
-                        command,
-                        check=True,
-                    ).check_returncode()
-                    if base_color:
-                        magick_command = [
-                            "magick",
-                            file_path,
-                            "-quality",
-                            "1",
-                            os.path.join(root, f"{texture_name}.jpg"),
-                        ]
-                        subprocess.run(
-                            magick_command,
-                            check=True,
-                        ).check_returncode()
-                    os.remove(file_path)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        list(executor.map(process_texture, files_to_process))
+
+
+def process_texture(file_path):
+    """
+    Worker function to process a single texture file.
+    """
+    texture_name, _ = os.path.splitext(os.path.basename(file_path))
+    root = os.path.dirname(file_path)
+    output_path = os.path.join(root, f"{texture_name}.ktx2")
+
+    resize_to_pot(file_path, file_path)
+
+    # kram encode -input your_image.png -output your_image.ktx2 -mipmin 1 -zstd 0 -format bc7 -encoder bcenc
+    command = [
+        "kram",
+        "encode",
+        "-input",
+        file_path,
+        "-output",
+        output_path,
+        "-mipmin",
+        "1",
+        "-zstd",
+        "0",
+        "-encoder",
+        "bcenc",
+    ]
+
+    base_color = False
+    filename = os.path.basename(file_path)
+
+    if any(suffix in filename for suffix in NORMAL_MAP_SUFFIX):
+        command.extend(["-normal", "-format", "bc5"])
+    elif any(suffix in filename for suffix in LINEAR_TEXTURE_SUFFIX):
+        command.extend(["-format", "bc5"])
+    else:
+        command.extend(["-srgb", "-format", "bc7"])
+        base_color = True
+
+    # convert the texture to ktx2
+    subprocess.run(command, check=True, capture_output=True)
+
+    if base_color:
+        jpg_output = os.path.join(root, f"{texture_name}.jpg")
+        magick_command = [
+            "magick",
+            file_path,
+            "-quality",
+             "85",
+            jpg_output,
+        ]
+        subprocess.run(magick_command, check=True, capture_output=True)
+
+    os.remove(file_path)
 
 
 def point_material_files_to_ktx2():
     for root, _dirs, files in os.walk(_BAKED_TEXTURES_DIR):
         for file in files:
             if file.endswith(".toml"):
-                with open(os.path.join(root, file), "r") as f:
+                path = os.path.join(root, file)
+                with open(path, "r") as f:
                     content = f.read()
                 for ext in TEXTURE_EXTENSIONS:
                     content = content.replace(ext, ".ktx2")
-                with open(os.path.join(root, file), "w") as f:
-                    _ = f.write(content)
+                with open(path, "w") as f:
+                    f.write(content)
 
 
 def point_gltf_textures_to_ktx2():
     GLTF_EXTENSIONS = [".glb", ".gltf"]
-    for root, _dirs, files in os.walk(os.path.join(BAKED_ASSETS_DIR, MODELS_SUB_DIR)):
+    models_path = os.path.join(BAKED_ASSETS_DIR, MODELS_SUB_DIR)
+
+    for root, _dirs, files in os.walk(models_path):
         for file in files:
             if os.path.splitext(file)[1] in GLTF_EXTENSIONS:
-                with open(os.path.join(root, file), "r") as f:
+                path = os.path.join(root, file)
+                with open(path, "r") as f:
                     content = f.read()
                 for ext in TEXTURE_EXTENSIONS:
                     content = content.replace(ext, ".ktx2")
-                with open(os.path.join(root, file), "w") as f:
-                    _ = f.write(content)
+                with open(path, "w") as f:
+                    f.write(content)
 
 
 def resize_to_pot(input_path: str, output_path: str):
@@ -199,7 +224,8 @@ def resize_to_pot(input_path: str, output_path: str):
                 output_path,
             ],
             check=True,
-        ).check_returncode()
+            capture_output=True
+        )
 
 
 def next_power_of_two(x: int) -> int:

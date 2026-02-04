@@ -52,7 +52,7 @@ bevy = { version = "0.18", default-features = false, features = [
     "zstd_rust",
     "reflect_auto_register"
 ] }
-bevy_enhanced_input = "0.22"
+bevy_enhanced_input = "0.23"
 
 # physics
 avian3d = "0.6.0-dev"

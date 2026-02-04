@@ -1,11 +1,9 @@
 //! [Bevy TrenchBroom](https://github.com/Noxmore/bevy_trenchbroom) is the integration layer between Bevy and [TrenchBroom](https://trenchbroom.github.io/).
 //! We use TrenchBroom to edit our levels.
 
-use bevy::{ecs::world::DeferredWorld, image::ImageSampler, prelude::*};
+use bevy::{ecs::world::DeferredWorld, prelude::*};
 use bevy_trenchbroom::prelude::*;
 use bevy_trenchbroom_avian::AvianPhysicsBackend;
-
-use crate::asset_processing::default_image_sampler_descriptor;
 
 pub(super) fn plugin(app: &mut App) {
     app.add_plugins((
@@ -20,24 +18,14 @@ pub(super) fn plugin(app: &mut App) {
                     "*_normal",
                     "*_roughness",
                 ]))
-                .texture_sampler(texture_sampler())
                 .default_solid_scene_hooks(|| {
                     SceneHooks::new()
                         .convex_collider()
                         .smooth_by_default_angle()
                 }),
-        )
-        .build()
-        // Fix issue with textures
-        .disable::<bevy_trenchbroom::config::ConfigPlugin>(),
+        ),
         TrenchBroomPhysicsPlugin::new(AvianPhysicsBackend),
     ));
-}
-
-fn texture_sampler() -> ImageSampler {
-    let mut sampler = ImageSampler::linear();
-    *sampler.get_or_init_descriptor() = default_image_sampler_descriptor();
-    sampler
 }
 
 fn to_string_vec(slice: &[&str]) -> Vec<String> {

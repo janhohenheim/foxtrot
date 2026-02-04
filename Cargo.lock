@@ -567,7 +567,7 @@ dependencies = [
 [[package]]
 name = "bevy_ahoy"
 version = "0.0.3"
-source = "git+https://github.com/janhohenheim/bevy_ahoy#497486cd86495705687ac4339c63e94500577879"
+source = "git+https://github.com/janhohenheim/bevy_ahoy#fd15962049381fc972dad04df324c5d98a33fa05"
 dependencies = [
  "avian3d",
  "avian_pickup",

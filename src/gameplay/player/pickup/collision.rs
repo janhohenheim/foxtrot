@@ -19,28 +19,32 @@ pub(super) fn plugin(app: &mut App) {
 
 fn disable_collision_with_held_prop(
     add: On<Add, HeldProp>,
+    mut commands: Commands,
     q_children: Query<&Children>,
-    mut q_collision_layers: Query<&mut CollisionLayers>,
+    q_collision_layers: Query<&CollisionLayers>,
 ) {
     let rigid_body = add.entity;
     for child in iter::once(rigid_body).chain(q_children.iter_descendants(rigid_body)) {
-        let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
+        let Ok(mut collision_layers) = q_collision_layers.get(child).copied() else {
             continue;
         };
         collision_layers.filters.remove(CollisionLayer::Character);
+        commands.entity(child).insert(collision_layers);
     }
 }
 
 fn enable_collision_with_no_longer_held_prop(
     remove: On<Remove, HeldProp>,
+    mut commands: Commands,
     q_children: Query<&Children>,
-    mut q_collision_layers: Query<&mut CollisionLayers>,
+    q_collision_layers: Query<&CollisionLayers>,
 ) {
     let rigid_body = remove.entity;
     for child in iter::once(rigid_body).chain(q_children.iter_descendants(rigid_body)) {
-        let Ok(mut collision_layers) = q_collision_layers.get_mut(child) else {
+        let Ok(mut collision_layers) = q_collision_layers.get(child).copied() else {
             continue;
         };
         collision_layers.filters.add(CollisionLayer::Character);
+        commands.entity(child).insert(collision_layers);
     }
 }

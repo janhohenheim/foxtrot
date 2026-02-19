@@ -26,15 +26,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-fn spawn_or_skip_asset_loading_screen(
-    mut commands: Commands,
-    resource_handles: Res<ResourceHandles>,
-    mut next_screen: ResMut<NextState<LoadingScreen>>,
-) {
-    if resource_handles.is_all_done() {
-        next_screen.set(LoadingScreen::Shaders);
-        return;
-    }
+fn spawn_or_skip_asset_loading_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Loading Screen"),
         BackgroundColor(SCREEN_BACKGROUND),
@@ -63,6 +55,7 @@ fn update_loading_assets_label(
         );
     }
 }
+
 fn all_assets_loaded(resource_handles: Res<ResourceHandles>) -> bool {
     resource_handles.is_all_done()
 }

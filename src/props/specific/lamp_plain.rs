@@ -1,16 +1,23 @@
 use avian3d::prelude::*;
-use bevy::prelude::*;
+use bevy::{
+    app::{HierarchyPropagatePlugin, Propagate},
+    ecs::{lifecycle::HookContext, world::DeferredWorld},
+    light::NotShadowCaster,
+    prelude::*,
+};
 
 use bevy_trenchbroom::prelude::*;
 
 use crate::{
-    asset_tracking::LoadResource as _,
-    props::{effects::disable_shadow_casting_on_instance_ready, setup::static_bundle},
+    asset_tracking::LoadResource as _, props::setup::quake_bundle,
     third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _,
 };
 
 pub(super) fn plugin(app: &mut App) {
-    app.add_observer(setup_lamp_wall_electric);
+    if !app.is_plugin_added::<HierarchyPropagatePlugin<NotShadowCaster>>() {
+        app.add_plugins(HierarchyPropagatePlugin::<NotShadowCaster>::new(PostUpdate));
+    }
+
     app.load_asset::<Gltf>(LampPlain::model_path());
 }
 
@@ -19,6 +26,7 @@ pub(super) fn plugin(app: &mut App) {
     model("models/darkmod/lights/non-extinguishable/electric_plain1_unattached.gltf"),
     classname("light_lamp_plain")
 )]
+#[component(on_add = setup_lamp_wall_electric)]
 struct LampPlain {
     color: Color,
     intensity: f32,
@@ -33,27 +41,35 @@ impl Default for LampPlain {
     }
 }
 
-fn setup_lamp_wall_electric(
-    add: On<Add, LampPlain>,
-    lamp: Query<&LampPlain>,
-    asset_server: Res<AssetServer>,
-    mut commands: Commands,
-) {
-    let lamp = lamp.get(add.entity).unwrap();
-    let bundle = static_bundle::<LampPlain>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
-    commands
-        .entity(add.entity)
-        .insert(bundle)
-        .with_child((
-            Transform::from_xyz(0.0, -0.08, -0.35),
-            PointLight {
-                color: lamp.color,
-                intensity: lamp.intensity,
-                radius: 0.05,
-                range: 20.0,
-                shadows_enabled: true,
-                ..default()
-            },
-        ))
-        .observe(disable_shadow_casting_on_instance_ready);
+fn setup_lamp_wall_electric(mut world: DeferredWorld, ctx: HookContext) {
+    println!("Spawning lamp wall electric");
+    world.commands().queue(move |world: &mut World| {
+        world.resource_scope::<AssetServer, ()>(move |world, asset_server| {
+            let &LampPlain { color, intensity } = world
+                .query::<&LampPlain>()
+                .get(world, ctx.entity)
+                .expect("Component `LampPlain` should exist");
+
+            let bundle = quake_bundle::<LampPlain>(
+                &asset_server,
+                RigidBody::Static,
+                ColliderConstructor::ConvexHullFromMesh,
+            );
+
+            world
+                .entity_mut(ctx.entity)
+                .insert((bundle, NotShadowCaster, Propagate(NotShadowCaster)))
+                .with_child((
+                    Transform::from_xyz(0.0, -0.08, -0.35),
+                    PointLight {
+                        color,
+                        intensity,
+                        radius: 0.05,
+                        range: 20.0,
+                        shadows_enabled: true,
+                        ..default()
+                    },
+                ));
+        });
+    });
 }

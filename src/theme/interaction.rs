@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{picking::hover::Hovered, prelude::*, ui::Pressed};
 use bevy_seedling::sample::{AudioSample, SamplePlayer};
 
 use crate::{PostPhysicsAppSystems, asset_tracking::LoadResource, audio::SfxPool};
@@ -7,11 +7,7 @@ pub(super) fn plugin(app: &mut App) {
     app.load_resource::<InteractionAssets>();
     app.add_systems(
         Update,
-        (
-            trigger_on_press,
-            apply_interaction_palette,
-            trigger_interaction_sound_effect,
-        )
+        (apply_interaction_palette, trigger_interaction_sound_effect)
             .run_if(resource_exists::<InteractionAssets>)
             .in_set(PostPhysicsAppSystems::ChangeUi),
     );
@@ -22,41 +18,29 @@ pub(super) fn plugin(app: &mut App) {
 /// on the current interaction state.
 #[derive(Component, Debug, Reflect)]
 #[reflect(Component)]
+#[require(Hovered)]
 pub(crate) struct InteractionPalette {
     pub(crate) none: Color,
     pub(crate) hovered: Color,
     pub(crate) pressed: Color,
 }
 
-/// Event triggered on a UI entity when the [`Interaction`] component on the same entity changes to
-/// [`Interaction::Pressed`]. Observe this event to detect e.g. button presses.
-#[derive(EntityEvent)]
-pub(crate) struct OnPress {
-    pub(crate) entity: Entity,
-}
-
-fn trigger_on_press(
-    interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
-    mut commands: Commands,
-) {
-    for (entity, interaction) in &interaction_query {
-        if matches!(interaction, Interaction::Pressed) {
-            commands.trigger(OnPress { entity });
-        }
-    }
-}
-
 fn apply_interaction_palette(
     mut palette_query: Query<
-        (&Interaction, &InteractionPalette, &mut BackgroundColor),
+        (
+            Has<Pressed>,
+            &Hovered,
+            &InteractionPalette,
+            &mut BackgroundColor,
+        ),
         Changed<Interaction>,
     >,
 ) {
-    for (interaction, palette, mut background) in &mut palette_query {
-        *background = match interaction {
-            Interaction::None => palette.none,
-            Interaction::Hovered => palette.hovered,
-            Interaction::Pressed => palette.pressed,
+    for (pressed, Hovered(hovered), palette, mut background) in &mut palette_query {
+        *background = match (pressed, hovered) {
+            (true, _) => palette.pressed,
+            (false, true) => palette.hovered,
+            (false, false) => palette.none,
         }
         .into();
     }
@@ -85,17 +69,20 @@ impl FromWorld for InteractionAssets {
     }
 }
 
+fn trigger_pressed_sound_effect(
+    _: On<Pointer<Press>>,
+    mut commands: Commands,
+    interaction_assets: Res<InteractionAssets>,
+) {
+    commands.spawn((SamplePlayer::new(interaction_assets.press.clone()), SfxPool));
+}
+
 fn trigger_interaction_sound_effect(
-    interaction_query: Query<&Interaction, Changed<Interaction>>,
+    interaction_query: Populated<&Hovered, Changed<Hovered>>,
     interaction_assets: Res<InteractionAssets>,
     mut commands: Commands,
 ) {
-    for interaction in &interaction_query {
-        let source = match interaction {
-            Interaction::Hovered => interaction_assets.hover.clone(),
-            Interaction::Pressed => interaction_assets.press.clone(),
-            _ => continue,
-        };
-        commands.spawn((SamplePlayer::new(source), SfxPool));
+    for _ in interaction_query.iter().filter(|h| h.0) {
+        commands.spawn((SamplePlayer::new(interaction_assets.hover.clone()), SfxPool));
     }
 }

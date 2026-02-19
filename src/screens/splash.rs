@@ -22,7 +22,6 @@ pub(super) fn plugin(app: &mut App) {
 
     // Add splash timer.
     app.add_systems(OnEnter(Screen::Splash), insert_splash_timer);
-    app.add_systems(OnExit(Screen::Splash), remove_splash_timer);
     app.add_systems(
         Update,
         (
@@ -102,8 +101,8 @@ fn apply_fade_in_out(mut animation_query: Query<(&ImageNodeFadeInOut, &mut Image
     }
 }
 
-#[derive(Resource, Debug, Clone, PartialEq, Reflect)]
-#[reflect(Resource)]
+#[derive(Component, Debug, Clone, PartialEq, Reflect)]
+#[reflect(Component)]
 struct SplashTimer(Timer);
 
 impl Default for SplashTimer {
@@ -113,18 +112,14 @@ impl Default for SplashTimer {
 }
 
 fn insert_splash_timer(mut commands: Commands) {
-    commands.init_resource::<SplashTimer>();
+    commands.spawn((SplashTimer::default(), DespawnOnExit(Screen::Splash)));
 }
 
-fn remove_splash_timer(mut commands: Commands) {
-    commands.remove_resource::<SplashTimer>();
-}
-
-fn tick_splash_timer(time: Res<Time>, mut timer: ResMut<SplashTimer>) {
+fn tick_splash_timer(time: Res<Time>, mut timer: Single<&mut SplashTimer>) {
     timer.0.tick(time.delta());
 }
 
-fn check_splash_timer(timer: ResMut<SplashTimer>, mut next_screen: ResMut<NextState<Screen>>) {
+fn check_splash_timer(timer: Single<&SplashTimer>, mut next_screen: ResMut<NextState<Screen>>) {
     if timer.0.just_finished() {
         next_screen.set(Screen::Title);
     }

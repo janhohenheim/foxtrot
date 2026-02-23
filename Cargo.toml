@@ -52,24 +52,24 @@ bevy = { version = "0.18", default-features = false, features = [
     "zstd_rust",
     "reflect_auto_register"
 ] }
-bevy_enhanced_input = "0.22"
+bevy_enhanced_input = "0.23"
 
 # physics
-avian3d = "0.6.0-dev"
-avian_pickup = "0.5.0-dev"
+avian3d = "0.6.0-rc.1"
+avian_pickup = "0.5.0-rc.1"
 
 # character controller
-bevy_ahoy = "0.0.3"
+bevy_ahoy = "0.1.0-rc.1"
 
 # navigation
 bevy_landmass = "0.11.0"
 landmass_rerecast = "0.2.0"
 bevy_rerecast = { version = "0.4.0", default-features = false }
-avian_rerecast = "0.5.0-dev"
+avian_rerecast = "0.5.0-rc.1"
 
 # Level editor
 bevy_trenchbroom = "0.12"
-bevy_trenchbroom_avian = "0.13.0-dev"
+bevy_trenchbroom_avian = "0.13.0-rc.1"
 
 # dialogue
 bevy_yarnspinner = "0.7"
@@ -188,13 +188,6 @@ debug-assertions = false
 [patch.crates-io]
 # Not released yet
 bevy_framepace = { git = "https://github.com/aevyrie/bevy_framepace" }
-# AI-generated bandaid until upstream is on 0.18
-# Note: Hanabi-batched supports 0.18, but does not support WebGPU
-bevy_hanabi = { git = "https://github.com/morgenthum/bevy_hanabi", branch = "bevy-0.18" }
 # Avian 0.6 not released yet
 bevy_trenchbroom = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "avian-0.6" }
 bevy_trenchbroom_avian = { git = "https://github.com/janhohenheim/bevy_trenchbroom", branch = "avian-0.6" }
-avian3d = { git = "https://github.com/avianphysics/avian" }
-avian_pickup = { git = "https://github.com/janhohenheim/avian_pickup" }
-bevy_ahoy = { git = "https://github.com/janhohenheim/bevy_ahoy" }
-avian_rerecast = { git = "https://github.com/janhohenheim/rerecast" }

@@ -1,7 +1,12 @@
 use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
+use bevy::app::Propagate;
+use bevy::asset::io::embedded::GetAssetServer as _;
 use bevy::camera::visibility::RenderLayers;
+use bevy::ecs::lifecycle::HookContext;
+use bevy::ecs::world::DeferredWorld;
+use bevy::light::NotShadowCaster;
 use bevy_hanabi::prelude::{Gradient, *};
 use bevy_seedling::prelude::*;
 use bevy_seedling::sample::AudioSample;
@@ -10,13 +15,9 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::RenderLayer;
 use crate::asset_tracking::LoadResource as _;
+use crate::props::setup::quake_bundle;
 use crate::third_party::bevy_trenchbroom::GetTrenchbroomModelPath as _;
-use crate::{
-    PostPhysicsAppSystems,
-    audio::SpatialPool,
-    props::{effects::disable_shadow_casting_on_instance_ready, setup::static_bundle},
-    screens::Screen,
-};
+use crate::{PostPhysicsAppSystems, audio::SpatialPool, screens::Screen};
 use bevy::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
@@ -28,7 +29,6 @@ pub(super) fn plugin(app: &mut App) {
             .run_if(in_state(Screen::Gameplay))
             .in_set(PostPhysicsAppSystems::Update),
     );
-    app.add_observer(setup_burning_logs);
     app.load_asset::<Gltf>(BurningLogs::model_path());
     app.add_observer(add_particle_effects);
 }
@@ -37,6 +37,7 @@ pub(super) fn plugin(app: &mut App) {
     base(Transform, Visibility),
     model("models/darkmod/fireplace/burntwood.gltf")
 )]
+#[component(on_add = setup_burning_logs)]
 pub(crate) struct BurningLogs;
 
 #[derive(Resource, Asset, Clone, TypePath)]
@@ -71,36 +72,42 @@ const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 
 const BASE_INTENSITY: f32 = 150_000.0;
 
-fn setup_burning_logs(
-    add: On<Add, BurningLogs>,
-    asset_server: Res<AssetServer>,
-    mut commands: Commands,
-) {
-    let static_bundle =
-        static_bundle::<BurningLogs>(&asset_server, ColliderConstructor::ConvexHullFromMesh);
-    let sound_effect: Handle<AudioSample> = asset_server.load(SOUND_PATH);
+fn setup_burning_logs(mut world: DeferredWorld, ctx: HookContext) {
+    if world.is_scene_world() {
+        return;
+    }
+    world.commands().queue(move |world: &mut World| {
+        let asset_server = world.get_asset_server().clone();
+        let static_bundle = quake_bundle::<BurningLogs>(
+            asset_server.clone(),
+            RigidBody::Static,
+            ColliderConstructor::ConvexHullFromMesh,
+        );
+        let sound_effect: Handle<AudioSample> = asset_server.load(SOUND_PATH);
 
-    commands
-        .entity(add.entity)
-        .insert((
-            static_bundle,
-            SamplePlayer::new(sound_effect)
-                .looping()
-                .with_volume(Volume::Linear(0.25)),
-            SpatialPool,
-        ))
-        .observe(disable_shadow_casting_on_instance_ready)
-        .with_child((
-            PointLight {
-                color: Color::srgb(1.0, 0.7, 0.4),
-                intensity: BASE_INTENSITY,
-                radius: 0.1,
-                shadows_enabled: true,
-                ..default()
-            },
-            Transform::from_xyz(0.0, 0.2, 0.0),
-            Flicker,
-        ));
+        world
+            .entity_mut(ctx.entity)
+            .insert((
+                static_bundle,
+                NotShadowCaster,
+                Propagate(NotShadowCaster),
+                SamplePlayer::new(sound_effect)
+                    .looping()
+                    .with_volume(Volume::Linear(0.25)),
+                SpatialPool,
+            ))
+            .with_child((
+                PointLight {
+                    color: Color::srgb(1.0, 0.7, 0.4),
+                    intensity: BASE_INTENSITY,
+                    radius: 0.1,
+                    shadows_enabled: true,
+                    ..default()
+                },
+                Transform::from_xyz(0.0, 0.2, 0.0),
+                Flicker,
+            ));
+    });
 }
 
 #[derive(Component, Debug, Reflect)]

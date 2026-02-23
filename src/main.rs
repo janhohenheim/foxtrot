@@ -18,8 +18,10 @@ mod third_party;
 mod ui_camera;
 
 use asset_processing::default_image_sampler_descriptor;
+use bevy::app::HierarchyPropagatePlugin;
 use bevy::gltf::GltfPlugin;
 use bevy::gltf::convert_coordinates::GltfConvertCoordinates;
+use bevy::light::NotShadowCaster;
 use bevy::log::LogPlugin;
 use bevy::log::tracing_subscriber::field::MakeExt;
 use bevy::pbr::DefaultOpaqueRendererMethod;
@@ -112,6 +114,7 @@ fn main() -> AppExit {
         SeedlingPlugin::default(),
         #[cfg(feature = "web")]
         SeedlingPlugin::new_web_audio(),
+        HierarchyPropagatePlugin::<NotShadowCaster>::new(Update),
     ));
 
     app.insert_resource(GlobalAmbientLight::NONE);

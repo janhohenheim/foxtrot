@@ -30,15 +30,7 @@ pub(super) fn plugin(app: &mut App) {
     );
 }
 
-fn spawn_or_skip_shader_compilation_loading_screen(
-    mut commands: Commands,
-    loaded_pipeline_count: Res<LoadedPipelineCount>,
-    mut next_screen: ResMut<NextState<LoadingScreen>>,
-) {
-    if loaded_pipeline_count.is_done() {
-        next_screen.set(LoadingScreen::Level);
-        return;
-    }
+fn spawn_or_skip_shader_compilation_loading_screen(mut commands: Commands) {
     commands.spawn((
         widget::ui_root("Loading Screen"),
         BackgroundColor(SCREEN_BACKGROUND),

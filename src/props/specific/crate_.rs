@@ -7,7 +7,7 @@ use bevy_trenchbroom::prelude::*;
 
 use crate::{
     asset_tracking::LoadResource as _,
-    props::setup::setup_static_prop_with_convex_hull,
+    props::setup::setup_prop,
     third_party::{
         avian3d::CollisionLayer,
         bevy_trenchbroom::{GetTrenchbroomModelPath as _, LoadTrenchbroomModel as _},
@@ -16,7 +16,6 @@ use crate::{
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(setup_crate_small);
-    app.add_observer(setup_static_prop_with_convex_hull::<CrateBig>);
     app.load_asset::<Gltf>(CrateBig::model_path())
         .load_asset::<Gltf>(CrateSmall::model_path());
 }
@@ -25,6 +24,7 @@ pub(super) fn plugin(app: &mut App) {
     base(Transform, Visibility),
     model("models/darkmod/containers/crate01_big.gltf")
 )]
+#[component(on_add = setup_prop::<CrateBig>(RigidBody::Static, ColliderConstructor::ConvexHullFromMesh))]
 pub(crate) struct CrateBig;
 
 #[point_class(

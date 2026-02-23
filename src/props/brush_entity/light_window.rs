@@ -1,8 +1,4 @@
-use bevy::{
-    app::Propagate,
-    light::NotShadowCaster,
-    prelude::*,
-};
+use bevy::{app::Propagate, light::NotShadowCaster, prelude::*};
 use bevy_trenchbroom::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {

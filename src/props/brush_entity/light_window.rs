@@ -6,10 +6,6 @@ use bevy::{
 use bevy_trenchbroom::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
-    if !app.is_plugin_added::<HierarchyPropagatePlugin<NotShadowCaster>>() {
-        app.add_plugins(HierarchyPropagatePlugin::<NotShadowCaster>::new(PostUpdate));
-    }
-
     app.add_observer(setup_light_window_brush_entity);
 }
 

@@ -1,6 +1,7 @@
 use avian3d::prelude::*;
 use bevy::{
     app::{HierarchyPropagatePlugin, Propagate},
+    asset::io::embedded::GetAssetServer as _,
     ecs::{lifecycle::HookContext, world::DeferredWorld},
     light::NotShadowCaster,
     prelude::*,
@@ -14,10 +15,6 @@ use crate::{
 };
 
 pub(super) fn plugin(app: &mut App) {
-    if !app.is_plugin_added::<HierarchyPropagatePlugin<NotShadowCaster>>() {
-        app.add_plugins(HierarchyPropagatePlugin::<NotShadowCaster>::new(PostUpdate));
-    }
-
     app.load_asset::<Gltf>(LampPlain::model_path());
 }
 
@@ -42,34 +39,35 @@ impl Default for LampPlain {
 }
 
 fn setup_lamp_wall_electric(mut world: DeferredWorld, ctx: HookContext) {
-    println!("Spawning lamp wall electric");
+    if world.is_scene_world() {
+        return;
+    }
     world.commands().queue(move |world: &mut World| {
-        world.resource_scope::<AssetServer, ()>(move |world, asset_server| {
-            let &LampPlain { color, intensity } = world
-                .query::<&LampPlain>()
-                .get(world, ctx.entity)
-                .expect("Component `LampPlain` should exist");
+        let asset_server = world.get_asset_server().clone();
+        let &LampPlain { color, intensity } = world
+            .query::<&LampPlain>()
+            .get(world, ctx.entity)
+            .expect("Component `LampPlain` should exist");
 
-            let bundle = quake_bundle::<LampPlain>(
-                &asset_server,
-                RigidBody::Static,
-                ColliderConstructor::ConvexHullFromMesh,
-            );
+        let bundle = quake_bundle::<LampPlain>(
+            asset_server,
+            RigidBody::Static,
+            ColliderConstructor::ConvexHullFromMesh,
+        );
 
-            world
-                .entity_mut(ctx.entity)
-                .insert((bundle, NotShadowCaster, Propagate(NotShadowCaster)))
-                .with_child((
-                    Transform::from_xyz(0.0, -0.08, -0.35),
-                    PointLight {
-                        color,
-                        intensity,
-                        radius: 0.05,
-                        range: 20.0,
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                ));
-        });
+        world
+            .entity_mut(ctx.entity)
+            .insert((bundle, NotShadowCaster, Propagate(NotShadowCaster)))
+            .with_child((
+                Transform::from_xyz(0.0, -0.08, -0.35),
+                PointLight {
+                    color,
+                    intensity,
+                    radius: 0.05,
+                    range: 20.0,
+                    shadows_enabled: true,
+                    ..default()
+                },
+            ));
     });
 }

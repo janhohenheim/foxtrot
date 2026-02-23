@@ -2,6 +2,7 @@ use avian_pickup::prop::PreferredPickupRotation;
 use avian3d::prelude::*;
 use bevy::{
     app::{HierarchyPropagatePlugin, Propagate},
+    asset::io::embedded::GetAssetServer as _,
     ecs::{lifecycle::HookContext, world::DeferredWorld},
     light::NotShadowCaster,
     prelude::*,
@@ -15,9 +16,6 @@ use crate::{
 };
 
 pub(super) fn plugin(app: &mut App) {
-    if !app.is_plugin_added::<HierarchyPropagatePlugin<NotShadowCaster>>() {
-        app.add_plugins(HierarchyPropagatePlugin::<NotShadowCaster>::new(PostUpdate));
-    }
     app.load_asset::<Gltf>(LampSitting::model_path());
 }
 
@@ -31,35 +29,36 @@ pub(super) fn plugin(app: &mut App) {
 pub(crate) struct LampSitting;
 
 fn setup_lamp_sitting(mut world: DeferredWorld, ctx: HookContext) {
-    println!("Spawning lamp sitting");
+    if world.is_scene_world() {
+        return;
+    }
     world.commands().queue(move |world: &mut World| {
-        world.resource_scope::<AssetServer, ()>(move |world, asset_server| {
-            let bundle = quake_bundle::<LampSitting>(
-                &asset_server,
-                RigidBody::Dynamic,
-                ColliderConstructor::ConvexDecompositionFromMesh,
-            );
+        let asset_server = world.get_asset_server().clone();
+        let bundle = quake_bundle::<LampSitting>(
+            asset_server,
+            RigidBody::Dynamic,
+            ColliderConstructor::ConvexDecompositionFromMesh,
+        );
 
-            world
-                .entity_mut(ctx.entity)
-                // The prop should be held upright.
-                .insert((
-                    bundle,
-                    NotShadowCaster,
-                    Propagate(NotShadowCaster),
-                    PreferredPickupRotation(Quat::IDENTITY),
-                ))
-                // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.
-                .with_child((
-                    Transform::from_xyz(0.0, 0.2, 0.0),
-                    PointLight {
-                        color: Color::srgb(1.0, 0.7, 0.4),
-                        intensity: 40_000.0,
-                        radius: 0.05,
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                ));
-        })
+        world
+            .entity_mut(ctx.entity)
+            // The prop should be held upright.
+            .insert((
+                bundle,
+                NotShadowCaster,
+                Propagate(NotShadowCaster),
+                PreferredPickupRotation(Quat::IDENTITY),
+            ))
+            // The lamp's origin is at the bottom of the lamp, so we need to offset the light a bit.
+            .with_child((
+                Transform::from_xyz(0.0, 0.2, 0.0),
+                PointLight {
+                    color: Color::srgb(1.0, 0.7, 0.4),
+                    intensity: 40_000.0,
+                    radius: 0.05,
+                    shadows_enabled: true,
+                    ..default()
+                },
+            ));
     });
 }

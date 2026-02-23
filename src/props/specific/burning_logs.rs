@@ -2,6 +2,7 @@ use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
 use bevy::app::{HierarchyPropagatePlugin, Propagate};
+use bevy::asset::io::embedded::GetAssetServer as _;
 use bevy::camera::visibility::RenderLayers;
 use bevy::ecs::lifecycle::HookContext;
 use bevy::ecs::world::DeferredWorld;
@@ -20,10 +21,6 @@ use crate::{PostPhysicsAppSystems, audio::SpatialPool, screens::Screen};
 use bevy::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
-    if !app.is_plugin_added::<HierarchyPropagatePlugin<NotShadowCaster>>() {
-        app.add_plugins(HierarchyPropagatePlugin::<NotShadowCaster>::new(PostUpdate));
-    }
-
     // This causes https://github.com/bevyengine/bevy/issues/18980
     app.load_resource::<BurningLogsAssets>();
     app.add_systems(
@@ -76,39 +73,40 @@ const SOUND_PATH: &str = "audio/music/loop_flames_03.ogg";
 const BASE_INTENSITY: f32 = 150_000.0;
 
 fn setup_burning_logs(mut world: DeferredWorld, ctx: HookContext) {
-    println!("Spawning burning logs");
+    if world.is_scene_world() {
+        return;
+    }
     world.commands().queue(move |world: &mut World| {
-        world.resource_scope::<AssetServer, ()>(move |world, asset_server| {
-            let static_bundle = quake_bundle::<BurningLogs>(
-                &asset_server,
-                RigidBody::Static,
-                ColliderConstructor::ConvexHullFromMesh,
-            );
-            let sound_effect: Handle<AudioSample> = asset_server.load(SOUND_PATH);
+        let asset_server = world.get_asset_server().clone();
+        let static_bundle = quake_bundle::<BurningLogs>(
+            asset_server.clone(),
+            RigidBody::Static,
+            ColliderConstructor::ConvexHullFromMesh,
+        );
+        let sound_effect: Handle<AudioSample> = asset_server.load(SOUND_PATH);
 
-            world
-                .entity_mut(ctx.entity)
-                .insert((
-                    static_bundle,
-                    NotShadowCaster,
-                    Propagate(NotShadowCaster),
-                    SamplePlayer::new(sound_effect)
-                        .looping()
-                        .with_volume(Volume::Linear(0.25)),
-                    SpatialPool,
-                ))
-                .with_child((
-                    PointLight {
-                        color: Color::srgb(1.0, 0.7, 0.4),
-                        intensity: BASE_INTENSITY,
-                        radius: 0.1,
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                    Transform::from_xyz(0.0, 0.2, 0.0),
-                    Flicker,
-                ));
-        });
+        world
+            .entity_mut(ctx.entity)
+            .insert((
+                static_bundle,
+                NotShadowCaster,
+                Propagate(NotShadowCaster),
+                SamplePlayer::new(sound_effect)
+                    .looping()
+                    .with_volume(Volume::Linear(0.25)),
+                SpatialPool,
+            ))
+            .with_child((
+                PointLight {
+                    color: Color::srgb(1.0, 0.7, 0.4),
+                    intensity: BASE_INTENSITY,
+                    radius: 0.1,
+                    shadows_enabled: true,
+                    ..default()
+                },
+                Transform::from_xyz(0.0, 0.2, 0.0),
+                Flicker,
+            ));
     });
 }
 

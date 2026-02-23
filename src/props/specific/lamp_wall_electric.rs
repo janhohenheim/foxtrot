@@ -1,6 +1,6 @@
 use avian3d::prelude::*;
 use bevy::{
-    app::{HierarchyPropagatePlugin, Propagate},
+    app::Propagate,
     asset::io::embedded::GetAssetServer as _,
     ecs::{lifecycle::HookContext, world::DeferredWorld},
     light::NotShadowCaster,

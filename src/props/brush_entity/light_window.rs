@@ -1,5 +1,5 @@
 use bevy::{
-    app::{HierarchyPropagatePlugin, Propagate},
+    app::Propagate,
     light::NotShadowCaster,
     prelude::*,
 };

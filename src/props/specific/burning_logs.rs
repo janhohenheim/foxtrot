@@ -1,7 +1,7 @@
 use std::f32::consts::TAU;
 
 use avian3d::prelude::*;
-use bevy::app::{HierarchyPropagatePlugin, Propagate};
+use bevy::app::Propagate;
 use bevy::asset::io::embedded::GetAssetServer as _;
 use bevy::camera::visibility::RenderLayers;
 use bevy::ecs::lifecycle::HookContext;
